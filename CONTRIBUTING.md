@@ -3,14 +3,8 @@
 Contributor로서 다음과 같은 지침을 준수해주세요.
 
 - [Submission Guidelines](#submission-guidelines)
-  - [Issue 제출하기](#📌-issue-제출하기)
-  - [Pull Request 제출하기](#📌-pull-request-제출하기)
-  - [Pull Request 리뷰하기](#📌-pull-request-리뷰하기)
 - [Git Commit Message Convention](#git-commit-message-convention)
-  - [Commit Message Header](#📌-commit-message-header)
-  - [Commit Message Body](#📌-commit-message-body)
-  - [Commit Message Footer](#📌-commit-message-footer)
-
+  
 ## **Submission Guidelines**
 
 ### **📌 Issue 제출하기**
@@ -21,6 +15,8 @@ Contributor로서 다음과 같은 지침을 준수해주세요.
 2. Assignee를 지정합니다.
 3. 관련있는 Label를 추가합니다.
 4. 템플릿 컨벤션을 준수하여 제출해주세요.
+
+<br>
 
 ### **📌 Pull Request 제출하기**
 
@@ -49,6 +45,21 @@ Contributor로서 다음과 같은 지침을 준수해주세요.
 5. 해당 브랜치에 push해주세요.
 
 6. Github에서 템플릿 컨벤션을 준수하여 Pull Request를 제출해주세요.
+7. 리뷰 우선순위 판단을 돕는 `D-n 룰`을 사용하여 해당 label을 붙여주세요.
+
+    7-1. **D-n룰**
+
+    - **`D-0` (ASAP)**
+
+      긴급한 수정사항으로 바로 리뷰해 주세요. 앱의 오류로 인해 장애가 발생하거나, 빌드가 되지 않는 등 긴급 이슈가 발생할 때 사용합니다.
+
+    - **`D-N` (Within N days)**
+
+      N일 이내에 리뷰해 주세요.
+
+      일반적으로 D-2 태그를 많이 사용하며, 중요도가 낮거나 일정이 여유 있는 경우 D-3 ~ D-5 를 사용하기도 합니다.
+  
+<br>
 
 ### **📌 Pull Request 리뷰하기**
 
@@ -82,6 +93,10 @@ PR의 reivewer라면 다음 사항을 따라주세요:
 
 3. 해당 PR reviewer가 **Approve**를 하면 머지를 할 수 있습니다.
 
+<br>
+<br>
+
+
 ## **Git Commit Message Convention**
 
 ### **📌 Commit Message Header**
@@ -95,6 +110,8 @@ PR의 reivewer라면 다음 사항을 따라주세요:
          │
          └─⫸ Commit Type
 ```
+
+<br>
 
 ### **타입**
 
@@ -113,12 +130,16 @@ PR의 reivewer라면 다음 사항을 따라주세요:
 🔥 [remove]  : 파일, 폴더 삭제 작업
 ```
 
+<br>
+
 ### **제목**
 
 변경 사항에 대한 간략한 설명을 제공합니다.
 
 - 제목은 명령문 한글로 작성합니다.
 - 끝에는 마침표 (.)가 없습니다.
+
+<br>
 
 ### **📌 Commit Message Body**
 
@@ -128,11 +149,15 @@ PR의 reivewer라면 다음 사항을 따라주세요:
 - 한 줄 당 72자 내로 작성합니다.
 - 여러 줄의 메시지를 작성할 땐 "-"로 구분합니다.
 
+<br>
+
 ### **📌 Commit Message Footer**
 
 현재 커밋과 관련된 이슈 번호로 작성합니다.
 
 - ex) `#이슈번호`
+
+<br>
 
 ## PR Merge Type
 
