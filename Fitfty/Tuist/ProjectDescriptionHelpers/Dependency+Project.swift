@@ -16,6 +16,7 @@ public extension TargetDependency.Projcet {
     static let Core = TargetDependency.project(target: "Core", path: .relativeToRoot("Projects/Core"))
     static let Auth = TargetDependency.project(target: "Auth", path: .relativeToRoot("Projects/Auth"))
     static let MainFeed = TargetDependency.project(target: "MainFeed", path: .relativeToRoot("Projects/MainFeed"))
+    static let Onboarding = TargetDependency.project(target: "Onboarding", path: .relativeToRoot("Projects/Onboarding"))
     static let Profile = TargetDependency.project(target: "Profile", path: .relativeToRoot("Projects/Profile"))
     static let Setting = TargetDependency.project(target: "Setting", path: .relativeToRoot("Projects/Setting"))
 }
