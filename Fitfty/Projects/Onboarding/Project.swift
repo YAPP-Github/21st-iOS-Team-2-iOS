@@ -9,13 +9,12 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-    name: "Coordinator",
+    name: "Onboarding",
     product: .staticFramework,
     dependencies: [
-        .Projcet.Auth,
-        .Projcet.MainFeed,
-        .Projcet.Onboarding,
-        .Projcet.Profile,
-        .Projcet.Setting
+        .Projcet.Common,
+        .Projcet.Core,
+        .SPM.Moya
     ]
 )
+
