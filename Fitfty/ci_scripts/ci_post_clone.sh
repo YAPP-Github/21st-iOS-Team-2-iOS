@@ -2,9 +2,8 @@
 
 brew install swiftlint
 
-pwd
+# Fitfty 디렉토리로 경로 이동 -> /Volumes/workspace/repository/Fitfty
 cd ..
-pwd
 
 .tuist-bin/tuist fetch
 .tuist-bin/tuist generate
