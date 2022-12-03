@@ -8,10 +8,10 @@
 import ProjectDescription
 
 public extension TargetDependency {
-    enum Projcet {}
+    enum Project {}
 }
 
-public extension TargetDependency.Projcet {
+public extension TargetDependency.Project {
     static let Common = TargetDependency.project(target: "Common", path: .relativeToRoot("Projects/Common"))
     static let Core = TargetDependency.project(target: "Core", path: .relativeToRoot("Projects/Core"))
     static let Auth = TargetDependency.project(target: "Auth", path: .relativeToRoot("Projects/Auth"))
