@@ -17,8 +17,6 @@ final public class AuthViewController: UIViewController {
     
     public init() {
         super.init(nibName: nil, bundle: nil)
-        
-        view.backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {
