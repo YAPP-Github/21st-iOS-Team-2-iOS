@@ -9,23 +9,23 @@
 import UIKit
 import Auth
 
-final public class AuthCoordinator: Coordinator {
+final class AuthCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
     
-    public init(navigationConrtoller: UINavigationController) {
+    init(navigationConrtoller: UINavigationController) {
         self.navigationController = navigationConrtoller
     }
     
-    public func start() {
+    func start() {
         let viewController = makeAuthViewController()
         navigationController.pushViewController(viewController, animated: true)
     }
 }
 
 private extension AuthCoordinator {
-    private func makeAuthViewController() -> UIViewController {
+    func makeAuthViewController() -> UIViewController {
         let viewController = AuthViewController()
         viewController.coordinator = self
         return viewController
