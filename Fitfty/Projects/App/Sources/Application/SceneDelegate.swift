@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import Coordinator
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    var coordinator: AppCoordinator?
 
     func scene(
         _ scene: UIScene,
@@ -19,6 +21,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else {
             return
         }
+        window = UIWindow(windowScene: scene)
+        let navigationController = UINavigationController()
+        coordinator = AppCoordinator(navigationConrtoller: navigationController)
+        coordinator?.start()
+        
+        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {}
