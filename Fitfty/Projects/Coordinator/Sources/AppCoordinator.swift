@@ -24,7 +24,7 @@ final public class AppCoordinator: Coordinator {
 }
 
 private extension AppCoordinator {
-    private func makeAuthCoordinator() -> Coordinator {
+    func makeAuthCoordinator() -> Coordinator {
         let coordinator = AuthCoordinator(navigationConrtoller: navigationController)
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
