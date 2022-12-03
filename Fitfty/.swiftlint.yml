@@ -1,0 +1,32 @@
+excluded: # 린트 과정에서 무시할 파일 경로. `included`보다 우선순위 높음
+    - Projects/App/Sources/Application
+    - Tuist
+    - Derived
+identifier_name:
+    min_length:
+        - 2 # warning
+        - 4 # error
+    excluded: # 제외할 문자열 목록
+        - a
+        - b
+function_body_length:
+    - 150 # warning
+    - 300 # error
+type_body_length:
+    - 300 # warning
+    - 500 # error
+file_length:
+    - 1000 # warning
+    - 2000 # error
+disabled_rules: # 제외하고 싶은 룰
+    - colon
+    - control_statement
+    - trailing_whitespace
+    - vertical_parameter_alignment
+    - cyclomatic_complexity
+    - void_function_in_ternary
+    - comment_spacing
+opt_in_rules:
+    - empty_count
+    - empty_string
+    - conditional_returns_on_newline
