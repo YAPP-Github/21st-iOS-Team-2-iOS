@@ -1,9 +1,10 @@
 #!/bin/sh
 
-brew install tuist
 brew install swiftlint
 
-
+pwd
 cd ..
+pwd
+
 .tuist-bin/tuist fetch
 .tuist-bin/tuist generate
