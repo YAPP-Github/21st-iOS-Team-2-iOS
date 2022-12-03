@@ -12,8 +12,8 @@ let project = Project.makeModule(
     name: "MainFeed",
     product: .staticFramework,
     dependencies: [
-        .Projcet.Common,
-        .Projcet.Core,
+        .Project.Common,
+        .Project.Core,
         .SPM.Moya
     ]
 )

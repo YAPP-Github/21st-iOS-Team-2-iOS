@@ -12,10 +12,10 @@ let project = Project.makeModule(
     name: "Coordinator",
     product: .staticFramework,
     dependencies: [
-        .Projcet.Auth,
-        .Projcet.MainFeed,
-        .Projcet.Onboarding,
-        .Projcet.Profile,
-        .Projcet.Setting
+        .Project.Auth,
+        .Project.MainFeed,
+        .Project.Onboarding,
+        .Project.Profile,
+        .Project.Setting
     ]
 )
