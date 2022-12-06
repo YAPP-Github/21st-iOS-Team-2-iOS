@@ -11,7 +11,9 @@ protocol Coordinator: AnyObject {
     var parentCoordinator: Coordinator? { get set }
     var childCoordinators: [Coordinator] { get set }
     var navigationController: UINavigationController { get set }
-    
+    var type: CoordinatorType { get }
+    var finishDelegate: CoordinatorFinishDelegate? { get set }
+
     func start()
 }
 
@@ -29,4 +31,15 @@ extension Coordinator {
             }
         }
     }
+}
+
+protocol CoordinatorFinishDelegate: AnyObject {
+    func coordinatorDidFinish(childCoordinator: Coordinator)
+}
+
+enum CoordinatorType {
+    case app
+    case login
+    case tabBar
+    case main
 }
