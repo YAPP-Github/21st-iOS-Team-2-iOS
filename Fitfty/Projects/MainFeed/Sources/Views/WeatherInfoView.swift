@@ -34,7 +34,7 @@ final class WeatherInfoView: UIStackView {
     private lazy var conditionLabel: UILabel = {
         let label = UILabel()
         label.textColor = .systemGray
-        label.font = .preferredFont(for: .callout, weight: .regular)
+        label.font = .preferredFont(for: .footnote, weight: .regular)
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
     }()
@@ -42,17 +42,18 @@ final class WeatherInfoView: UIStackView {
     private lazy var tempInfoLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
-        label.font = .preferredFont(for: .callout, weight: .regular)
+        label.font = .preferredFont(for: .footnote, weight: .regular)
         label.setContentHuggingPriority(.required, for: .horizontal)
         return label
     }()
     
-    convenience init(temp: Int, condition: String, minimum: Int, maximum: Int) {
-        self.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         configure()
-        tempLabel.text = "\(temp)°"
-        conditionLabel.text = condition
-        tempInfoLabel.text = "최저\(minimum) ㆍ 최고\(maximum)"
+    }
+    
+    required init(coder: NSCoder) {
+        super.init(coder: coder)
     }
     
     private func configure() {
@@ -66,4 +67,13 @@ final class WeatherInfoView: UIStackView {
         addArrangedSubviews(tempLabel, backgroundStackView)
     }
     
+}
+
+extension WeatherInfoView {
+    
+    func setUp(temp: Int, condition: String, minimum: Int, maximum: Int) {
+        tempLabel.text = "\(temp)°"
+        conditionLabel.text = condition
+        tempInfoLabel.text = "최저\(minimum) ㆍ 최고\(maximum)"
+    }
 }
