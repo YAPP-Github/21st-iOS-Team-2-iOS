@@ -40,7 +40,7 @@ final class WeatherCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .systemGray
         label.textAlignment = .center
-        label.font = .preferredFont(for: .callout, weight: .semibold)
+        label.font = .preferredFont(for: .footnote, weight: .semibold)
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         label.text = "24시"
         label.backgroundColor = .white
@@ -61,7 +61,7 @@ final class WeatherCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-//        reset()
+        reset()
     }
     
     override init(frame: CGRect) {
@@ -92,7 +92,7 @@ final class WeatherCell: UICollectionViewCell {
     
     private func reset() {
         hourLabel.text = "24시"
-        weatherIconImageView.image = nil
+        weatherIconImageView.image = UIImage(systemName: "cloud")?.withTintColor(.label, renderingMode: .alwaysOriginal)
         hourLabel.textColor = .systemGray
         hourLabel.backgroundColor = .white
         separatorView.isHidden = false
