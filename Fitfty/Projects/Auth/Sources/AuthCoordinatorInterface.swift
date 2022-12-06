@@ -9,5 +9,7 @@
 import Foundation
 
 public protocol AuthCoordinatorInterface: AnyObject {
-    func showOnboardingView()
+    func pushMainFeedView()
+    func pushOnboardingView()
+    func presentKakaoLoginView()
 }

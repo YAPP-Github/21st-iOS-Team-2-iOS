@@ -17,4 +17,3 @@ let project = Project.makeModule(
         .SPM.Moya
     ]
 )
-
