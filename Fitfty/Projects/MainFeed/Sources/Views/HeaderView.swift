@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HeaderView: UICollectionReusableView {
+final class HeaderView: UICollectionReusableView {
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
