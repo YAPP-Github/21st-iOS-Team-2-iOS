@@ -11,7 +11,13 @@ import Auth
 
 final public class ProfileViewController: UIViewController {
     
+    enum Section: CaseIterable {
+        case feed
+    }
+    
     public weak var coordinator: AuthCoordinatorInterface?
+    
+    private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -22,7 +28,8 @@ final public class ProfileViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUpConstraintLayout()
-        configureCollectionView()
+        setUpDataSource()
+        applySnapshot()
     }
 
 }
@@ -37,27 +44,27 @@ private extension ProfileViewController {
         collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
     
-    func configureCollectionView() {
+    func setUpDataSource() {
+        collectionView.delegate = self
         collectionView.register(FeedImageCell.self,
                                 forCellWithReuseIdentifier: FeedImageCell.identifier)
-        collectionView.delegate = self
-        collectionView.dataSource = self
-    }
-}
-
-extension ProfileViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
+            collectionView: collectionView,
+            cellProvider: { (collectionView, indexPath, _) -> UICollectionViewCell? in
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: FeedImageCell.identifier,
+                    for: indexPath) as? FeedImageCell else {
+                    return UICollectionViewCell()
+                }
+                return cell
+            })
     }
     
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath)
-    -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: FeedImageCell.identifier,
-            for: indexPath) as? FeedImageCell else {
-            return UICollectionViewCell()
-        }
-        return cell
+    func applySnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
+        snapshot.appendSections([.feed])
+        snapshot.appendItems(Array(0..<10).map {_ in UUID() })
+        dataSource?.apply(snapshot, animatingDifferences: true)
     }
 }
 
