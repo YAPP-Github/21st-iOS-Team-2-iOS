@@ -8,6 +8,7 @@
 
 import UIKit
 import Auth
+import Profile
 
 final class AuthCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
@@ -26,7 +27,7 @@ final class AuthCoordinator: Coordinator {
 
 private extension AuthCoordinator {
     func makeAuthViewController() -> UIViewController {
-        let viewController = AuthViewController()
+        let viewController = ProfileViewController()
         viewController.coordinator = self
         return viewController
     }
