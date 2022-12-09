@@ -8,7 +8,6 @@
 
 import UIKit
 import Auth
-import Profile
 
 final class AuthCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
