@@ -27,18 +27,25 @@ final class AuthCoordinator: Coordinator {
 
 private extension AuthCoordinator {
     func makeAuthViewController() -> UIViewController {
-        let viewController = ProfileViewController()
+        let viewController = AuthViewController(
+            viewModel: AuthViewModel(),
+            coordinator: self
+        )
         viewController.coordinator = self
         return viewController
     }
 }
 
 extension AuthCoordinator: AuthCoordinatorInterface {
-    public func showMainFeedView() {
+    func presentKakaoLoginView() {
         
     }
     
-    public func showOnboardingView() {
+    func pushMainFeedView() {
+        
+    }
+    
+    func pushOnboardingView() {
         
     }
 }
