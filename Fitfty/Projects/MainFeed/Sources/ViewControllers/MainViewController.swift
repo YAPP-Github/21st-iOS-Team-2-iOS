@@ -26,8 +26,7 @@ public final class MainViewController: UIViewController {
         
     }
     
-    public var coordinator: MainCoordinatorInterface?
-    
+    private var coordinator: MainCoordinatorInterface
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private lazy var collectionView: UICollectionView = {
@@ -48,10 +47,11 @@ public final class MainViewController: UIViewController {
         setUpDataSource()
         applySnapshot()
     }
-    
-    public init() {
+    public init(coordinator: MainCoordinatorInterface) {
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .white
+        
     }
     
     required init?(coder: NSCoder) {
