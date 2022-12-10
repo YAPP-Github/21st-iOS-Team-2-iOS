@@ -46,7 +46,7 @@ public final class MainViewController: UIViewController {
         setUpLayout()
         setUpNavigationBar()
         setUpDataSource()
-        setUpCollectionView()
+        applySnapshot()
     }
     
     public init() {
@@ -125,7 +125,7 @@ public final class MainViewController: UIViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func setUpCollectionView() {
+    private func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
         snapshot.appendSections([.weather])
         snapshot.appendItems(Array(0...23).map { _ in UUID() })
