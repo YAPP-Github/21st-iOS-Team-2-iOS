@@ -80,32 +80,38 @@ final class ProfileView: UIView {
         [imageView, nicknameLabel, contentLabel, followView].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+            NSLayoutConstraint.activate([$0.centerXAnchor.constraint(equalTo: centerXAnchor)])
         }
-        imageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 104).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 104).isActive = true
         
-        nicknameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8).isActive = true
-        
-        contentLabel.topAnchor.constraint(equalTo: nicknameLabel.bottomAnchor, constant: 6).isActive = true
-        
-        followView.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: 16).isActive = true
-        followView.widthAnchor.constraint(equalToConstant: 144).isActive = true
-        followView.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.widthAnchor.constraint(equalToConstant: 104),
+            imageView.heightAnchor.constraint(equalToConstant: 104),
+            
+            nicknameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
+            
+            contentLabel.topAnchor.constraint(equalTo: nicknameLabel.bottomAnchor, constant: 6),
+            
+            followView.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: 16),
+            followView.widthAnchor.constraint(equalToConstant: 144),
+            followView.heightAnchor.constraint(equalToConstant: 34)
+        ])
         
         [followButton, followerButton, dotLabel].forEach {
             followView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        dotLabel.centerXAnchor.constraint(equalTo: followView.centerXAnchor).isActive = true
-        dotLabel.centerYAnchor.constraint(equalTo: followView.centerYAnchor).isActive = true
         
-        followButton.rightAnchor.constraint(equalTo: dotLabel.leftAnchor, constant: -3).isActive = true
-        followButton.centerYAnchor.constraint(equalTo: followView.centerYAnchor).isActive = true
-        
-        followerButton.leftAnchor.constraint(equalTo: dotLabel.rightAnchor, constant: 3).isActive = true
-        followerButton.centerYAnchor.constraint(equalTo: followView.centerYAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            dotLabel.centerXAnchor.constraint(equalTo: followView.centerXAnchor),
+            dotLabel.centerYAnchor.constraint(equalTo: followView.centerYAnchor),
+            
+            followButton.rightAnchor.constraint(equalTo: dotLabel.leftAnchor, constant: -1),
+            followButton.centerYAnchor.constraint(equalTo: followView.centerYAnchor),
+            
+            followerButton.leftAnchor.constraint(equalTo: dotLabel.rightAnchor, constant: 1),
+            followerButton.centerYAnchor.constraint(equalTo: followView.centerYAnchor)
+        ])
     }
 }
 

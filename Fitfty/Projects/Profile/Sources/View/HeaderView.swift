@@ -10,7 +10,6 @@ import UIKit
 import Common
 
 final class HeaderView: UICollectionReusableView {
-    static let identifier = "headerView"
     
     private lazy var settingButton: UIButton = {
         let button = UIButton()
@@ -42,25 +41,26 @@ final class HeaderView: UICollectionReusableView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        settingButton.widthAnchor.constraint(equalToConstant: 62).isActive = true
-        settingButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
-        settingButton.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
-        settingButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20).isActive = true
-        
-        profileView.topAnchor.constraint(equalTo: settingButton.bottomAnchor, constant: 12).isActive = true
-        profileView.heightAnchor.constraint(equalToConstant: 223).isActive = true
-        profileView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        profileView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        
-        menuView.topAnchor.constraint(equalTo: profileView.bottomAnchor, constant: 24).isActive = true
-        menuView.heightAnchor.constraint(equalToConstant: 72).isActive = true
-        menuView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        menuView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        
-        spacingView.topAnchor.constraint(equalTo: menuView.bottomAnchor).isActive = true
-        spacingView.heightAnchor.constraint(equalToConstant: 24).isActive = true
-        spacingView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        spacingView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        
+        NSLayoutConstraint.activate([
+            settingButton.widthAnchor.constraint(equalToConstant: 62),
+            settingButton.heightAnchor.constraint(equalToConstant: 34),
+            settingButton.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            settingButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            
+            profileView.topAnchor.constraint(equalTo: settingButton.bottomAnchor, constant: 12),
+            profileView.heightAnchor.constraint(equalToConstant: 223),
+            profileView.leftAnchor.constraint(equalTo: leftAnchor),
+            profileView.rightAnchor.constraint(equalTo: rightAnchor),
+            
+            menuView.topAnchor.constraint(equalTo: profileView.bottomAnchor, constant: 24),
+            menuView.heightAnchor.constraint(equalToConstant: 72),
+            menuView.leftAnchor.constraint(equalTo: leftAnchor),
+            menuView.rightAnchor.constraint(equalTo: rightAnchor),
+            
+            spacingView.topAnchor.constraint(equalTo: menuView.bottomAnchor),
+            spacingView.heightAnchor.constraint(equalToConstant: 24),
+            spacingView.leftAnchor.constraint(equalTo: leftAnchor),
+            spacingView.rightAnchor.constraint(equalTo: rightAnchor)
+        ])
     }
 }
