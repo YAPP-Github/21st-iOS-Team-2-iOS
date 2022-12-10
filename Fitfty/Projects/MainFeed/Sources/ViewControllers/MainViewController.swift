@@ -31,14 +31,14 @@ public final class MainViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private lazy var collectionView: UICollectionView = {
-        let colletionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
-        colletionView.register(WeatherCell.self)
-        colletionView.register(StyleCell.self)
-        colletionView.register(CodyCell.self)
-        colletionView.register(FooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
-        colletionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
-        colletionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
-        return colletionView
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+        collectionView.register(WeatherCell.self)
+        collectionView.register(StyleCell.self)
+        collectionView.register(CodyCell.self)
+        collectionView.register(FooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
+        collectionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
+        collectionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
+        return collectionView
     }()
     
     public override func viewDidLoad() {
