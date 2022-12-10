@@ -10,7 +10,6 @@ import UIKit
 import Common
 
 final class FeedImageCell: UICollectionViewCell {
-    static let identifier: String = "FeedImageCell"
     
     private lazy var feedImageView: UIView = {
         let imageView = UIImageView()
@@ -32,9 +31,11 @@ final class FeedImageCell: UICollectionViewCell {
     private func setUpConstraintLayout() {
         self.addSubview(feedImageView)
         feedImageView.translatesAutoresizingMaskIntoConstraints = false
-        feedImageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        feedImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        feedImageView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
-        feedImageView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            feedImageView.topAnchor.constraint(equalTo: self.topAnchor),
+            feedImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            feedImageView.leftAnchor.constraint(equalTo: self.leftAnchor),
+            feedImageView.rightAnchor.constraint(equalTo: self.rightAnchor)
+        ])
     }
 }

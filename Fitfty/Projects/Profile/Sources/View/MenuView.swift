@@ -10,10 +10,15 @@ import UIKit
 import Common
 
 final class MenuView: UIView {
+    
+    enum MenuState {
+        case cody
+        case bookmark
+    }
 
     private lazy var codyIconButton: UIButton = {
         let button = UIButton()
-        button.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
+        button.setImage(CommonAsset.Images.btnCodyUnselected.image, for: .normal)
         button.addTarget(self, action: #selector(didTapCodyButton), for: .touchUpInside)
         return button
     }()
@@ -49,9 +54,12 @@ final class MenuView: UIView {
         return view
     }()
     
+    private var menuState: MenuState = .cody
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpConstraintLayout()
+        checkMenuState()
     }
     
     required init?(coder: NSCoder) {
@@ -63,28 +71,41 @@ final class MenuView: UIView {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        barView.widthAnchor.constraint(equalToConstant: 1).isActive = true
-        barView.heightAnchor.constraint(equalToConstant: 72).isActive = true
-        barView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        
-        codyIconButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -65).isActive = true
-        codyIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
-        codyTextButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -48).isActive = true
-        codyTextButton.topAnchor.constraint(equalTo: codyIconButton.bottomAnchor, constant: 14).isActive = true
-        bookmarkIconButton.leftAnchor.constraint(equalTo: barView.rightAnchor, constant: 65).isActive = true
-        
-        bookmarkIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
-        bookmarkTextButton.leftAnchor.constraint(equalTo: barView.rightAnchor, constant: 48).isActive = true
-        bookmarkTextButton.topAnchor.constraint(equalTo: bookmarkIconButton.bottomAnchor, constant: 14).isActive = true
+        NSLayoutConstraint.activate([
+            barView.widthAnchor.constraint(equalToConstant: 1),
+            barView.heightAnchor.constraint(equalToConstant: 72),
+            barView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            
+            codyIconButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -65),
+            codyIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            codyTextButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -48),
+            codyTextButton.topAnchor.constraint(equalTo: codyIconButton.bottomAnchor, constant: 14),
+            bookmarkIconButton.leftAnchor.constraint(equalTo: barView.rightAnchor, constant: 65),
+            
+            bookmarkIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            bookmarkTextButton.leftAnchor.constraint(equalTo: barView.rightAnchor, constant: 48),
+            bookmarkTextButton.topAnchor.constraint(equalTo: bookmarkIconButton.bottomAnchor, constant: 14)
+        ])
+    }
+    
+    private func checkMenuState() {
+        switch menuState {
+        case .cody:
+            codyIconButton.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
+            bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkUnselected.image, for: .normal)
+        case .bookmark:
+            codyIconButton.setImage(CommonAsset.Images.btnCodyUnselected.image, for: .normal)
+            bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkSelected.image, for: .normal)
+        }
     }
     
     @objc func didTapCodyButton(_ sender: UIButton) {
-        codyIconButton.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
-        bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkUnselected.image, for: .normal)
+        menuState = .cody
+        checkMenuState()
     }
     
     @objc func didTapBookmarkButton(_ sender: UIButton) {
-        codyIconButton.setImage(CommonAsset.Images.btnCodyUnselected.image, for: .normal)
-        bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkSelected.image, for: .normal)
+        menuState = .bookmark
+        checkMenuState()
     }
 }

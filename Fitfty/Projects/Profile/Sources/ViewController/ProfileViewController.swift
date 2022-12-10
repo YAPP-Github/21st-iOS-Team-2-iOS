@@ -33,26 +33,27 @@ final public class ProfileViewController: UIViewController {
 private extension ProfileViewController {
     func setUpConstraintLayout() {
         view.addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        collectionView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        collectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        collectionView.delegate = self
+        collectionView.register(FeedImageCell.self,
+                                forCellWithReuseIdentifier: FeedImageCell.className)
+        collectionView.register(HeaderView.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: HeaderView.className)
     }
     
     func setUpDataSource() {
-        collectionView.delegate = self
-        collectionView.register(FeedImageCell.self,
-                                forCellWithReuseIdentifier: FeedImageCell.identifier)
-        collectionView.register(HeaderView.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: HeaderView.identifier)
-        
         dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
             collectionView: collectionView,
             cellProvider: { (collectionView, indexPath, _) -> UICollectionViewCell? in
                 guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: FeedImageCell.identifier,
+                    withReuseIdentifier: FeedImageCell.className,
                     for: indexPath) as? FeedImageCell else {
                     return UICollectionViewCell()
                 }
@@ -62,7 +63,7 @@ private extension ProfileViewController {
         dataSource?.supplementaryViewProvider = { (collectionView, kind, indexPath) -> UICollectionReusableView? in
             guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
-                withReuseIdentifier: HeaderView.identifier,
+                withReuseIdentifier: HeaderView.className,
                 for: indexPath) as? HeaderView else {
                 return UICollectionReusableView()
             }
