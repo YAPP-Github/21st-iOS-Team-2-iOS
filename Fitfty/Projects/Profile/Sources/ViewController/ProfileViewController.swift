@@ -25,6 +25,7 @@ final public class ProfileViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUpConstraintLayout()
+        setUpCollectionView()
         setUpDataSource()
         applySnapshot()
     }
@@ -40,6 +41,9 @@ private extension ProfileViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    func setUpCollectionView() {
         collectionView.delegate = self
         collectionView.register(FeedImageCell.self,
                                 forCellWithReuseIdentifier: FeedImageCell.className)
