@@ -29,8 +29,7 @@ final class MainCoordinator: Coordinator {
 
 private extension MainCoordinator {
     func makeMainViewController() -> UIViewController {
-        let viewController = MainViewController()
-        viewController.coordinator = self
+        let viewController = MainViewController(coordinator: self)
         return viewController
     }
 }
