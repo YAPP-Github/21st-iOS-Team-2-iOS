@@ -11,6 +11,7 @@ import Common
 public final class MainViewController: UIViewController {
     
     enum Section {
+        
         case weather
         case style
         case cody
@@ -51,7 +52,6 @@ public final class MainViewController: UIViewController {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
-        
     }
     
     required init?(coder: NSCoder) {

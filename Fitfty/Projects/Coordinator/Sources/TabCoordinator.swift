@@ -11,6 +11,7 @@ import Common
 import MainFeed
 
 protocol TabCoordinatorProtocol: Coordinator {
+    
     var tabBarController: UITabBarController { get set }
     
     func selectPage(_ page: TabBarPage)
@@ -18,9 +19,11 @@ protocol TabCoordinatorProtocol: Coordinator {
     func setSelectedIndex(_ index: Int)
     
     func currentPage() -> TabBarPage?
+    
 }
 
 final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol, UITabBarControllerDelegate {
+    
     var type: CoordinatorType { .tabBar }
     var finishDelegate: CoordinatorFinishDelegate?
     
@@ -109,4 +112,5 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol, UITab
     func currentPage() -> TabBarPage? {
         return TabBarPage.init(index: tabBarController.selectedIndex)
     }
+    
 }

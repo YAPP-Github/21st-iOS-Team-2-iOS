@@ -76,4 +76,5 @@ extension WeatherInfoView {
         conditionLabel.text = condition
         tempInfoLabel.text = "최저\(minimum) ㆍ 최고\(maximum)"
     }
+    
 }

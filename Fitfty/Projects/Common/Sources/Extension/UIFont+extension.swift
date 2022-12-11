@@ -22,4 +22,5 @@ public extension UIFont {
         let font = UIFont.systemFont(ofSize: size, weight: weight)
         return metrics.scaledFont(for: font)
     }
+    
 }

@@ -72,6 +72,7 @@ final class StyleCell: UICollectionViewCell {
 }
 
 extension StyleCell {
+    
     func setUp(text: String) {
         titleLabel.text = "#\(text)"
     }
@@ -81,4 +82,5 @@ extension StyleCell {
         titleLabel.backgroundColor = isSelected ? CommonAsset.Colors.ftSecondaryText.color : .clear
         
     }
+    
 }
