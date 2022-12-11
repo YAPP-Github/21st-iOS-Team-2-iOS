@@ -6,3 +6,10 @@
 //
 
 import Foundation
+import Moya
+
+public enum OpenWeaterAPI {
+    
+}
+
+
