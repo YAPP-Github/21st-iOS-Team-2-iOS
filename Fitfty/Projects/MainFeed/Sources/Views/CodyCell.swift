@@ -73,7 +73,7 @@ final class CodyCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-//        reset()
+        reset()
     }
     
     override init(frame: CGRect) {
@@ -112,7 +112,9 @@ final class CodyCell: UICollectionViewCell {
 }
 
 extension CodyCell {
+    
     func setUp() {
         
     }
+    
 }
