@@ -104,12 +104,14 @@ public final class MainViewController: UIViewController {
                     withReuseIdentifier: HeaderView.className,
                     for: indexPath
                 )
+                
             case FooterView.className:
                 return collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
                     withReuseIdentifier: FooterView.className,
                     for: indexPath
                 )
+                
             case WeatherInfoHeaderView.className:
                 let reusableView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
@@ -118,6 +120,7 @@ public final class MainViewController: UIViewController {
                 ) as? WeatherInfoHeaderView
                 reusableView?.setUp(temp: 12, condition: "구름 많음", minimum: 12, maximum: 12)
                 return reusableView
+                
             default: return UICollectionReusableView()
             }
             
