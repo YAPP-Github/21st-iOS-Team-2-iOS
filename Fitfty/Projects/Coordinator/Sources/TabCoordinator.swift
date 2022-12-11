@@ -10,37 +10,6 @@ import UIKit
 import Common
 import MainFeed
 
-enum TabBarPage {
-    case weather
-    case createCody
-    case profile
-    
-    init?(index: Int) {
-        switch index {
-        case 0: self = .weather
-        case 1: self = .createCody
-        case 2: self = .profile
-        default: return nil
-        }
-    }
-    
-    var pageOrderNumber: Int {
-        switch self {
-        case .weather: return 0
-        case .createCody: return 1
-        case .profile: return 2
-        }
-    }
-    
-    var pageIconImage: UIImage? {
-        switch self {
-        case .weather: return CommonAsset.Images.iconSun.image.withRenderingMode(.alwaysOriginal)
-        case .createCody: return CommonAsset.Images.iconAdd.image.withRenderingMode(.alwaysOriginal)
-        case .profile: return CommonAsset.Images.iconProfile.image.withRenderingMode(.alwaysOriginal)
-        }
-    }
-}
-
 protocol TabCoordinatorProtocol: Coordinator {
     var tabBarController: UITabBarController { get set }
     
@@ -60,9 +29,12 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol, UITab
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
     
-    required init(_ navigationController: UINavigationController) {
+    required init(
+        _ navigationController: UINavigationController,
+        tabBarController: UITabBarController = TabBarController()
+    ) {
         self.navigationController = navigationController
-        self.tabBarController = TabBarController()
+        self.tabBarController = tabBarController
     }
     
     func start() {
@@ -75,7 +47,6 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol, UITab
     }
     
     private func prepareTabBarController(withTabControllers tabControllers: [UIViewController]) {
-        tabBarController.delegate = self
         tabBarController.tabBar.isTranslucent = false
         tabBarController.view.backgroundColor = .white
         selectPage(.weather)
