@@ -35,7 +35,7 @@ public final class MainViewController: UIViewController {
         collectionView.register(WeatherCell.self)
         collectionView.register(StyleCell.self)
         collectionView.register(CodyCell.self)
-        collectionView.register(FooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
+        collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
         collectionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
         return collectionView
@@ -104,7 +104,7 @@ public final class MainViewController: UIViewController {
                     withReuseIdentifier: HeaderView.className,
                     for: indexPath
                 )
-            case UICollectionView.elementKindSectionFooter:
+            case FooterView.className:
                 return collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
                     withReuseIdentifier: FooterView.className,
@@ -177,7 +177,7 @@ public final class MainViewController: UIViewController {
                     widthDimension: .absolute(UIScreen.main.bounds.width),
                     heightDimension: .absolute(8)
                 ),
-                elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
+                elementKind: FooterView.className, alignment: .bottom)
         ]
         return section
     }
