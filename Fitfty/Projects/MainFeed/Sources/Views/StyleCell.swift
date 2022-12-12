@@ -46,12 +46,12 @@ final class StyleCell: UICollectionViewCell {
     }
     
     override func systemLayoutSizeFitting(
-            _ targetSize: CGSize,
-            withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
-            verticalFittingPriority: UILayoutPriority
-        ) -> CGSize {
-            return CGSize(width: intrinsicContentSize.width, height: intrinsicContentSize.height)
-        }
+        _ targetSize: CGSize,
+        withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
+        verticalFittingPriority: UILayoutPriority
+    ) -> CGSize {
+        return CGSize(width: intrinsicContentSize.width, height: intrinsicContentSize.height)
+    }
     
     private func configure() {
         contentView.addSubviews(titleLabel)
@@ -72,6 +72,7 @@ final class StyleCell: UICollectionViewCell {
 }
 
 extension StyleCell {
+    
     func setUp(text: String) {
         titleLabel.text = "#\(text)"
     }
@@ -81,4 +82,5 @@ extension StyleCell {
         titleLabel.backgroundColor = isSelected ? CommonAsset.Colors.ftSecondaryText.color : .clear
         
     }
+    
 }

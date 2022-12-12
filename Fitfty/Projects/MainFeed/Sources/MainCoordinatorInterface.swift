@@ -9,5 +9,7 @@
 import Foundation
 
 public protocol MainCoordinatorInterface: AnyObject {
+    
     func showSettingAddress()
+    
 }

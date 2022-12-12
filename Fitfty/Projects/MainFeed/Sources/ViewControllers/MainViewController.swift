@@ -11,24 +11,34 @@ import Common
 public final class MainViewController: UIViewController {
     
     enum Section {
+        
         case weather
         case style
         case cody
+        
+        init?(index: Int) {
+            switch index {
+            case 0: self = .weather
+            case 1: self = .style
+            case 2: self = .cody
+            default: return nil
+            }
+        }
+        
     }
     
-    public var coordinator: MainCoordinatorInterface?
-    
+    private var coordinator: MainCoordinatorInterface
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private lazy var collectionView: UICollectionView = {
-        let colletionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
-        colletionView.register(WeatherCell.self)
-        colletionView.register(StyleCell.self)
-        colletionView.register(CodyCell.self)
-        colletionView.register(FooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
-        colletionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
-        colletionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
-        return colletionView
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+        collectionView.register(WeatherCell.self)
+        collectionView.register(StyleCell.self)
+        collectionView.register(CodyCell.self)
+        collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
+        collectionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
+        collectionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
+        return collectionView
     }()
     
     public override func viewDidLoad() {
@@ -36,12 +46,12 @@ public final class MainViewController: UIViewController {
         setUpLayout()
         setUpNavigationBar()
         setUpDataSource()
-        setUpCollectionView()
+        applySnapshot()
     }
-    
-    public init() {
+    public init(coordinator: MainCoordinatorInterface) {
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {
@@ -67,18 +77,23 @@ public final class MainViewController: UIViewController {
         dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
             collectionView: collectionView,
             cellProvider: { collectionView, indexPath, _ in
-                switch indexPath.section {
-                case 0:
+                let section = Section(index: indexPath.section)
+                switch section {
+                case .weather:
                     let cell = collectionView.dequeueReusableCell(WeatherCell.self, for: indexPath)
                     return cell
-                case 1:
+                    
+                case .style:
                     let cell = collectionView.dequeueReusableCell(StyleCell.self, for: indexPath)
                     cell?.setUp(text: ["포멀", "캐주얼", "미니멀"].randomElement()!)
                     return cell
-                case 2:
+                    
+                case .cody:
                     let cell = collectionView.dequeueReusableCell(CodyCell.self, for: indexPath)
                     return cell
-                default: return UICollectionViewCell()
+                    
+                default:
+                    return UICollectionViewCell()
                 }
             })
         dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
@@ -89,12 +104,14 @@ public final class MainViewController: UIViewController {
                     withReuseIdentifier: HeaderView.className,
                     for: indexPath
                 )
-            case UICollectionView.elementKindSectionFooter:
+                
+            case FooterView.className:
                 return collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
                     withReuseIdentifier: FooterView.className,
                     for: indexPath
                 )
+                
             case WeatherInfoHeaderView.className:
                 let reusableView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
@@ -103,6 +120,7 @@ public final class MainViewController: UIViewController {
                 ) as? WeatherInfoHeaderView
                 reusableView?.setUp(temp: 12, condition: "구름 많음", minimum: 12, maximum: 12)
                 return reusableView
+                
             default: return UICollectionReusableView()
             }
             
@@ -110,7 +128,7 @@ public final class MainViewController: UIViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func setUpCollectionView() {
+    private func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
         snapshot.appendSections([.weather])
         snapshot.appendItems(Array(0...23).map { _ in UUID() })
@@ -122,95 +140,100 @@ public final class MainViewController: UIViewController {
     }
     
     private func createLayout() -> UICollectionViewCompositionalLayout {
-        return UICollectionViewCompositionalLayout { (sectionNumber, _) -> NSCollectionLayoutSection? in
-            
-            switch sectionNumber {
-            case 0: // 날씨 아이콘 섹션
-                let layoutSize = NSCollectionLayoutSize(
-                    widthDimension: .absolute(74),
-                    heightDimension: .absolute(72)
-                )
-
-                let groupSize = NSCollectionLayoutSize(
-                    widthDimension: layoutSize.widthDimension,
-                    heightDimension: layoutSize.heightDimension
-                )
-                let group = NSCollectionLayoutGroup.horizontal(
-                    layoutSize: groupSize,
-                    subitems: [.init(layoutSize: layoutSize)]
-                )
-
-                let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: .zero, leading: 10, bottom: 28, trailing: .zero)
-                section.orthogonalScrollingBehavior = .continuous
-                
-                section.boundarySupplementaryItems = [
-                    NSCollectionLayoutBoundarySupplementaryItem(
-                        layoutSize: .init(
-                            widthDimension: .absolute(UIScreen.main.bounds.width),
-                            heightDimension: .absolute(80)
-                        ),
-                        elementKind: WeatherInfoHeaderView.className, alignment: .top),
-                    NSCollectionLayoutBoundarySupplementaryItem(
-                        layoutSize: .init(
-                            widthDimension: .absolute(UIScreen.main.bounds.width),
-                            heightDimension: .absolute(8)
-                        ),
-                        elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
-                ]
-                return section
-            case 1: // 스타일 태그 섹션
-                
-                let layoutSize = NSCollectionLayoutSize(
-                    widthDimension: .estimated(100),
-                    heightDimension: .absolute(32)
-                )
-                let group = NSCollectionLayoutGroup.horizontal(
-                    layoutSize: .init(
-                        widthDimension: layoutSize.widthDimension,
-                        heightDimension: layoutSize.heightDimension
-                    ),
-                    subitems: [.init(layoutSize: layoutSize)]
-                )
-                group.interItemSpacing = .fixed(8)
-
-                let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: .zero, leading: 20, bottom: 20, trailing: 20)
-                section.interGroupSpacing = 8
-                section.orthogonalScrollingBehavior = .continuous
-                
-                section.boundarySupplementaryItems = [
-                    NSCollectionLayoutBoundarySupplementaryItem(
-                        layoutSize: .init(
-                            widthDimension: .absolute(UIScreen.main.bounds.width),
-                            heightDimension: .absolute(50)
-                        ),
-                        elementKind: HeaderView.className, alignment: .top)
-                ]
-                return section
-            case 2: // 코디 사진 섹션
-                let layoutSize = NSCollectionLayoutSize(
-                    widthDimension: .absolute(300),
-                    heightDimension: .absolute(336)
-                )
-                let group = NSCollectionLayoutGroup.horizontal(
-                    layoutSize: .init(
-                        widthDimension: layoutSize.widthDimension,
-                        heightDimension: layoutSize.heightDimension
-                    ),
-                    subitems: [.init(layoutSize: layoutSize)]
-                )
-                group.interItemSpacing = .fixed(8)
-
-                let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: .zero, leading: 20, bottom: .zero, trailing: 20)
-                section.interGroupSpacing = 8
-                section.orthogonalScrollingBehavior = .groupPaging
-                
-                return section
-            default:
-                return nil
+        return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
+            let section = Section(index: sectionNumber)
+            switch section {
+            case .weather: return self?.weatherSectionLayout()
+            case .style: return self?.styleSectionLayout()
+            case .cody: return self?.codySectionLayout()
+            default: return nil
             }
         }
     }
+    
+    private func weatherSectionLayout() -> NSCollectionLayoutSection? {
+        let layoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(74),
+            heightDimension: .absolute(72)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: layoutSize.widthDimension,
+                heightDimension: layoutSize.heightDimension
+            ),
+            subitems: [.init(layoutSize: layoutSize)]
+        )
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: .zero, leading: 10, bottom: 28, trailing: 10)
+        section.orthogonalScrollingBehavior = .continuous
+        
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(UIScreen.main.bounds.width),
+                    heightDimension: .absolute(80)
+                ),
+                elementKind: WeatherInfoHeaderView.className, alignment: .top),
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(UIScreen.main.bounds.width),
+                    heightDimension: .absolute(8)
+                ),
+                elementKind: FooterView.className, alignment: .bottom)
+        ]
+        return section
+    }
+    
+    private func styleSectionLayout() -> NSCollectionLayoutSection? {
+        let layoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(100),
+            heightDimension: .absolute(32)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: layoutSize.widthDimension,
+                heightDimension: layoutSize.heightDimension
+            ),
+            subitems: [.init(layoutSize: layoutSize)]
+        )
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: .zero, leading: 20, bottom: 20, trailing: 20)
+        section.interGroupSpacing = 8
+        section.orthogonalScrollingBehavior = .continuous
+        
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(UIScreen.main.bounds.width),
+                    heightDimension: .absolute(50)
+                ),
+                elementKind: HeaderView.className, alignment: .top)
+        ]
+        return section
+    }
+    
+    private func codySectionLayout() -> NSCollectionLayoutSection? {
+        let layoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(300),
+            heightDimension: .absolute(336)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: layoutSize.widthDimension,
+                heightDimension: layoutSize.heightDimension
+            ),
+            subitems: [.init(layoutSize: layoutSize)]
+        )
+        group.interItemSpacing = .fixed(8)
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: .zero, leading: 20, bottom: .zero, trailing: 20)
+        section.interGroupSpacing = 8
+        section.orthogonalScrollingBehavior = .groupPaging
+        
+        return section
+    }
+    
 }

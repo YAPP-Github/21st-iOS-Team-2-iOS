@@ -73,7 +73,7 @@ final class CodyCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-//        reset()
+        reset()
     }
     
     override init(frame: CGRect) {
@@ -86,12 +86,12 @@ final class CodyCell: UICollectionViewCell {
     }
     
     override func systemLayoutSizeFitting(
-            _ targetSize: CGSize,
-            withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
-            verticalFittingPriority: UILayoutPriority
-        ) -> CGSize {
-            return CGSize(width: intrinsicContentSize.width, height: intrinsicContentSize.height)
-        }
+        _ targetSize: CGSize,
+        withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
+        verticalFittingPriority: UILayoutPriority
+    ) -> CGSize {
+        return CGSize(width: intrinsicContentSize.width, height: intrinsicContentSize.height)
+    }
     
     private func configure() {
         contentView.addSubviews(codyImageView, profileStackView)
@@ -112,7 +112,9 @@ final class CodyCell: UICollectionViewCell {
 }
 
 extension CodyCell {
+    
     func setUp() {
         
     }
+    
 }

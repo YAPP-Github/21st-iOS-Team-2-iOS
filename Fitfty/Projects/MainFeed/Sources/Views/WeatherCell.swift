@@ -101,6 +101,7 @@ final class WeatherCell: UICollectionViewCell {
 }
 
 extension WeatherCell {
+    
     func setUp(hour: String, image: UIImage?, isCurrentTime: Bool) {
         setUpHourLabel(by: isCurrentTime)
         hourLabel.text = "\(hour)시"
@@ -110,4 +111,5 @@ extension WeatherCell {
     func setUpSeparator(isHidden: Bool) {
         separatorView.isHidden = isHidden
     }
+    
 }

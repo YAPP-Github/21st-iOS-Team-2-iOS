@@ -18,4 +18,5 @@ final class FooterView: UICollectionReusableView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+    
 }
