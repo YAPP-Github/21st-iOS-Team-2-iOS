@@ -18,7 +18,7 @@ final class MenuView: UIView {
 
     private lazy var codyIconButton: UIButton = {
         let button = UIButton()
-        button.setImage(CommonAsset.Images.btnCodyUnselected.image, for: .normal)
+        button.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
         button.addTarget(self, action: #selector(didTapCodyButton), for: .touchUpInside)
         return button
     }()
@@ -54,12 +54,22 @@ final class MenuView: UIView {
         return view
     }()
     
-    private var menuState: MenuState = .cody
+    private var menuState: MenuState = .cody {
+        didSet {
+            switch menuState {
+            case .cody:
+                codyIconButton.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
+                bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkUnselected.image, for: .normal)
+            case .bookmark:
+                codyIconButton.setImage(CommonAsset.Images.btnCodyUnselected.image, for: .normal)
+                bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkSelected.image, for: .normal)
+            }
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpConstraintLayout()
-        checkMenuState()
     }
     
     required init?(coder: NSCoder) {
@@ -88,24 +98,11 @@ final class MenuView: UIView {
         ])
     }
     
-    private func checkMenuState() {
-        switch menuState {
-        case .cody:
-            codyIconButton.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
-            bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkUnselected.image, for: .normal)
-        case .bookmark:
-            codyIconButton.setImage(CommonAsset.Images.btnCodyUnselected.image, for: .normal)
-            bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkSelected.image, for: .normal)
-        }
-    }
-    
     @objc func didTapCodyButton(_ sender: UIButton) {
         menuState = .cody
-        checkMenuState()
     }
     
     @objc func didTapBookmarkButton(_ sender: UIButton) {
         menuState = .bookmark
-        checkMenuState()
     }
 }
