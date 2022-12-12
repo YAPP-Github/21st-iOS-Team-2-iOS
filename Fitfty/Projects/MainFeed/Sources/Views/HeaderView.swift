@@ -38,4 +38,5 @@ final class HeaderView: UICollectionReusableView {
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
         ])
     }
+    
 }

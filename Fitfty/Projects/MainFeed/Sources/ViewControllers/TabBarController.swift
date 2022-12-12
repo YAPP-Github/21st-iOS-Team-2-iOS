@@ -25,4 +25,5 @@ public final class TabBarController: UITabBarController {
             return CGSize(width: UIScreen.main.bounds.width, height: 96)
         }
     }
+    
 }

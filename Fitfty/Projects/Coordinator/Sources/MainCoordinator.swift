@@ -10,6 +10,7 @@ import UIKit
 import MainFeed
 
 final class MainCoordinator: Coordinator {
+    
     var type: CoordinatorType { .main }
     var finishDelegate: CoordinatorFinishDelegate?
     
@@ -29,10 +30,10 @@ final class MainCoordinator: Coordinator {
 
 private extension MainCoordinator {
     func makeMainViewController() -> UIViewController {
-        let viewController = MainViewController()
-        viewController.coordinator = self
+        let viewController = MainViewController(coordinator: self)
         return viewController
     }
+    
 }
 
 extension MainCoordinator: MainCoordinatorInterface {
@@ -40,4 +41,5 @@ extension MainCoordinator: MainCoordinatorInterface {
     public func showSettingAddress() {
         
     }
+    
 }

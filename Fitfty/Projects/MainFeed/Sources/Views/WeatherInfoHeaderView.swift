@@ -30,6 +30,7 @@ final class WeatherInfoHeaderView: UICollectionReusableView {
             weatherInfoView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
+    
 }
 
 extension WeatherInfoHeaderView {
@@ -37,4 +38,5 @@ extension WeatherInfoHeaderView {
     func setUp(temp: Int, condition: String, minimum: Int, maximum: Int) {
         weatherInfoView.setUp(temp: temp, condition: condition, minimum: minimum, maximum: maximum)
     }
+    
 }
