@@ -12,7 +12,7 @@ final class WeatherAPITests: XCTestCase {
     var todayDate: String {
         let date = Date()
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYYMMDD"
+        dateFormatter.dateFormat = "YYYYMMdd"
         
         return dateFormatter.string(from: date)
     }
@@ -42,9 +42,9 @@ final class WeatherAPITests: XCTestCase {
             "dataCd": "ASOS",
             "dateCd": "HR",
             "stnIds": "108",
-            "startDt": todayDate,
+            "startDt": "20221201",
             "startHh": "00",
-            "endDt": todayDate,
+            "endDt": "20221207",
             "endHh": "01"
         ]
         
