@@ -16,6 +16,13 @@ public enum FitftyFont {
     case appleSDMedium(size: CGFloat)
     case appleSDSemiBold(size: CGFloat)
     case appleSDBold(size: CGFloat)
+
+    case SFProDisplayBlack(size: CGFloat)
+    case SFProDisplayBold(size: CGFloat)
+    case SFProDisplayLight(size: CGFloat)
+    case SFProDisplayMedium(size: CGFloat)
+    case SFProDisplaySemibold(size: CGFloat)
+    case SFProDisplayThin(size: CGFloat)
 }
 
 extension FitftyFont {
@@ -35,6 +42,19 @@ extension FitftyFont {
             return UIFont(name: "AppleSDGothicNeo-SemiBold", size: size)
         case .appleSDBold(let size):
             return UIFont(name: "AppleSDGothicNeo-Bold", size: size)
-        }
+
+        case .SFProDisplayBlack(let size):
+            return CommonFontFamily.SFProDisplay.black.font(size: size)
+        case .SFProDisplayBold(let size):
+            return CommonFontFamily.SFProDisplay.bold.font(size: size)
+        case .SFProDisplayLight(let size):
+            return CommonFontFamily.SFProDisplay.light.font(size: size)
+        case .SFProDisplayMedium(let size):
+            return CommonFontFamily.SFProDisplay.medium.font(size: size)
+        case .SFProDisplaySemibold(let size):
+            return CommonFontFamily.SFProDisplay.semibold.font(size: size)
+        case .SFProDisplayThin(let size):
+            return CommonFontFamily.SFProDisplay.thin.font(size: size)
+      }
     }
 }
