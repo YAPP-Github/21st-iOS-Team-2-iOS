@@ -10,6 +10,9 @@ import UIKit
 import Auth
 
 final class AuthCoordinator: Coordinator {
+    var type: CoordinatorType { .login }
+    var finishDelegate: CoordinatorFinishDelegate?
+    
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
@@ -21,6 +24,7 @@ final class AuthCoordinator: Coordinator {
     func start() {
         let viewController = makeAuthViewController()
         navigationController.pushViewController(viewController, animated: true)
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
 
@@ -36,6 +40,7 @@ private extension AuthCoordinator {
 }
 
 extension AuthCoordinator: AuthCoordinatorInterface {
+    
     func presentKakaoLoginView() {
         
     }
