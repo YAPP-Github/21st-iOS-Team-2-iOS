@@ -45,7 +45,7 @@ extension WeatherAPI: TargetType {
 }
 
 public extension WeatherAPI {
-    static func requestWeather<T: Decodable>(target: WeatherAPI, dataType: T.Type) async throws -> T {
+    static func request<T: Decodable>(target: WeatherAPI, dataType: T.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
             let provider = MoyaProvider<WeatherAPI>()
             provider.request(target) { result in
@@ -63,7 +63,7 @@ public extension WeatherAPI {
         }
     }
     
-    static func requestWeather(target: WeatherAPI) async throws -> Response {
+    static func request(target: WeatherAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
             let provider = MoyaProvider<WeatherAPI>()
             provider.request(target) { result in
