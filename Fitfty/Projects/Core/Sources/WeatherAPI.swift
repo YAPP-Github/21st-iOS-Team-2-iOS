@@ -27,7 +27,7 @@ extension WeatherAPI: TargetType {
         case .fetchWeather: return "/VilageFcstInfoService_2.0/getUltraSrtFcst"
         case .fetchPastWeather: return "/AsosHourlyInfoService/getWthrDataList"
         case .fetchMiddleWeatherTemperature: return "/MidFcstInfoService/getMidTa"
-        case .fetchMiddleWeatherInfo: return "MidFcstInfoService/getMidLandFcst"
+        case .fetchMiddleWeatherInfo: return "/MidFcstInfoService/getMidLandFcst"
         }
     }
     
