@@ -37,7 +37,11 @@ extension WeatherAPI: TargetType {
     
     public var task: Moya.Task {
         switch self {
-        case .fetchWeather(let parameter), .fetchPastWeather(let parameter), .fetchMiddleWeatherTemperature(let parameter), .fetchMiddleWeatherInfo(let parameter):
+        case .fetchWeather(let parameter),
+             .fetchPastWeather(let parameter),
+             .fetchMiddleWeatherTemperature(let parameter),
+             .fetchMiddleWeatherInfo(let parameter):
+            
             let parameter = updateParameters(parameter)
             return .requestParameters(parameters: parameter, encoding: URLEncoding.queryString)
         }
