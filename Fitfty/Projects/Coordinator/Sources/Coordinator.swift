@@ -42,4 +42,5 @@ enum CoordinatorType {
     case login
     case tabBar
     case main
+    case profile
 }

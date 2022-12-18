@@ -13,7 +13,7 @@ final public class ProfileViewController: UIViewController {
     enum Section: CaseIterable {
         case feed
     }
-    
+    private var coordinator: ProfileCoordinatorInterface
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private lazy var collectionView: UICollectionView = {
@@ -28,6 +28,18 @@ final public class ProfileViewController: UIViewController {
         setUpCollectionView()
         setUpDataSource()
         applySnapshot()
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
+        
+    }
+    
+    public init(coordinator: ProfileCoordinatorInterface) {
+        self.coordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = .white
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -120,6 +132,12 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int) -> CGSize {
             return CGSize(width: collectionView.frame.width, height: 400)
+    }
+    
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath) {
+        coordinator.showPost()
     }
     
 }
