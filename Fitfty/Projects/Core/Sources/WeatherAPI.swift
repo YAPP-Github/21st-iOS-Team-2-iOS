@@ -13,6 +13,8 @@ import Moya
 public enum WeatherAPI {
     case fetchWeather(parameter: [String: Any])
     case fetchPastWeather(parameter: [String: Any])
+    case fetchMiddleWeatherTemperature(parameter: [String: Any])
+    case fetchMiddleWeatherInfo(parameter: [String: Any])
 }
 
 extension WeatherAPI: TargetType {
@@ -22,8 +24,10 @@ extension WeatherAPI: TargetType {
     
     public var path: String {
         switch self {
-        case .fetchWeather: return "/VilageFcstInfoService_2.0/getUltraSrtNcst"
+        case .fetchWeather: return "/VilageFcstInfoService_2.0/getUltraSrtFcst"
         case .fetchPastWeather: return "/AsosHourlyInfoService/getWthrDataList"
+        case .fetchMiddleWeatherTemperature: return "/MidFcstInfoService/getMidTa"
+        case .fetchMiddleWeatherInfo: return "MidFcstInfoService/getMidLandFcst"
         }
     }
     
@@ -33,7 +37,7 @@ extension WeatherAPI: TargetType {
     
     public var task: Moya.Task {
         switch self {
-        case .fetchWeather(let parameter), .fetchPastWeather(let parameter):
+        case .fetchWeather(let parameter), .fetchPastWeather(let parameter), .fetchMiddleWeatherTemperature(let parameter), .fetchMiddleWeatherInfo(let parameter):
             let parameter = updateParameters(parameter)
             return .requestParameters(parameters: parameter, encoding: URLEncoding.queryString)
         }
@@ -77,12 +81,6 @@ public extension WeatherAPI {
             }
         }
     }
-}
-
-// MARK: - FitftyAPI
-
-public enum FitftyAPI {
-
 }
 
 private extension TargetType {
