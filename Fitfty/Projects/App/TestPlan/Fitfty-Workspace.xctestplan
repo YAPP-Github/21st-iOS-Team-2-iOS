@@ -11,7 +11,7 @@
   "defaultOptions" : {
     "environmentVariableEntries" : [
       {
-        "key" : "WEATHERAPI_KEY",
+        "key" : "WEATHER_API_KEY",
         "value" : "local"
       }
     ]

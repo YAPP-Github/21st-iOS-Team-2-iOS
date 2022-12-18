@@ -10,7 +10,7 @@ import XCTest
 
 final class WeatherAPITests: XCTestCase {
     var parameter: [String: Any] = [:]
-    var apiKey: String = ProcessInfo.processInfo.environment["WEATHERAPI_KEY"]?.removingPercentEncoding ?? "NoAPIKey"
+    var apiKey: String = ProcessInfo.processInfo.environment["WEATHER_API_KEY"]?.removingPercentEncoding ?? "NoAPIKey"
     var todayDate: String {
         let date = Date()
         let dateFormatter = DateFormatter()
