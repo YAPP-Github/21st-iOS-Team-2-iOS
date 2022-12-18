@@ -126,15 +126,17 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             tabBarController.addChild(navigationController)
             
         case .profile:
-            let navigationController = UINavigationController()
+            let coordinator = ProfileCoordinator()
+            coordinator.start()
             let tabBarItem =  UITabBarItem.init(
                 title: nil,
                 image: page.pageIconImage,
                 tag: page.pageOrderNumber
             )
             tabBarItem.imageInsets = UIEdgeInsets(top: 12, left: -40, bottom: -12, right: 40)
-            navigationController.tabBarItem = tabBarItem
-            tabBarController.addChild(navigationController)
+            coordinator.navigationController.tabBarItem = tabBarItem
+            tabBarController.addChild(coordinator.navigationController)
+            print(tabBarController)
         }
         
         return navigationController
