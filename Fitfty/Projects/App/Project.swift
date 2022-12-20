@@ -8,6 +8,12 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
+let infoPlist = InfoPlist.extendingDefault(with: [
+    "NSAppTransportSecurity" : [
+        "NSAllowsArbitraryLoads": "YES"
+    ]
+])
+
 let project = Project.makeModule(
     name: "Fitfty",
     platform: .iOS,
@@ -16,5 +22,5 @@ let project = Project.makeModule(
         .project(target: "Coordinator", path: .relativeToRoot("Projects/Coordinator"))
     ],
     resources: ["Resources/**"],
-    infoPlist: .file(path: "Support/Info.plist")
+    infoPlist: infoPlist
 )
