@@ -76,7 +76,7 @@ final class PostInfoView: UIStackView {
 
 extension PostInfoView {
     func setUp(hits: String, bookmark: String) {
-        hitsLabel.text = hits
-        bookmarkLabel.text = bookmark
+        hitsLabel.text = hits.insertComma
+        bookmarkLabel.text = bookmark.insertComma
     }
 }
