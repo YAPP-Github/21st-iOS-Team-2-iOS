@@ -28,8 +28,16 @@ final public class ProfileViewController: UIViewController {
         setUpCollectionView()
         setUpDataSource()
         applySnapshot()
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-        
+    }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = true
+    }
+    
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.navigationBar.isHidden = false
     }
     
     public init(coordinator: ProfileCoordinatorInterface) {
