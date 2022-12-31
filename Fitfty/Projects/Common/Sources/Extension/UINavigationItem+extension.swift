@@ -24,8 +24,12 @@ public extension UINavigationItem {
         let barButtonItem = UIBarButtonItem(customView: button)
         barButtonItem.customView?.translatesAutoresizingMaskIntoConstraints = false
         
-        barButtonItem.customView?.heightAnchor.constraint(equalToConstant: size).isActive = true
-        barButtonItem.customView?.widthAnchor.constraint(equalToConstant: size).isActive = true
+        if let customView = barButtonItem.customView {
+            NSLayoutConstraint.activate([
+                customView.heightAnchor.constraint(equalToConstant: size),
+                customView.widthAnchor.constraint(equalToConstant: size)
+            ])
+        }
           
         if let viewController = target as? UIViewController {
             viewController.navigationItem.rightBarButtonItem = barButtonItem
