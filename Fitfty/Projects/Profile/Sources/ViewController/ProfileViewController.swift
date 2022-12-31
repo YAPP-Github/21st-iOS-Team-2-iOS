@@ -92,6 +92,7 @@ private extension ProfileViewController {
                 return UICollectionReusableView()
             }
             supplementaryView.profileView.setUp(nickname: "iosLover", content: "안녕하세용!", follow: 14, follower: 22)
+            supplementaryView.menuView.setUp(count: "12")
             return supplementaryView
         }
     }
