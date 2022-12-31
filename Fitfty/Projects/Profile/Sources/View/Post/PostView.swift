@@ -19,26 +19,19 @@ final class PostView: UIView {
         
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
-        label.font = FitftyFont.SFProDisplayBold(size: 15).font
+        label.font = FitftyFont.SFProDisplayMedium(size: 13).font
+        label.textColor = UIColor(red: 0.557, green: 0.557, blue: 0.576, alpha: 1)
         return label
-    }()
-    
-    private lazy var seperatorView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(red: 0.949, green: 0.949, blue: 0.969, alpha: 1)
-        return view
     }()
     
     private lazy var contentLabel: UILabel = {
         let label = UILabel()
         label.font = FitftyFont.appleSDMedium(size: 15).font
-        label.textColor = UIColor(red: 0.388, green: 0.388, blue: 0.4, alpha: 1)
+        label.textColor = UIColor(red: 0.11, green: 0.11, blue: 0.118, alpha: 1)
         label.numberOfLines = 0
         return label
     }()
-    
-    private lazy var contentView = UIView()
-    private lazy var dateView = UIView()
+   
     private lazy var postInfoView = PostInfoView()
     
     override init(frame: CGRect) {
@@ -51,7 +44,7 @@ final class PostView: UIView {
     }
     
     private func setUpConstraintLayout() {
-        [postImageView, dateView, seperatorView, contentView, dateLabel, contentLabel, postInfoView].forEach {
+        [postImageView, dateLabel, contentLabel, postInfoView].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -65,27 +58,13 @@ final class PostView: UIView {
             postInfoView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             postInfoView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             
-            dateView.topAnchor.constraint(equalTo: postImageView.bottomAnchor),
-            dateView.leftAnchor.constraint(equalTo: leftAnchor),
-            dateView.rightAnchor.constraint(equalTo: rightAnchor),
-            dateView.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor, multiplier: 0.08),
+            contentLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            contentLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            contentLabel.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 20),
             
-            dateLabel.leftAnchor.constraint(equalTo: dateView.leftAnchor, constant: 20),
-            dateLabel.centerYAnchor.constraint(equalTo: dateView.centerYAnchor),
+            dateLabel.leadingAnchor.constraint(equalTo: contentLabel.leadingAnchor),
+            dateLabel.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: 8)
             
-            seperatorView.heightAnchor.constraint(equalToConstant: 1),
-            seperatorView.topAnchor.constraint(equalTo: dateView.bottomAnchor),
-            seperatorView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            seperatorView.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            
-            contentView.topAnchor.constraint(equalTo: seperatorView.bottomAnchor),
-            contentView.leftAnchor.constraint(equalTo: leftAnchor),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor),
-            contentView.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor, multiplier: 0.22),
-            
-            contentLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
-            contentLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
-            contentLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16)
         ])
     }
 }
