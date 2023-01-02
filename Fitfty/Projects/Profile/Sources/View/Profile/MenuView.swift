@@ -12,23 +12,32 @@ import Common
 final class MenuView: UIView {
     
     enum MenuState {
-        case cody
+        case myFitfty
         case bookmark
     }
 
-    private lazy var codyIconButton: UIButton = {
+    private lazy var myFitftyIconButton: UIButton = {
         let button = UIButton()
         button.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
-        button.addTarget(self, action: #selector(didTapCodyButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapMyFitftyButton), for: .touchUpInside)
         return button
     }()
     
-    private lazy var codyTextButton: UIButton = {
+    private lazy var myFitftyTextButton: UIButton = {
         let button = UIButton()
         button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 15).font
         button.setTitleColor(.black, for: .normal)
-        button.setTitle("나의 코디", for: .normal)
-        button.addTarget(self, action: #selector(didTapCodyButton), for: .touchUpInside)
+        button.setTitle("내 핏프티", for: .normal)
+        button.addTarget(self, action: #selector(didTapMyFitftyButton), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var myFitftyCountButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = FitftyFont.SFProDisplaySemibold(size: 13).font
+        button.setTitleColor(UIColor(red: 0.22, green: 0.675, blue: 1, alpha: 1), for: .normal)
+        button.addTarget(self, action: #selector(didTapMyFitftyButton), for: .touchUpInside)
+        button.contentEdgeInsets = UIEdgeInsets(top: 7, left: 0, bottom: 0, right: 0)
         return button
     }()
     
@@ -54,14 +63,14 @@ final class MenuView: UIView {
         return view
     }()
     
-    private var menuState: MenuState = .cody {
+    private var menuState: MenuState = .myFitfty {
         didSet {
             switch menuState {
-            case .cody:
-                codyIconButton.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
+            case .myFitfty:
+                myFitftyIconButton.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
                 bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkUnselected.image, for: .normal)
             case .bookmark:
-                codyIconButton.setImage(CommonAsset.Images.btnCodyUnselected.image, for: .normal)
+                myFitftyIconButton.setImage(CommonAsset.Images.btnCodyUnselected.image, for: .normal)
                 bookmarkIconButton.setImage(CommonAsset.Images.btnBookmarkSelected.image, for: .normal)
             }
         }
@@ -77,32 +86,42 @@ final class MenuView: UIView {
     }
     
     private func setUpConstraintLayout() {
-        [codyIconButton, codyTextButton, bookmarkIconButton, bookmarkTextButton, barView].forEach {
-            addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+        addSubviews(myFitftyIconButton, myFitftyTextButton, myFitftyCountButton,
+                    bookmarkIconButton, bookmarkTextButton, barView)
+       
         NSLayoutConstraint.activate([
             barView.widthAnchor.constraint(equalToConstant: 1),
             barView.heightAnchor.constraint(equalToConstant: 72),
             barView.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            codyIconButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -65),
-            codyIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
-            codyTextButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -48),
-            codyTextButton.topAnchor.constraint(equalTo: codyIconButton.bottomAnchor, constant: 14),
-            bookmarkIconButton.leftAnchor.constraint(equalTo: barView.rightAnchor, constant: 65),
+            myFitftyIconButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -65),
+            myFitftyIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             
+            myFitftyCountButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -48),
+            myFitftyCountButton.topAnchor.constraint(equalTo: myFitftyIconButton.bottomAnchor, constant: 14),
+            
+            myFitftyTextButton.rightAnchor.constraint(equalTo: myFitftyCountButton.leftAnchor, constant: -2),
+            myFitftyTextButton.topAnchor.constraint(equalTo: myFitftyIconButton.bottomAnchor, constant: 14),
+            
+            bookmarkIconButton.leftAnchor.constraint(equalTo: barView.rightAnchor, constant: 65),
             bookmarkIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            
             bookmarkTextButton.leftAnchor.constraint(equalTo: barView.rightAnchor, constant: 48),
             bookmarkTextButton.topAnchor.constraint(equalTo: bookmarkIconButton.bottomAnchor, constant: 14)
         ])
     }
     
-    @objc func didTapCodyButton(_ sender: UIButton) {
-        menuState = .cody
+    @objc func didTapMyFitftyButton(_ sender: UIButton) {
+        menuState = .myFitfty
     }
     
     @objc func didTapBookmarkButton(_ sender: UIButton) {
         menuState = .bookmark
+    }
+}
+
+extension MenuView {
+    func setUp(count: String) {
+        myFitftyCountButton.setTitle(count, for: .normal)
     }
 }
