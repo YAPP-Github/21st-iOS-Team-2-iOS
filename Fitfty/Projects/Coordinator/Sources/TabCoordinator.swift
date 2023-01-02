@@ -136,7 +136,6 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             tabBarItem.imageInsets = UIEdgeInsets(top: 12, left: -40, bottom: -12, right: 40)
             coordinator.navigationController.tabBarItem = tabBarItem
             tabBarController.addChild(coordinator.navigationController)
-            print(tabBarController)
         }
         
         return navigationController

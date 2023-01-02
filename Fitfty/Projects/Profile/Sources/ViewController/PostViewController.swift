@@ -47,8 +47,7 @@ final public class PostViewController: UIViewController {
     }
     
     private func setUpConstraintLayout() {
-        view.addSubview(postView)
-        postView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubviews(postView)
         NSLayoutConstraint.activate([
             postView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             postView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),

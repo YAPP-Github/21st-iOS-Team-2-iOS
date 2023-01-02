@@ -86,11 +86,9 @@ final class MenuView: UIView {
     }
     
     private func setUpConstraintLayout() {
-        [myFitftyIconButton, myFitftyTextButton, myFitftyCountButton,
-         bookmarkIconButton, bookmarkTextButton, barView].forEach {
-            addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+        addSubviews(myFitftyIconButton, myFitftyTextButton, myFitftyCountButton,
+                    bookmarkIconButton, bookmarkTextButton, barView)
+       
         NSLayoutConstraint.activate([
             barView.widthAnchor.constraint(equalToConstant: 1),
             barView.heightAnchor.constraint(equalToConstant: 72),

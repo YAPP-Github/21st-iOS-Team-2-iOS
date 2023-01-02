@@ -77,32 +77,25 @@ final class ProfileView: UIView {
     }
     
     private func setUpConstraintLayout() {
-        [imageView, nicknameLabel, contentLabel, followView].forEach {
-            addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([$0.centerXAnchor.constraint(equalTo: centerXAnchor)])
-        }
+        addSubviews(imageView, nicknameLabel, contentLabel, followView, followButton, followerButton, dotLabel)
         
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: topAnchor),
             imageView.widthAnchor.constraint(equalToConstant: 104),
             imageView.heightAnchor.constraint(equalToConstant: 104),
-            
+            imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
+                                               
             nicknameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
+            nicknameLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             
             contentLabel.topAnchor.constraint(equalTo: nicknameLabel.bottomAnchor, constant: 6),
+            contentLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             
             followView.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: 16),
             followView.widthAnchor.constraint(equalToConstant: 144),
-            followView.heightAnchor.constraint(equalToConstant: 34)
-        ])
-        
-        [followButton, followerButton, dotLabel].forEach {
-            followView.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
-        NSLayoutConstraint.activate([
+            followView.heightAnchor.constraint(equalToConstant: 34),
+            followView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            
             dotLabel.centerXAnchor.constraint(equalTo: followView.centerXAnchor),
             dotLabel.centerYAnchor.constraint(equalTo: followView.centerYAnchor),
             
