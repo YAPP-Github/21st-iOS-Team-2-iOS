@@ -13,7 +13,7 @@ final public class ProfileViewController: UIViewController {
     enum Section: CaseIterable {
         case feed
     }
-    
+    private var coordinator: ProfileCoordinatorInterface
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private lazy var collectionView: UICollectionView = {
@@ -29,18 +29,37 @@ final public class ProfileViewController: UIViewController {
         setUpDataSource()
         applySnapshot()
     }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = true
+    }
+    
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.navigationBar.isHidden = false
+    }
+    
+    public init(coordinator: ProfileCoordinatorInterface) {
+        self.coordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = .white
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 private extension ProfileViewController {
     func setUpConstraintLayout() {
-        view.addSubview(collectionView)
+        view.addSubviews(collectionView)
         NSLayoutConstraint.activate([
             collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func setUpCollectionView() {
@@ -72,6 +91,7 @@ private extension ProfileViewController {
                 return UICollectionReusableView()
             }
             supplementaryView.profileView.setUp(nickname: "iosLover", content: "안녕하세용!", follow: 14, follower: 22)
+            supplementaryView.menuView.setUp(count: "12")
             return supplementaryView
         }
     }
@@ -120,6 +140,12 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int) -> CGSize {
             return CGSize(width: collectionView.frame.width, height: 400)
+    }
+    
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath) {
+        coordinator.showPost()
     }
     
 }

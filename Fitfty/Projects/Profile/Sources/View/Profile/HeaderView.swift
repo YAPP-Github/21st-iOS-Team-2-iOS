@@ -36,11 +36,8 @@ final class HeaderView: UICollectionReusableView {
     }
     
     private func setUpConstraintLayout() {
-        [settingButton, profileView, menuView, spacingView].forEach {
-            addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-
+        addSubviews(settingButton, profileView, menuView, spacingView)
+    
         NSLayoutConstraint.activate([
             settingButton.widthAnchor.constraint(equalToConstant: 62),
             settingButton.heightAnchor.constraint(equalToConstant: 34),

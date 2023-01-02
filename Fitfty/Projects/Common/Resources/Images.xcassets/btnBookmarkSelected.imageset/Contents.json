@@ -1,23 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "btnBookmarkSelected.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "btnBookmarkSelected@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "btnBookmarkSelected@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "btnBookmarkSelected.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {
     "author" : "xcode",
     "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
   }
 }
