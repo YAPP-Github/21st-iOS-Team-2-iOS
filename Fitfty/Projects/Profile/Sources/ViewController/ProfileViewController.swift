@@ -53,14 +53,13 @@ final public class ProfileViewController: UIViewController {
 
 private extension ProfileViewController {
     func setUpConstraintLayout() {
-        view.addSubview(collectionView)
+        view.addSubviews(collectionView)
         NSLayoutConstraint.activate([
             collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func setUpCollectionView() {

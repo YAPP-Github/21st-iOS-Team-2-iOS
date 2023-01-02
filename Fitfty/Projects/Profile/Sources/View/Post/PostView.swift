@@ -44,10 +44,7 @@ final class PostView: UIView {
     }
     
     private func setUpConstraintLayout() {
-        [postImageView, dateLabel, contentLabel, postInfoView].forEach {
-            addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+        addSubviews(postImageView, dateLabel, contentLabel, postInfoView)
         
         NSLayoutConstraint.activate([
             postImageView.topAnchor.constraint(equalTo: topAnchor),

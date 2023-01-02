@@ -22,6 +22,7 @@ final class PostInfoView: UIStackView {
         let label = UILabel()
         label.font = FitftyFont.SFProDisplayMedium(size: 13).font
         label.textColor = .white
+        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
     }()
     
@@ -36,6 +37,7 @@ final class PostInfoView: UIStackView {
         let label = UILabel()
         label.font = FitftyFont.SFProDisplayMedium(size: 13).font
         label.textColor = .white
+        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
     }()
     
@@ -56,13 +58,8 @@ final class PostInfoView: UIStackView {
     }
     
     private func setUpConstraintsLayout() {
-        [hitsImageView, hitsLabel, bookmarkImageView, bookmarkLabel].forEach {
-            addArrangedSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-        hitsLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        bookmarkLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        
+        addArrangedSubviews(hitsImageView, hitsLabel, bookmarkImageView, bookmarkLabel)
+       
         NSLayoutConstraint.activate([
             hitsImageView.heightAnchor.constraint(equalToConstant: 14),
             hitsImageView.widthAnchor.constraint(equalToConstant: 14),
