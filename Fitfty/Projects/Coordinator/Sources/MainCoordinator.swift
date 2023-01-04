@@ -34,12 +34,28 @@ private extension MainCoordinator {
         return viewController
     }
     
+    func makeAddressViewController() -> UIViewController {
+        let test = UIViewController()
+        let contentViewController = UINavigationController(rootViewController: test)
+        test.view.backgroundColor = .systemGreen
+        test.navigationItem.title = "주소를 변경해볼까요?"
+        test.navigationController?.navigationBar.prefersLargeTitles = true
+        let viewController = BottomSheetViewController(
+            style: .large,
+            contentViewController: contentViewController,
+            coordinator: self
+        )
+        return viewController
+    }
+    
 }
 
 extension MainCoordinator: MainCoordinatorInterface {
     
     public func showSettingAddress() {
-        
+        let viewController = makeAddressViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
 }
