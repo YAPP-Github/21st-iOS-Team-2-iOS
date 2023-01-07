@@ -30,13 +30,12 @@ public final class BottomSheetViewController: UIViewController {
     
     private let contentViewController: UIViewController
     private let style: ModalStyle
-    private let coordinator: MainCoordinatorInterface
     
     private var bottomSheetViewTopConstraint: NSLayoutConstraint!
     private var bottomSheetPanMinTopConstant: CGFloat = 30.0
     private lazy var bottomSheetPanStartingTopConstant: CGFloat = bottomSheetPanMinTopConstant
     
-    private lazy var backgroundView: UIView = {
+    private lazy var dimmedView: UIView = {
         let view = UIView()
         view.backgroundColor = .black.withAlphaComponent(0.7)
         view.alpha = 0
@@ -55,12 +54,10 @@ public final class BottomSheetViewController: UIViewController {
     
     public init(
         style: ModalStyle,
-        contentViewController: UIViewController,
-        coordinator: MainCoordinatorInterface
+        contentViewController: UIViewController
     ) {
         self.style = style
         self.contentViewController = contentViewController
-        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         
     }
@@ -96,7 +93,7 @@ private extension BottomSheetViewController {
     
     func setUpLayout() {
         view.backgroundColor = .clear
-        view.addSubviews(backgroundView, bottomSheetView)
+        view.addSubviews(dimmedView, bottomSheetView)
         bottomSheetViewTopConstraint = bottomSheetView.topAnchor.constraint(
             equalTo: view.topAnchor,
             constant: view.bounds.height
@@ -107,10 +104,10 @@ private extension BottomSheetViewController {
             bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
-            backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
+            dimmedView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            dimmedView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             contentViewController.view.topAnchor.constraint(equalTo: bottomSheetView.topAnchor),
             contentViewController.view.leadingAnchor.constraint(equalTo: bottomSheetView.leadingAnchor),
             contentViewController.view.trailingAnchor.constraint(equalTo: bottomSheetView.trailingAnchor),
@@ -120,7 +117,8 @@ private extension BottomSheetViewController {
     
     func setUpGestureRecognizer() {
         let dimmedTap = UITapGestureRecognizer(target: self, action: #selector(didTapDimmedView(_:)))
-        backgroundView.addGestureRecognizer(dimmedTap)
+        dimmedView.addGestureRecognizer(dimmedTap)
+        dimmedView.isUserInteractionEnabled = true
         let viewPan = UIPanGestureRecognizer(target: self, action: #selector(pannedView(_:)))
         viewPan.delaysTouchesBegan = false
         viewPan.delaysTouchesEnded = false
@@ -142,7 +140,7 @@ private extension BottomSheetViewController {
             if translation.y + bottomSheetPanMinTopConstant >= bottomSheetPanMinTopConstant {
                 bottomSheetViewTopConstraint.constant = bottomSheetPanStartingTopConstant + translation.y
             }
-            backgroundView.alpha = dimAlphaWithBottomSheetTopConstraint(
+            dimmedView.alpha = dimAlphaWithBottomSheetTopConstraint(
                 value: bottomSheetViewTopConstraint.constant
             )
         case .ended:
@@ -186,7 +184,7 @@ private extension BottomSheetViewController {
         bottomSheetViewTopConstraint.constant = safeAreaHeight + bottomPadding
         
         UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) {
-            self.backgroundView.alpha = 0.0
+            self.dimmedView.alpha = 0.0
             self.view.layoutIfNeeded()
         } completion: { _ in
             if self.presentingViewController != nil {
@@ -199,7 +197,7 @@ private extension BottomSheetViewController {
         bottomSheetViewTopConstraint.constant = style.topConstant
         
         UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
-            self.backgroundView.alpha = 0.7
+            self.dimmedView.alpha = 0.7
             self.view.layoutIfNeeded()
         }, completion: nil)
     }

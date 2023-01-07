@@ -35,17 +35,15 @@ private extension MainCoordinator {
     }
     
     func makeAddressViewController() -> UIViewController {
-        let test = UIViewController()
-        let contentViewController = UINavigationController(rootViewController: test)
-        test.view.backgroundColor = .systemGreen
-        test.navigationItem.title = "주소를 변경해볼까요?"
-        test.navigationController?.navigationBar.prefersLargeTitles = true
-        let viewController = BottomSheetViewController(
+        let coordinator = AddressCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        let bottomSheetViewController = BottomSheetViewController(
             style: .large,
-            contentViewController: contentViewController,
-            coordinator: self
+            contentViewController: coordinator.navigationController
         )
-        return viewController
+        return bottomSheetViewController
     }
     
 }
