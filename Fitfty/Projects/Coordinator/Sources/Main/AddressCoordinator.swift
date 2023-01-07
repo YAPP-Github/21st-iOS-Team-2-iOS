@@ -39,7 +39,3 @@ private extension AddressCoordinator {
     }
     
 }
-
-extension AddressCoordinator: AddressCoordinatorInterface {
-    
-}
