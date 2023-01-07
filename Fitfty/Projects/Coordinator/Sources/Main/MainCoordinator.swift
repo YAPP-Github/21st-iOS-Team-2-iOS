@@ -8,6 +8,7 @@
 
 import UIKit
 import MainFeed
+import Common
 
 final class MainCoordinator: Coordinator {
     
