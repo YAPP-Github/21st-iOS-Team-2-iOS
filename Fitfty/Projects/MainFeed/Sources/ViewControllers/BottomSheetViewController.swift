@@ -120,9 +120,8 @@ private extension BottomSheetViewController {
     
     func setUpGestureRecognizer() {
         let dimmedTap = UITapGestureRecognizer(target: self, action: #selector(didTapDimmedView(_:)))
-        view.addGestureRecognizer(dimmedTap)
-        view.isUserInteractionEnabled = true
-        let viewPan = UIPanGestureRecognizer(target: self, action: #selector(viewPanned(_:)))
+        backgroundView.addGestureRecognizer(dimmedTap)
+        let viewPan = UIPanGestureRecognizer(target: self, action: #selector(pannedView(_:)))
         viewPan.delaysTouchesBegan = false
         viewPan.delaysTouchesEnded = false
         view.addGestureRecognizer(viewPan)
@@ -132,7 +131,7 @@ private extension BottomSheetViewController {
         dismiss()
     }
     
-    @objc func viewPanned(_ panGestureRecognizer: UIPanGestureRecognizer) {
+    @objc func pannedView(_ panGestureRecognizer: UIPanGestureRecognizer) {
         let translation = panGestureRecognizer.translation(in: view)
         let velocity = panGestureRecognizer.velocity(in: view)
         
@@ -186,7 +185,7 @@ private extension BottomSheetViewController {
         let bottomPadding = view.safeAreaInsets.bottom + view.safeAreaInsets.top
         bottomSheetViewTopConstraint.constant = safeAreaHeight + bottomPadding
         
-        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn) {
+        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) {
             self.backgroundView.alpha = 0.0
             self.view.layoutIfNeeded()
         } completion: { _ in
