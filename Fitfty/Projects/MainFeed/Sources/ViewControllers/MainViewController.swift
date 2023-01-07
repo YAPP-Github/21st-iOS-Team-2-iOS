@@ -48,6 +48,7 @@ public final class MainViewController: UIViewController {
         setUpDataSource()
         applySnapshot()
     }
+    
     public init(coordinator: MainCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -61,6 +62,12 @@ public final class MainViewController: UIViewController {
     private func setUpNavigationBar() {
         let locationView = LocationView("성북구 정릉동")
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: locationView)
+        let tappedLoacationView = UITapGestureRecognizer(target: self, action: #selector(didTapLoactionView(_:)))
+        locationView.addGestureRecognizer(tappedLoacationView)
+    }
+    
+    @objc private func didTapLoactionView(_ sender: UITapGestureRecognizer) {
+        coordinator.showSettingAddress()
     }
     
     private func setUpLayout() {
@@ -84,8 +91,9 @@ public final class MainViewController: UIViewController {
                     return cell
                     
                 case .style:
+                    let items = ["포멀", "캐주얼", "미니멀", "포멀", "캐주얼", "미니멀", "포멀"]
                     let cell = collectionView.dequeueReusableCell(StyleCell.self, for: indexPath)
-                    cell?.setUp(text: ["포멀", "캐주얼", "미니멀"].randomElement()!)
+                    cell?.setUp(text: items[indexPath.item])
                     return cell
                     
                 case .cody:

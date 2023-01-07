@@ -27,7 +27,6 @@ final class StyleCell: UICollectionViewCell {
         label.layer.cornerRadius = 15
         label.textAlignment = .center
         label.clipsToBounds = true
-        label.text = "#캐주얼"
         return label
     }()
     
