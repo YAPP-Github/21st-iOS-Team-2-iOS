@@ -22,5 +22,5 @@ let project = Project.makeModule(
         .project(target: "Coordinator", path: .relativeToRoot("Projects/Coordinator"))
     ],
     resources: ["Resources/**"],
-    infoPlist: infoPlist
+    infoPlist: .file(path: "Support/Info.plist")
 )

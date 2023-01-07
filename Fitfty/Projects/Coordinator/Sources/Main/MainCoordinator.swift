@@ -8,6 +8,7 @@
 
 import UIKit
 import MainFeed
+import Common
 
 final class MainCoordinator: Coordinator {
     
@@ -34,12 +35,26 @@ private extension MainCoordinator {
         return viewController
     }
     
+    func makeAddressViewController() -> UIViewController {
+        let coordinator = AddressCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .large,
+            contentViewController: coordinator.navigationController
+        )
+        return bottomSheetViewController
+    }
+    
 }
 
 extension MainCoordinator: MainCoordinatorInterface {
     
     public func showSettingAddress() {
-        
+        let viewController = makeAddressViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
 }
