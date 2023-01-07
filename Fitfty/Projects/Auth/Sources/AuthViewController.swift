@@ -11,8 +11,13 @@ import Combine
 final public class AuthViewController: UIViewController {
     public weak var coordinator: AuthCoordinatorInterface?
     
+    private let contentView = AuthView()
     private let viewModel: AuthViewModel
     private var cancellables = Set<AnyCancellable>()
+    
+    public override func loadView() {
+        self.view = contentView
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +29,6 @@ final public class AuthViewController: UIViewController {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
-        
     }
     
     required init?(coder: NSCoder) {
@@ -43,7 +47,6 @@ final public class AuthViewController: UIViewController {
                     self?.coordinator?.pushOnboardingView()
                     
                 case .doSomething:
-                    // Do Something
                     break
                 }
             }

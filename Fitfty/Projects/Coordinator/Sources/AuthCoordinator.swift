@@ -24,7 +24,6 @@ final class AuthCoordinator: Coordinator {
     func start() {
         let viewController = makeAuthViewController()
         navigationController.pushViewController(viewController, animated: true)
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
 
