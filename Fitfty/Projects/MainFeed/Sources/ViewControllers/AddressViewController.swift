@@ -28,6 +28,15 @@ public final class AddressViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.tintColor = .darkGray
+        searchController.searchBar.placeholder = "지금 어디에 계세요?"
+        searchController.searchBar.setValue("취소", forKey: "cancelButtonText")
+        return searchController
+    }()
+    
 }
 
 private extension AddressViewController {
@@ -38,7 +47,9 @@ private extension AddressViewController {
     }
     
     func setUpNavigationBar() {
-        navigationItem.title = "주소를 변경해볼까요?"
+        navigationItem.title = "주소를 설정해주세요."
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController = searchController
     }
     
     func setUpLayout() {
