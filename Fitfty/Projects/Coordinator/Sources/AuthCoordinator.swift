@@ -34,7 +34,6 @@ private extension AuthCoordinator {
             viewModel: AuthViewModel(),
             coordinator: self
         )
-        viewController.coordinator = self
         return viewController
     }
 }
