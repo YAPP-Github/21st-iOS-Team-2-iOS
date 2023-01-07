@@ -32,10 +32,12 @@ final class AddressCoordinator: Coordinator {
 private extension AddressCoordinator {
     
     func makeAddressViewController() -> UIViewController {
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .systemGreen
-        viewController.navigationItem.title = "주소를 변경해볼까요?"
+        let viewController = AddressViewController(coordinator: self, viewModel: AddressViewModel())
         return viewController
     }
+    
+}
+
+extension AddressCoordinator: AddressCoordinatorInterface {
     
 }
