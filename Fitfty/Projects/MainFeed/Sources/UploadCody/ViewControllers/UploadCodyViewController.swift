@@ -32,10 +32,15 @@ final public class UploadCodyViewController: UIViewController {
     
     private let topBarView = TopBarView()
     
+    private let styleTagItems = ["포멀", "캐주얼"]
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(ContentCell.self)
+        collectionView.register(StyleTagCell.self)
+        collectionView.register(StyleTagHeaderView.self, forSupplementaryViewOfKind: StyleTagHeaderView.className)
+        collectionView.delegate = self
         return collectionView
     }()
 
@@ -87,14 +92,29 @@ final public class UploadCodyViewController: UIViewController {
                     return cell
                     
                 case .styleTag:
-                    let cell = collectionView.dequeueReusableCell(ContentCell.self, for: indexPath)
+                    let cell = collectionView.dequeueReusableCell(StyleTagCell.self, for: indexPath)
+                    cell?.setUp(text: self.styleTagItems[indexPath.item])
                     return cell
                     
                 default:
                     return UICollectionViewCell()
                 }
             })
-       
+        
+        dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+            switch elementKind {
+            case StyleTagHeaderView.className:
+                return collectionView.dequeueReusableSupplementaryView(
+                    ofKind: elementKind,
+                    withReuseIdentifier: StyleTagHeaderView.className,
+                    for: indexPath
+                )
+                
+            default:
+                return UICollectionReusableView()
+            }
+        }
+        
         collectionView.dataSource = dataSource
     }
     
@@ -105,7 +125,7 @@ final public class UploadCodyViewController: UIViewController {
         snapshot.appendSections([.weatherTag])
         snapshot.appendItems([UUID()])
         snapshot.appendSections([.styleTag])
-        snapshot.appendItems([UUID()])
+        snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
         dataSource?.apply(snapshot)
     }
     
@@ -115,7 +135,7 @@ final public class UploadCodyViewController: UIViewController {
             switch section {
             case .content: return self?.contentSectionLayout()
             case .weatherTag: return self?.contentSectionLayout()
-            case .styleTag: return self?.contentSectionLayout()
+            case .styleTag: return self?.styleTagSectionLayout()
             default: return nil
             }
         }
@@ -141,6 +161,36 @@ final public class UploadCodyViewController: UIViewController {
         return section
     }
     
+    private func styleTagSectionLayout() -> NSCollectionLayoutSection? {
+        let layoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(100),
+            heightDimension: .absolute(43)
+        )
+        
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: layoutSize.widthDimension,
+                heightDimension: layoutSize.heightDimension
+            ),
+            subitems: [.init(layoutSize: layoutSize)]
+        )
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+        section.interGroupSpacing = 8
+        section.orthogonalScrollingBehavior = .continuous
+        
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(UIScreen.main.bounds.width-40),
+                    heightDimension: .absolute(20)
+                ),
+                elementKind: StyleTagHeaderView.className, alignment: .top)
+        ]
+        return section
+    }
+    
     private func setUpButtonAction() {
         topBarView.addTargetCancelButton(self, action: #selector(didTapCancelButton))
         topBarView.addTargetUploadButton(self, action: #selector(didTapUploadButton))
@@ -152,5 +202,23 @@ final public class UploadCodyViewController: UIViewController {
     
     @objc func didTapUploadButton(_ sender: UIButton) {
         topBarView.setEnableUploadButton()
+    }
+}
+
+extension UploadCodyViewController: UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let section = Section(index: indexPath.section)
+        switch section {
+        case .weatherTag:
+            break
+        case .styleTag:
+            let cell = collectionView.dequeueReusableCell(StyleTagCell.self, for: indexPath)
+            for item in 0..<styleTagItems.count {
+                item == indexPath.row ? cell?.setSelectedButton(isSelected: true) : cell?.setSelectedButton(isSelected: false)
+            }
+        default:
+            break
+        }
+        
     }
 }
