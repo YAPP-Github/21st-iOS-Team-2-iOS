@@ -34,12 +34,17 @@ final public class UploadCodyViewController: UIViewController {
     
     private let styleTagItems = ["포멀", "캐주얼"]
     
+    private let weatherTagItems = ["❄️ 한파", "🌨 추운날", "🍂 쌀쌀한 날", "☀️ 따듯한 날", "🔥 더운날"]
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(ContentCell.self)
         collectionView.register(StyleTagCell.self)
+        collectionView.register(WeatherTagCell.self)
         collectionView.register(StyleTagHeaderView.self, forSupplementaryViewOfKind: StyleTagHeaderView.className)
+        collectionView.register(WeatherTagHeaderView.self, forSupplementaryViewOfKind: WeatherTagHeaderView.className)
+        collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
         collectionView.delegate = self
         return collectionView
     }()
@@ -88,7 +93,8 @@ final public class UploadCodyViewController: UIViewController {
                     return cell
                     
                 case .weatherTag:
-                    let cell = collectionView.dequeueReusableCell(ContentCell.self, for: indexPath)
+                    let cell = collectionView.dequeueReusableCell(WeatherTagCell.self, for: indexPath)
+                    cell?.setUp(text: self.weatherTagItems[indexPath.item])
                     return cell
                     
                 case .styleTag:
@@ -110,6 +116,20 @@ final public class UploadCodyViewController: UIViewController {
                     for: indexPath
                 )
                 
+            case WeatherTagHeaderView.className:
+                return collectionView.dequeueReusableSupplementaryView(
+                    ofKind: elementKind,
+                    withReuseIdentifier: WeatherTagHeaderView.className,
+                    for: indexPath
+                )
+            
+            case FooterView.className:
+                return collectionView.dequeueReusableSupplementaryView(
+                    ofKind: elementKind,
+                    withReuseIdentifier: FooterView.className,
+                    for: indexPath
+                )
+                
             default:
                 return UICollectionReusableView()
             }
@@ -123,7 +143,7 @@ final public class UploadCodyViewController: UIViewController {
         snapshot.appendSections([.content])
         snapshot.appendItems([UUID()])
         snapshot.appendSections([.weatherTag])
-        snapshot.appendItems([UUID()])
+        snapshot.appendItems(Array(0..<weatherTagItems.count).map {_ in UUID() })
         snapshot.appendSections([.styleTag])
         snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
         dataSource?.apply(snapshot)
@@ -134,7 +154,7 @@ final public class UploadCodyViewController: UIViewController {
             let section = Section(index: sectionNumber)
             switch section {
             case .content: return self?.contentSectionLayout()
-            case .weatherTag: return self?.contentSectionLayout()
+            case .weatherTag: return self?.weatherTagSectionLayout()
             case .styleTag: return self?.styleTagSectionLayout()
             default: return nil
             }
@@ -144,7 +164,7 @@ final public class UploadCodyViewController: UIViewController {
     private func contentSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .fractionalHeight(1)
+            heightDimension: .estimated(550)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -158,10 +178,56 @@ final public class UploadCodyViewController: UIViewController {
         section.contentInsets = .init(top: .zero, leading: .zero, bottom: .zero, trailing: .zero)
         section.orthogonalScrollingBehavior = .groupPaging
         
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width) ,
+                    heightDimension: .absolute(8)
+                ),
+                elementKind: FooterView.className,
+                alignment: .bottom
+            )
+        ]
+        
         return section
     }
     
     private func styleTagSectionLayout() -> NSCollectionLayoutSection? {
+        let layoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(100),
+            heightDimension: .absolute(43)
+        )
+        
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: layoutSize.widthDimension,
+                heightDimension: layoutSize.heightDimension
+            ),
+            subitems: [.init(layoutSize: layoutSize)]
+        )
+        
+            
+        let item = NSCollectionLayoutItem(layoutSize: layoutSize)
+        item.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+        
+        section.interGroupSpacing = 8
+        section.orthogonalScrollingBehavior = .continuous
+        
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width-40),
+                    heightDimension: .absolute(20)
+                ),
+                elementKind: StyleTagHeaderView.className, alignment: .top)
+        ]
+        return section
+    }
+    
+    private func weatherTagSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(100),
             heightDimension: .absolute(43)
@@ -183,10 +249,17 @@ final public class UploadCodyViewController: UIViewController {
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
-                    widthDimension: .absolute(UIScreen.main.bounds.width-40),
-                    heightDimension: .absolute(20)
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width-40),
+                    heightDimension: .estimated(40)
                 ),
-                elementKind: StyleTagHeaderView.className, alignment: .top)
+                elementKind: WeatherTagHeaderView.className, alignment: .top),
+            
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width-40),
+                    heightDimension: .absolute(1)
+                ),
+                elementKind: FooterView.className, alignment: .bottom)
         ]
         return section
     }

@@ -28,7 +28,7 @@ final class UploadCodyCoordinator: Coordinator {
     }
 }
 
-extension UploadCodyCoordinator {
+private extension UploadCodyCoordinator {
     func makeUploadCodyViewController() -> UIViewController {
         let viewController = UploadCodyViewController(coordinator: self)
         viewController.modalPresentationStyle = .fullScreen
