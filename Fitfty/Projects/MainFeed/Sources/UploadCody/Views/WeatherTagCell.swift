@@ -1,5 +1,5 @@
 //
-//  StyleTagCell.swift
+//  WeatherTagCell.swift
 //  MainFeed
 //
 //  Created by 임영선 on 2023/01/08.
@@ -9,7 +9,7 @@
 import UIKit
 import Common
 
-final class StyleTagCell: UICollectionViewCell {
+final class WeatherTagCell: UICollectionViewCell {
     
     override var intrinsicContentSize: CGSize {
         return CGSize(
@@ -58,15 +58,9 @@ final class StyleTagCell: UICollectionViewCell {
     }
 }
 
-extension StyleTagCell {
+extension WeatherTagCell {
     
     func setUp(text: String) {
         titleLabel.text = text
-    }
-    
-    func setSelectedButton(isSelected: Bool) {
-        titleLabel.textColor = isSelected ? .white : CommonAsset.Colors.gray06.color
-        titleLabel.backgroundColor = isSelected ? .black : CommonAsset.Colors.gray01.color
-
     }
 }

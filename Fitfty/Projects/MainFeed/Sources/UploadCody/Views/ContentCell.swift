@@ -9,7 +9,7 @@
 import UIKit
 import Common
 
-class ContentCell: UICollectionViewCell {
+final class ContentCell: UICollectionViewCell {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()

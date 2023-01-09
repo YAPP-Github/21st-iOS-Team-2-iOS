@@ -171,9 +171,9 @@ extension TabCoordinator: UITabBarControllerDelegate {
         }
         if tabBar == .createCody {
             let coordinator = UploadCodyCoordinator()
-            let controller = coordinator.makeUploadCodyViewController()
-            controller.view.backgroundColor = .white
-            tabBarController.present(controller, animated: true)
+            coordinator.start()
+            coordinator.navigationController.modalPresentationStyle = .fullScreen
+            tabBarController.present(coordinator.navigationController, animated: true)
             return false
         }
         return true
