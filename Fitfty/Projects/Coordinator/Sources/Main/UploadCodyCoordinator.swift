@@ -8,6 +8,7 @@
 
 import UIKit
 import MainFeed
+import Common
 
 final class UploadCodyCoordinator: Coordinator {
     var type: CoordinatorType { .uploadCody }
@@ -24,6 +25,9 @@ final class UploadCodyCoordinator: Coordinator {
     
     func start() {
         let viewController = makeUploadCodyViewController()
+        navigationController.navigationBar.prefersLargeTitles = true
+        navigationController.navigationBar.largeTitleTextAttributes =
+        [NSAttributedString.Key.font: FitftyFont.appleSDBold(size: 24).font ?? UIFont.systemFont(ofSize: 24)]
         navigationController.pushViewController(viewController, animated: true)
     }
 }

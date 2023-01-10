@@ -11,13 +11,6 @@ import Common
 
 final class ContentCell: UICollectionViewCell {
     
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "새 핏프티 등록"
-        label.font = FitftyFont.appleSDBold(size: 24).font
-        return label
-    }()
-    
     private lazy var backgroundUploadButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = CommonAsset.Colors.gray01.color
@@ -67,18 +60,16 @@ final class ContentCell: UICollectionViewCell {
     }
     
     private func setUpConstraintsLayout() {
-        contentView.addSubviews(titleLabel, backgroundUploadButton, uploadButton, imageView, contentTextView)
+        contentView.addSubviews(backgroundUploadButton, uploadButton, imageView, contentTextView)
         
         NSLayoutConstraint.activate([
-            titleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             
-            backgroundUploadButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
+            backgroundUploadButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             backgroundUploadButton.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             backgroundUploadButton.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             backgroundUploadButton.heightAnchor.constraint(equalToConstant: 350),
             
-            imageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             imageView.heightAnchor.constraint(equalToConstant: 350),

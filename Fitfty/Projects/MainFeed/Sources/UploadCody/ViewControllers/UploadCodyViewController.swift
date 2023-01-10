@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Common
 
 final public class UploadCodyViewController: UIViewController {
     
@@ -30,10 +31,7 @@ final public class UploadCodyViewController: UIViewController {
     private var coordinator: UploadCodyCoordinatorInterface
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
-    private let topBarView = TopBarView()
-    
     private let styleTagItems = ["포멀", "캐주얼"]
-    
     private let weatherTagItems = ["❄️ 한파", "🌨 추운날", "🍂 쌀쌀한 날", "☀️ 따듯한 날", "🔥 더운날"]
     
     private lazy var collectionView: UICollectionView = {
@@ -52,7 +50,7 @@ final public class UploadCodyViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUpConstraintLayout()
-        setUpButtonAction()
+        setUpNavigationBar()
         setUpDataSource()
         applySnapshot()
     }
@@ -67,15 +65,46 @@ final public class UploadCodyViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setUpNavigationBar() {
+        navigationItem.title = "새 핏프티 등록"
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: CommonAsset.Images.btnX.image,
+            style: .plain,
+            target: self,
+            action: #selector(didTapCancelButton)
+        )
+        navigationItem.leftBarButtonItem?.tintColor = .black
+        
+        let rightBarButton: UIBarButtonItem = {
+            let button = UIButton()
+            button.setTitle("등록", for: .normal)
+            button.setTitleColor(CommonAsset.Colors.gray03.color, for: .normal)
+            button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 16).font
+            button.addTarget(self, action: #selector(didTapUploadButton), for: .touchUpInside)
+            return UIBarButtonItem(customView: button)
+        }()
+        navigationItem.rightBarButtonItem = rightBarButton
+    }
+    
+    private func setUpEnableUploadButton() {
+        let rightBarButton: UIBarButtonItem = {
+            let button = UIButton()
+            button.setTitle("등록", for: .normal)
+            button.setTitleColor(.white, for: .normal)
+            button.titleLabel?.font = FitftyFont.appleSDMedium(size: 15).font
+            button.frame = CGRect(x: 0, y: 0, width: 65, height: 37)
+            button.backgroundColor = .black
+            button.layer.cornerRadius = 18
+            return UIBarButtonItem(customView: button)
+        }()
+        navigationItem.rightBarButtonItem = rightBarButton
+    }
+    
     private func setUpConstraintLayout() {
-        view.addSubviews(topBarView, collectionView)
+        view.addSubviews(collectionView)
         NSLayoutConstraint.activate([
-            topBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            topBarView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-            topBarView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            topBarView.heightAnchor.constraint(equalToConstant: 50),
-            
-            collectionView.topAnchor.constraint(equalTo: topBarView.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -206,7 +235,6 @@ final public class UploadCodyViewController: UIViewController {
             subitems: [.init(layoutSize: layoutSize)]
         )
         
-            
         let item = NSCollectionLayoutItem(layoutSize: layoutSize)
         item.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
         
@@ -264,17 +292,12 @@ final public class UploadCodyViewController: UIViewController {
         return section
     }
     
-    private func setUpButtonAction() {
-        topBarView.addTargetCancelButton(self, action: #selector(didTapCancelButton))
-        topBarView.addTargetUploadButton(self, action: #selector(didTapUploadButton))
-    }
-    
     @objc func didTapCancelButton(_ sender: UIButton) {
-        coordinator.dismissUploadCody(self)
+        dismiss(animated: true)
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
-        topBarView.setEnableUploadButton()
+        setUpEnableUploadButton()
     }
 }
 
