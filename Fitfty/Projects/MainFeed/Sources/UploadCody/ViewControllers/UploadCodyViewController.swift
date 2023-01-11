@@ -40,8 +40,7 @@ final public class UploadCodyViewController: UIViewController {
         collectionView.register(ContentCell.self)
         collectionView.register(StyleTagCell.self)
         collectionView.register(WeatherTagCell.self)
-        collectionView.register(StyleTagHeaderView.self, forSupplementaryViewOfKind: StyleTagHeaderView.className)
-        collectionView.register(WeatherTagHeaderView.self, forSupplementaryViewOfKind: WeatherTagHeaderView.className)
+        collectionView.register(Common.HeaderView.self, forSupplementaryViewOfKind: Common.HeaderView.className)
         collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
         collectionView.delegate = self
         return collectionView
@@ -137,21 +136,47 @@ final public class UploadCodyViewController: UIViewController {
             })
         
         dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+            let section = Section(index: indexPath.section)
             switch elementKind {
-            case StyleTagHeaderView.className:
-                return collectionView.dequeueReusableSupplementaryView(
-                    ofKind: elementKind,
-                    withReuseIdentifier: StyleTagHeaderView.className,
-                    for: indexPath
-                )
+            case Common.HeaderView.className:
+                if section == .weatherTag {
+                    let reusableView = collectionView.dequeueReusableSupplementaryView(
+                        ofKind: elementKind,
+                        withReuseIdentifier: Common.HeaderView.className,
+                        for: indexPath
+                    ) as? Common.HeaderView
+                    
+                    reusableView?.setUp(
+                        largeTitle: "날씨 태그를 골라주세요.",
+                        smallTitle: "사진을 업로드하면 촬영한 날의 날씨 정보를 자동으로 불러와요.",
+                        largeTitleFont: FitftyFont.appleSDBold(size: 16).font ?? .systemFont(ofSize: 16),
+                        smallTitleFont: FitftyFont.appleSDMedium(size: 14).font ?? .systemFont(ofSize: 14),
+                        smallTitleColor: CommonAsset.Colors.gray05.color,
+                        largeTitleTopAnchorConstant: 32,
+                        smallTitleTopAchorConstant: 8
+                    )
+                    return reusableView
+                } else if section == .styleTag {
+                    let reusableView = collectionView.dequeueReusableSupplementaryView(
+                        ofKind: elementKind,
+                        withReuseIdentifier: Common.HeaderView.className,
+                        for: indexPath
+                    ) as? Common.HeaderView
+                    
+                    reusableView?.setUp(
+                        largeTitle: "스타일 태그를 골라주세요.",
+                        smallTitle: nil,
+                        largeTitleFont: FitftyFont.appleSDBold(size: 16).font ?? .systemFont(ofSize: 16),
+                        smallTitleFont: nil,
+                        smallTitleColor: nil,
+                        largeTitleTopAnchorConstant: 28,
+                        smallTitleTopAchorConstant: 0
+                    )
+                    return reusableView
+                } else {
+                    return nil
+                }
                 
-            case WeatherTagHeaderView.className:
-                return collectionView.dequeueReusableSupplementaryView(
-                    ofKind: elementKind,
-                    withReuseIdentifier: WeatherTagHeaderView.className,
-                    for: indexPath
-                )
-            
             case FooterView.className:
                 return collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
@@ -193,7 +218,7 @@ final public class UploadCodyViewController: UIViewController {
     private func contentSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(550)
+            heightDimension: .absolute(500)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -248,9 +273,9 @@ final public class UploadCodyViewController: UIViewController {
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
                     widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width-40),
-                    heightDimension: .absolute(20)
+                    heightDimension: .estimated(50)
                 ),
-                elementKind: StyleTagHeaderView.className, alignment: .top)
+                elementKind: Common.HeaderView.className, alignment: .top)
         ]
         return section
     }
@@ -278,9 +303,9 @@ final public class UploadCodyViewController: UIViewController {
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
                     widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width-40),
-                    heightDimension: .estimated(40)
+                    heightDimension: .estimated(82)
                 ),
-                elementKind: WeatherTagHeaderView.className, alignment: .top),
+                elementKind: Common.HeaderView.className, alignment: .top),
             
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
