@@ -60,7 +60,9 @@ final class WeatherTagCell: UICollectionViewCell {
 
 extension WeatherTagCell {
     
-    func setUp(text: String) {
-        titleLabel.text = text
+    func setUp(weahterTag: WeatherTag, isSelected: Bool) {
+        titleLabel.text = weahterTag.getWeatherTagString()
+        titleLabel.textColor = isSelected ? weahterTag.getTextColor() : CommonAsset.Colors.gray06.color
+        titleLabel.backgroundColor = isSelected ? weahterTag.backgroundColor() : CommonAsset.Colors.gray01.color
     }
 }

@@ -31,8 +31,17 @@ final public class UploadCodyViewController: UIViewController {
     private var coordinator: UploadCodyCoordinatorInterface
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
-    private let styleTagItems = ["포멀", "캐주얼"]
-    private let weatherTagItems = ["❄️ 한파", "🌨 추운날", "🍂 쌀쌀한 날", "☀️ 따듯한 날", "🔥 더운날"]
+    private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
+        (.formal, true),
+        (.casual, false)
+    ]
+    private var weatherTagItems: [(weatherTag: WeatherTag, isSelected: Bool)] = [
+        (.coldWaveWeather, true),
+        (.coldWeather, false),
+        (.chillyWeather, false),
+        (.warmWeather, false),
+        (.hotWeather, false)
+    ]
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
@@ -118,16 +127,22 @@ final public class UploadCodyViewController: UIViewController {
                 switch section {
                 case .content:
                     let cell = collectionView.dequeueReusableCell(ContentCell.self, for: indexPath)
-                    return cell
+                    return cell ?? UICollectionViewCell()
                     
                 case .weatherTag:
                     let cell = collectionView.dequeueReusableCell(WeatherTagCell.self, for: indexPath)
-                    cell?.setUp(text: self.weatherTagItems[indexPath.item])
-                    return cell
+                    cell?.setUp(
+                        weahterTag: self.weatherTagItems[indexPath.item].weatherTag,
+                        isSelected: self.weatherTagItems[indexPath.item].isSelected
+                    )
+                    return cell ?? UICollectionViewCell()
                     
                 case .styleTag:
                     let cell = collectionView.dequeueReusableCell(StyleTagCell.self, for: indexPath)
-                    cell?.setUp(text: self.styleTagItems[indexPath.item])
+                    cell?.setUp(
+                        styleTag: self.styleTagItems[indexPath.item].styleTag,
+                        isSelected: self.styleTagItems[indexPath.item].isSelected
+                    )
                     return cell
                     
                 default:
@@ -188,7 +203,6 @@ final public class UploadCodyViewController: UIViewController {
                 return UICollectionReusableView()
             }
         }
-        
         collectionView.dataSource = dataSource
     }
     
@@ -200,7 +214,7 @@ final public class UploadCodyViewController: UIViewController {
         snapshot.appendItems(Array(0..<weatherTagItems.count).map {_ in UUID() })
         snapshot.appendSections([.styleTag])
         snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
-        dataSource?.apply(snapshot)
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
     
     private func createLayout() -> UICollectionViewCompositionalLayout {
@@ -331,12 +345,25 @@ extension UploadCodyViewController: UICollectionViewDelegate {
         let section = Section(index: indexPath.section)
         switch section {
         case .weatherTag:
-            break
-        case .styleTag:
-            let cell = collectionView.dequeueReusableCell(StyleTagCell.self, for: indexPath)
-            for item in 0..<styleTagItems.count {
-                item == indexPath.row ? cell?.setSelectedButton(isSelected: true) : cell?.setSelectedButton(isSelected: false)
+            for index in weatherTagItems.indices {
+                if indexPath.item == index {
+                    weatherTagItems[index].isSelected = true
+                } else {
+                    weatherTagItems[index].isSelected = false
+                }
             }
+            applySnapshot()
+            
+        case .styleTag:
+            for index in styleTagItems.indices {
+                if indexPath.item == index {
+                    styleTagItems[index].isSelected = true
+                } else {
+                    styleTagItems[index].isSelected = false
+                }
+            }
+            applySnapshot()
+            
         default:
             break
         }
