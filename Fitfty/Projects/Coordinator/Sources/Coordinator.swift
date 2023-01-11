@@ -45,4 +45,5 @@ enum CoordinatorType {
     case profile
     case address
     case uploadCody
+    case album
 }

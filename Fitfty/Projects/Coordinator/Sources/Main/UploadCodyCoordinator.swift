@@ -38,6 +38,19 @@ private extension UploadCodyCoordinator {
         viewController.modalPresentationStyle = .fullScreen
         return viewController
     }
+    
+    func makeAlbumViewController() -> UIViewController {
+        let coordinator = AlbumCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .large,
+            contentViewController: coordinator.navigationController
+        )
+        return bottomSheetViewController
+        
+    }
 }
 
 extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
@@ -46,6 +59,8 @@ extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
     }
     
     func showAlbum() {
-        
+        let viewController = makeAlbumViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
 }
