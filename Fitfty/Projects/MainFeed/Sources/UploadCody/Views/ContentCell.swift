@@ -11,14 +11,14 @@ import Common
 
 final class ContentCell: UICollectionViewCell {
     
-    private lazy var backgroundUploadButton: UIButton = {
+    private lazy var backgroundButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = CommonAsset.Colors.gray01.color
         button.setTitle("", for: .normal)
         return button
     }()
     
-    private lazy var uploadButton: UIButton = {
+    private lazy var uploadPhotoButton: UIButton = {
         let button = UIButton()
         button.setImage(CommonAsset.Images.btnInstagram.image, for: .normal)
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 6)
@@ -60,26 +60,26 @@ final class ContentCell: UICollectionViewCell {
     }
     
     private func setUpConstraintsLayout() {
-        contentView.addSubviews(backgroundUploadButton, uploadButton, imageView, contentTextView)
+        contentView.addSubviews(backgroundButton, uploadPhotoButton, imageView, contentTextView)
         
         NSLayoutConstraint.activate([
             
-            backgroundUploadButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
-            backgroundUploadButton.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            backgroundUploadButton.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            backgroundUploadButton.heightAnchor.constraint(equalToConstant: 350),
+            backgroundButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
+            backgroundButton.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            backgroundButton.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            backgroundButton.heightAnchor.constraint(equalToConstant: 350),
             
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             imageView.heightAnchor.constraint(equalToConstant: 350),
             
-            uploadButton.centerXAnchor.constraint(equalTo: backgroundUploadButton.centerXAnchor),
-            uploadButton.centerYAnchor.constraint(equalTo: backgroundUploadButton.centerYAnchor),
-            uploadButton.heightAnchor.constraint(equalToConstant: 40),
-            uploadButton.widthAnchor.constraint(equalToConstant: 138),
+            uploadPhotoButton.centerXAnchor.constraint(equalTo: backgroundButton.centerXAnchor),
+            uploadPhotoButton.centerYAnchor.constraint(equalTo: backgroundButton.centerYAnchor),
+            uploadPhotoButton.heightAnchor.constraint(equalToConstant: 40),
+            uploadPhotoButton.widthAnchor.constraint(equalToConstant: 138),
             
-            contentTextView.topAnchor.constraint(equalTo: backgroundUploadButton.bottomAnchor, constant: 20),
+            contentTextView.topAnchor.constraint(equalTo: backgroundButton.bottomAnchor, constant: 20),
             contentTextView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
             contentTextView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
             contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3)
@@ -108,5 +108,12 @@ extension ContentCell: UITextViewDelegate {
             return false
         }
         return true
+    }
+}
+
+extension ContentCell {
+    public func setActionUploadPhotoButton(_ target: Any?, action: Selector) {
+        backgroundButton.addTarget(target, action: action, for: .touchUpInside)
+        uploadPhotoButton.addTarget(target, action: action, for: .touchUpInside)
     }
 }

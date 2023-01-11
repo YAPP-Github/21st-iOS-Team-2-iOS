@@ -127,6 +127,7 @@ final public class UploadCodyViewController: UIViewController {
                 switch section {
                 case .content:
                     let cell = collectionView.dequeueReusableCell(ContentCell.self, for: indexPath)
+                    cell?.setActionUploadPhotoButton(self, action: #selector(self.didTapUploadPhotoButton))
                     return cell ?? UICollectionViewCell()
                     
                 case .weatherTag:
@@ -332,11 +333,15 @@ final public class UploadCodyViewController: UIViewController {
     }
     
     @objc func didTapCancelButton(_ sender: UIButton) {
-        dismiss(animated: true)
+        coordinator.dismissUploadCody(self)
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
         setUpEnableUploadButton()
+    }
+    
+    @objc func didTapUploadPhotoButton(_ sener: UIButton) {
+        coordinator.showAlbum()
     }
 }
 
