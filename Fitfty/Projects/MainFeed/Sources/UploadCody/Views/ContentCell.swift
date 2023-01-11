@@ -82,7 +82,7 @@ final class ContentCell: UICollectionViewCell {
             contentTextView.topAnchor.constraint(equalTo: backgroundUploadButton.bottomAnchor, constant: 20),
             contentTextView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
             contentTextView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
-            contentTextView.heightAnchor.constraint(equalToConstant: 110)
+            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3)
         ])
     }
 }
