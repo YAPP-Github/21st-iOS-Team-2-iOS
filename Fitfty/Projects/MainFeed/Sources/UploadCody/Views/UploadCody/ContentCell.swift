@@ -15,6 +15,7 @@ final class ContentCell: UICollectionViewCell {
         let button = UIButton()
         button.backgroundColor = CommonAsset.Colors.gray01.color
         button.setTitle("", for: .normal)
+        button.addTarget(self, action: #selector(didTapBackgroundButton(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -113,7 +114,10 @@ extension ContentCell: UITextViewDelegate {
 
 extension ContentCell {
     public func setActionUploadPhotoButton(_ target: Any?, action: Selector) {
-        backgroundButton.addTarget(target, action: action, for: .touchUpInside)
         uploadPhotoButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+    @objc func didTapBackgroundButton(_ sender: UIButton) {
+        contentTextView.resignFirstResponder()
     }
 }
