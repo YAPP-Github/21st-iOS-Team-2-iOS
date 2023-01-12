@@ -30,9 +30,7 @@ final class AlbumCoordinator: Coordinator {
 
 private extension AlbumCoordinator {
     func makeAlbumViewController() -> UIViewController {
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .brown
-        viewController.navigationItem.title = "Album"
+        let viewController = AlbumViewController()
         return viewController
     }
 }
