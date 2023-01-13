@@ -9,7 +9,7 @@
 import UIKit
 import Common
 
-class AlbumCell: UICollectionViewCell {
+final class AlbumCell: UICollectionViewCell {
     private lazy var imageView = UIImageView()
     
     private lazy var button: UIButton = {
@@ -38,5 +38,11 @@ class AlbumCell: UICollectionViewCell {
             button.rightAnchor.constraint(equalTo: rightAnchor, constant: -8),
             button.topAnchor.constraint(equalTo: topAnchor, constant: 8)
         ])
+    }
+}
+
+extension AlbumCell {
+    func setUp(image: UIImage) {
+        imageView.image = image
     }
 }
