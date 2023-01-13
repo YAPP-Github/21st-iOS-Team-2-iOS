@@ -47,6 +47,7 @@ final class ContentCell: UICollectionViewCell {
         textView.font = FitftyFont.appleSDMedium(size: 16).font
         textView.textColor = CommonAsset.Colors.gray04.color
         textView.isScrollEnabled = false
+        textView.returnKeyType = .done
         textView.delegate = self
         return textView
     }()
@@ -90,6 +91,7 @@ final class ContentCell: UICollectionViewCell {
 
 extension ContentCell: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
+        NotificationCenter.default.post(name: .scrollToBottom, object: nil)
         if textView.text == textViewPlaceHolder {
             textView.text = nil
             textView.textColor = .black
@@ -97,6 +99,7 @@ extension ContentCell: UITextViewDelegate {
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
+        NotificationCenter.default.post(name: .scrollToTop, object: nil)
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textView.text = textViewPlaceHolder
             textView.textColor = CommonAsset.Colors.gray04.color
