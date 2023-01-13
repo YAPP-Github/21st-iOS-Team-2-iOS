@@ -344,10 +344,7 @@ extension UploadCodyViewController {
             ),
             subitems: [.init(layoutSize: layoutSize)]
         )
-        
-        let item = NSCollectionLayoutItem(layoutSize: layoutSize)
-        item.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
-        
+                
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
         
