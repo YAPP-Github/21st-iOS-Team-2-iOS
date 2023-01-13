@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Photos
 
 final public class UploadCodyViewController: UIViewController {
     
@@ -54,7 +55,7 @@ final public class UploadCodyViewController: UIViewController {
         collectionView.delegate = self
         return collectionView
     }()
-
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUpConstraintLayout()
@@ -62,7 +63,7 @@ final public class UploadCodyViewController: UIViewController {
         setUpDataSource()
         applySnapshot()
     }
-
+    
     public init(coordinator: UploadCodyCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -218,6 +219,17 @@ final public class UploadCodyViewController: UIViewController {
         dataSource?.apply(snapshot, animatingDifferences: false)
     }
     
+    @objc func didTapCancelButton(_ sender: UIButton) {
+        coordinator.dismissUploadCody(self)
+    }
+    
+    @objc func didTapUploadButton(_ sender: UIButton) {
+        setUpEnableUploadButton()
+    }
+}
+
+// MARK: - UICollectionViewCompositionalLayout
+extension UploadCodyViewController {
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
             let section = Section(index: sectionNumber)
@@ -331,20 +343,9 @@ final public class UploadCodyViewController: UIViewController {
         ]
         return section
     }
-    
-    @objc func didTapCancelButton(_ sender: UIButton) {
-        coordinator.dismissUploadCody(self)
-    }
-    
-    @objc func didTapUploadButton(_ sender: UIButton) {
-        setUpEnableUploadButton()
-    }
-    
-    @objc func didTapUploadPhotoButton(_ sener: UIButton) {
-        coordinator.showAlbum()
-    }
 }
 
+// MARK: - UICollectionViewDelegate
 extension UploadCodyViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let section = Section(index: indexPath.section)
@@ -372,6 +373,65 @@ extension UploadCodyViewController: UICollectionViewDelegate {
         default:
             break
         }
-        
+    }
+}
+
+// MARK: - AlbumAuthorization
+extension UploadCodyViewController {
+    @objc private func didTapUploadPhotoButton(_ sender: UIButton) {
+        self.requestAlbumAuthorization { isAuthorized in
+            if isAuthorized {
+                PhotoService.shared.getAlbums(completion: { [weak self] _ in
+                    DispatchQueue.main.async {
+                        self?.coordinator.showAlbum()
+                    }
+                })
+            } else {
+                self.showAlertGoToSetting(
+                    title: "현재 앨범 사용에 대한 접근 권한이 없습니다.",
+                    message: "설정 > 핏프티 탭에서 접근을 활성화 할 수 있습니다."
+                )
+            }
+        }
+    }
+    
+    func requestAlbumAuthorization(completion: @escaping (Bool) -> Void) {
+        if #available(iOS 14.0, *) {
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
+                completion([.authorized, .limited].contains(where: { $0 == status }))
+            }
+        } else {
+            PHPhotoLibrary.requestAuthorization { status in
+                completion(status == .authorized)
+            }
+        }
+    }
+    
+    func showAlertGoToSetting(title: String, message: String) {
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        let cancelAlert = UIAlertAction(
+            title: "취소",
+            style: .cancel
+        ) { _ in
+            alertController.dismiss(animated: true, completion: nil)
+        }
+        let goToSettingAlert = UIAlertAction(
+            title: "설정으로 이동하기",
+            style: .default) { _ in
+                guard
+                    let settingURL = URL(string: UIApplication.openSettingsURLString),
+                    UIApplication.shared.canOpenURL(settingURL)
+                else { return }
+                UIApplication.shared.open(settingURL, options: [:])
+            }
+        [cancelAlert, goToSettingAlert]
+            .forEach(alertController.addAction(_:))
+        DispatchQueue.main.async {
+            self.present(alertController, animated: true)
+        }
     }
 }

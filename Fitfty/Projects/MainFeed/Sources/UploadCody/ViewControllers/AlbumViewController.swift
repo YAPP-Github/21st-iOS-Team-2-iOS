@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Photos
 
 final public class AlbumViewController: UIViewController {
     
@@ -16,6 +17,7 @@ final public class AlbumViewController: UIViewController {
     }
     
     private let navigationBarView = BarView()
+    
     private let bottomView = UIView()
     
     private lazy var uploadButton: UIButton = {
@@ -33,17 +35,61 @@ final public class AlbumViewController: UIViewController {
     }()
     
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
-
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        setUpNavigationBar()
-        setConstraintsLayout()
-        setDataSource()
-        applySanpshot()
+    
+    private var albums: [AlbumInfo]?
+    
+    private var currentAlbumIndex = 0 {
+        didSet {
+            if let albums = albums {
+                PhotoService.shared.getPHAssets(album: albums[currentAlbumIndex].album) { [weak self] phAssets in
+                    self?.phAssets = phAssets
+                }
+            }
+        }
     }
     
-    private func setUpNavigationBar() {
+    private var currentAlbum: PHFetchResult<PHAsset>? {
+        if let albums = albums,
+           currentAlbumIndex <= albums.count-1 {
+            return albums[currentAlbumIndex].album
+        }
+        return nil
+    }
+    
+    private var phAssets = [PHAsset]() {
+        didSet {
+            applySnapshot()
+        }
+    }
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setNavigationBar()
+        setConstraintsLayout()
+        setDataSource()
+        applySnapshot()
+        setPhotoService()
+    }
+    
+    private func setNavigationBar() {
         navigationController?.navigationBar.isHidden = true
+    }
+    
+    private func setPhotoService() {
+        PhotoService.shared.delegate = self
+        getAlbums()
+    }
+    
+    private func getAlbums() {
+        PhotoService.shared.getAlbums(completion: { [weak self] albums in
+            self?.albums = albums
+        })
+        
+        if let albums = albums {
+            PhotoService.shared.getPHAssets(album: albums[currentAlbumIndex].album) { [weak self] phAssets in
+                self?.phAssets = phAssets
+            }
+        }
     }
     
     private func setConstraintsLayout() {
@@ -76,14 +122,24 @@ final public class AlbumViewController: UIViewController {
             collectionView: collectionView,
             cellProvider: { collectionView, indexPath, _ in
                 let cell = collectionView.dequeueReusableCell(AlbumCell.self, for: indexPath)
+                
+                PhotoService.shared.fetchImage(
+                    asset: self.phAssets[indexPath.item],
+                    size: .init(width: 368, height: 356),
+                    contentMode: .aspectFit
+                ) { [weak cell] image in
+                    DispatchQueue.main.async {
+                        cell?.setUp(image: image)
+                    }
+                }
                 return cell
             })
     }
     
-    private func applySanpshot() {
+    private func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(Array(0..<25).map { _ in UUID() })
+        snapshot.appendItems(Array(0..<phAssets.count).map { _ in UUID() })
         dataSource?.apply(snapshot)
     }
     
@@ -107,5 +163,12 @@ final public class AlbumViewController: UIViewController {
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
     }
+    
+}
 
+// 사진 접근 권한: 선택된 사진
+extension AlbumViewController: PHPhotoLibraryChangeObserver {
+    public func photoLibraryDidChange(_ changeInstance: PHChange) {
+        getAlbums()
+    }
 }
