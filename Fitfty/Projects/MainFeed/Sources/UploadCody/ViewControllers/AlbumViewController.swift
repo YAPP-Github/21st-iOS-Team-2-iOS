@@ -94,16 +94,18 @@ final public class AlbumViewController: UIViewController {
     
     private func setConstraintsLayout() {
         view.addSubviews(navigationBarView, collectionView, bottomView, uploadButton)
+        
+        let collectionViewTopConstraint = collectionView.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor)
+        collectionViewTopConstraint.priority = .defaultLow
+        
+        let collectionViewBottomConstraint = collectionView.bottomAnchor.constraint(equalTo: bottomView.topAnchor)
+        collectionViewBottomConstraint.priority = .defaultLow
+        
         NSLayoutConstraint.activate([
             navigationBarView.topAnchor.constraint(equalTo: view.topAnchor),
             navigationBarView.leftAnchor.constraint(equalTo: view.leftAnchor),
             navigationBarView.rightAnchor.constraint(equalTo: view.rightAnchor),
             navigationBarView.heightAnchor.constraint(equalToConstant: 76),
-            
-            collectionView.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor),
-            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: bottomView.topAnchor),
             
             bottomView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             bottomView.leftAnchor.constraint(equalTo: view.leftAnchor),
@@ -113,7 +115,12 @@ final public class AlbumViewController: UIViewController {
             uploadButton.leftAnchor.constraint(equalTo: bottomView.leftAnchor, constant: 20),
             uploadButton.rightAnchor.constraint(equalTo: bottomView.rightAnchor, constant: -20),
             uploadButton.topAnchor.constraint(equalTo: bottomView.topAnchor, constant: 32),
-            uploadButton.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor, constant: -56)
+            uploadButton.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor, constant: -56),
+            
+            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collectionViewTopConstraint,
+            collectionViewBottomConstraint
         ])
     }
     
