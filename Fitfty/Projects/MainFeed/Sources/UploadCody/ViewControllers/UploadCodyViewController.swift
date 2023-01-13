@@ -62,6 +62,12 @@ final public class UploadCodyViewController: UIViewController {
         setUpNavigationBar()
         setUpDataSource()
         applySnapshot()
+        setNotificationCenter()
+    }
+    
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeNotificationCenter()
     }
     
     public init(coordinator: UploadCodyCoordinatorInterface) {
@@ -119,6 +125,64 @@ final public class UploadCodyViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
+    
+    private func setNotificationCenter() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(scrollToBottom),
+            name: .scrollToBottom,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(scrollToTop),
+            name: .scrollToTop,
+            object: nil
+        )
+    }
+    
+    private func removeNotificationCenter() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .scrollToTop,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .scrollToBottom,
+            object: nil
+        )
+    }
+    
+    @objc func didTapCancelButton(_ sender: UIButton) {
+        coordinator.dismissUploadCody(self)
+    }
+    
+    @objc func didTapUploadButton(_ sender: UIButton) {
+        setUpEnableUploadButton()
+    }
+    
+    @objc func scrollToBottom() {
+        guard collectionView.numberOfSections > 0 else {
+            return
+        }
+        let indexPath = IndexPath(
+            item: collectionView.numberOfItems(inSection: collectionView.numberOfSections - 1) - 1,
+            section: collectionView.numberOfSections - 1
+        )
+        collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+    }
+    
+    @objc func scrollToTop() {
+        guard collectionView.numberOfSections > 0 else {
+            return
+        }
+        collectionView.setContentOffset(.zero, animated: true)
+    }
+}
+
+// MARK: - UICollectionViewDiffableDataSource
+extension UploadCodyViewController {
     
     private func setUpDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
@@ -219,17 +283,11 @@ final public class UploadCodyViewController: UIViewController {
         dataSource?.apply(snapshot, animatingDifferences: false)
     }
     
-    @objc func didTapCancelButton(_ sender: UIButton) {
-        coordinator.dismissUploadCody(self)
-    }
-    
-    @objc func didTapUploadButton(_ sender: UIButton) {
-        setUpEnableUploadButton()
-    }
 }
 
 // MARK: - UICollectionViewCompositionalLayout
 extension UploadCodyViewController {
+    
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
             let section = Section(index: sectionNumber)
@@ -347,6 +405,7 @@ extension UploadCodyViewController {
 
 // MARK: - UICollectionViewDelegate
 extension UploadCodyViewController: UICollectionViewDelegate {
+    
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let section = Section(index: indexPath.section)
         switch section {
