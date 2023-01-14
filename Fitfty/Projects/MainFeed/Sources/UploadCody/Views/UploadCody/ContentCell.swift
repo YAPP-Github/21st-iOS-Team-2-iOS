@@ -52,6 +52,10 @@ final class ContentCell: UICollectionViewCell {
         return textView
     }()
     
+    override func prepareForReuse() {
+        contentTextView.text = "100자 이내로 설명을 남길 수 있어요."
+        contentTextView.textColor = CommonAsset.Colors.gray04.color
+    }
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpConstraintsLayout()
@@ -87,6 +91,10 @@ final class ContentCell: UICollectionViewCell {
             contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3)
         ])
     }
+    
+    @objc func didTapBackgroundButton(_ sender: UIButton) {
+        contentTextView.resignFirstResponder()
+    }
 }
 
 extension ContentCell: UITextViewDelegate {
@@ -118,9 +126,5 @@ extension ContentCell: UITextViewDelegate {
 extension ContentCell {
     public func setActionUploadPhotoButton(_ target: Any?, action: Selector) {
         uploadPhotoButton.addTarget(target, action: action, for: .touchUpInside)
-    }
-    
-    @objc func didTapBackgroundButton(_ sender: UIButton) {
-        contentTextView.resignFirstResponder()
     }
 }
