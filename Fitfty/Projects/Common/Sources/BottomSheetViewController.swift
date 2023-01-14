@@ -28,7 +28,7 @@ public final class BottomSheetViewController: UIViewController {
         
     }
     
-    private let contentViewController: UIViewController
+    private weak var contentViewController: UIViewController?
     private let style: ModalStyle
     
     private var bottomSheetViewTopConstraint: NSLayoutConstraint!
@@ -48,7 +48,7 @@ public final class BottomSheetViewController: UIViewController {
         view.layer.cornerRadius = 20
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         view.clipsToBounds = true
-        view.addSubviews(contentViewController.view)
+        view.addSubviews(contentViewController?.view ?? UIView())
         return view
     }()
     
@@ -87,8 +87,17 @@ private extension BottomSheetViewController {
     }
     
     func setUpContentView() {
+        guard let contentViewController else {
+            return
+        }
         addChild(contentViewController)
         contentViewController.didMove(toParent: self)
+        NSLayoutConstraint.activate([
+            contentViewController.view.topAnchor.constraint(equalTo: bottomSheetView.topAnchor),
+            contentViewController.view.leadingAnchor.constraint(equalTo: bottomSheetView.leadingAnchor),
+            contentViewController.view.trailingAnchor.constraint(equalTo: bottomSheetView.trailingAnchor),
+            contentViewController.view.bottomAnchor.constraint(equalTo: bottomSheetView.bottomAnchor)
+        ])
     }
     
     func setUpLayout() {
@@ -107,11 +116,7 @@ private extension BottomSheetViewController {
             dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
             dimmedView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             dimmedView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            contentViewController.view.topAnchor.constraint(equalTo: bottomSheetView.topAnchor),
-            contentViewController.view.leadingAnchor.constraint(equalTo: bottomSheetView.leadingAnchor),
-            contentViewController.view.trailingAnchor.constraint(equalTo: bottomSheetView.trailingAnchor),
-            contentViewController.view.bottomAnchor.constraint(equalTo: bottomSheetView.bottomAnchor)
+            dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
@@ -183,12 +188,19 @@ private extension BottomSheetViewController {
         let bottomPadding = view.safeAreaInsets.bottom + view.safeAreaInsets.top
         bottomSheetViewTopConstraint.constant = safeAreaHeight + bottomPadding
         
-        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) {
-            self.dimmedView.alpha = 0.0
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            if self.presentingViewController != nil {
-                self.dismiss(animated: false, completion: nil)
+        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) { [weak self] in
+            self?.dimmedView.alpha = 0.0
+            self?.view.layoutIfNeeded()
+        } completion: { [weak self] _ in
+            if self?.presentingViewController != nil {
+                self?.contentViewController?.willMove(toParent: nil)
+                self?.contentViewController?.removeFromParent()
+                self?.contentViewController?.view.removeFromSuperview()
+                let navigationController = self?.contentViewController as? UINavigationController
+                navigationController?.popToRootViewController(animated: false)
+                navigationController?.topViewController?.removeFromParent()
+                self?.contentViewController = nil
+                self?.dismiss(animated: false, completion: nil)
             }
         }
     }
@@ -196,10 +208,23 @@ private extension BottomSheetViewController {
     func showBottomSheet() {
         bottomSheetViewTopConstraint.constant = style.topConstant
         
-        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
-            self.dimmedView.alpha = 0.7
-            self.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
+            self?.dimmedView.alpha = 0.7
+            self?.view.layoutIfNeeded()
         }, completion: nil)
+    }
+    
+}
+
+public protocol BottomSheetViewControllerDelegate: AnyObject {
+    
+    func dismissBottomSheet()
+}
+
+extension BottomSheetViewController: BottomSheetViewControllerDelegate {
+    
+    public func dismissBottomSheet() {
+        dismiss()
     }
     
 }
