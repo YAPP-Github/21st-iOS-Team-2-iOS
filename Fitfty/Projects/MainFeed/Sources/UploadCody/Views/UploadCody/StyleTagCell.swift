@@ -59,11 +59,9 @@ final class StyleTagCell: UICollectionViewCell {
 }
 
 extension StyleTagCell {
-    
     func setUp(styleTag: StyleTag, isSelected: Bool) {
-        titleLabel.text = styleTag.getStyleTagString()
+        titleLabel.text = styleTag.styleTagString
         titleLabel.textColor = isSelected ? .white : CommonAsset.Colors.gray06.color
         titleLabel.backgroundColor = isSelected ? .black : CommonAsset.Colors.gray01.color
-
     }
 }

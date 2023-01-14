@@ -29,8 +29,9 @@ final public class AlbumViewController: UIViewController {
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: albumLayout())
-        collectionView.register(AlbumCell.self)
+        collectionView.backgroundColor = .white
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.register(AlbumCell.self)
         return collectionView
     }()
     

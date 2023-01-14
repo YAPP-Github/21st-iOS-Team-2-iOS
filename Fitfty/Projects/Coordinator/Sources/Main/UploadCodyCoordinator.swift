@@ -55,6 +55,7 @@ private extension UploadCodyCoordinator {
 
 extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
     func dismissUploadCody(_ viewController: UIViewController) {
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         viewController.dismiss(animated: true)
     }
     
