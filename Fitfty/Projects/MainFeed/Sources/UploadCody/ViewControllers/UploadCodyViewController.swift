@@ -280,9 +280,21 @@ extension UploadCodyViewController {
         snapshot.appendItems(Array(0..<weatherTagItems.count).map {_ in UUID() })
         snapshot.appendSections([.styleTag])
         snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
-        dataSource?.apply(snapshot, animatingDifferences: false)
+        dataSource?.apply(snapshot, animatingDifferences: true)
     }
     
+    private func applyTagSnapshot() {
+        if var snapshot = dataSource?.snapshot() {
+            snapshot.deleteSections([.weatherTag])
+            snapshot.appendSections([.weatherTag])
+            snapshot.appendItems(Array(0..<weatherTagItems.count).map { _ in UUID() })
+            snapshot.deleteSections([.styleTag])
+            snapshot.appendSections([.styleTag])
+            snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
+            dataSource?.apply(snapshot, animatingDifferences: false)
+        }
+    }
+        
 }
 
 // MARK: - UICollectionViewCompositionalLayout
@@ -414,7 +426,7 @@ extension UploadCodyViewController: UICollectionViewDelegate {
                     weatherTagItems[index].isSelected = false
                 }
             }
-            applySnapshot()
+            applyTagSnapshot()
             
         case .styleTag:
             for index in styleTagItems.indices {
@@ -424,7 +436,7 @@ extension UploadCodyViewController: UICollectionViewDelegate {
                     styleTagItems[index].isSelected = false
                 }
             }
-            applySnapshot()
+            applyTagSnapshot()
             
         default:
             break
