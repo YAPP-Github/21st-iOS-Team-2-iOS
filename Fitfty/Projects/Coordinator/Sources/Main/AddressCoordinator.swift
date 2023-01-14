@@ -8,11 +8,13 @@
 
 import UIKit
 import MainFeed
+import Common
 
 final class AddressCoordinator: Coordinator {
     
     var type: CoordinatorType { .address }
-    var finishDelegate: CoordinatorFinishDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
+    weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -40,4 +42,9 @@ private extension AddressCoordinator {
 
 extension AddressCoordinator: AddressCoordinatorInterface {
     
+    func dismiss() {
+        navigationController.viewControllers.removeAll()
+        bottomSheetDelegate?.dismissBottomSheet()
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+    }
 }
