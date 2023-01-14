@@ -87,7 +87,7 @@ private extension BottomSheetViewController {
     }
     
     func setUpContentView() {
-        guard let contentViewController else {
+        guard let contentViewController = contentViewController else {
             return
         }
         addChild(contentViewController)
