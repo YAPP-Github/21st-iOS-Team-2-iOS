@@ -9,5 +9,5 @@
 import Foundation
 
 public protocol AddressCoordinatorInterface: AnyObject {
-    
+    func dismiss()
 }
