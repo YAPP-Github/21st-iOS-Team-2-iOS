@@ -56,6 +56,7 @@ final class ContentCell: UICollectionViewCell {
         contentTextView.text = "100자 이내로 설명을 남길 수 있어요."
         contentTextView.textColor = CommonAsset.Colors.gray04.color
     }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpConstraintsLayout()

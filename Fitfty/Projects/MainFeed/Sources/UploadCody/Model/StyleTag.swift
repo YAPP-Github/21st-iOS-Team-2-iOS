@@ -10,7 +10,7 @@ enum StyleTag {
     case formal
     case casual
     
-    func getStyleTagString() -> String {
+    var styleTagString: String {
         switch self {
         case .formal:
             return "포멀"

@@ -47,6 +47,7 @@ final public class UploadCodyViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.backgroundColor = .white
         collectionView.register(ContentCell.self)
         collectionView.register(StyleTagCell.self)
         collectionView.register(WeatherTagCell.self)
@@ -389,7 +390,7 @@ extension UploadCodyViewController {
         )
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 28, trailing: 20)
         section.interGroupSpacing = 8
         section.orthogonalScrollingBehavior = .continuous
         
