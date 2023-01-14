@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Common
 
 public final class AddressViewController: UIViewController {
     
@@ -69,6 +70,7 @@ public final class AddressViewController: UIViewController {
         let button = UIButton()
         button.setTitle("닫기", for: .normal)
         button.titleLabel?.textColor = .white
+        button.titleLabel?.font = FitftyFont.SFProDisplayBold(size: 18).font
         button.backgroundColor = .black
         button.layer.cornerRadius = 12
         button.clipsToBounds = true
@@ -96,6 +98,7 @@ public final class AddressViewController: UIViewController {
         let button = UIButton()
         button.setTitle("선택", for: .normal)
         button.titleLabel?.textColor = .white
+        button.titleLabel?.font = FitftyFont.SFProDisplayBold(size: 18).font
         button.backgroundColor = .black
         button.layer.cornerRadius = 12
         button.clipsToBounds = true
@@ -108,6 +111,7 @@ public final class AddressViewController: UIViewController {
         let button = UIButton()
         button.setTitle("뒤로가기", for: .normal)
         button.titleLabel?.textColor = .white
+        button.titleLabel?.font = FitftyFont.SFProDisplayBold(size: 18).font
         button.backgroundColor = .black
         button.layer.cornerRadius = 12
         button.clipsToBounds = true
