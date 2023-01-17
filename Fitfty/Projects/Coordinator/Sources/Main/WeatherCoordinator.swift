@@ -8,6 +8,7 @@
 
 import UIKit
 import MainFeed
+import Common
 
 final class WeatherCoordinator: Coordinator {
     
@@ -35,16 +36,40 @@ private extension WeatherCoordinator {
         return viewController
     }
     
+    func makeAddressViewController() -> UIViewController {
+        let coordinator = AddressCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .large,
+            contentViewController: coordinator.navigationController
+        )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
+    }
+    
 }
 
 extension WeatherCoordinator: WeatherCoordinatorInterface {
     
     func showSettingAddress() {
-        print(#function)
+        let viewController = makeAddressViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
     func finished() {
         navigationController.popViewController(animated: true)
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+    }
+}
+
+extension WeatherCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
     }
 }
