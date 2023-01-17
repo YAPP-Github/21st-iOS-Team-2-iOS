@@ -125,8 +125,8 @@ private extension WeatherViewController {
                     largeTitle: "10일간 날씨예보",
                     smallTitle: "기상청에서 제공하는 정보를 알려드려요.",
                     largeTitleFont: FitftyFont.appleSDBold(size: 24).font ?? .systemFont(ofSize: 24),
-                    smallTitleFont: FitftyFont.appleSDMedium(size: 13).font ?? .systemFont(ofSize: 13),
-                    smallTitleColor: CommonAsset.Colors.gray05.color,
+                    smallTitleFont: FitftyFont.appleSDSemiBold(size: 13).font ?? .systemFont(ofSize: 13),
+                    smallTitleColor: CommonAsset.Colors.gray04.color,
                     largeTitleTopAnchorConstant: 24,
                     smallTitleTopAchorConstant: 4
                 )

@@ -100,7 +100,7 @@ public final class MainViewController: UIViewController {
                     largeTitle: "오늘의 핏프티",
                     smallTitle: "날씨에 맞는 코디 추천",
                     largeTitleFont: FitftyFont.appleSDBold(size: 24).font ?? .systemFont(ofSize: 24),
-                    smallTitleFont: FitftyFont.appleSDMedium(size: 14).font ?? .systemFont(ofSize: 14),
+                    smallTitleFont: FitftyFont.appleSDSemiBold(size: 14).font ?? .systemFont(ofSize: 14),
                     smallTitleColor: CommonAsset.Colors.gray04.color,
                     largeTitleTopAnchorConstant: 24,
                     smallTitleTopAchorConstant: 4
