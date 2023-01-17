@@ -11,23 +11,9 @@ import Common
 
 public final class WeatherViewController: UIViewController {
     
-    enum Section {
-        case today
-        case anotherDay
-        
-        init?(index: Int) {
-            switch index {
-            case 0: self = .today
-            case 1: self = .anotherDay
-            default: return nil
-            }
-        }
-        
-    }
-    
     private var coordinator: WeatherCoordinatorInterface
     private var viewModel: WeatherViewModel
-    private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<WeatherViewSection, UUID>?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,10 +92,10 @@ private extension WeatherViewController {
     }
     
     func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<WeatherViewSection, UUID>(
             collectionView: collectionView,
             cellProvider: { collectionView, indexPath, _ in
-                let section = Section(index: indexPath.section)
+                let section = WeatherViewSection(index: indexPath.section)
                 switch section {
                 case .today:
                     let cell = collectionView.dequeueReusableCell(WeatherCell.self, for: indexPath)
@@ -157,7 +143,7 @@ private extension WeatherViewController {
     }
     
     func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
+        var snapshot = NSDiffableDataSourceSnapshot<WeatherViewSection, UUID>()
         snapshot.appendSections([.today])
         snapshot.appendItems(Array(0...23).map { _ in UUID() })
         snapshot.appendSections([.anotherDay])
@@ -167,7 +153,7 @@ private extension WeatherViewController {
     
     func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
-            let section = Section(index: sectionNumber)
+            let section = WeatherViewSection(index: sectionNumber)
             switch section {
             case .today: return self?.weatherSectionLayout()
             case .anotherDay: return self?.anotherDaySectionLayout()
