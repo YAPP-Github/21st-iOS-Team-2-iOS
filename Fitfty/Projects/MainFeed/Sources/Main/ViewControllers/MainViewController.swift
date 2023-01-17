@@ -91,11 +91,21 @@ public final class MainViewController: UIViewController {
         dataSource?.supplementaryViewProvider = { [weak self] collectionView, elementKind, indexPath in
             switch elementKind {
             case HeaderView.className:
-                return collectionView.dequeueReusableSupplementaryView(
+                let headerView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
                     withReuseIdentifier: HeaderView.className,
                     for: indexPath
+                ) as? HeaderView
+                headerView?.setUp(
+                    largeTitle: "오늘의 핏프티",
+                    smallTitle: "날씨에 맞는 코디 추천",
+                    largeTitleFont: FitftyFont.appleSDBold(size: 24).font ?? .systemFont(ofSize: 24),
+                    smallTitleFont: FitftyFont.appleSDMedium(size: 14).font ?? .systemFont(ofSize: 14),
+                    smallTitleColor: CommonAsset.Colors.gray04.color,
+                    largeTitleTopAnchorConstant: 24,
+                    smallTitleTopAchorConstant: 4
                 )
+                return headerView
                 
             case FooterView.className:
                 return collectionView.dequeueReusableSupplementaryView(
@@ -193,15 +203,15 @@ public final class MainViewController: UIViewController {
         )
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: .zero, leading: 20, bottom: 20, trailing: 20)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
         section.interGroupSpacing = 8
         section.orthogonalScrollingBehavior = .continuous
         
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
-                    widthDimension: .absolute(UIScreen.main.bounds.width),
-                    heightDimension: .absolute(50)
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width - 40),
+                    heightDimension: .absolute(80)
                 ),
                 elementKind: HeaderView.className, alignment: .top)
         ]
