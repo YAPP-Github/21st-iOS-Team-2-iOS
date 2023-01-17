@@ -103,6 +103,9 @@ private extension WeatherViewController {
                     
                 case .anotherDay:
                     let cell = collectionView.dequeueReusableCell(WeeklyWeatherCell.self, for: indexPath)
+                    if indexPath.item == 0 {
+                        cell?.highlighted()
+                    }
                     cell?.setUp()
                     return cell
                     

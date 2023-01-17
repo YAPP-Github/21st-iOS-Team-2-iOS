@@ -114,6 +114,24 @@ final class WeeklyWeatherCell: UICollectionViewCell {
         return label
     }()
     
+    private lazy var highlightedView: UIView = {
+        let view = UIView()
+        view.backgroundColor = CommonAsset.Colors.blue.color
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = CGRect(x: .zero, y: .zero, width: safeAreaLayoutGuide.layoutFrame.width, height: 72)
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0.8)
+        gradientLayer.endPoint = CGPoint(x: 0.9, y: 1)
+        gradientLayer.colors = [UIColor.white.withAlphaComponent(0).cgColor, CommonAsset.Colors.purple.color.cgColor]
+        gradientLayer.locations = [-0.9]
+        gradientLayer.cornerRadius = 8
+        view.layer.addSublayer(gradientLayer)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.isHidden = true
+//        view.alpha = 0.3
+        return view
+    }()
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         reset()
@@ -137,12 +155,16 @@ final class WeeklyWeatherCell: UICollectionViewCell {
     }
     
     private func configure() {
-        contentView.addSubviews(backgroundStackView)
+        contentView.addSubviews(highlightedView, backgroundStackView)
         NSLayoutConstraint.activate([
             backgroundStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             backgroundStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             backgroundStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            backgroundStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            backgroundStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            highlightedView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            highlightedView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            highlightedView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            highlightedView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
     
@@ -153,6 +175,7 @@ final class WeeklyWeatherCell: UICollectionViewCell {
         pmInfoView.reset()
         minTempLabel.text = nil
         maxTempLabel.text = nil
+        highlightedView.isHidden = true
     }
     
 }
@@ -167,6 +190,10 @@ extension WeeklyWeatherCell {
         minTempLabel.text = "-12°"
         maxTempLabel.text = "3°"
 
+    }
+    
+    func highlighted() {
+        highlightedView.isHidden = false
     }
     
 }
