@@ -46,4 +46,6 @@ enum CoordinatorType {
     case profile
     case address
     case weather
+    case uploadCody
+    case album
 }
