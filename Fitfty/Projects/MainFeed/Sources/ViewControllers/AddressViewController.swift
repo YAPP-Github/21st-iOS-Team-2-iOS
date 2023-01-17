@@ -10,20 +10,7 @@ import UIKit
 import Common
 
 public final class AddressViewController: UIViewController {
-    
-    enum Section {
-        
-        case address
-        
-        init?(index: Int) {
-            switch index {
-            case 0: self = .address
-            default: return nil
-            }
-        }
-        
-    }
-    
+
     private weak var coordinator: AddressCoordinatorInterface?
     private var viewModel: AddressViewModel
     
@@ -47,7 +34,7 @@ public final class AddressViewController: UIViewController {
         coordinator?.dismiss()
     }
     
-    private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<AddressViewSection, UUID>?
     
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
@@ -169,10 +156,10 @@ private extension AddressViewController {
     }
     
     func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<AddressViewSection, UUID>(
             collectionView: collectionView,
             cellProvider: { collectionView, indexPath, _ in
-                let section = Section(index: indexPath.section)
+                let section = AddressViewSection(index: indexPath.section)
                 switch section {
                 case .address:
                     let cell = collectionView.dequeueReusableCell(AddressCell.self, for: indexPath)
@@ -185,7 +172,7 @@ private extension AddressViewController {
     }
     
     func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
+        var snapshot = NSDiffableDataSourceSnapshot<AddressViewSection, UUID>()
         snapshot.appendSections([.address])
         snapshot.appendItems(Array(0...20).map { _ in UUID() })
         dataSource?.apply(snapshot)
@@ -193,7 +180,7 @@ private extension AddressViewController {
     
     func createLayout() -> UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
-            let section = Section(index: sectionNumber)
+            let section = AddressViewSection(index: sectionNumber)
             switch section {
             case .address: return self?.addressSectionLayout()
             default: return nil
