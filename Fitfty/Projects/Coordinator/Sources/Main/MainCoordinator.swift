@@ -80,3 +80,10 @@ extension MainCoordinator: CoordinatorFinishDelegate {
         childDidFinish(childCoordinator, parent: self)
     }
 }
+
+extension MainCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
+    }
+}
