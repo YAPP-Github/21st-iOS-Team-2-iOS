@@ -71,10 +71,10 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
     var tabBarController: UITabBarController
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
-    var navigationController: UINavigationController
+    var navigationController: BaseNavigationController
     
     required init(
-        _ navigationController: UINavigationController,
+        _ navigationController: BaseNavigationController,
         tabBarController: UITabBarController = TabBarController()
     ) {
         self.navigationController = navigationController
@@ -85,7 +85,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
         let pages: [TabBarPage] = [.weather, .createCody, .profile]
             .sorted(by: { $0.pageOrderNumber < $1.pageOrderNumber })
         
-        let controllers: [UINavigationController] = pages.map({ getTabController($0) })
+        let controllers: [BaseNavigationController] = pages.map({ getTabController($0) })
         
         prepareTabBarController(withTabControllers: controllers)
     }
@@ -100,7 +100,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
         navigationController.setNavigationBarHidden(true, animated: false)
     }
     
-    private func getTabController(_ page: TabBarPage) -> UINavigationController {
+    private func getTabController(_ page: TabBarPage) -> BaseNavigationController {
         switch page {
         case .weather:
             let coordinator = MainCoordinator()
@@ -115,7 +115,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             tabBarController.addChild(coordinator.navigationController)
             
         case .createCody:
-            let navigationController = UINavigationController()
+            let navigationController = BaseNavigationController()
             let tabBarItem =  UITabBarItem.init(
                 title: nil,
                 image: page.pageIconImage,
