@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Common
 
 public final class WeatherViewController: UIViewController {
     
@@ -57,6 +58,7 @@ public final class WeatherViewController: UIViewController {
         collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
         collectionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
+        collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
 
@@ -73,13 +75,11 @@ private extension WeatherViewController {
     
     func setUpNavigationBar() {
         let cancelButton = UIBarButtonItem(
-            image: UIImage(systemName: "arrow.left")?
-                .withConfiguration(UIImage.SymbolConfiguration(font: .preferredFont(for: .body, weight: .bold))),
+            image: CommonAsset.Images.btnArrowleft.image,
             style: .plain,
             target: self,
             action: #selector(didTapBackButton(_:))
         )
-        navigationController?.navigationBar.tintColor = .black
         navigationItem.leftBarButtonItem = cancelButton
     }
     
