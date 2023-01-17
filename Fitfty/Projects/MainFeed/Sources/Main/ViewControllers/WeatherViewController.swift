@@ -113,11 +113,21 @@ private extension WeatherViewController {
         dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
             switch elementKind {
             case HeaderView.className:
-                return collectionView.dequeueReusableSupplementaryView(
+                let headerView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
                     withReuseIdentifier: HeaderView.className,
                     for: indexPath
+                ) as? HeaderView
+                headerView?.setUp(
+                    largeTitle: "10일간 날씨예보",
+                    smallTitle: "기상청에서 제공하는 정보를 알려드려요.",
+                    largeTitleFont: FitftyFont.appleSDBold(size: 24).font ?? .systemFont(ofSize: 24),
+                    smallTitleFont: FitftyFont.appleSDMedium(size: 13).font ?? .systemFont(ofSize: 13),
+                    smallTitleColor: CommonAsset.Colors.gray05.color,
+                    largeTitleTopAnchorConstant: 24,
+                    smallTitleTopAchorConstant: 4
                 )
+                return headerView
                 
             case FooterView.className:
                 return collectionView.dequeueReusableSupplementaryView(
@@ -210,14 +220,14 @@ private extension WeatherViewController {
         )
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: .zero, leading: 20, bottom: 20, trailing: 20)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
         section.interGroupSpacing = 16
         
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
-                    widthDimension: .absolute(UIScreen.main.bounds.width),
-                    heightDimension: .absolute(50)
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width - 40),
+                    heightDimension: .absolute(80)
                 ),
                 elementKind: HeaderView.className, alignment: .top)
         ]
