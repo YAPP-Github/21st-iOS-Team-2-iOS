@@ -5,11 +5,13 @@ excluded: # 린트 과정에서 무시할 파일 경로. `included`보다 우선
 identifier_name:
     min_length:
         - 2 # warning
-        - 4 # error
+        - 3 # error
     excluded: # 제외할 문자열 목록
         - a
         - b
         - app
+        - nx
+        - ny
 function_body_length:
     - 150 # warning
     - 300 # error
