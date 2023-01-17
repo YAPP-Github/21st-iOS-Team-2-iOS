@@ -15,8 +15,19 @@ final class AlbumCell: UICollectionViewCell {
     private lazy var button: UIButton = {
         let button = UIButton()
         button.setImage(CommonAsset.Images.btnAlbumUnSelcted.image, for: .normal)
+        button.isUserInteractionEnabled = false
         return button
     }()
+    
+    override var isSelected: Bool {
+        didSet {
+            if isSelected {
+                button.setImage(CommonAsset.Images.btnAlbumSelected.image, for: .normal)
+            } else {
+                button.setImage(CommonAsset.Images.btnAlbumUnSelcted.image, for: .normal)
+            }
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,7 +53,9 @@ final class AlbumCell: UICollectionViewCell {
 }
 
 extension AlbumCell {
-    func setUp(image: UIImage) {
+    
+    func setImage(image: UIImage) {
         imageView.image = image
     }
+
 }
