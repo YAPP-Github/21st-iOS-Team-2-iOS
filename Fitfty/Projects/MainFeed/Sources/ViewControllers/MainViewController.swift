@@ -10,25 +10,8 @@ import Common
 
 public final class MainViewController: UIViewController {
     
-    enum Section {
-        
-        case weather
-        case style
-        case cody
-        
-        init?(index: Int) {
-            switch index {
-            case 0: self = .weather
-            case 1: self = .style
-            case 2: self = .cody
-            default: return nil
-            }
-        }
-        
-    }
-    
     private var coordinator: MainCoordinatorInterface
-    private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<MainViewSection, UUID>?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
@@ -82,10 +65,10 @@ public final class MainViewController: UIViewController {
     }
     
     private func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<MainViewSection, UUID>(
             collectionView: collectionView,
             cellProvider: { collectionView, indexPath, _ in
-                let section = Section(index: indexPath.section)
+                let section = MainViewSection(index: indexPath.section)
                 switch section {
                 case .weather:
                     let cell = collectionView.dequeueReusableCell(WeatherCell.self, for: indexPath)
@@ -140,7 +123,7 @@ public final class MainViewController: UIViewController {
     }
     
     private func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
+        var snapshot = NSDiffableDataSourceSnapshot<MainViewSection, UUID>()
         snapshot.appendSections([.weather])
         snapshot.appendItems(Array(0...23).map { _ in UUID() })
         snapshot.appendSections([.style])
@@ -152,7 +135,7 @@ public final class MainViewController: UIViewController {
     
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
-            let section = Section(index: sectionNumber)
+            let section = MainViewSection(index: sectionNumber)
             switch section {
             case .weather: return self?.weatherSectionLayout()
             case .style: return self?.styleSectionLayout()
@@ -259,7 +242,7 @@ private extension MainViewController {
 extension MainViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = Section(index: indexPath.section)
+        let section = MainViewSection(index: indexPath.section)
         
         switch section {
         case .weather:
