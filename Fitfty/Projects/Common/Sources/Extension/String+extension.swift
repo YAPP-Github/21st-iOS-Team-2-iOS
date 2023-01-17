@@ -17,4 +17,12 @@ public extension String {
         }
         return self
     }
+    
+    func toDate(_ format: DateFormat) -> Date? {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "ko-kr")
+        formatter.dateFormat = format.rawValue
+        formatter.locale = Locale(identifier: "ko-kr")
+        return formatter.date(from: self)
+    }
 }
