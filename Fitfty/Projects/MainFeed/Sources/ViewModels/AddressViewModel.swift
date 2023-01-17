@@ -10,6 +10,17 @@ import Foundation
 import Combine
 import Common
 
+enum AddressViewSection {
+    case address
+    
+    init?(index: Int) {
+        switch index {
+        case 0: self = .address
+        default: return nil
+        }
+    }
+}
+
 public final class AddressViewModel: ViewModelType {
     
     public enum ViewModelState {
