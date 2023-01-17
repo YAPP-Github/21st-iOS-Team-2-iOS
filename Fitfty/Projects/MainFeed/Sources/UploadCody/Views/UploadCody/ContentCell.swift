@@ -72,13 +72,13 @@ final class ContentCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             
             backgroundButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
-            backgroundButton.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            backgroundButton.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            backgroundButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            backgroundButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             backgroundButton.heightAnchor.constraint(equalToConstant: 350),
             
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
-            imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             imageView.heightAnchor.constraint(equalToConstant: 350),
             
             uploadPhotoButton.centerXAnchor.constraint(equalTo: backgroundButton.centerXAnchor),
@@ -87,8 +87,8 @@ final class ContentCell: UICollectionViewCell {
             uploadPhotoButton.widthAnchor.constraint(equalToConstant: 138),
             
             contentTextView.topAnchor.constraint(equalTo: backgroundButton.bottomAnchor, constant: 20),
-            contentTextView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
-            contentTextView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
+            contentTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            contentTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3)
         ])
     }
