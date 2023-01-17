@@ -61,8 +61,8 @@ extension HeaderView {
         stackView.addArrangedSubviews(largeTitleLabel, smallTitleLabel)
         
         NSLayoutConstraint.activate([
-            stackView.leftAnchor.constraint(equalTo: leftAnchor),
-            stackView.rightAnchor.constraint(equalTo: rightAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: largeTitleTopAnchorConstant),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])

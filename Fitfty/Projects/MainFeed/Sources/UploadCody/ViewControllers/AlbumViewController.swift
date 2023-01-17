@@ -104,22 +104,22 @@ final public class AlbumViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             navigationBarView.topAnchor.constraint(equalTo: view.topAnchor),
-            navigationBarView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            navigationBarView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            navigationBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            navigationBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             navigationBarView.heightAnchor.constraint(equalToConstant: 76),
             
             bottomView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            bottomView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            bottomView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            bottomView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomView.heightAnchor.constraint(equalToConstant: 152),
             
-            uploadButton.leftAnchor.constraint(equalTo: bottomView.leftAnchor, constant: 20),
-            uploadButton.rightAnchor.constraint(equalTo: bottomView.rightAnchor, constant: -20),
+            uploadButton.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 20),
+            uploadButton.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -20),
             uploadButton.topAnchor.constraint(equalTo: bottomView.topAnchor, constant: 32),
             uploadButton.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor, constant: -56),
             
-            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionViewTopConstraint,
             collectionViewBottomConstraint
         ])

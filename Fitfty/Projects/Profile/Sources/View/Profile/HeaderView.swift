@@ -42,22 +42,22 @@ final class HeaderView: UICollectionReusableView {
             settingButton.widthAnchor.constraint(equalToConstant: 62),
             settingButton.heightAnchor.constraint(equalToConstant: 34),
             settingButton.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            settingButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            settingButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
             profileView.topAnchor.constraint(equalTo: settingButton.bottomAnchor, constant: 12),
             profileView.heightAnchor.constraint(equalToConstant: 223),
-            profileView.leftAnchor.constraint(equalTo: leftAnchor),
-            profileView.rightAnchor.constraint(equalTo: rightAnchor),
+            profileView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            profileView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
             menuView.topAnchor.constraint(equalTo: profileView.bottomAnchor, constant: 24),
             menuView.heightAnchor.constraint(equalToConstant: 72),
-            menuView.leftAnchor.constraint(equalTo: leftAnchor),
-            menuView.rightAnchor.constraint(equalTo: rightAnchor),
+            menuView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            menuView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
             spacingView.topAnchor.constraint(equalTo: menuView.bottomAnchor),
             spacingView.heightAnchor.constraint(equalToConstant: 24),
-            spacingView.leftAnchor.constraint(equalTo: leftAnchor),
-            spacingView.rightAnchor.constraint(equalTo: rightAnchor)
+            spacingView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            spacingView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
 }

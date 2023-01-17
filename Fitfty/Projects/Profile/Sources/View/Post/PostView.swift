@@ -48,15 +48,15 @@ final class PostView: UIView {
         
         NSLayoutConstraint.activate([
             postImageView.topAnchor.constraint(equalTo: topAnchor),
-            postImageView.leftAnchor.constraint(equalTo: leftAnchor),
-            postImageView.rightAnchor.constraint(equalTo: rightAnchor),
+            postImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            postImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             postImageView.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor, multiplier: 0.7),
             
             postInfoView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            postInfoView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            postInfoView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             
-            contentLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            contentLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            contentLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             contentLabel.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 20),
             
             dateLabel.leadingAnchor.constraint(equalTo: contentLabel.leadingAnchor),

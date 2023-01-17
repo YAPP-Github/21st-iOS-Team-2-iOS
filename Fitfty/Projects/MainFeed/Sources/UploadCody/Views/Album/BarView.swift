@@ -55,10 +55,10 @@ final class BarView: UIView {
         albumStackView.spacing = 10
         NSLayoutConstraint.activate([
             albumStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            albumStackView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            albumStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
         
             cancelButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-            cancelButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            cancelButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             cancelButton.widthAnchor.constraint(equalToConstant: 32),
             cancelButton.heightAnchor.constraint(equalToConstant: 32)
         ])

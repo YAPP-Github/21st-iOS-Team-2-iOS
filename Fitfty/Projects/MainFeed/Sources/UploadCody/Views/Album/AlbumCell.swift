@@ -31,11 +31,11 @@ final class AlbumCell: UICollectionViewCell {
     private func setConstraintsLayout() {
         addSubviews(imageView, button)
         NSLayoutConstraint.activate([
-            imageView.leftAnchor.constraint(equalTo: leftAnchor),
-            imageView.rightAnchor.constraint(equalTo: rightAnchor),
+            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             imageView.topAnchor.constraint(equalTo: topAnchor),
             imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            button.rightAnchor.constraint(equalTo: rightAnchor, constant: -8),
+            button.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
             button.topAnchor.constraint(equalTo: topAnchor, constant: 8)
         ])
     }
