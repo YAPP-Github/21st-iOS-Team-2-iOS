@@ -50,7 +50,7 @@ final class PhotoService: NSObject {
             .init(
                 identifier: nil,
                 name: Const.titleText,
-                count: standardAlbum.count,
+                photoCount: standardAlbum.count,
                 album: standardAlbum
             )
         )
@@ -78,7 +78,7 @@ final class PhotoService: NSObject {
                     .init(
                         identifier: smartAlbum.localIdentifier,
                         name: smartAlbum.localizedTitle ?? Const.titleText,
-                        count: smartAlbums.count,
+                        photoCount: smartAlbums.count,
                         album: smartAlbums
                     )
                 )
