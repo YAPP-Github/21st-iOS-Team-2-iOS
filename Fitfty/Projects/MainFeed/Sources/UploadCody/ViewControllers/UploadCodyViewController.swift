@@ -91,13 +91,15 @@ final public class UploadCodyViewController: UIViewController {
     private func setUpNavigationBar() {
         navigationItem.title = "새 핏프티 등록"
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: CommonAsset.Images.btnX.image,
-            style: .plain,
-            target: self,
-            action: #selector(didTapCancelButton)
-        )
-        navigationItem.leftBarButtonItem?.tintColor = .black
+        let leftButton: UIButton = {
+          let button = UIButton()
+            button.setImage(UIImage(systemName: "xmark"), for: .normal)
+            button.tintColor = .black
+            button.setPreferredSymbolConfiguration(.init(scale: .medium), forImageIn: .normal)
+            button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
+            return button
+        }()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
         
         let rightBarButton: UIBarButtonItem = {
             let button = UIButton()
