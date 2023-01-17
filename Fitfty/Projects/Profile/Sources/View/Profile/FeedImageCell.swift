@@ -34,8 +34,8 @@ final class FeedImageCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             feedImageView.topAnchor.constraint(equalTo: self.topAnchor),
             feedImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            feedImageView.leftAnchor.constraint(equalTo: self.leftAnchor),
-            feedImageView.rightAnchor.constraint(equalTo: self.rightAnchor)
+            feedImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            feedImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
         ])
     }
 }
