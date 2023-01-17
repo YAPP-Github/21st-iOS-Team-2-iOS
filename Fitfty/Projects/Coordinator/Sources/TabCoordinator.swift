@@ -116,14 +116,16 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             
         case .createCody:
             let navigationController = BaseNavigationController()
+            let coordinator = UploadCodyCoordinator()
+            coordinator.start()
             let tabBarItem =  UITabBarItem.init(
                 title: nil,
                 image: page.pageIconImage,
                 tag: page.pageOrderNumber
             )
-            navigationController.tabBarItem = tabBarItem
+            coordinator.navigationController.tabBarItem = tabBarItem
             tabBarItem.imageInsets = UIEdgeInsets(top: 13, left: 0, bottom: -15, right: 0)
-            tabBarController.addChild(navigationController)
+            tabBarController.addChild(coordinator.navigationController)
             
         case .profile:
             let coordinator = ProfileCoordinator()
@@ -169,9 +171,10 @@ extension TabCoordinator: UITabBarControllerDelegate {
             return true
         }
         if tabBar == .createCody {
-            let controller = UIViewController()
-            controller.view.backgroundColor = .white
-            tabBarController.present(controller, animated: true)
+            let coordinator = UploadCodyCoordinator()
+            coordinator.start()
+            coordinator.navigationController.modalPresentationStyle = .fullScreen
+            tabBarController.present(coordinator.navigationController, animated: true)
             return false
         }
         return true

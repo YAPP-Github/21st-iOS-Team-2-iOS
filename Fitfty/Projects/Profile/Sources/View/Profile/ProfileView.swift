@@ -99,10 +99,10 @@ final class ProfileView: UIView {
             dotLabel.centerXAnchor.constraint(equalTo: followView.centerXAnchor),
             dotLabel.centerYAnchor.constraint(equalTo: followView.centerYAnchor),
             
-            followButton.rightAnchor.constraint(equalTo: dotLabel.leftAnchor, constant: -1),
+            followButton.trailingAnchor.constraint(equalTo: dotLabel.leadingAnchor, constant: -1),
             followButton.centerYAnchor.constraint(equalTo: followView.centerYAnchor),
             
-            followerButton.leftAnchor.constraint(equalTo: dotLabel.rightAnchor, constant: 1),
+            followerButton.leadingAnchor.constraint(equalTo: dotLabel.trailingAnchor, constant: 1),
             followerButton.centerYAnchor.constraint(equalTo: followView.centerYAnchor)
         ])
     }
