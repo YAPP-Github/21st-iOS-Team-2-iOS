@@ -21,7 +21,6 @@ final public class AlbumViewController: UIViewController {
     private lazy var uploadButton: UIButton = {
         let button = UIButton()
         button.setTitle("업로드", for: .normal)
-        button.backgroundColor = .black
         return button
     }()
     
@@ -29,6 +28,7 @@ final public class AlbumViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: albumLayout())
         collectionView.backgroundColor = .white
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.delegate = self
         collectionView.register(AlbumCell.self)
         return collectionView
     }()
@@ -61,6 +61,8 @@ final public class AlbumViewController: UIViewController {
         }
     }
     
+    private var selectedIndex: Int?
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
@@ -72,6 +74,7 @@ final public class AlbumViewController: UIViewController {
         setDataSource()
         applySnapshot()
         setPhotoService()
+        setUploadButton()
     }
     
     private func setNavigationBar() {
@@ -81,6 +84,16 @@ final public class AlbumViewController: UIViewController {
     private func setPhotoService() {
         PhotoService.shared.delegate = self
         getAlbums()
+    }
+    
+    private func setUploadButton() {
+        if selectedIndex != nil {
+            uploadButton.setTitleColor(.white, for: .normal)
+            uploadButton.backgroundColor = .black
+        } else {
+            uploadButton.setTitleColor(CommonAsset.Colors.gray06.color, for: .normal)
+            uploadButton.backgroundColor = CommonAsset.Colors.gray03.color
+        }
     }
     
     private func getAlbums() {
@@ -131,7 +144,7 @@ final public class AlbumViewController: UIViewController {
                     contentMode: .aspectFit
                 ) { [weak cell] image in
                     DispatchQueue.main.async {
-                        cell?.setUp(image: image)
+                        cell?.setImage(image: image)
                     }
                 }
                 return cell
@@ -172,5 +185,12 @@ final public class AlbumViewController: UIViewController {
 extension AlbumViewController: PHPhotoLibraryChangeObserver {
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
         getAlbums()
+    }
+}
+
+extension AlbumViewController: UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndex = indexPath.row
+        setUploadButton()
     }
 }
