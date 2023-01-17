@@ -12,4 +12,6 @@ public protocol MainCoordinatorInterface: AnyObject {
     
     func showSettingAddress()
     
+    func showWeatherInfo()
+    
 }

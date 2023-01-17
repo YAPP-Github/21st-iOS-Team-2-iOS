@@ -1,111 +1,130 @@
 //
-//  MainViewController.swift
-//  ProjectDescriptionHelpers
+//  WeatherViewController.swift
+//  MainFeed
 //
-//  Created by Ari on 2022/12/02.
+//  Created by Ari on 2023/01/17.
+//  Copyright © 2023 Fitfty. All rights reserved.
 //
 
 import UIKit
-import Common
 
-public final class MainViewController: UIViewController {
+public final class WeatherViewController: UIViewController {
     
     enum Section {
-        
-        case weather
-        case style
-        case cody
+        case today
+        case anotherDay
         
         init?(index: Int) {
             switch index {
-            case 0: self = .weather
-            case 1: self = .style
-            case 2: self = .cody
+            case 0: self = .today
+            case 1: self = .anotherDay
             default: return nil
             }
         }
         
     }
     
-    private var coordinator: MainCoordinatorInterface
+    private var coordinator: WeatherCoordinatorInterface
+    private var viewModel: WeatherViewModel
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
-    
-    private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
-        collectionView.register(WeatherCell.self)
-        collectionView.register(StyleCell.self)
-        collectionView.register(CodyCell.self)
-        collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
-        collectionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
-        collectionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
-        collectionView.delegate = self
-        return collectionView
-    }()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setUpLayout()
-        setUpNavigationBar()
-        setUpDataSource()
-        applySnapshot()
+        setUp()
     }
     
-    public init(coordinator: MainCoordinatorInterface) {
+    public init(coordinator: WeatherCoordinatorInterface, viewModel: WeatherViewModel) {
         self.coordinator = coordinator
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        view.backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setUpNavigationBar() {
+    private lazy var locationView: LocationView = {
         let locationView = LocationView("성북구 정릉동")
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: locationView)
         let tappedLoacationView = UITapGestureRecognizer(target: self, action: #selector(didTapLoactionView(_:)))
         locationView.addGestureRecognizer(tappedLoacationView)
+        return locationView
+    }()
+    
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+        collectionView.register(WeatherCell.self)
+        collectionView.register(WeeklyWeatherCell.self)
+        collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
+        collectionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
+        collectionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
+        return collectionView
+    }()
+
+}
+
+private extension WeatherViewController {
+    
+    func setUp() {
+        setUpLayout()
+        setUpNavigationBar()
+        setUpDataSource()
+        applySnapshot()
     }
     
-    @objc private func didTapLoactionView(_ sender: UITapGestureRecognizer) {
+    func setUpNavigationBar() {
+        let cancelButton = UIBarButtonItem(
+            image: UIImage(systemName: "arrow.left")?
+                .withConfiguration(UIImage.SymbolConfiguration(font: .preferredFont(for: .body, weight: .bold))),
+            style: .plain,
+            target: self,
+            action: #selector(didTapBackButton(_:))
+        )
+        navigationController?.navigationBar.tintColor = .black
+        navigationItem.leftBarButtonItem = cancelButton
+    }
+    
+    @objc func didTapLoactionView(_ sender: UITapGestureRecognizer) {
         coordinator.showSettingAddress()
     }
     
-    private func setUpLayout() {
-        view.addSubviews(collectionView)
+    @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {
+        coordinator.finished()
+    }
+    
+    func setUpLayout() {
+        view.addSubviews(locationView, collectionView)
+        view.backgroundColor = .white
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            locationView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            locationView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            locationView.bottomAnchor.constraint(equalTo: collectionView.topAnchor, constant: -10),
+            collectionView.topAnchor.constraint(equalTo: locationView.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
-    private func setUpDataSource() {
+    func setUpDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
             collectionView: collectionView,
             cellProvider: { collectionView, indexPath, _ in
                 let section = Section(index: indexPath.section)
                 switch section {
-                case .weather:
+                case .today:
                     let cell = collectionView.dequeueReusableCell(WeatherCell.self, for: indexPath)
                     return cell
                     
-                case .style:
-                    let items = ["포멀", "캐주얼", "미니멀", "포멀", "캐주얼", "미니멀", "포멀"]
-                    let cell = collectionView.dequeueReusableCell(StyleCell.self, for: indexPath)
-                    cell?.setUp(text: items[indexPath.item])
-                    return cell
-                    
-                case .cody:
-                    let cell = collectionView.dequeueReusableCell(CodyCell.self, for: indexPath)
+                case .anotherDay:
+                    let cell = collectionView.dequeueReusableCell(WeeklyWeatherCell.self, for: indexPath)
+                    cell?.setUp()
                     return cell
                     
                 default:
                     return UICollectionViewCell()
                 }
             })
-        dataSource?.supplementaryViewProvider = { [weak self] collectionView, elementKind, indexPath in
+        dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
             switch elementKind {
             case HeaderView.className:
                 return collectionView.dequeueReusableSupplementaryView(
@@ -128,8 +147,6 @@ public final class MainViewController: UIViewController {
                     for: indexPath
                 ) as? WeatherInfoHeaderView
                 reusableView?.setUp(temp: 12, condition: "구름 많음", minimum: 12, maximum: 12)
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.didTapWeather(_:)))
-                reusableView?.addGestureRecognizer(tapGesture)
                 return reusableView
                 
             default: return UICollectionReusableView()
@@ -139,30 +156,27 @@ public final class MainViewController: UIViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applySnapshot() {
+    func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
-        snapshot.appendSections([.weather])
+        snapshot.appendSections([.today])
         snapshot.appendItems(Array(0...23).map { _ in UUID() })
-        snapshot.appendSections([.style])
-        snapshot.appendItems(Array(0...6).map { _ in UUID() })
-        snapshot.appendSections([.cody])
+        snapshot.appendSections([.anotherDay])
         snapshot.appendItems(Array(0...10).map { _ in UUID() })
         dataSource?.apply(snapshot)
     }
     
-    private func createLayout() -> UICollectionViewCompositionalLayout {
+    func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
             let section = Section(index: sectionNumber)
             switch section {
-            case .weather: return self?.weatherSectionLayout()
-            case .style: return self?.styleSectionLayout()
-            case .cody: return self?.codySectionLayout()
+            case .today: return self?.weatherSectionLayout()
+            case .anotherDay: return self?.anotherDaySectionLayout()
             default: return nil
             }
         }
     }
     
-    private func weatherSectionLayout() -> NSCollectionLayoutSection? {
+    func weatherSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(74),
             heightDimension: .absolute(72)
@@ -196,10 +210,10 @@ public final class MainViewController: UIViewController {
         return section
     }
     
-    private func styleSectionLayout() -> NSCollectionLayoutSection? {
+    func anotherDaySectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
-            widthDimension: .estimated(100),
-            heightDimension: .absolute(32)
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .absolute(72)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -211,8 +225,7 @@ public final class MainViewController: UIViewController {
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: .zero, leading: 20, bottom: 20, trailing: 20)
-        section.interGroupSpacing = 8
-        section.orthogonalScrollingBehavior = .continuous
+        section.interGroupSpacing = 16
         
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
@@ -224,48 +237,4 @@ public final class MainViewController: UIViewController {
         ]
         return section
     }
-    
-    private func codySectionLayout() -> NSCollectionLayoutSection? {
-        let layoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(300),
-            heightDimension: .absolute(336)
-        )
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: .init(
-                widthDimension: layoutSize.widthDimension,
-                heightDimension: layoutSize.heightDimension
-            ),
-            subitems: [.init(layoutSize: layoutSize)]
-        )
-        group.interItemSpacing = .fixed(8)
-        
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: .zero, leading: 20, bottom: .zero, trailing: 20)
-        section.interGroupSpacing = 8
-        section.orthogonalScrollingBehavior = .groupPaging
-        
-        return section
-    }
-    
-}
-
-private extension MainViewController {
-    
-    @objc func didTapWeather(_ sender: UIGestureRecognizer? = nil) {
-        coordinator.showWeatherInfo()
-    }
-}
-
-extension MainViewController: UICollectionViewDelegate {
-    
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = Section(index: indexPath.section)
-        
-        switch section {
-        case .weather:
-            didTapWeather()
-        default: return
-        }
-    }
-    
 }

@@ -44,4 +44,5 @@ enum CoordinatorType {
     case main
     case profile
     case address
+    case weather
 }
