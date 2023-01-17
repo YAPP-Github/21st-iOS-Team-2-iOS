@@ -52,7 +52,6 @@ final class BarView: UIView {
     private func setConstraintsLayout() {
         addSubviews(albumStackView, cancelButton)
         albumStackView.addArrangedSubviews(albumNameLabel, chevronButton)
-        albumStackView.spacing = 10
         NSLayoutConstraint.activate([
             albumStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             albumStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),

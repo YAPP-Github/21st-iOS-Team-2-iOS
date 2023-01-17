@@ -18,8 +18,6 @@ final public class AlbumViewController: UIViewController {
     
     private let navigationBarView = BarView()
     
-    private let bottomView = UIView()
-    
     private lazy var uploadButton: UIButton = {
         let button = UIButton()
         button.setTitle("업로드", for: .normal)
@@ -65,6 +63,10 @@ final public class AlbumViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setUp()
+    }
+    
+    private func setUp() {
         setNavigationBar()
         setConstraintsLayout()
         setDataSource()
@@ -94,13 +96,10 @@ final public class AlbumViewController: UIViewController {
     }
     
     private func setConstraintsLayout() {
-        view.addSubviews(navigationBarView, collectionView, bottomView, uploadButton)
+        view.addSubviews(navigationBarView, collectionView, uploadButton)
         
         let collectionViewTopConstraint = collectionView.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor)
         collectionViewTopConstraint.priority = .defaultLow
-        
-        let collectionViewBottomConstraint = collectionView.bottomAnchor.constraint(equalTo: bottomView.topAnchor)
-        collectionViewBottomConstraint.priority = .defaultLow
         
         NSLayoutConstraint.activate([
             navigationBarView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -108,20 +107,15 @@ final public class AlbumViewController: UIViewController {
             navigationBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             navigationBarView.heightAnchor.constraint(equalToConstant: 76),
             
-            bottomView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            bottomView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomView.heightAnchor.constraint(equalToConstant: 152),
-            
-            uploadButton.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 20),
-            uploadButton.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -20),
-            uploadButton.topAnchor.constraint(equalTo: bottomView.topAnchor, constant: 32),
-            uploadButton.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor, constant: -56),
-            
+            collectionViewTopConstraint,
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionViewTopConstraint,
-            collectionViewBottomConstraint
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -152),
+            
+            uploadButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            uploadButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            uploadButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 32),
+            uploadButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -56)
         ])
     }
     
