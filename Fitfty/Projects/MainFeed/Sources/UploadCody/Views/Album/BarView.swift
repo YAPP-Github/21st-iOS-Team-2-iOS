@@ -35,7 +35,8 @@ final class BarView: UIView {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.setImage(CommonAsset.Images.btnGrayX.image, for: .normal)
+        button.setImage(UIImage(systemName: "xmark"), for: .normal)
+        button.tintColor = CommonAsset.Colors.gray04.color
         button.setPreferredSymbolConfiguration(.init(scale: .large), forImageIn: .normal)
         return button
     }()
