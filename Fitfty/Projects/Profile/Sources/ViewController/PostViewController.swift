@@ -49,8 +49,8 @@ final public class PostViewController: UIViewController {
     private func setUpConstraintLayout() {
         view.addSubviews(postView)
         NSLayoutConstraint.activate([
-            postView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            postView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            postView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            postView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             postView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             postView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])

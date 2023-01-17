@@ -94,19 +94,19 @@ final class MenuView: UIView {
             barView.heightAnchor.constraint(equalToConstant: 72),
             barView.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            myFitftyIconButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -65),
+            myFitftyIconButton.trailingAnchor.constraint(equalTo: barView.leadingAnchor, constant: -65),
             myFitftyIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             
-            myFitftyCountButton.rightAnchor.constraint(equalTo: barView.leftAnchor, constant: -48),
+            myFitftyCountButton.trailingAnchor.constraint(equalTo: barView.leadingAnchor, constant: -48),
             myFitftyCountButton.topAnchor.constraint(equalTo: myFitftyIconButton.bottomAnchor, constant: 14),
             
-            myFitftyTextButton.rightAnchor.constraint(equalTo: myFitftyCountButton.leftAnchor, constant: -2),
+            myFitftyTextButton.trailingAnchor.constraint(equalTo: myFitftyCountButton.leadingAnchor, constant: -2),
             myFitftyTextButton.topAnchor.constraint(equalTo: myFitftyIconButton.bottomAnchor, constant: 14),
             
-            bookmarkIconButton.leftAnchor.constraint(equalTo: barView.rightAnchor, constant: 65),
+            bookmarkIconButton.leadingAnchor.constraint(equalTo: barView.trailingAnchor, constant: 65),
             bookmarkIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             
-            bookmarkTextButton.leftAnchor.constraint(equalTo: barView.rightAnchor, constant: 48),
+            bookmarkTextButton.leadingAnchor.constraint(equalTo: barView.trailingAnchor, constant: 48),
             bookmarkTextButton.topAnchor.constraint(equalTo: bookmarkIconButton.bottomAnchor, constant: 14)
         ])
     }
