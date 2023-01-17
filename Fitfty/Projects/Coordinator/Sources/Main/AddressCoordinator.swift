@@ -8,11 +8,13 @@
 
 import UIKit
 import MainFeed
+import Common
 
 final class AddressCoordinator: Coordinator {
     
     var type: CoordinatorType { .address }
-    var finishDelegate: CoordinatorFinishDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
+    weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -32,10 +34,17 @@ final class AddressCoordinator: Coordinator {
 private extension AddressCoordinator {
     
     func makeAddressViewController() -> UIViewController {
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .systemGreen
-        viewController.navigationItem.title = "주소를 변경해볼까요?"
+        let viewController = AddressViewController(coordinator: self, viewModel: AddressViewModel())
         return viewController
     }
     
+}
+
+extension AddressCoordinator: AddressCoordinatorInterface {
+    
+    func dismiss() {
+        navigationController.viewControllers.removeAll()
+        bottomSheetDelegate?.dismissBottomSheet()
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+    }
 }

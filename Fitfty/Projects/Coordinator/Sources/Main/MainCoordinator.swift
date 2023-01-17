@@ -40,10 +40,13 @@ private extension MainCoordinator {
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
         let bottomSheetViewController = BottomSheetViewController(
             style: .large,
             contentViewController: coordinator.navigationController
         )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
     
@@ -57,4 +60,11 @@ extension MainCoordinator: MainCoordinatorInterface {
         navigationController.present(viewController, animated: false)
     }
     
+}
+
+extension MainCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
+    }
 }
