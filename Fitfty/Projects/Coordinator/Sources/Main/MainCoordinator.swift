@@ -50,6 +50,15 @@ private extension MainCoordinator {
         return bottomSheetViewController
     }
     
+    func makeUserViewController() -> UIViewController {
+        let coordinator = UserCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        return coordinator.navigationController
+    }
+    
 }
 
 extension MainCoordinator: MainCoordinatorInterface {
@@ -58,6 +67,12 @@ extension MainCoordinator: MainCoordinatorInterface {
         let viewController = makeAddressViewController()
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
+    }
+    
+    public func showUser() {
+        let viewController = makeUserViewController()
+        viewController.modalPresentationStyle = .fullScreen
+        navigationController.present(viewController, animated: true)
     }
     
 }

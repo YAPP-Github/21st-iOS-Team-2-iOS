@@ -109,6 +109,10 @@ final class CodyCell: UICollectionViewCell {
         codyImageView.image = nil
     }
     
+    func addProfileViewGestureRecognizer(_ target: Any?, action: Selector) {
+        profileStackView.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
+    }
+    
 }
 
 extension CodyCell {
