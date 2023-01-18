@@ -1,5 +1,5 @@
 //
-//  DailyWeatherDTO.swift
+//  ShortTermForecastDTO.swift
 //  Core
 //
 //  Created by Ari on 2023/01/17.
@@ -9,7 +9,7 @@
 import Foundation
 
 // MARK: - DailyWeatherDTO
-public struct DailyWeatherDTO: Codable {
+public struct ShortTermForecastDTO: Codable {
     let response: DailyWeatherResponse
 }
 
