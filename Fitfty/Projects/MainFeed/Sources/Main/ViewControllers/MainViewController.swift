@@ -88,16 +88,17 @@ public final class MainViewController: UIViewController {
                 switch section {
                 case .weather:
                     let cell = collectionView.dequeueReusableCell(WeatherCell.self, for: indexPath)
-                    return cell
+                    return cell ?? UICollectionViewCell()
                     
                 case .style:
                     let items = ["포멀", "캐주얼", "미니멀", "포멀", "캐주얼", "미니멀", "포멀"]
                     let cell = collectionView.dequeueReusableCell(StyleCell.self, for: indexPath)
                     cell?.setUp(text: items[indexPath.item])
-                    return cell
+                    return cell ?? UICollectionViewCell()
                     
                 case .cody:
                     let cell = collectionView.dequeueReusableCell(CodyCell.self, for: indexPath)
+                    cell?.addProfileViewGestureRecognizer(self, action: #selector(self.didTapProfileStackView))
                     return cell
                     
                 default:
@@ -242,6 +243,10 @@ public final class MainViewController: UIViewController {
         section.orthogonalScrollingBehavior = .groupPaging
         
         return section
+    }
+    
+    @objc func didTapProfileStackView(_ sender: Any?) {
+        coordinator.showUser()
     }
     
 }
