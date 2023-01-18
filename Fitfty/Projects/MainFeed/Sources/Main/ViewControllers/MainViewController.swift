@@ -246,7 +246,7 @@ public final class MainViewController: UIViewController {
     }
     
     @objc func didTapProfileStackView(_ sender: Any?) {
-        coordinator.showUser()
+        coordinator.showUserProfile()
     }
     
 }

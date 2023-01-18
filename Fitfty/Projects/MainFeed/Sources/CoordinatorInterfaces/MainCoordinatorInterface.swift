@@ -12,5 +12,5 @@ public protocol MainCoordinatorInterface: AnyObject {
     
     func showSettingAddress()
     
-    func showUser()
+    func showUserProfile()
 }

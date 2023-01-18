@@ -11,7 +11,7 @@ import Common
 
 final public class PostViewController: UIViewController {
 
-    private var coordinator: ProfileCoordinatorInterface
+    private var coordinator: MyProfileCoordinatorInterface
     private let postView = PostView()
     
     public override func viewDidLoad() {
@@ -23,7 +23,7 @@ final public class PostViewController: UIViewController {
         setCustomNavigationItem()
     }
     
-    public init(coordinator: ProfileCoordinatorInterface) {
+    public init(coordinator: MyProfileCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white

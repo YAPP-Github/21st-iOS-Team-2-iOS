@@ -30,14 +30,15 @@ final class UserCoordinator: Coordinator {
 
 private extension UserCoordinator {
     func makeUserViewController() -> UIViewController {
-        let viewController = UserViewController(coordinator: self)
+        let viewController = UserProfileViewController(coordinator: self)
+        viewController.hidesBottomBarWhenPushed = true
         return viewController
     }
 }
 
-extension UserCoordinator: UserCoordinatorInterface {
-    func dismiss(_ viewController: UIViewController) {
-        viewController.dismiss(animated: true)
+extension UserCoordinator: UserProfileCoordinatorInterface {
+    func dismiss() {
+        navigationController.popViewController(animated: true)
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
