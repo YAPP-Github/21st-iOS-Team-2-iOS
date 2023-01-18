@@ -37,10 +37,17 @@ private extension UserCoordinator {
         viewController.hidesBottomBarWhenPushed = true
         return viewController
     }
+    
+    func makeUserPostViewController() -> UIViewController {
+        let viewController = UserPostViewController(coordinator: self)
+        return viewController
+    }
 }
 
 extension UserCoordinator: UserProfileCoordinatorInterface {
    
     func showPost() {
+        let viewController = makeUserPostViewController()
+        navigationController.pushViewController(viewController, animated: true)
     }
 }
