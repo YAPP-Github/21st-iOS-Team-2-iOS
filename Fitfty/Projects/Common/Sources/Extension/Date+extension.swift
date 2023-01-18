@@ -22,6 +22,7 @@ public extension Date {
 
 public enum DateFormat: String {
     case baseDate = "yyyyMMdd"
+    case hour = "HH"
     case fcstDate = "yyyyMMddHHmm"
     case week = "E"
     case monthDay = "MM.dd"

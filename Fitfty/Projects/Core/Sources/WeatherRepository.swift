@@ -25,7 +25,7 @@ public final class DefaultWeatherRepository: WeatherRepository {
             numOfRows: 1000,
             pageNo: 1,
             baseDate: Date().toString(.baseDate),
-            baseTime: "1400",
+            baseTime: baseTime(Date()),
             nx: latitude,
             ny: longitude
         ).asDictionary()
@@ -40,7 +40,7 @@ public final class DefaultWeatherRepository: WeatherRepository {
             }
             let filteredItems = dailyWeatherDTO.response.body?.items.item.filter {
                 let date = ($0.fcstDate + $0.fcstTime).toDate(.fcstDate) ?? Date()
-                return date > Date()
+                return Date() < date
             } ?? []
             let groupedItems = Dictionary(
                 grouping: filteredItems,
@@ -54,4 +54,22 @@ public final class DefaultWeatherRepository: WeatherRepository {
             throw error
         }
     }
+}
+
+private extension DefaultWeatherRepository {
+    
+    func baseTime(_ time: Date) -> String {
+        let currentHour = time.toString(.hour)
+        switch currentHour {
+        case "02", "03", "04": return "0200"
+        case "05", "06", "07": return "0500"
+        case "08", "09", "10": return "0800"
+        case "11", "12", "13": return "1100"
+        case "14", "15", "16": return "1400"
+        case "17", "18", "19": return "1700"
+        case "20", "21", "22": return "2000"
+        default: return "2300"
+        }
+    }
+    
 }

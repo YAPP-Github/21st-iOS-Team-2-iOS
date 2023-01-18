@@ -10,12 +10,12 @@ import Foundation
 import Common
 
 public struct DailyWeather {
-    let date: Date
-    let precipitation: String
-    let maxTemp: String
-    let minTemp: String
-    let skyState: SkyState
-    let precipitationPattern: PrecipitationPattern
+    public let date: Date
+    public let precipitation: String
+    public let maxTemp: String
+    public let minTemp: String
+    public let skyState: SkyState
+    public let precipitationPattern: PrecipitationPattern
 }
 
 public extension DailyWeather {
