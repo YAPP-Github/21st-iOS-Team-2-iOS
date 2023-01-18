@@ -6,8 +6,8 @@
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public protocol UserCoordinatorInterface: AnyObject {
-    func dismiss()
+    func dismiss(_ viewController: UIViewController)
 }

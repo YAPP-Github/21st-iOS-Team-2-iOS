@@ -43,6 +43,7 @@ enum CoordinatorType {
     case tabBar
     case main
     case profile
+    case user
     case address
     case uploadCody
     case album

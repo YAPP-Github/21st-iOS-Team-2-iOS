@@ -11,7 +11,7 @@ import Profile
 
 final class UserCoordinator: Coordinator {
  
-    var type: CoordinatorType { .address }
+    var type: CoordinatorType { .user }
     weak var finishDelegate: CoordinatorFinishDelegate?
    
     var parentCoordinator: Coordinator?
@@ -36,8 +36,8 @@ private extension UserCoordinator {
 }
 
 extension UserCoordinator: UserCoordinatorInterface {
-    func dismiss() {
-        navigationController.viewControllers.removeAll()
+    func dismiss(_ viewController: UIViewController) {
+        viewController.dismiss(animated: true)
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
