@@ -39,7 +39,7 @@ private extension ProfileCoordinator {
 
 extension ProfileCoordinator: MyProfileCoordinatorInterface {
     func showPost() {
-        let postViewController = PostViewController(coordinator: self)
+        let postViewController = MyPostViewController(coordinator: self)
         postViewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(postViewController, animated: true)
     }
