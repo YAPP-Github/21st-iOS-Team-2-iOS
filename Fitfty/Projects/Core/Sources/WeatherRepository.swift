@@ -12,15 +12,17 @@ import CoreLocation
 
 public protocol WeatherRepository {
     
-    func fetchDailyWeather(latitude: String, longitude: String) async throws -> [DailyWeather]
+    func fetchShortTermForecast(latitude: String, longitude: String) async throws -> [ShortTermForecast]
     
 }
 
 public final class DefaultWeatherRepository: WeatherRepository {
     
+    private var _shortTermForecast: [ShortTermForecast] = []
+    
     public init() {}
     
-    public func fetchDailyWeather(latitude: String, longitude: String) async throws -> [DailyWeather] {
+    public func fetchShortTermForecast(latitude: String, longitude: String) async throws -> [ShortTermForecast] {
         let request = try DailyWeatherRequest(
             numOfRows: 1000,
             pageNo: 1,
@@ -33,7 +35,7 @@ public final class DefaultWeatherRepository: WeatherRepository {
         do {
             let dailyWeatherDTO = try await WeatherAPI.request(
                 target: WeatherAPI.fetchDailyWeather(parameter: request),
-                dataType: DailyWeatherDTO.self
+                dataType: ShortTermForecastDTO.self
             )
             if dailyWeatherDTO.response.header.resultCode != .normalService {
                 throw dailyWeatherDTO.response.header.resultCode
@@ -46,10 +48,11 @@ public final class DefaultWeatherRepository: WeatherRepository {
                 grouping: filteredItems,
                 by: { ($0.fcstDate + $0.fcstTime).toDate(.fcstDate) ?? Date() }
             )
-            let dailyWeather = groupedItems
-                .map { DailyWeather($0.value) }
+            let shortTermForecast = groupedItems
+                .map { ShortTermForecast($0.value) }
                 .sorted { $0.date < $1.date }
-            return dailyWeather
+            _shortTermForecast = shortTermForecast
+            return shortTermForecast
         } catch {
             throw error
         }

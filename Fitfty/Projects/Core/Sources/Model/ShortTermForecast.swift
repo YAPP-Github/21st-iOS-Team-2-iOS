@@ -1,5 +1,5 @@
 //
-//  DailyWeather.swift
+//  ShortTermForecast.swift
 //  Core
 //
 //  Created by Ari on 2023/01/17.
@@ -9,7 +9,7 @@
 import Foundation
 import Common
 
-public struct DailyWeather {
+public struct ShortTermForecast {
     public let date: Date
     public let precipitation: String
     public let maxTemp: String
@@ -18,7 +18,7 @@ public struct DailyWeather {
     public let precipitationPattern: PrecipitationPattern
 }
 
-public extension DailyWeather {
+public extension ShortTermForecast {
     
     init(_ items: [DailyWeatherItem]) {
         self.date = items.first?.date ?? Date()
