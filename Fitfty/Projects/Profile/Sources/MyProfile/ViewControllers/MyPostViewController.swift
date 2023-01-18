@@ -9,7 +9,7 @@
 import UIKit
 import Common
 
-final public class PostViewController: UIViewController {
+final public class MyPostViewController: UIViewController {
 
     private var coordinator: MyProfileCoordinatorInterface
     private let postView = PostView()

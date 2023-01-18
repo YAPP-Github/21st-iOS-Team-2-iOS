@@ -9,5 +9,5 @@
 import UIKit
 
 public protocol UserProfileCoordinatorInterface: AnyObject {
-    func dismiss()
+    func showPost()
 }

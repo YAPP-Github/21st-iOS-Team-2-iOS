@@ -50,10 +50,6 @@ final public class UserProfileViewController: UIViewController {
         applySnapshot()
     }
     
-    @objc func didTapBackButton(_ sender: Any?) {
-        coordinator.dismiss()
-    }
-    
     @objc func didTapMoreVerticalButton(_ sender: Any?) {
         print("didTapMoreVerticalButton")
     }
@@ -72,14 +68,6 @@ private extension UserProfileViewController {
     }
     
     func setNavigationBar() {
-        navigationItem.leftBarButtonItem =
-        UIBarButtonItem(
-            image: CommonAsset.Images.btnArrowleft.image,
-            style: .plain, target: self,
-            action: #selector(didTapBackButton)
-        )
-        navigationItem.leftBarButtonItem?.tintColor = .black
-        
         navigationItem.rightBarButtonItem =
         UIBarButtonItem(
             image: CommonAsset.Images.btnMoreVertical.image,

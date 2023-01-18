@@ -8,6 +8,7 @@
 
 import UIKit
 import Profile
+import Common
 
 final class UserCoordinator: Coordinator {
  
@@ -20,16 +21,18 @@ final class UserCoordinator: Coordinator {
     
     init(navigationConrtoller: UINavigationController = UINavigationController()) {
         self.navigationController = navigationConrtoller
+        navigationConrtoller.setCustomBackButton()
+
     }
     
     func start() {
-        let viewController = makeUserViewController()
+        let viewController = makeUserProfileViewController()
         navigationController.pushViewController(viewController, animated: true)
     }
 }
 
 private extension UserCoordinator {
-    func makeUserViewController() -> UIViewController {
+    func makeUserProfileViewController() -> UIViewController {
         let viewController = UserProfileViewController(coordinator: self)
         viewController.hidesBottomBarWhenPushed = true
         return viewController
@@ -37,8 +40,7 @@ private extension UserCoordinator {
 }
 
 extension UserCoordinator: UserProfileCoordinatorInterface {
-    func dismiss() {
-        navigationController.popViewController(animated: true)
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+   
+    func showPost() {
     }
 }
