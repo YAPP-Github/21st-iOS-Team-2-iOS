@@ -18,6 +18,8 @@ public protocol WeatherRepository {
 
 public final class DefaultWeatherRepository: WeatherRepository {
     
+    public init() {}
+    
     public func fetchDailyWeather() async throws -> [DailyWeather] {
         let request = try DailyWeatherRequest(
             numOfRows: 1000,
@@ -27,38 +29,29 @@ public final class DefaultWeatherRepository: WeatherRepository {
             nx: Int(abs(LocationManager.shared.lastLocation?.coordinate.latitude ?? 61)).description,
             ny: Int(abs(LocationManager.shared.lastLocation?.coordinate.longitude ?? 127)).description
         ).asDictionary()
-        guard let dailyWeatherDTO = try await WeatherAPI.request(
-            target: WeatherAPI.fetchDailyWeather(parameter: request),
-            dataType: DailyWeatherDTO.self
-        ) else {
-            throw WeatherRepositoryError.optionalBindingFailed
-        }
-        if dailyWeatherDTO.response.header.resultCode == .normalService {
-            let filteredResponse: [DailyWeatherItem] = dailyWeatherDTO.response.body.items.item
-                .filter {
-                    let date = ($0.fcstDate + $0.fcstTime).toDate(.fcstDate) ?? Date()
-                    return date > Date()
-                }
-            return Dictionary(
-                grouping: filteredResponse,
+        
+        do {
+            let dailyWeatherDTO = try await WeatherAPI.request(
+                target: WeatherAPI.fetchDailyWeather(parameter: request),
+                dataType: DailyWeatherDTO.self
+            )
+            if dailyWeatherDTO.response.header.resultCode != .normalService {
+                throw dailyWeatherDTO.response.header.resultCode
+            }
+            let filteredItems = dailyWeatherDTO.response.body?.items.item.filter {
+                let date = ($0.fcstDate + $0.fcstTime).toDate(.fcstDate) ?? Date()
+                return date > Date()
+            } ?? []
+            let groupedItems = Dictionary(
+                grouping: filteredItems,
                 by: { ($0.fcstDate + $0.fcstTime).toDate(.fcstDate) ?? Date() }
-            ).map { DailyWeather($0.value) }
+            )
+            let dailyWeather = groupedItems
+                .map { DailyWeather($0.value) }
                 .sorted { $0.date < $1.date }
-        } else {
-            throw dailyWeatherDTO.response.header.resultCode
-        }
-            
-    }
-}
-
-enum WeatherRepositoryError: LocalizedError {
-    
-    case optionalBindingFailed
-    
-    var errorDescription: String? {
-        switch self {
-        case .optionalBindingFailed: return "reqeust를 Dictionary"
+            return dailyWeather
+        } catch {
+            throw error
         }
     }
-    
 }

@@ -16,7 +16,7 @@ public struct DailyWeatherDTO: Codable {
 // MARK: - Response
 public struct DailyWeatherResponse: Codable {
     let header: DailyWeatherHeader
-    let body: DailyWeatherBody
+    let body: DailyWeatherBody?
 }
 
 // MARK: - Body

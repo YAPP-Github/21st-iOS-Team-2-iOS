@@ -25,4 +25,5 @@ public enum DateFormat: String {
     case fcstDate = "yyyyMMddHHmm"
     case week = "E"
     case monthDay = "MM.dd"
+    case log = "yyyy-MM-dd HH:mm:ss"
 }

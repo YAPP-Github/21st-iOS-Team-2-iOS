@@ -56,15 +56,19 @@ extension WeatherAPI: TargetType {
 }
 
 public extension WeatherAPI {
-    static func request<T: Decodable>(target: WeatherAPI, dataType: T.Type) async throws -> T? {
+    static func request<T: Decodable>(target: WeatherAPI, dataType: T.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
             let provider = MoyaProvider<WeatherAPI>()
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
                     print("didFinishRequest URL [\(response.request?.url?.absoluteString ?? "")]")
-                    let data = try? JSONDecoder().decode(T.self, from: response.data)
-                    continuation.resume(returning: data)
+                    do {
+                        let data = try JSONDecoder().decode(T.self, from: response.data)
+                        continuation.resume(returning: data)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
                 case .failure(let error):
                     continuation.resume(throwing: error)
                 }
