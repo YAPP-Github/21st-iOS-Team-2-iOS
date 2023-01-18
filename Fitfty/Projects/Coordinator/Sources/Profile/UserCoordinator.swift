@@ -40,6 +40,7 @@ private extension UserCoordinator {
     
     func makeUserPostViewController() -> UIViewController {
         let viewController = UserPostViewController(coordinator: self)
+        viewController.hidesBottomBarWhenPushed = true
         return viewController
     }
 }

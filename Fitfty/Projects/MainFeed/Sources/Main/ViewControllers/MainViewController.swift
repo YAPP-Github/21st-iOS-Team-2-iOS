@@ -38,6 +38,7 @@ public final class MainViewController: UIViewController {
         collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
         collectionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
+        collectionView.delegate = self
         return collectionView
     }()
     
@@ -249,4 +250,16 @@ public final class MainViewController: UIViewController {
         coordinator.showUserProfile()
     }
     
+}
+
+extension MainViewController: UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let section = Section(index: indexPath.section)
+        switch section {
+        case .cody:
+            coordinator.showUserPost()
+        default:
+            break
+        }
+    }
 }

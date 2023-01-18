@@ -72,6 +72,11 @@ extension MainCoordinator: MainCoordinatorInterface {
         coordinator.start()
     }
     
+    public func showUserPost() {
+        let coordinator = makeUserCoordinator()
+        coordinator.showPost()
+    }
+    
 }
 
 extension MainCoordinator: CoordinatorFinishDelegate {
