@@ -25,6 +25,7 @@ final public class UserProfileViewController: UIViewController {
                                 forCellWithReuseIdentifier: FeedImageCell.className)
         collectionView.register(UserProfileHeaderView.self,
                                 forSupplementaryViewOfKind: UserProfileHeaderView.className)
+        collectionView.delegate = self
         return collectionView
     }()
     
@@ -137,5 +138,11 @@ private extension UserProfileViewController {
         ]
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
+    }
+}
+
+extension UserProfileViewController: UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        coordinator.showPost()
     }
 }
