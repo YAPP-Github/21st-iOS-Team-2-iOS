@@ -22,9 +22,8 @@ public final class LocationManager: NSObject {
         return manager
     }()
     
-    private var locationPublisher = CurrentValueSubject<CLLocation?, Never>(nil)
-    private var authorizationPublisher = CurrentValueSubject<CLAuthorizationStatus, Never>(.notDetermined)
-    private(set) var lastLocation: CLLocation?
+    private var _location = CurrentValueSubject<CLLocation?, Never>(nil)
+    private var _authorizationStatus = CurrentValueSubject<CLAuthorizationStatus, Never>(.notDetermined)
     
     public override init() {
         super.init()
@@ -32,17 +31,17 @@ public final class LocationManager: NSObject {
     }
     
     public func currentLocation() -> AnyPublisher<CLLocation, Never> {
-        guard locationPublisher.value == nil else {
+        guard _location.value == nil else {
             return Empty().eraseToAnyPublisher()
         }
         manager.startUpdatingLocation()
-        return locationPublisher
+        return _location
             .compactMap { $0 }
             .eraseToAnyPublisher()
     }
     
     public func authorizationStatus() -> AnyPublisher<CLAuthorizationStatus, Never> {
-        return authorizationPublisher.eraseToAnyPublisher()
+        return _authorizationStatus.eraseToAnyPublisher()
     }
     
     public func requestWhenInUseAuthorization() {
@@ -61,9 +60,9 @@ extension LocationManager: CLLocationManagerDelegate {
         case .notDetermined, .restricted:
             manager.requestWhenInUseAuthorization()
         default:
-            locationPublisher.send(nil)
+            _location.send(nil)
         }
-        authorizationPublisher.send(status)
+        _authorizationStatus.send(status)
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -71,24 +70,13 @@ extension LocationManager: CLLocationManagerDelegate {
             return
         }
         
-        if last.coordinate != lastLocation?.coordinate {
-            locationPublisher.send(last)
-            lastLocation = last
+        if last.coordinate != _location.value?.coordinate {
+            _location.send(last)
         }
     }
     
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        guard let error = error as? CLError else {
-            return
-        }
-        switch error.code {
-        case .denied:
-            lastLocation = nil
-        case .locationUnknown:
-            lastLocation = nil
-        default:
-            lastLocation = nil
-        }
+        Logger.debug(error: error, message: "위치 가져오기 오류")
     }
     
 }
