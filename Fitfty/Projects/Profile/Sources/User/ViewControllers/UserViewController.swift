@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Common
 
 final public class UserViewController: UIViewController {
 
@@ -14,6 +15,7 @@ final public class UserViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setNavigationBar()
     }
     
     public init(coordinator: UserCoordinatorInterface) {
@@ -26,4 +28,30 @@ final public class UserViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setNavigationBar() {
+        navigationItem.leftBarButtonItem =
+        UIBarButtonItem(
+            image: CommonAsset.Images.btnArrowleft.image,
+            style: .plain, target: self,
+            action: #selector(didTapBackButton)
+        )
+        navigationItem.leftBarButtonItem?.tintColor = .black
+        
+        navigationItem.rightBarButtonItem =
+        UIBarButtonItem(
+            image: CommonAsset.Images.btnMoreVertical.image,
+            style: .plain,
+            target: self,
+            action: #selector(didTapMoreVerticalButton)
+        )
+        navigationItem.rightBarButtonItem?.tintColor = .black
+    }
+    
+    @objc func didTapBackButton(_ sender: Any?) {
+        coordinator.dismiss(self)
+    }
+    
+    @objc func didTapMoreVerticalButton(_ sender: Any?) {
+        print("didTapMoreVerticalButton")
+    }
 }
