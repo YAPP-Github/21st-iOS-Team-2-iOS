@@ -32,12 +32,12 @@ final class ProfileCoordinator: Coordinator {
 
 private extension ProfileCoordinator {
     func makeProfileViewController() -> UIViewController {
-        let viewController = ProfileViewController(coordinator: self)
+        let viewController = MyProfileViewController(coordinator: self)
         return viewController
     }
 }
 
-extension ProfileCoordinator: ProfileCoordinatorInterface {
+extension ProfileCoordinator: MyProfileCoordinatorInterface {
     func showPost() {
         let postViewController = PostViewController(coordinator: self)
         postViewController.hidesBottomBarWhenPushed = true

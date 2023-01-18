@@ -8,6 +8,6 @@
 
 import UIKit
 
-public protocol UserCoordinatorInterface: AnyObject {
-    func dismiss(_ viewController: UIViewController)
+public protocol UserProfileCoordinatorInterface: AnyObject {
+    func dismiss()
 }
