@@ -18,20 +18,14 @@ public protocol WeatherRepository {
 
 public final class DefaultWeatherRepository: WeatherRepository {
     
-    private let locationManager: CLLocationManager
-    
-    public init(locationManager: CLLocationManager = .init()) {
-        self.locationManager = locationManager
-    }
-    
     public func fetchDailyWeather() async throws -> [DailyWeather] {
         let request = try DailyWeatherRequest(
             numOfRows: 1000,
             pageNo: 1,
             baseDate: Date().toString(.baseDate),
             baseTime: "1400",
-            nx: Int(locationManager.location?.coordinate.latitude ?? 61).description,
-            ny: Int(locationManager.location?.coordinate.longitude ?? 127).description
+            nx: Int(abs(LocationManager.shared.lastLocation?.coordinate.latitude ?? 61)).description,
+            ny: Int(abs(LocationManager.shared.lastLocation?.coordinate.longitude ?? 127)).description
         ).asDictionary()
         guard let dailyWeatherDTO = try await WeatherAPI.request(
             target: WeatherAPI.fetchDailyWeather(parameter: request),
