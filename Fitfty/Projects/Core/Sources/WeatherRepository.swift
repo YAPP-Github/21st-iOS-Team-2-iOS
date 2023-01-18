@@ -12,7 +12,7 @@ import CoreLocation
 
 public protocol WeatherRepository {
     
-    func fetchDailyWeather() async throws -> [DailyWeather]
+    func fetchDailyWeather(latitude: String, longitude: String) async throws -> [DailyWeather]
     
 }
 
@@ -20,14 +20,14 @@ public final class DefaultWeatherRepository: WeatherRepository {
     
     public init() {}
     
-    public func fetchDailyWeather() async throws -> [DailyWeather] {
+    public func fetchDailyWeather(latitude: String, longitude: String) async throws -> [DailyWeather] {
         let request = try DailyWeatherRequest(
             numOfRows: 1000,
             pageNo: 1,
             baseDate: Date().toString(.baseDate),
             baseTime: "1400",
-            nx: Int(abs(LocationManager.shared.lastLocation?.coordinate.latitude ?? 61)).description,
-            ny: Int(abs(LocationManager.shared.lastLocation?.coordinate.longitude ?? 127)).description
+            nx: latitude,
+            ny: longitude
         ).asDictionary()
         
         do {

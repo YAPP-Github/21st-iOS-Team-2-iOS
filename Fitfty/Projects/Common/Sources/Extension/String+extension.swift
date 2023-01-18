@@ -9,6 +9,7 @@
 import Foundation
 
 public extension String {
+    
     var insertComma: String {
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
@@ -24,5 +25,13 @@ public extension String {
         formatter.dateFormat = format.rawValue
         formatter.locale = Locale(identifier: "ko-kr")
         return formatter.date(from: self)
+    }
+    
+    var decimalClean: String {
+        if let doubleValue = Double(self) {
+            return Int(doubleValue).description
+        } else {
+            return self
+        }
     }
 }
