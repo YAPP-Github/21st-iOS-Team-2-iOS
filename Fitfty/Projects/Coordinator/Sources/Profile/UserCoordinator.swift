@@ -43,6 +43,15 @@ private extension UserCoordinator {
         viewController.hidesBottomBarWhenPushed = true
         return viewController
     }
+    
+    func makeReportViewController() -> UIViewController {
+        let bottomSheetViewController =
+        BottomSheetViewController(
+            style: .small,
+            contentViewController: ReportViewController(coordinator: self)
+        )
+        return bottomSheetViewController
+    }
 }
 
 extension UserCoordinator: UserProfileCoordinatorInterface {
@@ -50,5 +59,15 @@ extension UserCoordinator: UserProfileCoordinatorInterface {
     func showPost() {
         let viewController = makeUserPostViewController()
         navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func showReport(_ viewController: UIViewController) {
+        let reportViewController = makeReportViewController()
+        reportViewController.modalPresentationStyle = .overFullScreen
+        viewController.present(reportViewController, animated: false)
+    }
+    
+    func dismissReport(_ viewController: UIViewController) {
+        viewController.dismiss(animated: true)
     }
 }

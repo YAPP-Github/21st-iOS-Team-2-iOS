@@ -25,6 +25,7 @@ final public class UserProfileViewController: UIViewController {
                                 forCellWithReuseIdentifier: FeedImageCell.className)
         collectionView.register(UserProfileHeaderView.self,
                                 forSupplementaryViewOfKind: UserProfileHeaderView.className)
+        collectionView.backgroundColor = .white
         collectionView.delegate = self
         return collectionView
     }()
@@ -52,7 +53,7 @@ final public class UserProfileViewController: UIViewController {
     }
     
     @objc func didTapMoreVerticalButton(_ sender: Any?) {
-        print("didTapMoreVerticalButton")
+        coordinator.showReport(self)
     }
     
 }
