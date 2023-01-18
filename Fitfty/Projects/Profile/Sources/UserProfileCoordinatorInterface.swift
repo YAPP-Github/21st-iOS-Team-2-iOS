@@ -10,4 +10,6 @@ import UIKit
 
 public protocol UserProfileCoordinatorInterface: AnyObject {
     func showPost()
+    func showReport(_ viewController: UIViewController)
+    func dismissReport(_ viewController: UIViewController)
 }
