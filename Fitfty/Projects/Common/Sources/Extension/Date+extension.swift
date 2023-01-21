@@ -10,6 +10,10 @@ import Foundation
 
 public extension Date {
     
+    var yesterday: Date {
+        return Calendar.current.date(byAdding: .day, value: -1, to: self) ?? Date()
+    }
+    
     func toString(_ format: DateFormat) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "KST")
@@ -22,7 +26,9 @@ public extension Date {
 
 public enum DateFormat: String {
     case baseDate = "yyyyMMdd"
+    case baseTime = "HHmm"
     case hour = "HH"
+    case minute = "mm"
     case fcstDate = "yyyyMMddHHmm"
     case week = "E"
     case monthDay = "MM.dd"
