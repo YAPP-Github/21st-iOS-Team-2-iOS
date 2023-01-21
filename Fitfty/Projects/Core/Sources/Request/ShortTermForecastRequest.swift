@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct DailyWeatherRequest: Codable {
+struct ShortTermForecastRequest: Codable {
     
     let numOfRows: Int
     let pageNo: Int
