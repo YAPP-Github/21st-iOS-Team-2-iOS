@@ -14,8 +14,8 @@ struct ShortTermForecastRequest: Codable {
     let pageNo: Int
     let baseDate: String
     let baseTime: String
-    let nx: String
-    let ny: String
+    let nx: Int
+    let ny: Int
     
     enum CodingKeys: String, CodingKey {
         case numOfRows, pageNo, nx, ny

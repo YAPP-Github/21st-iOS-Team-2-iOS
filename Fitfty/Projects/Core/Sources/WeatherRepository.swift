@@ -12,7 +12,7 @@ import CoreLocation
 
 public protocol WeatherRepository {
     
-    func fetchShortTermForecast(latitude: String, longitude: String) async throws -> [ShortTermForecast]
+    func fetchShortTermForecast(longitude: String, latitude: String) async throws -> [ShortTermForecast]
     
 }
 
@@ -22,17 +22,20 @@ public final class DefaultWeatherRepository: WeatherRepository {
     
     public init() {}
     
-    public func fetchShortTermForecast(latitude: String, longitude: String) async throws -> [ShortTermForecast] {
+    public func fetchShortTermForecast(longitude: String, latitude: String) async throws -> [ShortTermForecast] {
         let baseDate = baseDate(Date())
+        let grid = LocationConverter.shared.grid(
+            longitude: Double(longitude) ?? 0,
+            latitude: Double(latitude) ?? 0
+        )
         let request = try ShortTermForecastRequest(
             numOfRows: 1000,
             pageNo: 1,
             baseDate: baseDate.toString(.baseDate),
             baseTime: baseDate.toString(.baseTime),
-            nx: latitude,
-            ny: longitude
+            nx: grid.x,
+            ny: grid.y
         ).asDictionary()
-        
         do {
             let dailyWeatherDTO = try await WeatherAPI.request(
                 target: WeatherAPI.fetchDailyWeather(parameter: request),
