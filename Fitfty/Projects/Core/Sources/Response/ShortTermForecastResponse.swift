@@ -9,30 +9,30 @@
 import Foundation
 
 // MARK: - DailyWeatherDTO
-public struct ShortTermForecastDTO: Codable {
-    let response: DailyWeatherResponse
+public struct ShortTermForecastResponse: Codable {
+    let response: ShortTermForecastResult
 }
 
 // MARK: - Response
-public struct DailyWeatherResponse: Codable {
+public struct ShortTermForecastResult: Codable {
     let header: DailyWeatherHeader
-    let body: DailyWeatherBody?
+    let body: ShortTermForecastBody?
 }
 
 // MARK: - Body
-public struct DailyWeatherBody: Codable {
+public struct ShortTermForecastBody: Codable {
     let dataType: String
-    let items: DailyWeatherItems
+    let items: ShortTermForecastItems
     let pageNo, numOfRows, totalCount: Int
 }
 
 // MARK: - Items
-public struct DailyWeatherItems: Codable {
-    let item: [DailyWeatherItem]
+public struct ShortTermForecastItems: Codable {
+    let item: [ShortTermForecastItem]
 }
 
 // MARK: - Item
-public struct DailyWeatherItem: Codable {
+public struct ShortTermForecastItem: Codable {
     let baseDate, baseTime: String
     let category: WeatherInfoCategory
     /// 예측 일자

@@ -10,12 +10,12 @@ import Foundation
 
 struct SearchAddressResponse: Codable {
     let documents: [SearchAddressResult]
-    let meta: MetaResponse
+    let meta: SearchAddressMeta
 }
 
 // MARK: - Document
 struct SearchAddressResult: Codable {
-    let address: AddressResponse
+    let address: SearchAddress
     let addressName: String
     let addressType: String
     var roadAddress: String?
@@ -32,7 +32,7 @@ struct SearchAddressResult: Codable {
 }
 
 // MARK: - Address
-struct AddressResponse: Codable {
+struct SearchAddress: Codable {
     let addressName: String
     let bCode: String
     let hCode: String
@@ -62,7 +62,7 @@ struct AddressResponse: Codable {
 }
 
 // MARK: - Meta
-struct MetaResponse: Codable {
+struct SearchAddressMeta: Codable {
     let isEnd: Bool
     let pageableCount: String
     let totalCount: Int

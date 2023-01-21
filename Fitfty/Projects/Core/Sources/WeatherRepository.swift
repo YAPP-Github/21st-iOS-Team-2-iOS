@@ -39,7 +39,7 @@ public final class DefaultWeatherRepository: WeatherRepository {
         do {
             let dailyWeatherDTO = try await WeatherAPI.request(
                 target: WeatherAPI.fetchDailyWeather(parameter: request),
-                dataType: ShortTermForecastDTO.self
+                dataType: ShortTermForecastResponse.self
             )
             if dailyWeatherDTO.response.header.resultCode != .normalService {
                 throw dailyWeatherDTO.response.header.resultCode
