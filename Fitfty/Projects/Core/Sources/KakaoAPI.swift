@@ -49,9 +49,9 @@ extension KakaoAPI: TargetType {
 }
 
 public extension KakaoAPI {
-    static func request<T: Decodable>(target: WeatherAPI, dataType: T.Type) async throws -> T {
+    static func request<T: Decodable>(target: KakaoAPI, dataType: T.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<WeatherAPI>()
+            let provider = MoyaProvider<KakaoAPI>()
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -69,9 +69,9 @@ public extension KakaoAPI {
         }
     }
     
-    static func request(target: WeatherAPI) async throws -> Response {
+    static func request(target: KakaoAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<WeatherAPI>()
+            let provider = MoyaProvider<KakaoAPI>()
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
