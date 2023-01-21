@@ -98,7 +98,7 @@ public extension WeatherAPI {
 private extension TargetType {
     func updateParameters(_ parameter: [String: Any]) -> [String: Any] {
         var parameter = parameter
-        parameter.updateValue(APIKey.apiKey.removingPercentEncoding ?? "", forKey: "serviceKey")
+        parameter.updateValue(APIKey.weatherApiKey.removingPercentEncoding ?? "", forKey: "serviceKey")
         parameter.updateValue("json", forKey: "dataType")
         return parameter
     }
