@@ -17,8 +17,8 @@ struct MidTermForecastRequest: Codable {
     
 }
 
-enum MidTermForecastZone {
-    case baengnyeongDo, seoul, gwacheon, gwangmyeong, eeinforced, gimpo, incheon, siheung
+enum MidTermForecastZone: CaseIterable {
+    case baengnyeongDo, seoul, gwacheon, gwangmyeong, ganghwa, gimpo, incheon, siheung
     case ansan, bucheon, uijeongbu, goyang, yangju, paju, dongducheon, yeoncheon, pocheon, gapyeong
     case copper, namyangju, yangpyeong, hanam, suwon, anyang, osan, mars, seongnam, pyeongtaek
     case uiwang, gunpo, anseong, yongin, icheon, gwangjuGyeonggiDo, yeoju, chungju, jincheon, voice
@@ -45,7 +45,7 @@ enum MidTermForecastZone {
         case .seoul: return "11B10101"
         case .gwacheon: return "11B10102"
         case .gwangmyeong: return "11B10103"
-        case .eeinforced: return "11B20101"
+        case .ganghwa: return "11B20101"
         case .gimpo: return "11B20102"
         case .incheon: return "11B20201"
         case .siheung: return "11B20202"
@@ -247,11 +247,11 @@ enum MidTermForecastZone {
     
     var localized: String {
         switch self {
-        case .baengnyeongDo: return "백령도"
+        case .baengnyeongDo: return "백령면"
         case .seoul: return "서울"
         case .gwacheon: return "과천"
         case .gwangmyeong: return "광명"
-        case .eeinforced: return "강화"
+        case .ganghwa: return "강화군"
         case .gimpo: return "김포"
         case .incheon: return "인천"
         case .siheung: return "시흥"
