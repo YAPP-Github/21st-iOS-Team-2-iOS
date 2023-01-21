@@ -20,7 +20,7 @@ public struct ShortTermForecast {
 
 public extension ShortTermForecast {
     
-    init(_ items: [DailyWeatherItem]) {
+    init(_ items: [ShortTermForecastItem]) {
         self.date = items.first?.date ?? Date()
         self.precipitation = "\(items.filter { $0.category == .pop }.first?.fcstValue ?? "0")%"
         self.maxTemp = (items.filter { $0.category == .tmx }.first?.fcstValue ?? "0").decimalClean + "°"
