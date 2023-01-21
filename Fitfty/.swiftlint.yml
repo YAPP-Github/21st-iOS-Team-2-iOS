@@ -12,6 +12,14 @@ identifier_name:
         - app
         - nx
         - ny
+        - pi
+        - re
+        - sn
+        - sf
+        - ro
+        - ra
+        - x
+        - y
 function_body_length:
     - 150 # warning
     - 300 # error
