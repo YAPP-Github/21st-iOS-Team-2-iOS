@@ -115,7 +115,6 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             tabBarController.addChild(coordinator.navigationController)
             
         case .createCody:
-            let navigationController = BaseNavigationController()
             let coordinator = UploadCodyCoordinator()
             coordinator.start()
             let tabBarItem =  UITabBarItem.init(
