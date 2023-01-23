@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Common
 
 final public class AppCoordinator: Coordinator {
     var type: CoordinatorType { .app }
@@ -14,9 +15,9 @@ final public class AppCoordinator: Coordinator {
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
-    var navigationController: UINavigationController
+    var navigationController: BaseNavigationController
     
-    public init(navigationConrtoller: UINavigationController) {
+    public init(navigationConrtoller: BaseNavigationController) {
         self.navigationController = navigationConrtoller
     }
     

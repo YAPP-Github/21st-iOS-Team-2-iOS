@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import Common
 
 protocol Coordinator: AnyObject {
     var parentCoordinator: Coordinator? { get set }
     var childCoordinators: [Coordinator] { get set }
-    var navigationController: UINavigationController { get set }
+    var navigationController: BaseNavigationController { get set }
     var type: CoordinatorType { get }
     var finishDelegate: CoordinatorFinishDelegate? { get set }
 
@@ -44,6 +45,7 @@ enum CoordinatorType {
     case main
     case profile
     case address
+    case weather
     case uploadCody
     case album
 }

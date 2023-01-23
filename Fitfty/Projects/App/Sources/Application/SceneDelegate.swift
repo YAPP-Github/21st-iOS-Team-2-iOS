@@ -7,6 +7,7 @@
 
 import UIKit
 import Coordinator
+import Common
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -22,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
         window = UIWindow(windowScene: scene)
-        let navigationController = UINavigationController()
+        let navigationController = BaseNavigationController()
         coordinator = AppCoordinator(navigationConrtoller: navigationController)
         coordinator?.start()
         
