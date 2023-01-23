@@ -40,10 +40,6 @@ final public class AuthViewModel: ViewModelType {
         
     }
     
-    func didTapLoginProblemButton() {
-
-    }
-    
     func didTapEnterWithoutLoginButton() {
         state.send(.pushIntroView)
     }
