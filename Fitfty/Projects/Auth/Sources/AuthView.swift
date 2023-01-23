@@ -7,6 +7,7 @@
 //
 
 import UIKit
+
 import Common
 
 final class AuthView: UIView {
@@ -21,6 +22,7 @@ final class AuthView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
+        backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {
