@@ -8,6 +8,7 @@
 
 import Foundation
 
-struct APIKey {
+public struct APIKey {
     static let apiKey = ""
+    static public let kakaoAppKey = ""
 }
