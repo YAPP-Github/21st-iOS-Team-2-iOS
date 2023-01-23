@@ -17,9 +17,9 @@ final class MainCoordinator: Coordinator {
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
-    var navigationController: UINavigationController
+    var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: UINavigationController = UINavigationController()) {
+    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
         self.navigationController = navigationConrtoller
     }
     
@@ -40,11 +40,30 @@ private extension MainCoordinator {
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
         let bottomSheetViewController = BottomSheetViewController(
             style: .large,
             contentViewController: coordinator.navigationController
         )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
+    }
+    
+    func makeUserCoordinator() -> UserCoordinator {
+        let coordinator = UserCoordinator(navigationConrtoller: navigationController)
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
+   
+    func makeWeatherCoordinator() -> WeatherCoordinator {
+        let coordinator = WeatherCoordinator(navigationController: navigationController)
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
     }
     
 }
@@ -57,4 +76,26 @@ extension MainCoordinator: MainCoordinatorInterface {
         navigationController.present(viewController, animated: false)
     }
     
+    public func showUserProfile() {
+        let coordinator = makeUserCoordinator()
+        coordinator.start()
+    }
+    
+    public func showUserPost() {
+        let coordinator = makeUserCoordinator()
+        coordinator.showPost()
+    }
+    
+    public func showWeatherInfo() {
+        let coordinator = makeWeatherCoordinator()
+        coordinator.start()
+    }
+    
+}
+
+extension MainCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
+    }
 }
