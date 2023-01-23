@@ -8,13 +8,15 @@
 
 import Foundation
 import Combine
+
+import Core
 import Common
 
 final public class AuthViewModel: ViewModelType {
     public enum ViewModelState {
-        case presentKakaoLoginView
-        case pushOnboardingView
-        case doSomething
+        case pushIntroView
+        case pushMainFeedView
+        case showErrorAlert(_ error: Error)
     }
     
     public var state: PassthroughSubject<ViewModelState, Never> = .init()
@@ -22,11 +24,27 @@ final public class AuthViewModel: ViewModelType {
     public init() {}
     
     func didTapKakaoLogin() {
-        state.send(.presentKakaoLoginView)
+        SocialLoginManager.shared.trySnsLogin(
+            snsType: .kakao,
+            completionHandler: { [weak self] in
+                // TODO: - 서버 연동되면 계정 유무 체크해서 바로 메인피드로 보낼지 회원가입 루트 탈지 분기 처리하자 - ethan
+                self?.state.send(.pushIntroView)
+            },
+            failedHandler: { [weak self] error in
+                self?.state.send(.showErrorAlert(error))
+            }
+        )
     }
     
-    func requestKakaoLogin() {
-        // request API... Success !
-        state.send(.pushOnboardingView)
+    func didTapAppleLogin() {
+        
+    }
+    
+    func didTapLoginProblemButton() {
+
+    }
+    
+    func didTapEnterWithoutLoginButton() {
+        state.send(.pushIntroView)
     }
 }
