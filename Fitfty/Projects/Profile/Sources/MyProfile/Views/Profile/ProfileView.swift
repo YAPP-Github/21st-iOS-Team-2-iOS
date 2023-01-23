@@ -22,7 +22,6 @@ final class ProfileView: UIView {
     
     private lazy var nicknameLabel: UILabel = {
         let label = UILabel()
-        label.text = "iloveios2"
         label.font = FitftyFont.SFProDisplaySemibold(size: 24).font
         label.textAlignment = .center
         return label
@@ -30,7 +29,6 @@ final class ProfileView: UIView {
     
     private lazy var contentLabel: UILabel = {
         let label = UILabel()
-        label.text = "안녕하세요! 반갑습니다"
         label.font = FitftyFont.appleSDMedium(size: 15).font
         label.textColor = UIColor(red: 0.512, green: 0.512, blue: 0.567, alpha: 1)
         label.textAlignment = .center
