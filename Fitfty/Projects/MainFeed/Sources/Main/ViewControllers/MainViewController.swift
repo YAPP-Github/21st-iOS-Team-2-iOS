@@ -247,18 +247,6 @@ public final class MainViewController: UIViewController {
     
 }
 
-extension MainViewController: UICollectionViewDelegate {
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = Section(index: indexPath.section)
-        switch section {
-        case .cody:
-            coordinator.showUserPost()
-        default:
-            break
-        }
-    }
-}
-
 private extension MainViewController {
     
     @objc func didTapWeather(_ sender: UIGestureRecognizer? = nil) {
@@ -274,6 +262,8 @@ extension MainViewController: UICollectionViewDelegate {
         switch section {
         case .weather:
             didTapWeather()
+        case .cody:
+            coordinator.showUserPost()
         default: return
         }
     }

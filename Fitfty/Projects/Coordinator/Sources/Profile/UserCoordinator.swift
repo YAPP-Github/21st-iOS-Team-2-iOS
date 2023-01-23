@@ -11,15 +11,15 @@ import Profile
 import Common
 
 final class UserCoordinator: Coordinator {
- 
+    
     var type: CoordinatorType { .user }
     weak var finishDelegate: CoordinatorFinishDelegate?
    
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
-    var navigationController: UINavigationController
+    var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: UINavigationController = UINavigationController()) {
+    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
         self.navigationController = navigationConrtoller
         navigationConrtoller.setCustomBackButton()
 
