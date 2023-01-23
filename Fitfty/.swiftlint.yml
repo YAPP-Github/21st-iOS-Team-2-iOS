@@ -22,6 +22,7 @@ identifier_name:
         - y
         - am
         - pm
+        - tm
 function_body_length:
     - 150 # warning
     - 300 # error
