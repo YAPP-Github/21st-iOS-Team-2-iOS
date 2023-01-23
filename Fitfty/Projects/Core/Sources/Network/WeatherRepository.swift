@@ -44,7 +44,8 @@ public final class DefaultWeatherRepository: WeatherRepository {
               let midTermForecastResponse: MidlandFcstItem = try await midTermForecast(address) else {
             throw ResultCode.nodataError
         }
-        var midTermForecastList: [MidTermForecast] = transferService.convertThirdDayMidTermForecast(_pastShortTermForecast)
+        var midTermForecastList: [MidTermForecast] = transferService
+            .convertThirdDayMidTermForecast(_pastShortTermForecast)
         midTermForecastList.append(contentsOf: transferService.merge(by: tempResponse, to: midTermForecastResponse))
         return midTermForecastList
     }
