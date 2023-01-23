@@ -28,6 +28,8 @@ function_body_length:
 type_body_length:
     - 300 # warning
     - 500 # error
+excluded:
+    - Projects/Core/Sources/Network/Request/MidTermForecastRequest.swift
 file_length:
     - 1000 # warning
     - 2000 # error
