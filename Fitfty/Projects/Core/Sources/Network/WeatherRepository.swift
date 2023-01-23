@@ -57,6 +57,26 @@ public final class DefaultWeatherRepository: WeatherRepository {
         return transferService.minMaxTemp(_pastShortTermForecast)
     }
     
+    public func fetchDailyWeather(for date: Date, longitude: String, latitude: String) async throws -> DailyWeather {
+        let address: String = try await transferService.address(latitude: latitude, longitude: longitude)
+        let request = try DailyWeatherListRequest(
+            stnIds: transferService.branchCode(address),
+            startDt: date.toString(.baseDate),
+            endDt: date.toString(.baseDate)
+        ).asDictionary()
+        let response = try await WeatherAPI.request(
+            target: WeatherAPI.fetchDailyWeatherList(parameter: request),
+            dataType: DailyWeatherListResponse.self
+        )
+        if response.response.header.resultCode != .normalService {
+            throw response.response.header.resultCode
+        }
+        guard let item = response.response.body?.items.item.first else {
+            throw ResultCode.nodataError
+        }
+        return DailyWeather(item)
+    }
+    
 }
 
 private extension DefaultWeatherRepository {
