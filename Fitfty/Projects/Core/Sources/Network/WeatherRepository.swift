@@ -92,14 +92,7 @@ private extension DefaultWeatherRepository {
         if response.response.header.resultCode != .normalService {
             throw response.response.header.resultCode
         }
-        let groupedItems: [Date: [ShortTermForecastItem]] = Dictionary(
-            grouping: response.response.body?.items.item ?? [],
-            by: { ($0.fcstDate + $0.fcstTime).toDate(.fcstDate) ?? Date() }
-        )
-        let shortTermForecast: [ShortTermForecast] = groupedItems
-            .map { ShortTermForecast($0.value) }
-            .sorted { $0.date < $1.date }
-        return shortTermForecast
+        return transferService.merge(by: response.response.body?.items.item ?? [])
     }
     
     func middleWeatherTemperature(_ address: String) async throws -> MiddleWeatherTemperatureItem? {
