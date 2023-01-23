@@ -17,7 +17,7 @@ struct MidTermForecastRequest: Codable {
     
 }
 
-enum MidTermForecastZone: CaseIterable {
+enum MiddleWeatherTemperatureZone: CaseIterable {
     case baengnyeongDo, seoul, gwacheon, gwangmyeong, ganghwa, gimpo, incheon, siheung
     case ansan, bucheon, uijeongbu, goyang, yangju, paju, dongducheon, yeoncheon, pocheon, gapyeong
     case copper, namyangju, yangpyeong, hanam, suwon, anyang, osan, mars, seongnam, pyeongtaek
@@ -448,6 +448,49 @@ enum MidTermForecastZone: CaseIterable {
         case .wonsan: return "원산"
         case .goseongJangjeon: return "고성(장전)"
         case .pyeonggang: return "평강"
+        }
+    }
+}
+
+enum MidTermLandForecastZone: CaseIterable {
+    case metropolitanArea
+    case yeongseoGangwonDo
+    case yeongdongGangwonDo
+    case daejeonSejongChungcheongnamDo
+    case chungcheongbukDo
+    case gwangjuJeollanamDo
+    case jeollabukDo
+    case daeguGyeongsangbukDo
+    case busanUlsanGyeongsangnamDo
+    case jeju
+    
+    var code: String {
+        switch self {
+        case .metropolitanArea: return "11B00000"
+        case .yeongseoGangwonDo: return "11D10000"
+        case .yeongdongGangwonDo: return "11D20000"
+        case .daejeonSejongChungcheongnamDo: return "11C20000"
+        case .chungcheongbukDo: return "11C10000"
+        case .gwangjuJeollanamDo: return "11F20000"
+        case .jeollabukDo: return "11F10000"
+        case .daeguGyeongsangbukDo: return "11H10000"
+        case .busanUlsanGyeongsangnamDo: return "11H20000"
+        case .jeju: return "11G00000"
+        }
+    }
+    
+    var localized: [String] {
+        switch self {
+        case .metropolitanArea: return ["서울", "인천", "경기도"]
+        case .yeongseoGangwonDo: return ["강원도", "영서"]
+        case .yeongdongGangwonDo: return ["강원도", "영동"]
+        case .daejeonSejongChungcheongnamDo: return ["대전", "세종", "충청남도"]
+        case .chungcheongbukDo: return ["충청북도"]
+        case .gwangjuJeollanamDo: return ["광주", "전라남도"]
+        case .jeollabukDo: return ["전라북도"]
+        case .daeguGyeongsangbukDo: return ["대구", "경상북도"]
+        case .busanUlsanGyeongsangnamDo: return ["부산", "울산", "경상남도"]
+        case .jeju: return ["제주"]
         }
     }
 }
