@@ -8,12 +8,12 @@
 
 import UIKit
 
-final public class ProfileViewController: UIViewController {
+final public class MyProfileViewController: UIViewController {
     
     enum Section: CaseIterable {
         case feed
     }
-    private var coordinator: ProfileCoordinatorInterface
+    private var coordinator: MyProfileCoordinatorInterface
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private lazy var collectionView: UICollectionView = {
@@ -40,7 +40,7 @@ final public class ProfileViewController: UIViewController {
         navigationController?.navigationBar.isHidden = false
     }
     
-    public init(coordinator: ProfileCoordinatorInterface) {
+    public init(coordinator: MyProfileCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
@@ -51,13 +51,13 @@ final public class ProfileViewController: UIViewController {
     }
 }
 
-private extension ProfileViewController {
+private extension MyProfileViewController {
     func setUpConstraintLayout() {
         view.addSubviews(collectionView)
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -66,9 +66,9 @@ private extension ProfileViewController {
         collectionView.delegate = self
         collectionView.register(FeedImageCell.self,
                                 forCellWithReuseIdentifier: FeedImageCell.className)
-        collectionView.register(HeaderView.self,
+        collectionView.register(MyProfileHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: HeaderView.className)
+                                withReuseIdentifier: MyProfileHeaderView.className)
     }
     
     func setUpDataSource() {
@@ -86,11 +86,11 @@ private extension ProfileViewController {
         dataSource?.supplementaryViewProvider = { (collectionView, kind, indexPath) -> UICollectionReusableView? in
             guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
-                withReuseIdentifier: HeaderView.className,
-                for: indexPath) as? HeaderView else {
+                withReuseIdentifier: MyProfileHeaderView.className,
+                for: indexPath) as? MyProfileHeaderView else {
                 return UICollectionReusableView()
             }
-            supplementaryView.profileView.setUp(nickname: "iosLover", content: "안녕하세용!", follow: 14, follower: 22)
+            supplementaryView.profileView.setUp(nickname: "iosLover", content: "안녕하세용!")
             supplementaryView.menuView.setUp(count: "12")
             return supplementaryView
         }
@@ -104,7 +104,7 @@ private extension ProfileViewController {
     }
 }
 
-extension ProfileViewController: UICollectionViewDelegateFlowLayout {
+extension MyProfileViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -139,7 +139,7 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout {
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int) -> CGSize {
-            return CGSize(width: collectionView.frame.width, height: 400)
+            return CGSize(width: collectionView.frame.width, height: 350)
     }
     
     public func collectionView(

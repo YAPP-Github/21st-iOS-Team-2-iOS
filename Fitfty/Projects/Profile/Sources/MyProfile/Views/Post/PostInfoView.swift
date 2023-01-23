@@ -61,7 +61,7 @@ final class PostInfoView: UIStackView {
         addArrangedSubviews(hitsImageView, hitsLabel, bookmarkImageView, bookmarkLabel)
        
         NSLayoutConstraint.activate([
-            hitsImageView.heightAnchor.constraint(equalToConstant: 14),
+            hitsImageView.heightAnchor.constraint(equalToConstant: 12),
             hitsImageView.widthAnchor.constraint(equalToConstant: 14),
 
             bookmarkImageView.heightAnchor.constraint(equalToConstant: 12),

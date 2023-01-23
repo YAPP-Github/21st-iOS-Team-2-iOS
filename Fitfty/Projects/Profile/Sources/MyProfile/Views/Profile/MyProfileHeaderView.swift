@@ -9,7 +9,7 @@
 import UIKit
 import Common
 
-final class HeaderView: UICollectionReusableView {
+final class MyProfileHeaderView: UICollectionReusableView {
     
     private lazy var settingButton: UIButton = {
         let button = UIButton()
@@ -45,11 +45,11 @@ final class HeaderView: UICollectionReusableView {
             settingButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
             profileView.topAnchor.constraint(equalTo: settingButton.bottomAnchor, constant: 12),
-            profileView.heightAnchor.constraint(equalToConstant: 223),
+            profileView.heightAnchor.constraint(equalToConstant: 173),
             profileView.leadingAnchor.constraint(equalTo: leadingAnchor),
             profileView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            menuView.topAnchor.constraint(equalTo: profileView.bottomAnchor, constant: 24),
+            menuView.topAnchor.constraint(equalTo: profileView.bottomAnchor, constant: 20),
             menuView.heightAnchor.constraint(equalToConstant: 72),
             menuView.leadingAnchor.constraint(equalTo: leadingAnchor),
             menuView.trailingAnchor.constraint(equalTo: trailingAnchor),

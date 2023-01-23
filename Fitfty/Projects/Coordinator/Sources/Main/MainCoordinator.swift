@@ -50,6 +50,14 @@ private extension MainCoordinator {
         return bottomSheetViewController
     }
     
+    func makeUserCoordinator() -> UserCoordinator {
+        let coordinator = UserCoordinator(navigationConrtoller: navigationController)
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
+   
     func makeWeatherCoordinator() -> WeatherCoordinator {
         let coordinator = WeatherCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
@@ -66,6 +74,16 @@ extension MainCoordinator: MainCoordinatorInterface {
         let viewController = makeAddressViewController()
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
+    }
+    
+    public func showUserProfile() {
+        let coordinator = makeUserCoordinator()
+        coordinator.start()
+    }
+    
+    public func showUserPost() {
+        let coordinator = makeUserCoordinator()
+        coordinator.showPost()
     }
     
     public func showWeatherInfo() {

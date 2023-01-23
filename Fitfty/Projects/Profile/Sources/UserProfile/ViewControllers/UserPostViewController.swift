@@ -1,52 +1,45 @@
 //
-//  PostViewController.swift
+//  UserPostViewController.swift
 //  Profile
 //
-//  Created by 임영선 on 2022/12/15.
-//  Copyright © 2022 Fitfty. All rights reserved.
+//  Created by 임영선 on 2023/01/18.
+//  Copyright © 2023 Fitfty. All rights reserved.
 //
 
 import UIKit
 import Common
 
-final public class PostViewController: UIViewController {
+final public class UserPostViewController: UIViewController {
 
-    private var coordinator: ProfileCoordinatorInterface
+    private var coordinator: UserProfileCoordinatorInterface
     private let postView = PostView()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setConstraintLayout()
+        postView.setUp(content: "오늘 날씨 너무 좋앗따~~~ 새로 산 원피스 입고!", hits: "51254", bookmark: "312", date: "22.08.15")
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setCustomNavigationItem()
+        setNavigationBar()
     }
     
-    public init(coordinator: ProfileCoordinatorInterface) {
+    public init(coordinator: UserProfileCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
-        setUpConstraintLayout()
-        postView.setUp(content: "오늘 날씨 너무 좋앗따~~~ 새로 산 원피스 입고!", hits: "51254", bookmark: "312", date: "22.08.15")
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setCustomNavigationItem() {
-        navigationController?.navigationItem.setCustomBackButton(self)
-        navigationController?.navigationItem.setCustomRightBarButton(
-            self,
-            action: #selector(didTapRightBarButton),
-            image: CommonAsset.Images.btnMoreVertical.image,
-            size: 24
-        )
+    private func setNavigationBar() {
+        navigationController?.navigationBar.topItem?.title = ""
     }
     
-    private func setUpConstraintLayout() {
+    private func setConstraintLayout() {
         view.addSubviews(postView)
         NSLayoutConstraint.activate([
             postView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
