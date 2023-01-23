@@ -38,16 +38,11 @@ private extension AuthCoordinator {
 }
 
 extension AuthCoordinator: AuthCoordinatorInterface {
-    
-    func presentKakaoLoginView() {
+    func pushIntroView() {
         
     }
     
     func pushMainFeedView() {
-        
-    }
-    
-    func pushOnboardingView() {
         
     }
 }
