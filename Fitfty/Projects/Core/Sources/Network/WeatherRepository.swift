@@ -16,6 +16,8 @@ public protocol WeatherRepository {
     
     func fetchMidTermForecast(longitude: String, latitude: String) async throws -> [MidTermForecast]
     
+    func minMaxTemp() -> (min: Int, max: Int)
+
 }
 
 public final class DefaultWeatherRepository: WeatherRepository {
@@ -57,6 +59,13 @@ public final class DefaultWeatherRepository: WeatherRepository {
             }
         }
         return midTermForecastList
+    }
+    
+    public func minMaxTemp() -> (min: Int, max: Int) {
+        if _pastShortTermForecast.isEmpty {
+            pastShortTermForecast(longitude: "127.016702905651", latitude: "37.5893588153919")
+        }
+        return transferService.minMaxTemp(_pastShortTermForecast)
     }
     
 }
