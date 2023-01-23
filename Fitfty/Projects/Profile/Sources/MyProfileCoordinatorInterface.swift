@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol ProfileCoordinatorInterface: AnyObject {
+public protocol MyProfileCoordinatorInterface: AnyObject {
     
     func showPost()
     
