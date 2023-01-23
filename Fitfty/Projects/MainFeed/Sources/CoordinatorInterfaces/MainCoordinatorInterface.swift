@@ -15,4 +15,7 @@ public protocol MainCoordinatorInterface: AnyObject {
     func showUserProfile()
     
     func showUserPost()
+
+    func showWeatherInfo()
+    
 }
