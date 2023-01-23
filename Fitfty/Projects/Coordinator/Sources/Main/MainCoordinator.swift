@@ -54,6 +54,7 @@ private extension MainCoordinator {
         let coordinator = WeatherCoordinator(navigationConrtoller: navigationController)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
         return coordinator
     }
     
