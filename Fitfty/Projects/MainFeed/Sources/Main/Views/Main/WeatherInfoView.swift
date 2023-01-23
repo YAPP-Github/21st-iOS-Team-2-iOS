@@ -34,7 +34,7 @@ final class WeatherInfoView: UIStackView {
     private lazy var conditionLabel: UILabel = {
         let label = UILabel()
         label.textColor = .systemGray
-        label.font = .preferredFont(for: .footnote, weight: .regular)
+        label.font = .preferredFont(for: .footnote, weight: .bold)
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
     }()
@@ -42,7 +42,7 @@ final class WeatherInfoView: UIStackView {
     private lazy var tempInfoLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
-        label.font = .preferredFont(for: .footnote, weight: .regular)
+        label.font = .preferredFont(for: .footnote, weight: .bold)
         label.setContentHuggingPriority(.required, for: .horizontal)
         return label
     }()

@@ -8,6 +8,7 @@
 
 import UIKit
 import Auth
+import Common
 
 final class AuthCoordinator: Coordinator {
     var type: CoordinatorType { .login }
@@ -15,9 +16,9 @@ final class AuthCoordinator: Coordinator {
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
-    var navigationController: UINavigationController
+    var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: UINavigationController) {
+    init(navigationConrtoller: BaseNavigationController) {
         self.navigationController = navigationConrtoller
     }
     

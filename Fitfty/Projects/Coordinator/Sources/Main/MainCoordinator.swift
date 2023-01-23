@@ -17,9 +17,9 @@ final class MainCoordinator: Coordinator {
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
-    var navigationController: UINavigationController
+    var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: UINavigationController = UINavigationController()) {
+    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
         self.navigationController = navigationConrtoller
     }
     
@@ -57,6 +57,14 @@ private extension MainCoordinator {
         childCoordinators.append(coordinator)
         return coordinator
     }
+   
+    func makeWeatherCoordinator() -> WeatherCoordinator {
+        let coordinator = WeatherCoordinator(navigationController: navigationController)
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
     
 }
 
@@ -76,6 +84,11 @@ extension MainCoordinator: MainCoordinatorInterface {
     public func showUserPost() {
         let coordinator = makeUserCoordinator()
         coordinator.showPost()
+    }
+    
+    public func showWeatherInfo() {
+        let coordinator = makeWeatherCoordinator()
+        coordinator.start()
     }
     
 }

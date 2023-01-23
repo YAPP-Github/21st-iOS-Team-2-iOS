@@ -8,6 +8,7 @@
 
 import UIKit
 import MainFeed
+import Common
 
 final class AlbumCoordinator: Coordinator {
     
@@ -16,9 +17,9 @@ final class AlbumCoordinator: Coordinator {
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
-    var navigationController: UINavigationController
+    var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: UINavigationController = UINavigationController()) {
+    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
         self.navigationController = navigationConrtoller
     }
     
