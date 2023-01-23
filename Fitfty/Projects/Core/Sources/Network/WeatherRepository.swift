@@ -60,7 +60,7 @@ public final class DefaultWeatherRepository: WeatherRepository {
     public func fetchDailyWeather(for date: Date, longitude: String, latitude: String) async throws -> DailyWeather {
         let address: String = try await transferService.address(latitude: latitude, longitude: longitude)
         let request = try DailyWeatherListRequest(
-            stnIds: transferService.branchCode(address),
+            stnIds: transferService.dailyWeatherListBranchCode(address),
             startDt: date.toString(.baseDate),
             endDt: date.toString(.baseDate)
         ).asDictionary()
@@ -105,7 +105,7 @@ private extension DefaultWeatherRepository {
     }
     
     func middleWeatherTemperature(_ address: String) async throws -> MiddleWeatherTemperatureItem? {
-        let middleWeatherTempCode: String = transferService.middleWeatherTempCode(address)
+        let middleWeatherTempCode: String = transferService.middleWeatherTempZoneCode(address)
         let announcementTime: String = transferService.announcementTime(Date())
         let middleWeatherTempRequest: [String : Any] = try MidTermForecastRequest(
             numOfRows: 1000, pageNo: 1, regId: middleWeatherTempCode, tmFc: announcementTime
@@ -121,7 +121,7 @@ private extension DefaultWeatherRepository {
     }
     
     func midTermForecast(_ address: String) async throws -> MidlandFcstItem? {
-        let midTermForecastCode = transferService.midTermLandForecastZone(address)
+        let midTermForecastCode = transferService.midTermLandForecastZoneCode(address)
         let announcementTime: String = transferService.announcementTime(Date())
         let midTermForecastRequest: [String : Any] = try MidTermForecastRequest(
             numOfRows: 1000, pageNo: 1, regId: midTermForecastCode, tmFc: announcementTime
