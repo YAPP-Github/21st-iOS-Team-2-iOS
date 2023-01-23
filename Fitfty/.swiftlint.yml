@@ -28,7 +28,7 @@ disabled_rules: # 제외하고 싶은 룰
     - cyclomatic_complexity
     - void_function_in_ternary
     - comment_spacing
+    - function_parameter_count
 opt_in_rules:
-    - empty_count
     - empty_string
     - conditional_returns_on_newline

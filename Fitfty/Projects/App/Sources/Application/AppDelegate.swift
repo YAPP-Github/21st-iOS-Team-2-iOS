@@ -10,6 +10,7 @@ import KakaoSDKCommon
 import KakaoSDKAuth
 
 import Core
+import Common
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,6 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        
+        AppAppearance.setUpAppearance()
         
         // MARK: - Social Login 초기화
         KakaoSDK.initSDK(appKey: APIKey.kakaoAppKey)
