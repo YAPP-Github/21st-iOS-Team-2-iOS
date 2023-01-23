@@ -31,7 +31,11 @@ public final class DefaultWeatherRepository: WeatherRepository {
     }
     
     public func fetchShortTermForecast(longitude: String, latitude: String) async throws -> [ShortTermForecast] {
-        return try await shortTermForecast(longitude: longitude, latitude: latitude, baseDate: transferService.baseDate(Date()))
+        return try await shortTermForecast(
+            longitude: longitude,
+            latitude: latitude,
+            baseDate: transferService.baseDate(Date())
+        )
     }
     
     public func fetchMidTermForecast(longitude: String, latitude: String) async throws -> [MidTermForecast] {
@@ -40,24 +44,8 @@ public final class DefaultWeatherRepository: WeatherRepository {
               let midTermForecastResponse: MidlandFcstItem = try await midTermForecast(address) else {
             throw ResultCode.nodataError
         }
-        var midTermForecastList: [MidTermForecast] = transferService.thirdDayMidTermForecast(_pastShortTermForecast)
-        for day in 3...9 {
-            let temp = tempResponse.temp(day)
-            let forecastList = Meridiem.allCases
-                .map { ($0, midTermForecastResponse.forecast(day, meridiem: $0)) }
-            forecastList.forEach { forecast in
-                let meridiem = forecast.0
-                let forecast = forecast.1
-                midTermForecastList.append(MidTermForecast(
-                    meridiem: meridiem,
-                    date: Date().addDays(day),
-                    forecast: Forecast(rawValue: forecast?.forecast ?? "") ?? .sunny,
-                    precipitation: forecast?.precipitation ?? 0,
-                    maxTemp: temp?.max ?? 0,
-                    minTemp: temp?.min ?? 0
-                ))
-            }
-        }
+        var midTermForecastList: [MidTermForecast] = transferService.convertThirdDayMidTermForecast(_pastShortTermForecast)
+        midTermForecastList.append(contentsOf: transferService.merge(by: tempResponse, to: midTermForecastResponse))
         return midTermForecastList
     }
     

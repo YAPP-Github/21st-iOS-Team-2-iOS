@@ -32,7 +32,7 @@ struct MiddleWeatherTemperatureItems: Codable {
 }
 
 // MARK: - Item
-struct MiddleWeatherTemperatureItem: Codable {
+public struct MiddleWeatherTemperatureItem: Codable {
     let regID: String
     let taMin3: Int
     let taMin3Low: Int
@@ -100,7 +100,7 @@ struct MiddleWeatherTemperatureResponseHeader: Codable {
 }
 
 extension MiddleWeatherTemperatureItem {
-    func temp(_ day: Int) -> (min: Int, max: Int)? {
+   public func temp(_ day: Int) -> (min: Int, max: Int)? {
         switch day {
         case 3: return (taMin3, taMax3)
         case 4: return (taMin4, taMax4)

@@ -46,10 +46,16 @@ public protocol WeatherTransferService {
     /// 단기예보 데이터로 제일 빈도수가 잦은 Forecast(비, 눈, 구름많음 등)를 구합니다.
     func forecast(_ data: [ShortTermForecast]) -> Forecast
     
-    /// 단기예보 데이터를 가지고, 3일간 중기예보를 직접 구합니다.
+    /// 단기예보 데이터를 가지고, 3일간 중기예보를 직접 구해서 변환하여 반환합니다.
     ///
     /// 중기예보 API의 경우 3일차부터 10일차 까지의 예보를 내려줍니다.
-    func thirdDayMidTermForecast(_ data: [ShortTermForecast]) -> [MidTermForecast]
+    func convertThirdDayMidTermForecast(_ data: [ShortTermForecast]) -> [MidTermForecast]
+    
+    /// 중기기온, 중기육상예보 데이터를 완전한 중기예보로 합쳐서 변환하여 반환합니다.
+    func merge(
+        by tempResponse: MiddleWeatherTemperatureItem,
+        to midTermForecastResponse: MidlandFcstItem
+    ) -> [MidTermForecast]
     
     /// 파라미터로 받아온 위도, 경도를 활용하여 주소를 검색하여 반환합니다.
     func address(latitude: String, longitude: String) async throws -> String
@@ -164,7 +170,7 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
             .flatMap { $0.key } ?? .sunny
     }
     
-    public func thirdDayMidTermForecast(_ data: [ShortTermForecast]) -> [MidTermForecast] {
+    public func convertThirdDayMidTermForecast(_ data: [ShortTermForecast]) -> [MidTermForecast] {
         let today = Meridiem.allCases
             .map { convertMidTermForecast(data, meridiem: $0, date: Date()) }
         let nextDay = Meridiem.allCases
@@ -172,6 +178,31 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
         let afterNextDay = Meridiem.allCases
             .map { convertMidTermForecast(data, meridiem: $0, date: Date().addDays(2)) }
         return today + nextDay + afterNextDay
+    }
+    
+    public func merge(
+        by tempResponse: MiddleWeatherTemperatureItem,
+        to midTermForecastResponse: MidlandFcstItem
+    ) -> [MidTermForecast] {
+        var midTermForecastList: [MidTermForecast] = []
+        for day in 3...9 {
+            let temp = tempResponse.temp(day)
+            let forecastList = Meridiem.allCases
+                .map { ($0, midTermForecastResponse.forecast(day, meridiem: $0)) }
+            forecastList.forEach { forecast in
+                let meridiem = forecast.0
+                let forecast = forecast.1
+                midTermForecastList.append(MidTermForecast(
+                    meridiem: meridiem,
+                    date: Date().addDays(day),
+                    forecast: Forecast(rawValue: forecast?.forecast ?? "") ?? .sunny,
+                    precipitation: forecast?.precipitation ?? 0,
+                    maxTemp: temp?.max ?? 0,
+                    minTemp: temp?.min ?? 0
+                ))
+            }
+        }
+        return midTermForecastList
     }
 
     public func address(latitude: String, longitude: String) async throws -> String {
@@ -182,7 +213,6 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
         ).documents
             .map { $0.address.addressName }.first ?? "서울"
     }
-    
     
 }
 
