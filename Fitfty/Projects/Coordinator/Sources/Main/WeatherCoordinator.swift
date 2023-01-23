@@ -38,11 +38,10 @@ private extension WeatherCoordinator {
     
     func makeAddressViewController() -> UIViewController {
         let coordinator = AddressCoordinator()
-        coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()
-        coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
         let bottomSheetViewController = BottomSheetViewController(
             style: .large,
             contentViewController: coordinator.navigationController
