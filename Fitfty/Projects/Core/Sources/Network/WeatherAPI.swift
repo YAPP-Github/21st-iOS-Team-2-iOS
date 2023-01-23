@@ -15,8 +15,9 @@ public enum WeatherAPI {
     case fetchPastWeather(parameter: [String: Any])
     case fetchMiddleWeatherTemperature(parameter: [String: Any])
     case fetchMiddleWeatherInfo(parameter: [String: Any])
-    case fetchDailyWeather(parameter: [String: Any])
+    case fetchShortTermForecast(parameter: [String: Any])
     case fetchMidlandFcst(parameter: [String: Any])
+    case fetchDailyWeatherList(parameter: [String: Any])
 }
 
 extension WeatherAPI: TargetType {
@@ -30,8 +31,9 @@ extension WeatherAPI: TargetType {
         case .fetchPastWeather: return "/AsosHourlyInfoService/getWthrDataList"
         case .fetchMiddleWeatherTemperature: return "/MidFcstInfoService/getMidTa"
         case .fetchMiddleWeatherInfo: return "/MidFcstInfoService/getMidLandFcst"
-        case .fetchDailyWeather: return "/VilageFcstInfoService_2.0/getVilageFcst"
+        case .fetchShortTermForecast: return "/VilageFcstInfoService_2.0/getVilageFcst"
         case .fetchMidlandFcst: return "/MidFcstInfoService/getMidLandFcst"
+        case .fetchDailyWeatherList: return "/AsosDalyInfoService/getWthrDataList"
         }
     }
     
@@ -45,7 +47,8 @@ extension WeatherAPI: TargetType {
              .fetchPastWeather(let parameter),
              .fetchMiddleWeatherTemperature(let parameter),
              .fetchMiddleWeatherInfo(let parameter),
-             .fetchDailyWeather(let parameter),
+             .fetchShortTermForecast(let parameter),
+             .fetchDailyWeatherList(let parameter),
              .fetchMidlandFcst(let parameter):
             
             let parameter = updateParameters(parameter)

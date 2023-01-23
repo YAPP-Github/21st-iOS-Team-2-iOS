@@ -75,7 +75,7 @@ private extension DefaultWeatherRepository {
             ny: grid.y
         ).asDictionary()
         let response = try await WeatherAPI.request(
-            target: WeatherAPI.fetchDailyWeather(parameter: request),
+            target: WeatherAPI.fetchShortTermForecast(parameter: request),
             dataType: ShortTermForecastResponse.self
         )
         if response.response.header.resultCode != .normalService {
