@@ -38,4 +38,5 @@ public enum DateFormat: String {
     case monthDay = "MM.dd"
     case day = "dd"
     case log = "yyyy-MM-dd HH:mm:ss"
+    case meridiemHour = "a h시"
 }
