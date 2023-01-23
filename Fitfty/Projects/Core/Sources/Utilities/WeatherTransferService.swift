@@ -10,6 +10,9 @@ import Foundation
 
 public protocol WeatherTransferService {
     
+    /// 흩어져있는 단기예보 정보를 합쳐서 날짜순으로 반환합니다.
+    func merge(by data: [ShortTermForecastItem]) -> [ShortTermForecast]
+    
     /// 파라미터로 받아온 date를 통해 baseDate를 구합니다.
     ///
     /// 이 메소드는 기상청 API 단기예보조회 서비스를 참고하여 단기예보 발표시각을 구하게 됩니다.
@@ -56,6 +59,16 @@ public protocol WeatherTransferService {
 public final class DefaultWeatherTransferService: WeatherTransferService {
     
     public init() {}
+    
+    public func merge(by data: [ShortTermForecastItem]) -> [ShortTermForecast] {
+        let groupedItems: [Date: [ShortTermForecastItem]] = Dictionary(
+            grouping: data,
+            by: { ($0.fcstDate + $0.fcstTime).toDate(.fcstDate) ?? Date() }
+        )
+        return groupedItems
+            .map { ShortTermForecast($0.value) }
+            .sorted { $0.date < $1.date }
+    }
     
     public func baseDate(_ date: Date) -> Date {
         let currentHour = date.toString(.hour)
