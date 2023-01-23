@@ -20,6 +20,8 @@ identifier_name:
         - ra
         - x
         - y
+        - am
+        - pm
 function_body_length:
     - 150 # warning
     - 300 # error
