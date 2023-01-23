@@ -11,26 +11,25 @@ import Common
 
 public struct ShortTermForecast {
     public let date: Date
-    public let precipitation: String
-    public let maxTemp: String
-    public let minTemp: String
-    public let skyState: SkyState
-    public let precipitationPattern: PrecipitationPattern
+    public let precipitation: Int
+    public let temp: Int
+    public let forecast: Forecast
 }
 
 public extension ShortTermForecast {
     
     init(_ items: [ShortTermForecastItem]) {
         self.date = items.first?.date ?? Date()
-        self.precipitation = "\(items.filter { $0.category == .pop }.first?.fcstValue ?? "0")%"
-        self.maxTemp = (items.filter { $0.category == .tmx }.first?.fcstValue ?? "0").decimalClean + "°"
-        self.minTemp = (items.filter { $0.category == .tmn }.first?.fcstValue ?? "0").decimalClean + "°"
-        self.skyState = SkyState(
+        self.precipitation = Int(items.filter { $0.category == .pop }.first?.fcstValue ?? "0") ?? 0
+        self.temp = items.filter { $0.category == .tmp }.compactMap { Int($0.fcstValue) }.max() ?? 0
+        let skyState = SkyState(
             rawValue: items.filter { $0.category == .sky }.first?.fcstValue ?? "1"
         ) ?? .sunny
-        self.precipitationPattern = PrecipitationPattern(
+        let precipitationPattern = PrecipitationPattern(
             rawValue: items.filter { $0.category == .pty }.first?.fcstValue ?? "0"
         ) ?? .noon
+        let forecast = precipitationPattern == .noon ? skyState.localized : precipitationPattern.localized
+        self.forecast = Forecast(rawValue: forecast) ?? .sunny
     }
 }
 
@@ -39,11 +38,11 @@ public enum SkyState: String {
     case lostOfCloudy = "3"
     case cloudy = "4"
     
-    public var icon: String {
+    public var localized: String {
         switch self {
-        case .sunny: return ""
-        case .lostOfCloudy: return ""
-        case .cloudy: return ""
+        case .sunny: return "맑음"
+        case .lostOfCloudy: return "구름많음"
+        case .cloudy: return "흐림"
         }
     }
 }
@@ -55,13 +54,13 @@ public enum PrecipitationPattern: String {
     case snow = "3"
     case scurry = "4"
     
-    public var icon: String {
+    public var localized: String {
         switch self {
-        case .noon: return ""
-        case .rain: return ""
-        case .rainOrSnow: return ""
-        case .snow: return ""
-        case .scurry: return ""
+        case .noon: return "없음"
+        case .rain: return "비"
+        case .rainOrSnow: return "비 또는 눈"
+        case .snow: return "눈"
+        case .scurry: return "소나기"
         }
     }
 }
