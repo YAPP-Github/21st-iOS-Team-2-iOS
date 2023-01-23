@@ -87,7 +87,6 @@ public extension KakaoAPI {
 
 private extension KakaoAPI {
     func updateParameters(_ parameter: [String: Any]) -> [String: Any] {
-        var parameter = parameter
         return parameter
     }
 }
