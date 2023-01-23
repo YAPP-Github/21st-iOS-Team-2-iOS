@@ -34,7 +34,7 @@ struct MidlandFcstItems: Codable {
 }
 
 // MARK: - Item
-struct MidlandFcstItem: Codable {
+public struct MidlandFcstItem: Codable {
     let regID: String
     let rnSt3Am: Int
     let rnSt3Pm: Int
@@ -79,7 +79,7 @@ struct MidlandFcstHeader: Codable {
 
 extension MidlandFcstItem {
     
-    func forecast(_ day: Int, meridiem: Meridiem) -> (forecast: String, precipitation: Int)? {
+    public func forecast(_ day: Int, meridiem: Meridiem) -> (forecast: String, precipitation: Int)? {
         switch (day, meridiem) {
         case (3, .am): return (wf3Am, rnSt3Am)
         case (3, .pm): return (wf3Pm, rnSt3Pm)
