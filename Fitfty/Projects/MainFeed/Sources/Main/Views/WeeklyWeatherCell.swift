@@ -128,7 +128,6 @@ final class WeeklyWeatherCell: UICollectionViewCell {
         view.clipsToBounds = true
         view.layer.cornerRadius = 8
         view.isHidden = true
-//        view.alpha = 0.3
         return view
     }()
     
