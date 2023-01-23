@@ -12,6 +12,7 @@ let project = Project.makeModule(
     name: "Core",
     product: .staticFramework,
     dependencies: [
-        .SPM.Moya
+        .SPM.Moya,
+        .SPM.KakaoSDK,
     ]
 )

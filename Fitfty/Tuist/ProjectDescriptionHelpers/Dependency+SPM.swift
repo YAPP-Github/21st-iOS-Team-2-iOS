@@ -13,4 +13,5 @@ public extension TargetDependency {
 
 public extension TargetDependency.SPM {
     static let Moya = TargetDependency.external(name: "Moya")
+    static let KakaoSDK = TargetDependency.external(name: "KakaoSDK")
 }
