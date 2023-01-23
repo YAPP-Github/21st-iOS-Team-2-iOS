@@ -22,6 +22,10 @@ public extension Date {
         return formatter.string(from: self)
     }
     
+    func addDays(_ days: Int) -> Date {
+        return Calendar.current.date(byAdding: .day, value: days, to: self) ?? Date()
+    }
+    
 }
 
 public enum DateFormat: String {
@@ -32,5 +36,6 @@ public enum DateFormat: String {
     case fcstDate = "yyyyMMddHHmm"
     case week = "E"
     case monthDay = "MM.dd"
+    case day = "dd"
     case log = "yyyy-MM-dd HH:mm:ss"
 }
