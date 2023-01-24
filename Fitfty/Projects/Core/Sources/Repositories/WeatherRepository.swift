@@ -17,6 +17,8 @@ public protocol WeatherRepository {
     func fetchMidTermForecast(longitude: String, latitude: String) async throws -> [MidTermForecast]
     
     func fetchDailyWeather(for date: Date, longitude: String, latitude: String) async throws -> DailyWeather
+    
+    func fetchCurrentWeather(longitude: String, latitude: String) async throws -> CurrentWeather
 
 }
 
