@@ -34,7 +34,8 @@ public final class DefaultWeatherRepository: WeatherRepository {
         return try await shortTermForecast(
             longitude: longitude,
             latitude: latitude,
-            baseDate: transferService.baseDate(Date())
+            baseDate: transferService.baseDate(Date()),
+            numOfRows: 300
         )
     }
     
@@ -81,13 +82,13 @@ public final class DefaultWeatherRepository: WeatherRepository {
 
 private extension DefaultWeatherRepository {
     
-    func shortTermForecast(longitude: String, latitude: String, baseDate: Date) async throws -> [ShortTermForecast] {
+    func shortTermForecast(longitude: String, latitude: String, baseDate: Date, numOfRows: Int) async throws -> [ShortTermForecast] {
         let grid = LocationConverter.shared.grid(
-            longitude: Double(longitude) ?? 127,
-            latitude: Double(latitude) ?? 61
+            longitude: Double(longitude) ?? 127.016702905651,
+            latitude: Double(latitude) ?? 37.5893588153919
         )
         let request = try ShortTermForecastRequest(
-            numOfRows: 1000,
+            numOfRows: numOfRows,
             pageNo: 1,
             baseDate: baseDate.toString(.baseDate),
             baseTime: baseDate.toString(.baseTime),
@@ -140,7 +141,10 @@ private extension DefaultWeatherRepository {
         Task {
             do {
                 let pastShortTermForecastList: [ShortTermForecast] = try await shortTermForecast(
-                    longitude: longitude, latitude: latitude, baseDate: transferService.pastBaseDate(Date())
+                    longitude: longitude,
+                    latitude: latitude,
+                    baseDate: transferService.pastBaseDate(Date()),
+                    numOfRows: 1000
                 )
                 _pastShortTermForecast = pastShortTermForecastList
             } catch {
