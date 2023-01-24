@@ -16,7 +16,7 @@ public protocol WeatherRepository {
     
     func fetchMidTermForecast(longitude: String, latitude: String) async throws -> [MidTermForecast]
     
-    func minMaxTemp() -> (min: Int, max: Int)
+    func fetchDailyWeather(for date: Date, longitude: String, latitude: String) async throws -> DailyWeather
 
 }
 
@@ -24,19 +24,22 @@ public final class DefaultWeatherRepository: WeatherRepository {
     
     private let transferService: WeatherTransferService
     private var _pastShortTermForecast: [ShortTermForecast] = []
+    private var _shortTermForecast: [ShortTermForecast] = []
     
     public init(transferService: WeatherTransferService = DefaultWeatherTransferService()) {
         self.transferService = transferService
-        pastShortTermForecast(longitude: "127.016702905651", latitude: "37.5893588153919")
     }
     
     public func fetchShortTermForecast(longitude: String, latitude: String) async throws -> [ShortTermForecast] {
-        return try await shortTermForecast(
+        try await pastShortTermForecast(longitude: longitude, latitude: latitude)
+        let shortTermForecast = try await shortTermForecast(
             longitude: longitude,
             latitude: latitude,
             baseDate: transferService.baseDate(Date()),
             numOfRows: 300
         )
+        _shortTermForecast = shortTermForecast
+        return shortTermForecast
     }
     
     public func fetchMidTermForecast(longitude: String, latitude: String) async throws -> [MidTermForecast] {
@@ -49,13 +52,6 @@ public final class DefaultWeatherRepository: WeatherRepository {
             .convertThirdDayMidTermForecast(_pastShortTermForecast)
         midTermForecastList.append(contentsOf: transferService.merge(by: tempResponse, to: midTermForecastResponse))
         return midTermForecastList
-    }
-    
-    public func minMaxTemp() -> (min: Int, max: Int) {
-        if _pastShortTermForecast.isEmpty {
-            pastShortTermForecast(longitude: "127.016702905651", latitude: "37.5893588153919")
-        }
-        return transferService.minMaxTemp(_pastShortTermForecast)
     }
     
     public func fetchDailyWeather(for date: Date, longitude: String, latitude: String) async throws -> DailyWeather {
@@ -78,11 +74,34 @@ public final class DefaultWeatherRepository: WeatherRepository {
         return DailyWeather(item)
     }
     
+    public func fetchCurrentWeather(longitude: String, latitude: String) async throws -> CurrentWeather {
+        let minMaxTemp = transferService.minMaxTemp(
+            _pastShortTermForecast.filter { $0.isToday }
+        )
+        guard let currentShortTermForecast = _shortTermForecast
+            .filter({ $0.isCurrent }).first
+        else {
+            throw ResultCode.nodataError
+        }
+        return CurrentWeather(
+            temp: currentShortTermForecast.temp,
+            minTemp: minMaxTemp.min,
+            maxTemp: minMaxTemp.max,
+            forecast: currentShortTermForecast.forecast,
+            date: currentShortTermForecast.date
+        )
+    }
+    
 }
 
 private extension DefaultWeatherRepository {
     
-    func shortTermForecast(longitude: String, latitude: String, baseDate: Date, numOfRows: Int) async throws -> [ShortTermForecast] {
+    func shortTermForecast(
+        longitude: String,
+        latitude: String,
+        baseDate: Date,
+        numOfRows: Int
+    ) async throws -> [ShortTermForecast] {
         let grid = LocationConverter.shared.grid(
             longitude: Double(longitude) ?? 127.016702905651,
             latitude: Double(latitude) ?? 37.5893588153919
@@ -137,20 +156,14 @@ private extension DefaultWeatherRepository {
         return response.response.body?.items.item.first
     }
     
-    func pastShortTermForecast(longitude: String, latitude: String) {
-        Task {
-            do {
-                let pastShortTermForecastList: [ShortTermForecast] = try await shortTermForecast(
-                    longitude: longitude,
-                    latitude: latitude,
-                    baseDate: transferService.pastBaseDate(Date()),
-                    numOfRows: 1000
-                )
-                _pastShortTermForecast = pastShortTermForecastList
-            } catch {
-                Logger.debug(error: error, message: "과거 날씨 데이터 요청 실패")
-            }
-        }
+    func pastShortTermForecast(longitude: String, latitude: String) async throws {
+        let pastShortTermForecastList: [ShortTermForecast] = try await shortTermForecast(
+            longitude: longitude,
+            latitude: latitude,
+            baseDate: transferService.pastBaseDate(Date()),
+            numOfRows: 882
+        )
+        _pastShortTermForecast = pastShortTermForecastList
     }
     
 }
