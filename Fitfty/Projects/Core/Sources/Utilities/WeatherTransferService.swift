@@ -216,13 +216,19 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
     }
     
     public func convertThirdDayMidTermForecast(_ data: [ShortTermForecast]) -> [MidTermForecast] {
-        let today = Meridiem.allCases
-            .map { convertMidTermForecast(data, meridiem: $0, date: Date()) }
-        let nextDay = Meridiem.allCases
-            .map { convertMidTermForecast(data, meridiem: $0, date: Date().addDays(1)) }
-        let afterNextDay = Meridiem.allCases
-            .map { convertMidTermForecast(data, meridiem: $0, date: Date().addDays(2)) }
-        return today + nextDay + afterNextDay
+        let today = convertMidTermForecast(
+            data.filter { $0.isToday },
+            date: Date()
+        )
+        let nextDay = convertMidTermForecast(
+            data.filter { $0.date.toString(.baseDate) == Date().addDays(1).toString(.baseDate)},
+            date: Date().addDays(1)
+        )
+        let afterNextDay = convertMidTermForecast(
+            data.filter { $0.date.toString(.baseDate) == Date().addDays(2).toString(.baseDate)},
+            date: Date().addDays(2)
+        )
+        return [today, nextDay, afterNextDay]
     }
     
     public func merge(
@@ -232,20 +238,17 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
         var midTermForecastList: [MidTermForecast] = []
         for day in 3...9 {
             let temp = tempResponse.temp(day)
-            let forecastList = Meridiem.allCases
-                .map { ($0, midTermForecastResponse.forecast(day, meridiem: $0)) }
-            forecastList.forEach { forecast in
-                let meridiem = forecast.0
-                let forecast = forecast.1
-                midTermForecastList.append(MidTermForecast(
-                    meridiem: meridiem,
-                    date: Date().addDays(day),
-                    forecast: Forecast(rawValue: forecast?.forecast ?? "") ?? .sunny,
-                    precipitation: forecast?.precipitation ?? 0,
-                    maxTemp: temp?.max ?? 0,
-                    minTemp: temp?.min ?? 0
-                ))
-            }
+            let amOnshoreForecast = midTermForecastResponse.forecast(day, meridiem: .am)
+            let pmOnshoreForecast = midTermForecastResponse.forecast(day, meridiem: .pm)
+            midTermForecastList.append(MidTermForecast(
+                date: Date().addDays(day),
+                amforecast: Forecast(rawValue: amOnshoreForecast?.forecast ?? "") ?? .sunny,
+                pmforecast: Forecast(rawValue: pmOnshoreForecast?.forecast ?? "") ?? .sunny,
+                amPrecipitation: amOnshoreForecast?.precipitation ?? 0,
+                pmPrecipitation: pmOnshoreForecast?.precipitation ?? 0,
+                maxTemp: temp?.max ?? 0,
+                minTemp: temp?.min ?? 0
+            ))
         }
         return midTermForecastList
     }
@@ -282,22 +285,24 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
 
 private extension DefaultWeatherTransferService {
     
-    func convertMidTermForecast(_ data: [ShortTermForecast], meridiem: Meridiem, date: Date) -> MidTermForecast {
-        let data = data.filter { forecast in
+    func convertMidTermForecast(_ data: [ShortTermForecast], date: Date) -> MidTermForecast {
+        let amData = data.filter { forecast in
             let currentHour = Int(forecast.date.toString(.hour)) ?? 0
-            if meridiem == .am {
-                return (0...11).contains(currentHour)
-            } else {
-                return (12...24).contains(currentHour)
-            }
+            return (0...11).contains(currentHour)
         }
-        let forecast = forecast(data)
+        let pmData = data.filter { forecast in
+            let currentHour = Int(forecast.date.toString(.hour)) ?? 0
+            return (12...24).contains(currentHour)
+        }
+        let amForecast = forecast(amData)
+        let pmForecast = forecast(pmData)
         let minMaxTempInfo = minMaxTemp(data)
         return MidTermForecast(
-            meridiem: meridiem,
             date: date,
-            forecast: forecast,
-            precipitation: data.reduce(0) { max($0, $1.precipitation) },
+            amforecast: amForecast,
+            pmforecast: pmForecast,
+            amPrecipitation: amData.reduce(0) { max($0, $1.precipitation) },
+            pmPrecipitation: pmData.reduce(0) { max($0, $1.precipitation) },
             maxTemp: minMaxTempInfo.max,
             minTemp: minMaxTempInfo.min
         )

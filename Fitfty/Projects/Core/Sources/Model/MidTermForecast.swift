@@ -10,10 +10,11 @@ import Foundation
 
 public struct MidTermForecast {
     
-    public let meridiem: Meridiem
     public let date: Date
-    public let forecast: Forecast
-    public let precipitation: Int
+    public let amforecast: Forecast
+    public let pmforecast: Forecast
+    public let amPrecipitation: Int
+    public let pmPrecipitation: Int
     public let maxTemp: Int
     public let minTemp: Int
     
