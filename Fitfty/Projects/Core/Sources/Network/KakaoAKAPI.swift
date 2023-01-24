@@ -9,13 +9,13 @@
 import Foundation
 import Moya
 
-public enum KakaoAPI {
+public enum KakaoAKAPI {
     case fetchSearchAddress(parameter: [String: Any])
     case fetchSearchRegionCode(parameter: [String: Any])
     case fetchAddressConversion(parameter: [String: Any])
 }
 
-extension KakaoAPI: TargetType {
+extension KakaoAKAPI: TargetType {
     public var baseURL: URL {
         return URL(string: "https://dapi.kakao.com")!
     }
@@ -48,10 +48,10 @@ extension KakaoAPI: TargetType {
     }
 }
 
-public extension KakaoAPI {
-    static func request<T: Decodable>(target: KakaoAPI, dataType: T.Type) async throws -> T {
+public extension KakaoAKAPI {
+    static func request<T: Decodable>(target: KakaoAKAPI, dataType: T.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<KakaoAPI>()
+            let provider = MoyaProvider<KakaoAKAPI>()
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -69,9 +69,9 @@ public extension KakaoAPI {
         }
     }
     
-    static func request(target: KakaoAPI) async throws -> Response {
+    static func request(target: KakaoAKAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<KakaoAPI>()
+            let provider = MoyaProvider<KakaoAKAPI>()
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -85,7 +85,7 @@ public extension KakaoAPI {
     }
 }
 
-private extension KakaoAPI {
+private extension KakaoAKAPI {
     func updateParameters(_ parameter: [String: Any]) -> [String: Any] {
         return parameter
     }

@@ -255,8 +255,8 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
 
     public func address(latitude: String, longitude: String) async throws -> String {
         let searchAddress = AddressConversionRequest(x: Double(latitude) ?? 0, y: Double(longitude) ?? 0)
-        return try await KakaoAPI.request(
-            target: KakaoAPI.fetchAddressConversion(parameter: try searchAddress.asDictionary()),
+        return try await KakaoAKAPI.request(
+            target: KakaoAKAPI.fetchAddressConversion(parameter: try searchAddress.asDictionary()),
             dataType: AddressConversionResponse.self
         ).documents
             .map { $0.address.addressName }.first ?? "서울"

@@ -20,7 +20,7 @@ public final class DefaultAddressRepository: AddressRepository {
     
     public func fetchAddressList(search: String) async throws -> [Address] {
         let request = try SearchAddressRequest(query: search, page: 1, size: 30).asDictionary()
-        let response = try await KakaoAPI.request(
+        let response = try await KakaoAKAPI.request(
             target: .fetchSearchAddress(parameter: request),
             dataType: SearchAddressResponse.self
         )
