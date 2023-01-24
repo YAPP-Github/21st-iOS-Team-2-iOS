@@ -40,4 +40,5 @@ public enum DateFormat: String {
     case log = "yyyy-MM-dd HH:mm:ss"
     case meridiemHour = "a h시"
     case yyyyMMddHyphen = "yyyy-MM-dd"
+    case mmddHH = "MM/dd HH시"
 }

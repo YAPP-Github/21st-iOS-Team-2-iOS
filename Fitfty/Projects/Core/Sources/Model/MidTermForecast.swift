@@ -19,7 +19,15 @@ public struct MidTermForecast {
     
 }
 
-public enum Forecast: String {
+public extension MidTermForecast {
+    
+    var isToday: Bool {
+        date.toString(.baseDate) == Date().toString(.baseDate)
+    }
+    
+}
+
+public enum Forecast: String, Codable {
     case sunny = "맑음"
     case lostOfCloudy = "구름많음"
     case cloudy = "흐림"

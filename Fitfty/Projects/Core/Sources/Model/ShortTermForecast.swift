@@ -31,6 +31,14 @@ public extension ShortTermForecast {
         let forecast = precipitationPattern == .noon ? skyState.localized : precipitationPattern.localized
         self.forecast = Forecast(rawValue: forecast) ?? .sunny
     }
+    
+    var isCurrent: Bool {
+        date.toString(.mmddHH) == Date().toString(.mmddHH)
+    }
+    
+    var isToday: Bool {
+        date.toString(.baseDate) == Date().toString(.baseDate)
+    }
 }
 
 public enum SkyState: String {
