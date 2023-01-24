@@ -15,7 +15,7 @@ public struct ShortTermForecastResponse: Codable {
 
 // MARK: - Response
 public struct ShortTermForecastResult: Codable {
-    let header: DailyWeatherHeader
+    let header: ShortTermForecastHeader
     let body: ShortTermForecastBody?
 }
 
@@ -81,7 +81,7 @@ public enum WeatherInfoCategory: String, Codable {
 }
 
 // MARK: - Header
-public struct DailyWeatherHeader: Codable {
+public struct ShortTermForecastHeader: Codable {
     let resultCode: ResultCode
     let resultMsg: String
 }
