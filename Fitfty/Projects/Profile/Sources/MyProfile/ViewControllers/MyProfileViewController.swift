@@ -17,11 +17,11 @@ final public class MyProfileViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: postLayout())
         collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
- 
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUpConstraintLayout()
@@ -67,8 +67,7 @@ private extension MyProfileViewController {
         collectionView.register(FeedImageCell.self,
                                 forCellWithReuseIdentifier: FeedImageCell.className)
         collectionView.register(MyProfileHeaderView.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: MyProfileHeaderView.className)
+                                forSupplementaryViewOfKind: MyProfileHeaderView.className)
     }
     
     func setUpDataSource() {
@@ -104,48 +103,38 @@ private extension MyProfileViewController {
     }
 }
 
-extension MyProfileViewController: UICollectionViewDelegateFlowLayout {
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (collectionView.frame.width) / 2 - 28
-        let height = width * 1.157
-        return CGSize(width: width, height: height)
-    }
+func postLayout() -> UICollectionViewLayout {
+    let itemSize = NSCollectionLayoutSize(
+        widthDimension: .fractionalWidth(1/2),
+        heightDimension: .fractionalHeight(1)
+    )
+    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    item.contentInsets = .init(top: 8, leading: 8, bottom: 8, trailing: 8)
     
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 16
-    }
+    let groupSize = NSCollectionLayoutSize(
+        widthDimension: .fractionalWidth(1),
+        heightDimension: .fractionalWidth(1/2)
+    )
+    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
     
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 16
-    }
-    
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 20)
-    }
-    
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int) -> CGSize {
-            return CGSize(width: collectionView.frame.width, height: 350)
-    }
-    
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath) {
+    let section = NSCollectionLayoutSection(group: group)
+    section.contentInsets = .init(top: 27, leading: 12, bottom: 5, trailing: 12)
+    section.boundarySupplementaryItems = [
+        NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: .init(
+                widthDimension: .absolute(UIScreen.main.bounds.width),
+                heightDimension: .estimated(320)
+            ),
+            elementKind: MyProfileHeaderView.className,
+            alignment: .top
+        )
+    ]
+    let layout = UICollectionViewCompositionalLayout(section: section)
+    return layout
+}
+
+extension MyProfileViewController: UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         coordinator.showPost()
     }
-    
 }
