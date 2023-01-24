@@ -15,24 +15,23 @@ struct SearchAddressResponse: Codable {
 
 // MARK: - Document
 struct SearchAddressResult: Codable {
-    let address: SearchAddress
     let addressName: String
     let addressType: String
-    var roadAddress: String?
     let x: String
     let y: String
+    var roadAddress: RoadAddressResponse?
+    let address: AddressResponse?
 
     enum CodingKeys: String, CodingKey {
-        case address
+        case address, x, y
         case addressName = "address_name"
         case addressType = "address_type"
         case roadAddress = "road_address"
-        case x, y
     }
 }
 
 // MARK: - Address
-struct SearchAddress: Codable {
+struct AddressResponse: Codable {
     let addressName: String
     let bCode: String
     let hCode: String
@@ -47,6 +46,7 @@ struct SearchAddress: Codable {
     let y: String
 
     enum CodingKeys: String, CodingKey {
+        case x, y
         case addressName = "address_name"
         case bCode = "b_code"
         case hCode = "h_code"
@@ -57,14 +57,44 @@ struct SearchAddress: Codable {
         case region3DepthHName = "region_3depth_h_name"
         case region3DepthName = "region_3depth_name"
         case subAddressNo = "sub_address_no"
-        case x, y
     }
 }
+
+// MARK: - RoadAddress
+struct RoadAddressResponse: Codable {
+    let addressName: String
+    let buildingName: String
+    let mainBuildingNo: String
+    let region1DepthName: String
+    let region2DepthName: String
+    let region3DepthName: String
+    let roadName: String
+    let subBuildingNo: String
+    let undergroundYn: String
+    let x: String
+    let y: String
+    let zoneNo: String
+
+    enum CodingKeys: String, CodingKey {
+        case x, y
+        case addressName = "address_name"
+        case buildingName = "building_name"
+        case mainBuildingNo = "main_building_no"
+        case region1DepthName = "region_1depth_name"
+        case region2DepthName = "region_2depth_name"
+        case region3DepthName = "region_3depth_name"
+        case roadName = "road_name"
+        case subBuildingNo = "sub_building_no"
+        case undergroundYn = "underground_yn"
+        case zoneNo = "zone_no"
+    }
+}
+
 
 // MARK: - Meta
 struct SearchAddressMeta: Codable {
     let isEnd: Bool
-    let pageableCount: String
+    let pageableCount: Int
     let totalCount: Int
 
     enum CodingKeys: String, CodingKey {
