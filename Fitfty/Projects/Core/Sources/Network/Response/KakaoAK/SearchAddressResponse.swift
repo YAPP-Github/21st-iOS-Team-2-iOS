@@ -90,7 +90,6 @@ struct RoadAddressResponse: Codable {
     }
 }
 
-
 // MARK: - Meta
 struct SearchAddressMeta: Codable {
     let isEnd: Bool
