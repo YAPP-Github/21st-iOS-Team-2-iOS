@@ -35,10 +35,11 @@ public enum DateFormat: String {
     case minute = "mm"
     case fcstDate = "yyyyMMddHHmm"
     case week = "E"
-    case monthDay = "MM.dd"
+    case mmddDot = "M.d"
     case day = "dd"
     case log = "yyyy-MM-dd HH:mm:ss"
     case meridiemHour = "a h시"
     case yyyyMMddHyphen = "yyyy-MM-dd"
     case mmddHH = "MM/dd HH시"
+    case yyMMddDot = "yy.MM.dd"
 }
