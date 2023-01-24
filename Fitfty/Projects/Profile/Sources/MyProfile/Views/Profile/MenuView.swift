@@ -23,36 +23,9 @@ final class MenuView: UIView {
         return button
     }()
     
-    private lazy var myFitftyTextButton: UIButton = {
-        let button = UIButton()
-        button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 15).font
-        button.setTitleColor(.black, for: .normal)
-        button.setTitle("내 핏프티", for: .normal)
-        button.addTarget(self, action: #selector(didTapMyFitftyButton), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var myFitftyCountButton: UIButton = {
-        let button = UIButton()
-        button.titleLabel?.font = FitftyFont.SFProDisplaySemibold(size: 13).font
-        button.setTitleColor(UIColor(red: 0.22, green: 0.675, blue: 1, alpha: 1), for: .normal)
-        button.addTarget(self, action: #selector(didTapMyFitftyButton), for: .touchUpInside)
-        button.contentEdgeInsets = UIEdgeInsets(top: 7, left: 0, bottom: 0, right: 0)
-        return button
-    }()
-    
     private lazy var bookmarkIconButton: UIButton = {
         let button = UIButton()
         button.setImage(CommonAsset.Images.btnBookmarkUnselected.image, for: .normal)
-        button.addTarget(self, action: #selector(didTapBookmarkButton), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var bookmarkTextButton: UIButton = {
-        let button = UIButton()
-        button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 15).font
-        button.setTitleColor(.black, for: .normal)
-        button.setTitle("즐겨찾기", for: .normal)
         button.addTarget(self, action: #selector(didTapBookmarkButton), for: .touchUpInside)
         return button
     }()
@@ -86,28 +59,18 @@ final class MenuView: UIView {
     }
     
     private func setUpConstraintLayout() {
-        addSubviews(myFitftyIconButton, myFitftyTextButton, myFitftyCountButton,
-                    bookmarkIconButton, bookmarkTextButton, barView)
+        addSubviews(myFitftyIconButton, bookmarkIconButton, barView)
        
         NSLayoutConstraint.activate([
             barView.widthAnchor.constraint(equalToConstant: 1),
-            barView.heightAnchor.constraint(equalToConstant: 72),
+            barView.heightAnchor.constraint(equalToConstant: 32),
             barView.centerXAnchor.constraint(equalTo: centerXAnchor),
             
             myFitftyIconButton.trailingAnchor.constraint(equalTo: barView.leadingAnchor, constant: -65),
             myFitftyIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             
-            myFitftyCountButton.trailingAnchor.constraint(equalTo: barView.leadingAnchor, constant: -48),
-            myFitftyCountButton.topAnchor.constraint(equalTo: myFitftyIconButton.bottomAnchor, constant: 14),
-            
-            myFitftyTextButton.trailingAnchor.constraint(equalTo: myFitftyCountButton.leadingAnchor, constant: -2),
-            myFitftyTextButton.topAnchor.constraint(equalTo: myFitftyIconButton.bottomAnchor, constant: 14),
-            
             bookmarkIconButton.leadingAnchor.constraint(equalTo: barView.trailingAnchor, constant: 65),
-            bookmarkIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
-            
-            bookmarkTextButton.leadingAnchor.constraint(equalTo: barView.trailingAnchor, constant: 48),
-            bookmarkTextButton.topAnchor.constraint(equalTo: bookmarkIconButton.bottomAnchor, constant: 14)
+            bookmarkIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10)
         ])
     }
     
@@ -117,11 +80,5 @@ final class MenuView: UIView {
     
     @objc func didTapBookmarkButton(_ sender: UIButton) {
         menuState = .bookmark
-    }
-}
-
-extension MenuView {
-    func setUp(count: String) {
-        myFitftyCountButton.setTitle(count, for: .normal)
     }
 }

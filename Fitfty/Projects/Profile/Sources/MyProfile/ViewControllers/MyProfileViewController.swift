@@ -90,7 +90,6 @@ private extension MyProfileViewController {
                 return UICollectionReusableView()
             }
             supplementaryView.profileView.setUp(nickname: "iosLover", content: "안녕하세용!")
-            supplementaryView.menuView.setUp(count: "12")
             return supplementaryView
         }
     }
@@ -123,7 +122,7 @@ func postLayout() -> UICollectionViewLayout {
         NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: .init(
                 widthDimension: .absolute(UIScreen.main.bounds.width),
-                heightDimension: .estimated(320)
+                heightDimension: .estimated(283)
             ),
             elementKind: MyProfileHeaderView.className,
             alignment: .top
