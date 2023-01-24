@@ -116,13 +116,7 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
     }
     
     public func pastBaseDate(_ date: Date) -> Date {
-        let currentHour = Int(date.toString(.hour)) ?? 0
-        let dateString: String
-        if currentHour >= 3 {
-            dateString = date.toString(.baseDate) + "0200"
-        } else {
-            dateString = date.yesterday.toString(.baseDate) + "0200"
-        }
+        let dateString: String = date.yesterday.toString(.baseDate) + "2300"
         return dateString.toDate(.fcstDate) ?? Date()
     }
     
