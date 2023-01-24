@@ -8,12 +8,6 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let infoPlist = InfoPlist.extendingDefault(with: [
-    "NSAppTransportSecurity" : [
-        "NSAllowsArbitraryLoads": "YES"
-    ]
-])
-
 let project = Project.makeModule(
     name: "Fitfty",
     platform: .iOS,
