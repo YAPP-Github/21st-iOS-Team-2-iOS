@@ -19,6 +19,7 @@ public enum Logger {
     ) {
         let file = file.components(separatedBy: ["/"]).last ?? ""
         print("\(Date().toString(.log)) [⛔️][\(file)][\(function)][\(line)] -> \(message)")
+        print(error.localizedDescription)
         debugPrint(error)
     }
     
