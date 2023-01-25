@@ -84,17 +84,21 @@ final public class AuthViewController: UIViewController {
     @objc
     private func didTapLoginProblemButton() {
         if MFMailComposeViewController.canSendMail() {
-            let mailViewController = MFMailComposeViewController()
-            mailViewController.mailComposeDelegate = self
-            
-            mailViewController.setToRecipients(["team.fitfty@gmail.com"])
-            mailViewController.setSubject("로그인 문제")
-            mailViewController.setMessageBody("로그인에 어떤 문제가 있나요?", isHTML: false)
-            
+            let mailViewController = makeMailViewController()
             self.present(mailViewController, animated: true, completion: nil)
         } else {
             self.showSendMailErrorAlert()
         }
+    }
+    
+    private func makeMailViewController() -> MFMailComposeViewController {
+        let mailViewController = MFMailComposeViewController()
+        mailViewController.mailComposeDelegate = self
+        mailViewController.setToRecipients(["team.fitfty@gmail.com"])
+        mailViewController.setSubject("로그인 문제")
+        mailViewController.setMessageBody("로그인에 어떤 문제가 있나요?", isHTML: false)
+        
+        return mailViewController
     }
     
     private func showErrorAlert(_ error: Error) {
