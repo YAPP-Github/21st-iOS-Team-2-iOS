@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Common
 
 final public class MyProfileViewController: UIViewController {
     
@@ -32,7 +33,7 @@ final public class MyProfileViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.isHidden = true
+        setUpNavigationBar()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -52,6 +53,14 @@ final public class MyProfileViewController: UIViewController {
 }
 
 private extension MyProfileViewController {
+    
+    func setUpNavigationBar() {
+        navigationController?.navigationBar.isHidden = true
+        let miniProfileView = MiniProfileView(imageSize: 32, frame: .zero)
+        miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: miniProfileView)
+    }
+    
     func setUpConstraintLayout() {
         view.addSubviews(collectionView)
         NSLayoutConstraint.activate([
@@ -100,40 +109,51 @@ private extension MyProfileViewController {
         snapshot.appendItems(Array(0..<10).map {_ in UUID() })
         dataSource?.apply(snapshot, animatingDifferences: true)
     }
-}
-
-func postLayout() -> UICollectionViewLayout {
-    let itemSize = NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(1/2),
-        heightDimension: .fractionalHeight(1)
-    )
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = .init(top: 8, leading: 8, bottom: 8, trailing: 8)
     
-    let groupSize = NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(1),
-        heightDimension: .fractionalWidth(1/2)
-    )
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    
-    let section = NSCollectionLayoutSection(group: group)
-    section.contentInsets = .init(top: 27, leading: 12, bottom: 5, trailing: 12)
-    section.boundarySupplementaryItems = [
-        NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: .init(
-                widthDimension: .absolute(UIScreen.main.bounds.width),
-                heightDimension: .estimated(283)
-            ),
-            elementKind: MyProfileHeaderView.className,
-            alignment: .top
+    func postLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1/2),
+            heightDimension: .fractionalHeight(1)
         )
-    ]
-    let layout = UICollectionViewCompositionalLayout(section: section)
-    return layout
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = .init(top: 8, leading: 8, bottom: 8, trailing: 8)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .fractionalWidth(1/2)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 27, leading: 20, bottom: 5, trailing: 20)
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(UIScreen.main.bounds.width),
+                    heightDimension: .estimated(283)
+                ),
+                elementKind: MyProfileHeaderView.className,
+                alignment: .top
+            )
+        ]
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        return layout
+    }
+
 }
 
 extension MyProfileViewController: UICollectionViewDelegate {
+    
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         coordinator.showPost()
     }
+    
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y >= 250 {
+            navigationController?.navigationBar.isHidden = false
+        } else {
+            navigationController?.navigationBar.isHidden = true
+        }
+    }
+    
 }
