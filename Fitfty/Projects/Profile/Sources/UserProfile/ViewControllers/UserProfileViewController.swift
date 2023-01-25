@@ -126,7 +126,7 @@ private extension UserProfileViewController {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 27, leading: 12, bottom: 5, trailing: 12)
+        section.contentInsets = .init(top: 27, leading: 20, bottom: 5, trailing: 20)
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
