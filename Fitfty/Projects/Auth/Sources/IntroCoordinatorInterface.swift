@@ -7,3 +7,7 @@
 //
 
 import Foundation
+
+public protocol IntroCoordinatorInterface: AnyObject {
+    func pushPermissionView()
+}
