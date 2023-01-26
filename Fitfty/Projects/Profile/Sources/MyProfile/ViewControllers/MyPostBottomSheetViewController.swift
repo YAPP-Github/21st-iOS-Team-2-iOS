@@ -16,6 +16,7 @@ final public class MyPostBottomSheetViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setConstratintsLayout()
+        setButtonAction()
     }
     
     public init(coordinator: MyProfileCoordinatorInterface) {
@@ -36,6 +37,21 @@ final public class MyPostBottomSheetViewController: UIViewController {
             myPostBottomSheetView.topAnchor.constraint(equalTo: view.topAnchor, constant: 44),
             myPostBottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -44)
         ])
+    }
+    
+    private func setButtonAction() {
+        myPostBottomSheetView.setActionDeleteButton(self, action: #selector(didTapDeleteButton))
+        myPostBottomSheetView.setActionModifyButton(self, action: #selector(didTapModifyButton))
+    }
+    
+    @objc func didTapModifyButton(_ sender: Any?) {
+        coordinator.dismiss()
+        coordinator.showUploadCody()
+    }
+    
+    @objc func didTapDeleteButton(_ sender: Any?) {
+        coordinator.dismiss()
+        coordinator.popToRoot()
     }
 
 }

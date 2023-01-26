@@ -53,3 +53,15 @@ final class MyPostBottomSheetView: UIStackView {
         ])
     }
 }
+
+extension MyPostBottomSheetView {
+    
+    func setActionModifyButton(_ target: Any?, action: Selector) {
+        modifyButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+    func setActionDeleteButton( _ target: Any?, action: Selector) {
+        deleteButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+}
