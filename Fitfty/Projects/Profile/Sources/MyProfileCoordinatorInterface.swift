@@ -6,10 +6,10 @@
 //  Copyright © 2022 Fitfty. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public protocol MyProfileCoordinatorInterface: AnyObject {
     
     func showPost()
-    
+    func showBottomSheet()
 }

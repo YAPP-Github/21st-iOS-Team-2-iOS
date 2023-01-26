@@ -57,7 +57,7 @@ final public class MyPostViewController: UIViewController {
     }
     
     @objc private func didTapRightBarButton(_ sender: Any) {
-        print("tappedRightBarButton")
+        coordinator.showBottomSheet()
     }
     
 }
