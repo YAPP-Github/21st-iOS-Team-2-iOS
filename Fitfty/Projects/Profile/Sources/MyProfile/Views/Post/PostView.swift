@@ -20,14 +20,14 @@ final class PostView: UIView {
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.font = FitftyFont.SFProDisplayMedium(size: 13).font
-        label.textColor = UIColor(red: 0.557, green: 0.557, blue: 0.576, alpha: 1)
+        label.textColor = CommonAsset.Colors.gray04.color
         return label
     }()
     
     private lazy var contentLabel: UILabel = {
         let label = UILabel()
         label.font = FitftyFont.appleSDMedium(size: 15).font
-        label.textColor = UIColor(red: 0.11, green: 0.11, blue: 0.118, alpha: 1)
+        label.textColor = CommonAsset.Colors.gray08.color
         label.numberOfLines = 0
         return label
     }()

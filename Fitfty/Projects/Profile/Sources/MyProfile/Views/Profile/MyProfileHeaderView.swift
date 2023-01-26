@@ -14,10 +14,10 @@ final class MyProfileHeaderView: UICollectionReusableView {
     private lazy var settingButton: UIButton = {
         let button = UIButton()
         button.setTitle("설정", for: .normal)
-        button.setTitleColor(UIColor(red: 0.557, green: 0.557, blue: 0.576, alpha: 1), for: .normal)
+        button.setTitleColor(CommonAsset.Colors.gray05.color, for: .normal)
         button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 13).font
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor(red: 0.898, green: 0.898, blue: 0.918, alpha: 1).cgColor
+        button.layer.borderColor = CommonAsset.Colors.gray02.color.cgColor
         button.layer.cornerRadius = 18
         return button
     }()
