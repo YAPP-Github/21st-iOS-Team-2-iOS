@@ -30,6 +30,7 @@ final public class MyProfileViewController: UIViewController {
     }()
     
     private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
+    private let headerHeight: CGFloat = 283
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -152,7 +153,7 @@ private extension MyProfileViewController {
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
                     widthDimension: .absolute(UIScreen.main.bounds.width),
-                    heightDimension: .estimated(283)
+                    heightDimension: .estimated(headerHeight)
                 ),
                 elementKind: MyProfileHeaderView.className,
                 alignment: .top
@@ -171,7 +172,7 @@ extension MyProfileViewController: UICollectionViewDelegate {
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y >= 250 {
+        if scrollView.contentOffset.y >= headerHeight {
             setMiniProfileView(isHidden: false)
         } else {
             setMiniProfileView(isHidden: true)
