@@ -35,6 +35,11 @@ final public class UserProfileViewController: UIViewController {
         setUp()
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setNavigationBarTitle()
+    }
+    
     public init(coordinator: UserProfileCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -78,6 +83,10 @@ private extension UserProfileViewController {
             action: #selector(didTapMoreVerticalButton)
         )
         navigationItem.rightBarButtonItem?.tintColor = .black
+    }
+    
+    func setNavigationBarTitle() {
+        navigationController?.navigationBar.topItem?.title = ""
     }
     
     func setDataSource() {
