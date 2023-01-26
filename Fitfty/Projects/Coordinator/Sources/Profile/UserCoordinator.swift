@@ -70,4 +70,9 @@ extension UserCoordinator: UserProfileCoordinatorInterface {
     func dismissReport(_ viewController: UIViewController) {
         viewController.dismiss(animated: true)
     }
+    
+    func showProfile() {
+        let viewController = makeUserProfileViewController()
+        navigationController.pushViewController(viewController, animated: true)
+    }
 }
