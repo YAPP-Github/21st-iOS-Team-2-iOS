@@ -22,6 +22,13 @@ final public class MyProfileViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
+    
+    private lazy var seperatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 0.949, green: 0.949, blue: 0.969, alpha: 1)
+        return view
+    }()
+    
     private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
     
     public override func viewDidLoad() {
@@ -54,19 +61,15 @@ final public class MyProfileViewController: UIViewController {
         setUpCollectionView()
         setUpDataSource()
         applySnapshot()
-        setUpMiniProfileView()
+        setMiniProfileView(isHidden: true)
+        miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
     }
 }
 
 private extension MyProfileViewController {
     
-    func setUpMiniProfileView() {
-        miniProfileView.isHidden = true
-        miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
-    }
-    
     func setUpConstraintLayout() {
-        view.addSubviews(collectionView, miniProfileView)
+        view.addSubviews(collectionView, miniProfileView, seperatorView)
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -76,7 +79,12 @@ private extension MyProfileViewController {
             miniProfileView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             miniProfileView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             miniProfileView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            miniProfileView.heightAnchor.constraint(equalToConstant: 66)
+            miniProfileView.heightAnchor.constraint(equalToConstant: 66),
+            
+            seperatorView.heightAnchor.constraint(equalToConstant: 1),
+            seperatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            seperatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            seperatorView.bottomAnchor.constraint(equalTo: miniProfileView.bottomAnchor)
         ])
     }
     
@@ -86,6 +94,11 @@ private extension MyProfileViewController {
                                 forCellWithReuseIdentifier: FeedImageCell.className)
         collectionView.register(MyProfileHeaderView.self,
                                 forSupplementaryViewOfKind: MyProfileHeaderView.className)
+    }
+    
+    func setMiniProfileView(isHidden: Bool) {
+        miniProfileView.isHidden = isHidden
+        seperatorView.isHidden = isHidden
     }
     
     func setUpDataSource() {
@@ -159,9 +172,9 @@ extension MyProfileViewController: UICollectionViewDelegate {
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y >= 250 {
-            miniProfileView.isHidden = false
+            setMiniProfileView(isHidden: false)
         } else {
-            miniProfileView.isHidden = true
+            setMiniProfileView(isHidden: true)
         }
     }
     
