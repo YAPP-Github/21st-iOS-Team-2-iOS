@@ -12,4 +12,7 @@ public protocol MyProfileCoordinatorInterface: AnyObject {
     
     func showPost()
     func showBottomSheet()
+    func showUploadCody()
+    func dismiss()
+    func popToRoot()
 }

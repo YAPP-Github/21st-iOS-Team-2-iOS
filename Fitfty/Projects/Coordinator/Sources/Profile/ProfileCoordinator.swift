@@ -45,9 +45,18 @@ private extension ProfileCoordinator {
         )
         return bottomSheetViewController
     }
+    
+    func makeUploadCodyCoordinator() -> UploadCodyCoordinator {
+        let coordinator = UploadCodyCoordinator()
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
 }
 
 extension ProfileCoordinator: MyProfileCoordinatorInterface {
+    
     func showPost() {
         let postViewController = MyPostViewController(coordinator: self)
         postViewController.hidesBottomBarWhenPushed = true
@@ -58,5 +67,28 @@ extension ProfileCoordinator: MyProfileCoordinatorInterface {
         let bottomSheetViewController = makeProfileBottomSheetViewController()
         bottomSheetViewController.modalPresentationStyle = .overFullScreen
         navigationController.present(bottomSheetViewController, animated: false)
+    }
+    
+    func showUploadCody() {
+        let coordinator = makeUploadCodyCoordinator()
+        coordinator.start()
+        coordinator.navigationController.modalPresentationStyle = .overFullScreen
+        navigationController.present(coordinator.navigationController, animated: true)
+    }
+    
+    func dismiss() {
+        navigationController.dismiss(animated: false)
+    }
+    
+    func popToRoot() {
+        navigationController.popToRootViewController(animated: true)
+    }
+    
+}
+
+extension ProfileCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
     }
 }
