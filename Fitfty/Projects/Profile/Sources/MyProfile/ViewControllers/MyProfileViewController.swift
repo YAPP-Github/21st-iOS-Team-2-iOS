@@ -22,18 +22,16 @@ final public class MyProfileViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
+    private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setUpConstraintLayout()
-        setUpCollectionView()
-        setUpDataSource()
-        applySnapshot()
+        setUp()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setUpNavigationBar()
+        navigationController?.navigationBar.isHidden = true
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -50,24 +48,35 @@ final public class MyProfileViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    private func setUp() {
+        setUpConstraintLayout()
+        setUpCollectionView()
+        setUpDataSource()
+        applySnapshot()
+        setUpMiniProfileView()
+    }
 }
 
 private extension MyProfileViewController {
     
-    func setUpNavigationBar() {
-        navigationController?.navigationBar.isHidden = true
-        let miniProfileView = MiniProfileView(imageSize: 32, frame: .zero)
+    func setUpMiniProfileView() {
+        miniProfileView.isHidden = true
         miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: miniProfileView)
     }
     
     func setUpConstraintLayout() {
-        view.addSubviews(collectionView)
+        view.addSubviews(collectionView, miniProfileView)
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            miniProfileView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            miniProfileView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            miniProfileView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            miniProfileView.heightAnchor.constraint(equalToConstant: 66)
         ])
     }
     
@@ -125,7 +134,7 @@ private extension MyProfileViewController {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 27, leading: 20, bottom: 5, trailing: 20)
+        section.contentInsets = .init(top: 27, leading: 12, bottom: 5, trailing: 12)
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
@@ -150,9 +159,9 @@ extension MyProfileViewController: UICollectionViewDelegate {
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y >= 250 {
-            navigationController?.navigationBar.isHidden = false
+            miniProfileView.isHidden = false
         } else {
-            navigationController?.navigationBar.isHidden = true
+            miniProfileView.isHidden = true
         }
     }
     
