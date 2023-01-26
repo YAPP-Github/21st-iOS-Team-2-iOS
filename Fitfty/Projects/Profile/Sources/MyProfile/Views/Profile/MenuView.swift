@@ -32,7 +32,7 @@ final class MenuView: UIView {
     
     private lazy var barView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 0.949, green: 0.949, blue: 0.969, alpha: 1)
+        view.backgroundColor = CommonAsset.Colors.gray01.color
         return view
     }()
     

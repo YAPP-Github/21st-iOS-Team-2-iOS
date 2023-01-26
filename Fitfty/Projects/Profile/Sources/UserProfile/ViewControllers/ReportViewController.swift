@@ -16,7 +16,7 @@ final public class ReportViewController: UIViewController {
     private lazy var reportButton: UIButton = {
         let button = UIButton()
         button.setTitle("계정 신고", for: .normal)
-        button.setTitleColor(UIColor(red: 1, green: 0.402, blue: 0.367, alpha: 1), for: .normal)
+        button.setTitleColor(CommonAsset.Colors.error.color, for: .normal)
         button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 18).font
         button.addTarget(self, action: #selector(didTapReportButton), for: .touchUpInside)
         return button
