@@ -36,6 +36,15 @@ private extension ProfileCoordinator {
         let viewController = MyProfileViewController(coordinator: self)
         return viewController
     }
+    
+    func makeProfileBottomSheetViewController() -> UIViewController {
+        let viewController = MyPostBottomSheetViewController(coordinator: self)
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .custom(196),
+            contentViewController: viewController
+        )
+        return bottomSheetViewController
+    }
 }
 
 extension ProfileCoordinator: MyProfileCoordinatorInterface {
@@ -43,5 +52,11 @@ extension ProfileCoordinator: MyProfileCoordinatorInterface {
         let postViewController = MyPostViewController(coordinator: self)
         postViewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(postViewController, animated: true)
+    }
+    
+    func showBottomSheet() {
+        let bottomSheetViewController = makeProfileBottomSheetViewController()
+        bottomSheetViewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(bottomSheetViewController, animated: false)
     }
 }

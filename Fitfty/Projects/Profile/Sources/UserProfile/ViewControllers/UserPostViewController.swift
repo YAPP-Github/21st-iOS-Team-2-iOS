@@ -48,9 +48,4 @@ final public class UserPostViewController: UIViewController {
             postView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
-    
-    @objc private func didTapRightBarButton(_ sender: Any) {
-        print("tappedRightBarButton")
-    }
-    
 }
