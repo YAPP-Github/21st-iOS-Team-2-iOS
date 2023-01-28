@@ -49,4 +49,5 @@ enum CoordinatorType {
     case weather
     case uploadCody
     case album
+    case setting
 }
