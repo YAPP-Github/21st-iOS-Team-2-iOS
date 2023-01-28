@@ -41,7 +41,7 @@ final class SettingCell: UICollectionViewCell {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = FitftyFont.appleSDSemiBold(size: 16).font
-        label.textColor = .black
+        label.textColor = CommonAsset.Colors.gray07.color
         label.textAlignment = .left
         return label
     }()
