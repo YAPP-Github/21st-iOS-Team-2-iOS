@@ -83,7 +83,7 @@ private extension MyProfileViewController {
                 return cell
             })
         
-        dataSource?.supplementaryViewProvider = { [weak self] (collectionView, kind, indexPath) -> UICollectionReusableView? in
+        dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
             guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: MyProfileHeaderView.className,

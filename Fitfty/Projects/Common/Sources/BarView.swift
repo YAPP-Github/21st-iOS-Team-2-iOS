@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Common
 
 public final class BarView: UIView {
 
