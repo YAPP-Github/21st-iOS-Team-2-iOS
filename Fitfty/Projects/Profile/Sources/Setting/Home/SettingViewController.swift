@@ -157,11 +157,8 @@ extension SettingViewController: UICollectionViewDelegate {
         case .feed:
             coordinator?.showFeedSetting()
         case .pushNoti:
-            print(item)
-        case .logout:
-            print(item)
-        case .membershipWithdrawal:
-            print(item)
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+        default: break
         }
     }
     
