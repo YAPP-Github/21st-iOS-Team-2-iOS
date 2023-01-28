@@ -10,6 +10,19 @@ import Foundation
 import Common
 import Combine
 
+enum SettingViewSection {
+    case setting
+    case etc
+    
+    init?(index: Int) {
+        switch index {
+        case 0: self = .setting
+        case 1: self = .etc
+        default: return nil
+        }
+    }
+}
+
 public final class SettingViewModel: ViewModelType {
     
     public enum ViewModelState {
