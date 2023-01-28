@@ -66,6 +66,21 @@ private extension MainCoordinator {
         return coordinator
     }
     
+    func makeWelcomeViewController() -> UIViewController {
+        let coordinator = WelcomeCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .medium,
+            contentViewController: coordinator.navigationController
+        )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
+    }
+    
 }
 
 extension MainCoordinator: MainCoordinatorInterface {
@@ -89,6 +104,12 @@ extension MainCoordinator: MainCoordinatorInterface {
     public func showWeatherInfo() {
         let coordinator = makeWeatherCoordinator()
         coordinator.start()
+    }
+    
+    public func showWelcomeSheet() {
+        let viewController = makeWelcomeViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
 }

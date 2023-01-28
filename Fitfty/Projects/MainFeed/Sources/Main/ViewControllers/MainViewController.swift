@@ -30,6 +30,11 @@ public final class MainViewController: UIViewController {
         setUp()
     }
     
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        showWelcomeView()
+    }
+    
     public init(coordinator: MainCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -42,6 +47,10 @@ public final class MainViewController: UIViewController {
 }
 
 private extension MainViewController {
+    
+    func showWelcomeView() {
+        coordinator.showWelcomeSheet()
+    }
     
     func setUp() {
         setUpLayout()
