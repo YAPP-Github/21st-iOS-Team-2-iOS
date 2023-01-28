@@ -42,6 +42,19 @@ public class WelcomeViewController: UIViewController {
         return imageView
     }()
     
+    private lazy var labelsView: UIStackView = {
+        let stackView = UIStackView(axis: .vertical, alignment: .leading, distribution: .fill, spacing: 12)
+        stackView.addArrangedSubviews(welcomeLabel, descriptionLabel)
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.directionalLayoutMargins = NSDirectionalEdgeInsets(
+            top: .zero,
+            leading: 20,
+            bottom: .zero,
+            trailing: 20
+        )
+        return stackView
+    }()
+    
     private lazy var welcomeLabel: UILabel = {
         let label = UILabel()
         label.text = "User님 안녕하세요?\n핏프티에 오신걸 환영해요."
@@ -87,20 +100,17 @@ private extension WelcomeViewController {
     }
     
     func setUpLayout() {
-        view.addSubviews(weatherImageView, welcomeLabel, descriptionLabel, startButton)
+        view.addSubviews(weatherImageView, labelsView, startButton)
         NSLayoutConstraint.activate([
             weatherImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 49),
             weatherImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             weatherImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            welcomeLabel.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: 78),
-            welcomeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            welcomeLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            descriptionLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 12),
-            descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            labelsView.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: 78),
+            labelsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            labelsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             startButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             startButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            startButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 40)
+            startButton.topAnchor.constraint(equalTo: labelsView.bottomAnchor, constant: 40)
         ])
     }
     
