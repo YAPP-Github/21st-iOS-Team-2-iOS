@@ -31,6 +31,20 @@ public final class PersonalInfoViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private lazy var saveButton: UIButton = {
+        let button = UIButton()
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 20
+        button.backgroundColor = .black
+        button.titleLabel?.textColor = .white
+        button.titleLabel?.font = FitftyFont.appleSDMedium(size: 15).font
+        button.setTitle("저장", for: .normal)
+        button.addTarget(self, action: #selector(didTapSaveButton(_:)), for: .touchUpInside)
+        button.widthAnchor.constraint(equalToConstant: 67).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        return button
+    }()
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(PersonalInfoInputCell.self)
@@ -62,6 +76,7 @@ public final class PersonalInfoViewController: UIViewController {
     private lazy var textfieldList: [FitftyTextField] = {
         return [contactTextField, dateTextField, emailTextField]
     }()
+    
 }
 
 private extension PersonalInfoViewController {
@@ -80,7 +95,9 @@ private extension PersonalInfoViewController {
             target: self,
             action: #selector(didTapBackButton(_:))
         )
+        let saveButton = UIBarButtonItem(customView: saveButton)
         navigationItem.leftBarButtonItem = cancelButton
+        navigationItem.rightBarButtonItem = saveButton
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes =
         [NSAttributedString.Key.font: FitftyFont.appleSDBold(size: 28).font ?? UIFont.systemFont(ofSize: 28)]
@@ -88,6 +105,10 @@ private extension PersonalInfoViewController {
     }
     
     @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {
+        coordinator?.finished()
+    }
+    
+    @objc func didTapSaveButton(_ sender: UITapGestureRecognizer) {
         coordinator?.finished()
     }
     
