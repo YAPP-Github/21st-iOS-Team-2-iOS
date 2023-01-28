@@ -113,7 +113,24 @@ private extension ProfileSettingViewController {
     }
     
     @objc func didTapEditProfileButton(_ sender: UIButton) {
-        print(#function)
+        coordinator?.showImagePicker(self)
+    }
+    
+}
+
+extension ProfileSettingViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+    
+    public func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
+    ) {
+        let originalImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+        let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage
+        guard let selectedImage = editedImage ?? originalImage else {
+            return
+        }
+        profileImageView.image = selectedImage
+        picker.dismiss(animated: true)
     }
     
 }

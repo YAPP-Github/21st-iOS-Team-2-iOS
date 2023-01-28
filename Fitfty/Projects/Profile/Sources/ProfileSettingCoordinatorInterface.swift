@@ -6,9 +6,11 @@
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public protocol ProfileSettingCoordinatorInterface: AnyObject {
     
     func dismiss()
+    
+    func showImagePicker(_ viewController: UIViewController)
 }
