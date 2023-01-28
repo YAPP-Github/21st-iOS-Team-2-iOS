@@ -14,6 +14,8 @@ public final class PersonalInfoViewController: UIViewController {
     private weak var coordinator: PersonalInfoCoordinatorInterface?
     private var viewModel: PersonalInfoViewModel
     
+    private var dataSource: UICollectionViewDiffableDataSource<PersonalInfoSection, Setting>?
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
@@ -29,13 +31,46 @@ public final class PersonalInfoViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+        collectionView.register(PersonalInfoInputCell.self)
+        collectionView.register(SettingCell.self)
+        collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
+        collectionView.backgroundColor = .white
+        collectionView.delegate = self
+        return collectionView
+    }()
+    
+    private lazy var contactTextField: FitftyTextField = {
+        let textFiled = FitftyTextField(style: .normal, placeHolderText: "010-1234-5678")
+        textFiled.font = FitftyFont.appleSDSemiBold(size: 16).font
+        return textFiled
+    }()
+    
+    private lazy var dateTextField: FitftyTextField = {
+        let textFiled = FitftyTextField(style: .normal, placeHolderText: "YYMMDD")
+        textFiled.font = FitftyFont.appleSDSemiBold(size: 16).font
+        return textFiled
+    }()
+    
+    private lazy var emailTextField: FitftyTextField = {
+        let textFiled = FitftyTextField(style: .normal, placeHolderText: "fitfty@gmail.com")
+        textFiled.font = FitftyFont.appleSDSemiBold(size: 16).font
+        return textFiled
+    }()
+    
+    private lazy var textfieldList: [FitftyTextField] = {
+        return [contactTextField, dateTextField, emailTextField]
+    }()
 }
 
 private extension PersonalInfoViewController {
     
     func setUp() {
-        view.backgroundColor = .white
         setUpNavigationBar()
+        setUpLayout()
+        setUpDataSource()
+        applySnapshot()
     }
     
     func setUpNavigationBar() {
@@ -55,4 +90,139 @@ private extension PersonalInfoViewController {
     @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {
         coordinator?.finished()
     }
+    
+    func setUpLayout() {
+        view.backgroundColor = .white
+        view.addSubviews(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    func createLayout() -> UICollectionViewLayout {
+        return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
+            let section = PersonalInfoSection(index: sectionNumber)
+            switch section {
+            case .info: return self?.infoListLayout()
+            case .etc: return self?.etcLayout()
+            default: return nil
+            }
+        }
+    }
+    
+    func infoListLayout() -> NSCollectionLayoutSection? {
+        let layoutSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(90)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: layoutSize.widthDimension,
+                heightDimension: layoutSize.heightDimension
+            ),
+            subitems: [.init(layoutSize: layoutSize)]
+        )
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 60, trailing: 20)
+        section.interGroupSpacing = 30
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width),
+                    heightDimension: .absolute(8)
+                ),
+                elementKind: FooterView.className, alignment: .bottom)
+        ]
+        return section
+    }
+    
+    func etcLayout() -> NSCollectionLayoutSection? {
+        let layoutSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(72)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: layoutSize.widthDimension,
+                heightDimension: layoutSize.heightDimension
+            ),
+            subitems: [.init(layoutSize: layoutSize)]
+        )
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+        
+        return section
+    }
+    
+    private func setUpDataSource() {
+        dataSource = UICollectionViewDiffableDataSource<PersonalInfoSection, Setting>(
+            collectionView: collectionView,
+            cellProvider: { [weak self] collectionView, indexPath, item in
+                let section = PersonalInfoSection(index: indexPath.section)
+                switch section {
+                case .info:
+                    guard let cell = collectionView.dequeueReusableCell(
+                        PersonalInfoInputCell.self,
+                        for: indexPath
+                    ), let textField = self?.textfieldList[indexPath.item] else {
+                        return UICollectionViewCell()
+                    }
+                    cell.setUp(title: item.title, textField: textField)
+                    return cell
+                    
+                case .etc:
+                    guard let cell = collectionView.dequeueReusableCell(SettingCell.self, for: indexPath) else {
+                        return UICollectionViewCell()
+                    }
+                    cell.setUp(item: item)
+                    return cell
+                default: return UICollectionViewCell()
+                }
+                
+            })
+        dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+            switch elementKind {
+            case FooterView.className:
+                return collectionView.dequeueReusableSupplementaryView(
+                    ofKind: elementKind,
+                    withReuseIdentifier: FooterView.className,
+                    for: indexPath
+                )
+            default: return UICollectionReusableView()
+            }
+        }
+        collectionView.dataSource = dataSource
+    }
+    
+    private func applySnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<PersonalInfoSection, Setting>()
+        snapshot.appendSections([.info])
+        snapshot.appendItems(Setting.info())
+        snapshot.appendSections([.etc])
+        snapshot.appendItems(Setting.etc())
+        dataSource?.apply(snapshot)
+    }
+}
+
+extension PersonalInfoViewController: UICollectionViewDelegate {
+    
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = dataSource?.itemIdentifier(for: indexPath) else {
+            return
+        }
+        switch item {
+        case .logout:
+            print(item)
+            
+        case .membershipWithdrawal:
+            print(item)
+            
+        default: break
+        }
+    }
+    
 }

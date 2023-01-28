@@ -15,6 +15,9 @@ enum Setting {
     case pushNoti
     case logout
     case membershipWithdrawal
+    case contact
+    case birthDate
+    case email
 }
 
 extension Setting {
@@ -27,13 +30,16 @@ extension Setting {
         case .pushNoti: return "푸쉬 알림 설정"
         case .logout: return "로그아웃"
         case .membershipWithdrawal: return "회원 탈퇴"
+        case .contact: return "휴대전화"
+        case .birthDate: return "생년월일"
+        case .email: return "이메일"
         }
     }
     
     var isNextPage: Bool {
         switch self {
         case .profile, .myInfo, .feed, .pushNoti: return true
-        case .logout, .membershipWithdrawal: return false
+        default: return false
         }
     }
     
@@ -43,6 +49,10 @@ extension Setting {
     
     static func etc() -> [Setting] {
         return [.logout, .membershipWithdrawal]
+    }
+    
+    static func info() -> [Setting] {
+        return [.contact, .birthDate, .email]
     }
     
 }

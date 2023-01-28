@@ -19,17 +19,29 @@ final class UserInputView: UIStackView {
         return label
     }()
     
-    init(title: String, textField: UITextField) {
-        super.init(frame: .zero)
-        titleLabel.text = title
+    convenience init(title: String, textField: UITextField) {
+        self.init(frame: .zero)
         configure()
-        addArrangedSubviews(titleLabel, textField)
+        setUp(title: title, textField: textField)
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configure()
     }
     
     required init(coder: NSCoder) {
         super.init(coder: coder)
     }
+
+    func setUp(title: String, textField: UITextField) {
+        titleLabel.text = title
+        addArrangedSubviews(textField)
+    }
     
+    func reset() {
+        arrangedSubviews.last?.removeFromSuperview()
+    }
 }
 
 private extension UserInputView {
@@ -39,5 +51,6 @@ private extension UserInputView {
         alignment = .fill
         distribution = .fill
         spacing = 4
+        addArrangedSubviews(titleLabel)
     }
 }

@@ -70,6 +70,9 @@ extension SettingCell {
     func setUp(item: Setting) {
         titleLabel.text = item.title
         separator.isHidden = !item.isNextPage
+        if item == .membershipWithdrawal {
+            titleLabel.textColor = .systemRed
+        }
     }
     
     func hiddenLine() {
@@ -95,6 +98,7 @@ private extension SettingCell {
     
     func reset() {
         titleLabel.text = nil
+        titleLabel.textColor = CommonAsset.Colors.gray07.color
         lineView.isHidden = false
     }
 }
