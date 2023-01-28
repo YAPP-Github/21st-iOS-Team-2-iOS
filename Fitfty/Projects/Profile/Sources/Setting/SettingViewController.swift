@@ -34,6 +34,25 @@ public final class SettingViewController: UIViewController {
 private extension SettingViewController {
     
     func setUp() {
-        view.backgroundColor = .red
+        view.backgroundColor = .white
+        setUpNavigationBar()
+    }
+    
+    func setUpNavigationBar() {
+        let cancelButton = UIBarButtonItem(
+            image: CommonAsset.Images.btnArrowleft.image,
+            style: .plain,
+            target: self,
+            action: #selector(didTapBackButton(_:))
+        )
+        navigationItem.leftBarButtonItem = cancelButton
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes =
+        [NSAttributedString.Key.font: FitftyFont.appleSDBold(size: 28).font ?? UIFont.systemFont(ofSize: 28)]
+        navigationItem.title = "설정"
+    }
+    
+    @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {
+        coordinator?.finished()
     }
 }
