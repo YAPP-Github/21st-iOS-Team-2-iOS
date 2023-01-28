@@ -18,8 +18,8 @@ final class AuthCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: BaseNavigationController) {
-        self.navigationController = navigationConrtoller
+    init(navigationController: BaseNavigationController) {
+        self.navigationController = navigationController
     }
     
     func start() {

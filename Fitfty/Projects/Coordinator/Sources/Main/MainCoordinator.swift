@@ -19,8 +19,8 @@ final class MainCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
-        self.navigationController = navigationConrtoller
+    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+        self.navigationController = navigationController
     }
     
     func start() {
@@ -51,7 +51,7 @@ private extension MainCoordinator {
     }
     
     func makeUserCoordinator() -> UserCoordinator {
-        let coordinator = UserCoordinator(navigationConrtoller: navigationController)
+        let coordinator = UserCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
