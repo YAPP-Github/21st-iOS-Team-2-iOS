@@ -38,7 +38,7 @@ public class WelcomeViewController: UIViewController {
         let imageView = UIImageView()
         imageView.image = CommonAsset.Images.weather.image
         imageView.widthAnchor.constraint(equalToConstant: view.safeAreaLayoutGuide.layoutFrame.width).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         return imageView
     }()
     
