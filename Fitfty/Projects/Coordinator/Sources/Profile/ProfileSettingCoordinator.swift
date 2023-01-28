@@ -26,8 +26,8 @@ final class ProfileSettingCoordinator: Coordinator {
     
     func start() {
         let viewController = makeProfileSettingViewController()
-        navigationController.navigationBar.prefersLargeTitles = true
         navigationController.pushViewController(viewController, animated: true)
+        navigationController.setNavigationBarHidden(true, animated: false)
     }
 }
 
