@@ -74,7 +74,7 @@ private extension MainCoordinator {
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
         let bottomSheetViewController = BottomSheetViewController(
-            style: .medium,
+            style: .custom(420),
             contentViewController: coordinator.navigationController
         )
         coordinator.bottomSheetDelegate = bottomSheetViewController

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Common
 
 public class WelcomeViewController: UIViewController {
 
@@ -32,11 +33,39 @@ public class WelcomeViewController: UIViewController {
         super.removeFromParent()
         coordinator?.dismiss()
     }
+    
+    private lazy var weatherImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = CommonAsset.Images.weather.image
+        imageView.widthAnchor.constraint(equalToConstant: view.safeAreaLayoutGuide.layoutFrame.width).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        return imageView
+    }()
 }
 
 private extension WelcomeViewController {
     
     func setUp() {
-        view.backgroundColor = .red
+        setUpBackgroundView()
+        setUpLayout()
+    }
+    
+    func setUpBackgroundView() {
+        view.backgroundColor = .white
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = CGRect(x: .zero, y: .zero, width: view.safeAreaLayoutGuide.layoutFrame.width, height: 250)
+        gradientLayer.colors = [CommonAsset.Colors.ft.color.cgColor, UIColor.white.withAlphaComponent(0).cgColor]
+        gradientLayer.locations = [0.1]
+        gradientLayer.cornerRadius = 15
+        view.layer.addSublayer(gradientLayer)
+    }
+    
+    func setUpLayout() {
+        view.addSubviews(weatherImageView)
+        NSLayoutConstraint.activate([
+            weatherImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 49),
+            weatherImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            weatherImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
     }
 }
