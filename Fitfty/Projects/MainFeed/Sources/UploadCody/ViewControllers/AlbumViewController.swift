@@ -19,7 +19,7 @@ final public class AlbumViewController: UIViewController {
     }
     
     private lazy var navigationBarView: BarView = {
-        let barView = BarView()
+        let barView = BarView(title: "최근 항목", isChevronButtonHidden: false)
         barView.setCancelButtonTarget(target: self, action: #selector(didTapCancelButton(_:)))
         barView.setTitleViewTarget(target: self, action: #selector(didTapTitleView(_:)))
         return barView

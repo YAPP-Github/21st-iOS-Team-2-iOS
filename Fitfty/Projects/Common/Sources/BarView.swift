@@ -17,7 +17,7 @@ public final class BarView: UIView {
         return stackView
     }()
     
-    private lazy var albumNameLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "최근 항목"
         label.font = FitftyFont.appleSDBold(size: 20).font
@@ -40,9 +40,11 @@ public final class BarView: UIView {
         return button
     }()
     
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
+    public init(title: String, isChevronButtonHidden: Bool) {
+        super.init(frame: .zero)
         setConstraintsLayout()
+        self.chevronButton.isHidden = isChevronButtonHidden
+        self.titleLabel.text = title
     }
     
     public required init?(coder: NSCoder) {
@@ -51,7 +53,7 @@ public final class BarView: UIView {
     
     private func setConstraintsLayout() {
         addSubviews(backgroundStackView, cancelButton)
-        backgroundStackView.addArrangedSubviews(albumNameLabel, chevronButton)
+        backgroundStackView.addArrangedSubviews(titleLabel, chevronButton)
         NSLayoutConstraint.activate([
             backgroundStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             backgroundStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
