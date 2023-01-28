@@ -52,6 +52,7 @@ public final class PersonalInfoViewController: UIViewController {
         collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
         collectionView.backgroundColor = .white
         collectionView.delegate = self
+        collectionView.keyboardDismissMode = .onDrag
         return collectionView
     }()
     
