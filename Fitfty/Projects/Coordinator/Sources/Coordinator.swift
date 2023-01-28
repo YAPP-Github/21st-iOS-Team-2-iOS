@@ -52,4 +52,5 @@ enum CoordinatorType {
     case setting
     case profileSetting
     case feedSetting
+    case personalInfo
 }
