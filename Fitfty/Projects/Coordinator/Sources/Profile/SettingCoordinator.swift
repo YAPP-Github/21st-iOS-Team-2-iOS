@@ -12,7 +12,7 @@ import Common
 
 final class SettingCoordinator: Coordinator {
     
-    var type: CoordinatorType { .address }
+    var type: CoordinatorType { .setting }
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
