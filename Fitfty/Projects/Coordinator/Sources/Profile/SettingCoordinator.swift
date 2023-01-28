@@ -67,6 +67,14 @@ private extension SettingCoordinator {
         coordinator.bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
+    
+    func makeMyInfoCoordinator() -> Coordinator {
+        let coordinator = PersonalInfoCoordinator(navigationController: navigationController)
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
 }
 
 extension SettingCoordinator: SettingCoordinatorInterface {
@@ -84,7 +92,8 @@ extension SettingCoordinator: SettingCoordinatorInterface {
     }
     
     func showMyInfoSetting() {
-        print(#function)
+        let coordinator = makeMyInfoCoordinator()
+        coordinator.start()
     }
     
     func finished() {
