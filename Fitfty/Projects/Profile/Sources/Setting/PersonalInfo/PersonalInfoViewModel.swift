@@ -10,6 +10,19 @@ import Foundation
 import Common
 import Combine
 
+enum PersonalInfoSection {
+    case info
+    case etc
+    
+    init?(index: Int) {
+        switch index {
+        case 0: self = .info
+        case 1: self = .etc
+        default: return nil
+        }
+    }
+}
+
 public final class PersonalInfoViewModel: ViewModelType {
     
     public enum ViewModelState {
