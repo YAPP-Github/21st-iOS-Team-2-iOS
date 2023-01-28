@@ -121,17 +121,6 @@ private extension SettingViewController {
                 cell.setUp(item: item)
                 return cell
             })
-        dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
-            switch elementKind {
-            case FooterView.className:
-                return collectionView.dequeueReusableSupplementaryView(
-                    ofKind: elementKind,
-                    withReuseIdentifier: FooterView.className,
-                    for: indexPath
-                )
-            default: return UICollectionReusableView()
-            }
-        }
         collectionView.dataSource = dataSource
     }
     
