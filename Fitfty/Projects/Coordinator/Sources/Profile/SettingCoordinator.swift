@@ -52,6 +52,21 @@ private extension SettingCoordinator {
         coordinator.bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
+    
+    func makeFeedSettingViewController() -> UIViewController {
+        let coordinator = FeedSettingCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .medium,
+            contentViewController: coordinator.navigationController
+        )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
+    }
 }
 
 extension SettingCoordinator: SettingCoordinatorInterface {
@@ -63,7 +78,9 @@ extension SettingCoordinator: SettingCoordinatorInterface {
     }
     
     func showFeedSetting() {
-        print(#function)
+        let viewController = makeFeedSettingViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
     func showMyInfoSetting() {
