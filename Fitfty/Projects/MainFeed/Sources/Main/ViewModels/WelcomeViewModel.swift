@@ -21,4 +21,3 @@ public final class WelcomeViewModel: ViewModelType {
     public init() {}
 
 }
-
