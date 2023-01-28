@@ -34,7 +34,6 @@ public final class SettingViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(SettingCell.self)
-        collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
         collectionView.backgroundColor = .white
         collectionView.delegate = self
         return collectionView
@@ -85,7 +84,6 @@ private extension SettingViewController {
             let section = SettingViewSection(index: sectionNumber)
             switch section {
             case .setting: return self?.settingsLayout()
-            case .etc: return self?.etcLayout()
             default: return nil
             }
         }
@@ -107,32 +105,6 @@ private extension SettingViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
         
-        section.boundarySupplementaryItems = [
-            NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: .init(
-                    widthDimension: .absolute(UIScreen.main.bounds.width),
-                    heightDimension: .absolute(8)
-                ),
-                elementKind: FooterView.className, alignment: .bottom)
-        ]
-        return section
-    }
-    
-    func etcLayout() -> NSCollectionLayoutSection? {
-        let layoutSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(72)
-        )
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: .init(
-                widthDimension: layoutSize.widthDimension,
-                heightDimension: layoutSize.heightDimension
-            ),
-            subitems: [.init(layoutSize: layoutSize)]
-        )
-        
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
         return section
     }
     
@@ -167,8 +139,6 @@ private extension SettingViewController {
         var snapshot = NSDiffableDataSourceSnapshot<SettingViewSection, Setting>()
         snapshot.appendSections([.setting])
         snapshot.appendItems(Setting.settings())
-        snapshot.appendSections([.etc])
-        snapshot.appendItems(Setting.etc())
         dataSource?.apply(snapshot)
     }
 }

@@ -22,7 +22,7 @@ extension Setting{
     var title: String {
         switch self {
         case .profile: return "프로필 설정"
-        case .myInfo: return "내 정보 설정"
+        case .myInfo: return "개인 정보 설정"
         case .feed: return "핏프티 피드 정보 설정"
         case .pushNoti: return "푸쉬 알림 설정"
         case .logout: return "로그아웃"
