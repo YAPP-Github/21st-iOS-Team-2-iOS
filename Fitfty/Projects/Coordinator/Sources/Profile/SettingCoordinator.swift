@@ -37,12 +37,29 @@ private extension SettingCoordinator {
         let viewController = SettingViewController(coordinator: self, viewModel: SettingViewModel())
         return viewController
     }
+    
+    func makeProfileSettingViewController() -> UIViewController {
+        let coordinator = ProfileSettingCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .medium,
+            contentViewController: coordinator.navigationController
+        )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
+    }
 }
 
 extension SettingCoordinator: SettingCoordinatorInterface {
     
     func showProfileSetting() {
-        print(#function)
+        let viewController = makeProfileSettingViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
     func showFeedSetting() {
