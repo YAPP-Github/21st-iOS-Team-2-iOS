@@ -41,6 +41,32 @@ public class WelcomeViewController: UIViewController {
         imageView.heightAnchor.constraint(equalToConstant: 45).isActive = true
         return imageView
     }()
+    
+    private lazy var welcomeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "User님 안녕하세요?\n핏프티에 오신걸 환영해요."
+        label.textAlignment = .left
+        label.textColor = .black
+        label.numberOfLines = 2
+        label.setTextWithLineHeight(text: label.text, lineHeight: 32)
+        label.font = FitftyFont.appleSDBold(size: 24).font
+        return label
+    }()
+    
+    private lazy var descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "핏프티에서 날씨에 어울리는 코디 추천을 받아보세요."
+        label.textAlignment = .left
+        label.textColor = CommonAsset.Colors.gray05.color
+        label.font = FitftyFont.appleSDMedium(size: 15).font
+        return label
+    }()
+    
+    private lazy var startButton: FitftyButton = {
+        let button = FitftyButton(style: .enabled, title: "시작하기")
+        button.addTarget(self, action: #selector(didTapStartButton(_:)), for: .touchUpInside)
+        return button
+    }()
 }
 
 private extension WelcomeViewController {
@@ -61,11 +87,24 @@ private extension WelcomeViewController {
     }
     
     func setUpLayout() {
-        view.addSubviews(weatherImageView)
+        view.addSubviews(weatherImageView, welcomeLabel, descriptionLabel, startButton)
         NSLayoutConstraint.activate([
             weatherImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 49),
             weatherImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            weatherImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            weatherImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            welcomeLabel.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: 78),
+            welcomeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            welcomeLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            descriptionLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 12),
+            descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            startButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            startButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            startButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 40)
         ])
+    }
+    
+    @objc func didTapStartButton(_ sender: FitftyButton) {
+        coordinator?.dismiss()
     }
 }
