@@ -51,4 +51,5 @@ enum CoordinatorType {
     case album
     case setting
     case profileSetting
+    case feedSetting
 }
