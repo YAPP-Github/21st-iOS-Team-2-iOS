@@ -83,7 +83,7 @@ private extension MyProfileViewController {
                 return cell
             })
         
-        dataSource?.supplementaryViewProvider = { (collectionView, kind, indexPath) -> UICollectionReusableView? in
+        dataSource?.supplementaryViewProvider = { [weak self] (collectionView, kind, indexPath) -> UICollectionReusableView? in
             guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: MyProfileHeaderView.className,
@@ -92,6 +92,7 @@ private extension MyProfileViewController {
             }
             supplementaryView.profileView.setUp(nickname: "iosLover", content: "안녕하세용!")
             supplementaryView.menuView.setUp(count: "12")
+            supplementaryView.setButtonTarget(target: self, action: #selector(self?.didTapSettingButton(_:)))
             return supplementaryView
         }
     }
@@ -101,6 +102,10 @@ private extension MyProfileViewController {
         snapshot.appendSections([.feed])
         snapshot.appendItems(Array(0..<10).map {_ in UUID() })
         dataSource?.apply(snapshot, animatingDifferences: true)
+    }
+    
+    @objc func didTapSettingButton(_ sender: UIButton) {
+        coordinator.showSetting()
     }
 }
 

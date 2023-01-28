@@ -35,6 +35,10 @@ final class MyProfileHeaderView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public func setButtonTarget(target: Any?, action: Selector) {
+        settingButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
     private func setUpConstraintLayout() {
         addSubviews(settingButton, profileView, menuView, spacingView)
     

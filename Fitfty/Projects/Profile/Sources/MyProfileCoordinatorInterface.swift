@@ -12,4 +12,6 @@ public protocol MyProfileCoordinatorInterface: AnyObject {
     
     func showPost()
     
+    func showSetting()
+    
 }
