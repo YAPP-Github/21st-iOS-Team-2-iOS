@@ -152,7 +152,10 @@ final public class AlbumViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
             collectionView: collectionView,
-            cellProvider: { collectionView, indexPath, _ in
+            cellProvider: { [weak self] collectionView, indexPath, _ in
+                guard let self = self else {
+                    return UICollectionViewCell()
+                }
                 let cell = collectionView.dequeueReusableCell(AlbumCell.self, for: indexPath)
                 
                 PhotoService.shared.fetchImage(
