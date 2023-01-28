@@ -36,13 +36,21 @@ final class LocationConverter {
     private let degrad: Double = .pi / 180.0
     private let raddeg: Double = 180.0 / .pi
 
+    /// 지구 반경 [km]
     private var re: Double
+    /// 표준 위도 1 [degree]
     private var slat1: Double
+    /// 표준 위도 2 [degree]
     private var slat2: Double
+    /// 기준점의 경도 [degree]
     private var olon: Double
+    /// 기준점의 위도 [degree]
     private var olat: Double
+    /// 표준위도 간의 비율
     private var sn: Double
+    /// 표준위도 간의 비율에 따른 계산값
     private var sf: Double
+    /// 기준점의 위도에 따른 계산값
     private var ro: Double
     
     private init() {
