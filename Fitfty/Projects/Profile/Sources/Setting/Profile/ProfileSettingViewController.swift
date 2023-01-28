@@ -29,6 +29,11 @@ public final class ProfileSettingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override public func removeFromParent() {
+        super.removeFromParent()
+        coordinator?.dismiss()
+    }
+    
     private lazy var navigationBarView: BarView = {
         let barView = BarView(title: "프로필 설정", isChevronButtonHidden: true)
         barView.setCancelButtonTarget(target: self, action: #selector(didTapCancelButton(_:)))
