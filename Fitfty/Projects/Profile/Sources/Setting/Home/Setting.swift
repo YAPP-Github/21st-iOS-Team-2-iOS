@@ -17,7 +17,7 @@ enum Setting {
     case membershipWithdrawal
 }
 
-extension Setting{
+extension Setting {
     
     var title: String {
         switch self {
