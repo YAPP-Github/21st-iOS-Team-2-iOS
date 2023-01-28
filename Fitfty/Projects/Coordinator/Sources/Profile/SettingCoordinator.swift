@@ -46,7 +46,7 @@ private extension SettingCoordinator {
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
         let bottomSheetViewController = BottomSheetViewController(
-            style: .medium,
+            style: .custom(UIScreen.main.bounds.height - 70),
             contentViewController: coordinator.navigationController
         )
         coordinator.bottomSheetDelegate = bottomSheetViewController
