@@ -179,7 +179,20 @@ extension SettingViewController: UICollectionViewDelegate {
         guard let item = dataSource?.itemIdentifier(for: indexPath) else {
             return
         }
-        print(item)
+        switch item {
+        case .profile:
+            coordinator?.showProfileSetting()
+        case .myInfo:
+            coordinator?.showMyInfoSetting()
+        case .feed:
+            coordinator?.showFeedSetting()
+        case .pushNoti:
+            print(item)
+        case .logout:
+            print(item)
+        case .membershipWithdrawal:
+            print(item)
+        }
     }
     
 }
