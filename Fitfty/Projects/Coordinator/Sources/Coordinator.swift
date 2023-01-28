@@ -43,6 +43,7 @@ enum CoordinatorType {
     case login
     case tabBar
     case main
+    case welcome
     case profile
     case user
     case address

@@ -18,4 +18,6 @@ public protocol MainCoordinatorInterface: AnyObject {
 
     func showWeatherInfo()
     
+    func showWelcomeSheet()
+    
 }
