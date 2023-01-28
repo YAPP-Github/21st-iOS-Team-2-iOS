@@ -14,6 +14,7 @@ final class AlbumCoordinator: Coordinator {
     
     var type: CoordinatorType { .album }
     var finishDelegate: CoordinatorFinishDelegate?
+    weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -26,12 +27,22 @@ final class AlbumCoordinator: Coordinator {
     func start() {
         let viewController = makeAlbumViewController()
         navigationController.pushViewController(viewController, animated: true)
+        navigationController.setNavigationBarHidden(true, animated: false)
     }
 }
 
 private extension AlbumCoordinator {
     func makeAlbumViewController() -> UIViewController {
-        let viewController = AlbumViewController()
+        let viewController = AlbumViewController(coordinator: self)
         return viewController
+    }
+}
+
+extension AlbumCoordinator: AlbumCoordinatorInterface {
+    
+    func dismiss() {
+        navigationController.viewControllers.removeAll()
+        bottomSheetDelegate?.dismissBottomSheet()
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
