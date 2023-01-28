@@ -12,11 +12,18 @@ import Photos
 
 final public class AlbumViewController: UIViewController {
     
+    private let coordinator: AlbumCoordinatorInterface
+    
     enum Section: CaseIterable {
         case main
     }
     
-    private let navigationBarView = BarView()
+    private lazy var navigationBarView: BarView = {
+        let barView = BarView()
+        barView.setCancelButtonTarget(target: self, action: #selector(didTapCancelButton(_:)))
+        barView.setTitleViewTarget(target: self, action: #selector(didTapTitleView(_:)))
+        return barView
+    }()
     
     private lazy var uploadButton: UIButton = {
         let button = UIButton()
@@ -68,17 +75,27 @@ final public class AlbumViewController: UIViewController {
         setUp()
     }
     
+    override public func removeFromParent() {
+        super.removeFromParent()
+        coordinator.dismiss()
+    }
+    
+    public init(coordinator: AlbumCoordinatorInterface) {
+        self.coordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = .white
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private func setUp() {
-        setNavigationBar()
         setConstraintsLayout()
         setDataSource()
         applySnapshot()
         setPhotoService()
         setUploadButton()
-    }
-    
-    private func setNavigationBar() {
-        navigationController?.navigationBar.isHidden = true
     }
     
     private func setPhotoService() {
@@ -179,6 +196,13 @@ final public class AlbumViewController: UIViewController {
         return layout
     }
     
+    @objc private func didTapCancelButton(_ sender: UIButton) {
+        coordinator.dismiss()
+    }
+    
+    @objc private func didTapTitleView(_ sender: UITapGestureRecognizer) {
+        print(#function)
+    }
 }
 
 // 사진 접근 권한: 선택된 사진
