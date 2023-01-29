@@ -89,7 +89,7 @@ final class WeeklyWeatherCell: UICollectionViewCell {
     
     private lazy var minTempLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .systemBlue
         label.font = FitftyFont.SFProDisplaySemibold(size: 13).font
         label.textAlignment = .right
         label.text = "-12°"
@@ -107,7 +107,7 @@ final class WeeklyWeatherCell: UICollectionViewCell {
     
     private lazy var maxTempLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .systemRed
         label.font = FitftyFont.SFProDisplaySemibold(size: 13).font
         label.text = "3°"
         label.setContentHuggingPriority(.required, for: .horizontal)
