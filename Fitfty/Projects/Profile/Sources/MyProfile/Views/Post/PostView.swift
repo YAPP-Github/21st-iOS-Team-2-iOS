@@ -50,10 +50,12 @@ final class PostView: UIView {
             postImageView.topAnchor.constraint(equalTo: topAnchor),
             postImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             postImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            postImageView.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor, multiplier: 0.7),
+            postImageView.heightAnchor.constraint(equalToConstant: 485),
             
-            postInfoView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            postInfoView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            postInfoView.topAnchor.constraint(equalTo: postImageView.bottomAnchor),
+            postInfoView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            postInfoView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            postInfoView.heightAnchor.constraint(equalToConstant: 42),
             
             contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             contentLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
@@ -70,6 +72,6 @@ extension PostView {
     func setUp(content: String, hits: String, bookmark: String, date: String) {
         contentLabel.text = content
         dateLabel.text = date
-        postInfoView.setUp(hits: hits, bookmark: bookmark)
+        postInfoView.setUp(hits: hits, bookmark: bookmark, weatherTag: .coldWaveWeather)
     }
 }
