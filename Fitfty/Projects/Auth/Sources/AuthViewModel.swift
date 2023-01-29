@@ -10,23 +10,28 @@ import Foundation
 import Combine
 import Common
 
-final public class AuthViewModel: ViewModelType {
+final public class AuthViewModel {
+    
+    public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
+    
+    public init() {}
+    
+    func didTapKakaoLogin() {
+        currentState.send(.presentKakaoLoginView)
+    }
+    
+    func requestKakaoLogin() {
+        // request API... Success !
+        currentState.send(.pushOnboardingView)
+    }
+}
+
+extension AuthViewModel: ViewModelType {
     public enum ViewModelState {
         case presentKakaoLoginView
         case pushOnboardingView
         case doSomething
     }
     
-    public var state: PassthroughSubject<ViewModelState, Never> = .init()
-    
-    public init() {}
-    
-    func didTapKakaoLogin() {
-        state.send(.presentKakaoLoginView)
-    }
-    
-    func requestKakaoLogin() {
-        // request API... Success !
-        state.send(.pushOnboardingView)
-    }
+    public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
 }
