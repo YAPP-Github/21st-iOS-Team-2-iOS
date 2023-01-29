@@ -19,6 +19,8 @@ public protocol WeatherRepository {
     func fetchDailyWeather(for date: Date, longitude: String, latitude: String) async throws -> DailyWeather
     
     func fetchCurrentWeather(longitude: String, latitude: String) async throws -> CurrentWeather
+    
+    func fetchWeatherNow(longitude: String, latitude: String) async throws -> WeatherNow
 
 }
 
@@ -50,6 +52,7 @@ public final class DefaultWeatherRepository: WeatherRepository {
               let midTermForecastResponse: MidlandFcstItem = try await midTermForecast(address) else {
             throw ResultCode.nodataError
         }
+        try await pastShortTermForecast(longitude: longitude, latitude: latitude)
         var midTermForecastList: [MidTermForecast] = transferService
             .convertThirdDayMidTermForecast(_pastShortTermForecast)
         midTermForecastList.append(contentsOf: transferService.merge(by: tempResponse, to: midTermForecastResponse))
@@ -77,18 +80,34 @@ public final class DefaultWeatherRepository: WeatherRepository {
     }
     
     public func fetchCurrentWeather(longitude: String, latitude: String) async throws -> CurrentWeather {
+        try await pastShortTermForecast(longitude: longitude, latitude: latitude)
         let minMaxTemp = transferService.minMaxTemp(
             _pastShortTermForecast.filter { $0.isToday }
         )
-        guard let currentShortTermForecast = _shortTermForecast
-            .filter({ $0.isCurrent }).first
-        else {
+        guard let currentShortTermForecast = _shortTermForecast.filter({ $0.isCurrent }).first else {
             throw ResultCode.nodataError
         }
         return CurrentWeather(
             temp: currentShortTermForecast.temp,
             minTemp: minMaxTemp.min,
             maxTemp: minMaxTemp.max,
+            forecast: currentShortTermForecast.forecast,
+            date: currentShortTermForecast.date
+        )
+    }
+    
+    public func fetchWeatherNow(longitude: String, latitude: String) async throws -> WeatherNow {
+        let shortTermForecast = try await shortTermForecast(
+            longitude: longitude,
+            latitude: latitude,
+            baseDate: transferService.baseDate(Date()),
+            numOfRows: 36
+        )
+        guard let currentShortTermForecast = shortTermForecast.filter({ $0.isCurrent }).first else {
+            throw ResultCode.nodataError
+        }
+        return WeatherNow(
+            temp: currentShortTermForecast.temp,
             forecast: currentShortTermForecast.forecast,
             date: currentShortTermForecast.date
         )
@@ -159,6 +178,9 @@ private extension DefaultWeatherRepository {
     }
     
     func pastShortTermForecast(longitude: String, latitude: String) async throws {
+        guard _pastShortTermForecast.isEmpty else {
+            return
+        }
         let pastShortTermForecastList: [ShortTermForecast] = try await shortTermForecast(
             longitude: longitude,
             latitude: latitude,
