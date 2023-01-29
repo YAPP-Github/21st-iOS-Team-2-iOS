@@ -21,14 +21,16 @@ enum AddressViewSection {
     }
 }
 
-public final class AddressViewModel: ViewModelType {
-    
-    public enum ViewModelState {
-        
-    }
+public final class AddressViewModel {
 
-    public var state: PassthroughSubject<ViewModelState, Never> = .init()
+    private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
 
     public init() {}
 
+}
+
+extension AddressViewModel: ViewModelType {
+    public enum ViewModelState {}
+    
+    public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
 }

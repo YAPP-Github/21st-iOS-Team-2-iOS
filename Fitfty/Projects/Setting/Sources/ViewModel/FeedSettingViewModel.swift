@@ -30,14 +30,16 @@ enum FeedSettingSection {
     }
 }
 
-public final class FeedSettingViewModel: ViewModelType {
-    
-    public enum ViewModelState {
-        
-    }
+public final class FeedSettingViewModel {
 
-    public var state: PassthroughSubject<ViewModelState, Never> = .init()
+    private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
 
     public init() {}
 
+}
+
+extension FeedSettingViewModel: ViewModelType {
+    public enum ViewModelState {}
+    
+    public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
 }
