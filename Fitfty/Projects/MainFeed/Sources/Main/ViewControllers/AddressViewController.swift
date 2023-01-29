@@ -53,15 +53,8 @@ public final class AddressViewController: UIViewController {
         return collectionView
     }()
     
-    private lazy var cancelButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("닫기", for: .normal)
-        button.titleLabel?.textColor = .white
-        button.titleLabel?.font = FitftyFont.SFProDisplayBold(size: 18).font
-        button.backgroundColor = .black
-        button.layer.cornerRadius = 12
-        button.clipsToBounds = true
-        button.heightAnchor.constraint(equalToConstant: 64).isActive = true
+    private lazy var cancelButton: FitftyButton = {
+        let button = FitftyButton(style: .enabled, title: "닫기")
         button.addTarget(self, action: #selector(didTapCancelButton(_:)), for: .touchUpInside)
         return button
     }()
@@ -81,28 +74,14 @@ public final class AddressViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var selectButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("선택", for: .normal)
-        button.titleLabel?.textColor = .white
-        button.titleLabel?.font = FitftyFont.SFProDisplayBold(size: 18).font
-        button.backgroundColor = .black
-        button.layer.cornerRadius = 12
-        button.clipsToBounds = true
-        button.heightAnchor.constraint(equalToConstant: 64).isActive = true
+    private lazy var selectButton: FitftyButton = {
+        let button = FitftyButton(style: .enabled, title: "선택")
         button.addTarget(self, action: #selector(didTapSelectButton(_:)), for: .touchUpInside)
         return button
     }()
     
-    private lazy var backButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("뒤로가기", for: .normal)
-        button.titleLabel?.textColor = .white
-        button.titleLabel?.font = FitftyFont.SFProDisplayBold(size: 18).font
-        button.backgroundColor = .black
-        button.layer.cornerRadius = 12
-        button.clipsToBounds = true
-        button.heightAnchor.constraint(equalToConstant: 64).isActive = true
+    private lazy var backButton: FitftyButton = {
+        let button = FitftyButton(style: .enabled, title: "뒤로가기")
         button.addTarget(self, action: #selector(didTapBackButton(_:)), for: .touchUpInside)
         return button
     }()
@@ -119,6 +98,9 @@ private extension AddressViewController {
     }
     
     func setUpNavigationBar() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes =
+        [NSAttributedString.Key.font: FitftyFont.appleSDBold(size: 28).font ?? UIFont.systemFont(ofSize: 28)]
         navigationItem.title = "주소를 설정해주세요."
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController = searchController
@@ -142,7 +124,7 @@ private extension AddressViewController {
             cancelButton.heightAnchor.constraint(equalToConstant: 64),
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor, constant: -15),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             addressInfoView.topAnchor.constraint(equalTo: collectionView.topAnchor),
             addressInfoView.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor),
