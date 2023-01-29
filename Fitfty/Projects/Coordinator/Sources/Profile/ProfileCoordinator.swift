@@ -36,6 +36,14 @@ private extension ProfileCoordinator {
         let viewController = MyProfileViewController(coordinator: self)
         return viewController
     }
+    
+    func makeSettingCoordinator() -> SettingCoordinator {
+        let coordinator = SettingCoordinator(navigationConrtoller: navigationController)
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
 }
 
 extension ProfileCoordinator: MyProfileCoordinatorInterface {
@@ -43,5 +51,17 @@ extension ProfileCoordinator: MyProfileCoordinatorInterface {
         let postViewController = MyPostViewController(coordinator: self)
         postViewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(postViewController, animated: true)
+    }
+    
+    func showSetting() {
+        let coordinator = makeSettingCoordinator()
+        coordinator.start()
+    }
+}
+
+extension ProfileCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
     }
 }
