@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Common
 
 final class WeatherInfoView: UIStackView {
     
@@ -22,20 +23,35 @@ final class WeatherInfoView: UIStackView {
         stackView.addArrangedSubviews(conditionLabel, tempInfoLabel)
         return stackView
     }()
+    
+    private lazy var tempView: UIStackView = {
+        let stackView = UIStackView(axis: .horizontal, alignment: .top, distribution: .fill, spacing: 3)
+        stackView.addArrangedSubviews(tempLabel, ellipseView)
+        return stackView
+    }()
 
     private lazy var tempLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
-        label.font = .systemFont(ofSize: 54, weight: .bold)
-        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.font = FitftyFont.antonRegular(size: 64).font
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.heightAnchor.constraint(equalToConstant: 64).isActive = true
         return label
+    }()
+    
+    private lazy var ellipseView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = CommonAsset.Images.ondo.image
+        imageView.widthAnchor.constraint(equalToConstant: 17).isActive = true
+        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        return imageView
     }()
 
     private lazy var conditionLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .systemGray
-        label.font = .preferredFont(for: .footnote, weight: .bold)
-        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        label.textColor = CommonAsset.Colors.gray04.color
+        label.textAlignment = .right
+        label.font = FitftyFont.appleSDBold(size: 13).font
         return label
     }()
 
@@ -43,7 +59,6 @@ final class WeatherInfoView: UIStackView {
         let label = UILabel()
         label.textColor = .label
         label.font = .preferredFont(for: .footnote, weight: .bold)
-        label.setContentHuggingPriority(.required, for: .horizontal)
         return label
     }()
     
@@ -63,8 +78,8 @@ final class WeatherInfoView: UIStackView {
         spacing = 8
         backgroundColor = .clear
         isLayoutMarginsRelativeArrangement = true
-        directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
-        addArrangedSubviews(tempLabel, backgroundStackView)
+        directionalLayoutMargins = NSDirectionalEdgeInsets(top: 5, leading: 20, bottom: 0, trailing: 20)
+        addArrangedSubviews(tempView, backgroundStackView)
     }
     
 }
@@ -72,7 +87,7 @@ final class WeatherInfoView: UIStackView {
 extension WeatherInfoView {
     
     func setUp(temp: Int, condition: String, minimum: Int, maximum: Int) {
-        tempLabel.text = "\(temp)°"
+        tempLabel.text = temp.description
         conditionLabel.text = condition
         tempInfoLabel.text = "최저\(minimum) ㆍ 최고\(maximum)"
     }
