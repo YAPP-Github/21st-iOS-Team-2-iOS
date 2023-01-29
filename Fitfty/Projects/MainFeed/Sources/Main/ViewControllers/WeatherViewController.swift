@@ -178,7 +178,7 @@ private extension WeatherViewController {
     func weatherSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(72),
-            heightDimension: .absolute(75)
+            heightDimension: .absolute(86)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -191,7 +191,6 @@ private extension WeatherViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 14, leading: 10, bottom: 28, trailing: 10)
         section.orthogonalScrollingBehavior = .continuous
-        section.interGroupSpacing = 8
         
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
