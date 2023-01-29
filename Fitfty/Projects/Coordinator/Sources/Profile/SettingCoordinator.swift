@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Profile
+import Setting
 import Common
 
 final class SettingCoordinator: Coordinator {
