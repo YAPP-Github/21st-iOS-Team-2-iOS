@@ -28,5 +28,9 @@ public extension UICollectionView {
     func dequeueReusableCell<T: UICollectionViewCell>(_ cellClass: T.Type, for indexPath: IndexPath) -> T? {
         return dequeueReusableCell(withReuseIdentifier: cellClass.className, for: indexPath) as? T
     }
-
+    
+    func isLastItem(_ indexPath: IndexPath) -> Bool {
+        return IndexPath(item: numberOfItems(inSection: indexPath.section) - 1, section: indexPath.section) == indexPath
+    }
+    
 }
