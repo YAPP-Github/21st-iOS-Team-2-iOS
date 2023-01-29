@@ -86,6 +86,13 @@ public final class AddressViewController: UIViewController {
         return button
     }()
     
+    private lazy var emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "검색어를 입력해주세요."
+        label.textColor = CommonAsset.Colors.gray04.color
+        label.font = FitftyFont.appleSDBold(size: 18).font
+        return label
+    }()
 }
 
 private extension AddressViewController {
@@ -108,7 +115,7 @@ private extension AddressViewController {
     
     func setUpLayout() {
         view.backgroundColor = .white
-        view.addSubviews(cancelButton, collectionView, addressInfoView, buttonStackView)
+        view.addSubviews(cancelButton, collectionView, addressInfoView, buttonStackView, emptyLabel)
         let cancelButtonBottom = cancelButton.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -26
         )
@@ -133,7 +140,9 @@ private extension AddressViewController {
             buttonStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             buttonStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             buttonStackView.heightAnchor.constraint(equalToConstant: 64),
-            buttonsBottom
+            buttonsBottom,
+            emptyLabel.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor)
         ])
     }
     
