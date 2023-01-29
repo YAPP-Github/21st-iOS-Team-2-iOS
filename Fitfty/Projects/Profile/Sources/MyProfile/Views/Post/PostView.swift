@@ -10,6 +10,7 @@ import UIKit
 import Common
 
 final class PostView: UIView {
+    
     private lazy var postImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = CommonAsset.Images.profileSample.image
@@ -31,9 +32,25 @@ final class PostView: UIView {
         label.numberOfLines = 0
         return label
     }()
+    
+    private lazy var bookmarkButton: UIButton = {
+        let button = UIButton()
+        button.tintColor = .white
+        button.setImage(UIImage(systemName: "bookmark.fill"), for: .normal)
+        button.setPreferredSymbolConfiguration(.init(scale: .large), forImageIn: .normal)
+        return button
+    }()
+    
+    private lazy var bookmarkView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = 0.5
+        view.layer.cornerRadius = 24
+        return view
+    }()
    
     private lazy var postInfoView = PostInfoView()
-    
+   
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpConstraintLayout()
@@ -44,7 +61,8 @@ final class PostView: UIView {
     }
     
     private func setUpConstraintLayout() {
-        addSubviews(postImageView, dateLabel, contentLabel, postInfoView)
+        addSubviews(postImageView, dateLabel, contentLabel, postInfoView,
+                    bookmarkView, bookmarkButton)
         
         NSLayoutConstraint.activate([
             postImageView.topAnchor.constraint(equalTo: topAnchor),
@@ -62,8 +80,15 @@ final class PostView: UIView {
             contentLabel.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 20),
             
             dateLabel.leadingAnchor.constraint(equalTo: contentLabel.leadingAnchor),
-            dateLabel.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: 8)
+            dateLabel.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: 8),
             
+            bookmarkView.widthAnchor.constraint(equalToConstant: 48),
+            bookmarkView.heightAnchor.constraint(equalToConstant: 48),
+            bookmarkView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            bookmarkView.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: -20),
+            
+            bookmarkButton.centerXAnchor.constraint(equalTo: bookmarkView.centerXAnchor),
+            bookmarkButton.centerYAnchor.constraint(equalTo: bookmarkView.centerYAnchor)
         ])
     }
 }
