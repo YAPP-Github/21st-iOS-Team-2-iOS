@@ -52,9 +52,9 @@ final class WeatherIconView: UIStackView {
     private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.widthAnchor.constraint(equalToConstant: 34).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 34).isActive = true
-        imageView.image = UIImage(systemName: "cloud")?.withTintColor(.label, renderingMode: .alwaysOriginal)
+        imageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        imageView.image = CommonAsset.Images.lostOfCloudy.image
         return imageView
     }()
 }
@@ -83,7 +83,7 @@ extension WeatherIconView {
     func setUp(meridiem: String, precipitation: String, icon: UIImage?) {
         meridiemLabel.text = meridiem
         precipitationLabel.text = precipitation
-        iconImageView.image = icon?.withTintColor(.label, renderingMode: .alwaysOriginal)
+        iconImageView.image = icon
     }
     
     func reset() {
