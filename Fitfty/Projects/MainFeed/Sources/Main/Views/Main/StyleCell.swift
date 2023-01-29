@@ -20,10 +20,10 @@ final class StyleCell: UICollectionViewCell {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = CommonAsset.Colors.fTtext.color
+        label.textColor = CommonAsset.Colors.primaryBlueNormal.color
         label.font = FitftyFont.appleSDBold(size: 18).font
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        label.backgroundColor = CommonAsset.Colors.ftSecondaryText.color
+        label.backgroundColor = CommonAsset.Colors.primaryBlueDark.color
         label.layer.cornerRadius = 18
         label.textAlignment = .center
         label.clipsToBounds = true
@@ -77,8 +77,8 @@ extension StyleCell {
     }
     
     func selected(in isSelected: Bool) {
-        titleLabel.textColor = isSelected ? CommonAsset.Colors.fTtext.color : .systemGray
-        titleLabel.backgroundColor = isSelected ? CommonAsset.Colors.ftSecondaryText.color : .clear
+        titleLabel.textColor = isSelected ? CommonAsset.Colors.primaryBlueNormal.color : .systemGray
+        titleLabel.backgroundColor = isSelected ? CommonAsset.Colors.primaryBlueDark.color : .clear
         
     }
     
