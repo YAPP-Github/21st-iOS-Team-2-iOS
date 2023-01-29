@@ -14,7 +14,7 @@ final class UserCoordinator: Coordinator {
     
     var type: CoordinatorType { .user }
     weak var finishDelegate: CoordinatorFinishDelegate?
-   
+    weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
@@ -50,6 +50,7 @@ private extension UserCoordinator {
             style: .small,
             contentViewController: ReportViewController(coordinator: self)
         )
+        bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
 }
@@ -67,8 +68,9 @@ extension UserCoordinator: UserProfileCoordinatorInterface {
         viewController.present(reportViewController, animated: false)
     }
     
-    func dismissReport(_ viewController: UIViewController) {
-        viewController.dismiss(animated: true)
+    func dismissReport() {
+        navigationController.dismiss(animated: true)
+        bottomSheetDelegate?.dismissBottomSheet()
     }
     
     func showProfile() {
