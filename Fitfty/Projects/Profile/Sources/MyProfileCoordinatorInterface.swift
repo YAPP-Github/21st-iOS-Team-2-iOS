@@ -6,8 +6,6 @@
 //  Copyright © 2022 Fitfty. All rights reserved.
 //
 
-import UIKit
-
 public protocol MyProfileCoordinatorInterface: AnyObject {
     
     func showPost()
