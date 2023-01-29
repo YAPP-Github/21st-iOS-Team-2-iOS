@@ -14,7 +14,7 @@ final class AddressCell: UICollectionViewCell {
     override var intrinsicContentSize: CGSize {
         return CGSize(
             width: safeAreaLayoutGuide.layoutFrame.width,
-            height: temperatureLabel.intrinsicContentSize.height + 28
+            height: addressLabel.intrinsicContentSize.height + 28
         )
     }
     
@@ -28,7 +28,7 @@ final class AddressCell: UICollectionViewCell {
             bottom: 16,
             trailing: 20
         )
-        stackView.addArrangedSubviews(addressLabel, temperatureLabel)
+        stackView.addArrangedSubviews(addressLabel)
         return stackView
     }()
     
@@ -38,15 +38,6 @@ final class AddressCell: UICollectionViewCell {
         label.text = "서울시, 강남구, 역삼 1동"
         label.font = FitftyFont.SFProDisplaySemibold(size: 18).font
         label.editTextColor(of: "강남", in: .black)
-        return label
-    }()
-    
-    private lazy var temperatureLabel: UILabel = {
-        let label = UILabel()
-        label.text = "12°"
-        label.textColor = .black
-        label.font = FitftyFont.SFProDisplaySemibold(size: 18).font
-        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
     }()
     
@@ -79,7 +70,6 @@ private extension AddressCell {
     
     func reset() {
         addressLabel.text = nil
-        temperatureLabel.text = nil
     }
     
 }
