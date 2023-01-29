@@ -8,7 +8,7 @@
 
 import UIKit
 import Common
-import Profile
+import Setting
 
 final class PersonalInfoCoordinator: Coordinator {
     
