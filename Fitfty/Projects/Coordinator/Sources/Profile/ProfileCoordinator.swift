@@ -19,7 +19,8 @@ final class ProfileCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    var finishDelegate: CoordinatorFinishDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
+    weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
     init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
         self.navigationController = navigationConrtoller
@@ -43,6 +44,7 @@ private extension ProfileCoordinator {
             style: .custom(196),
             contentViewController: viewController
         )
+        bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
     
@@ -78,6 +80,7 @@ extension ProfileCoordinator: MyProfileCoordinatorInterface {
     
     func dismiss() {
         navigationController.dismiss(animated: false)
+        bottomSheetDelegate?.dismissBottomSheet()
     }
     
     func popToRoot() {
