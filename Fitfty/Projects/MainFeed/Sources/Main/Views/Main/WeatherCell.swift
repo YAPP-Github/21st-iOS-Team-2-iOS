@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Common
 
 final class WeatherCell: UICollectionViewCell {
     
@@ -15,13 +16,13 @@ final class WeatherCell: UICollectionViewCell {
     }
     
     private lazy var backgroundStackView: UIStackView = {
-        let stackView = UIStackView(axis: .vertical, alignment: .center, distribution: .fill, spacing: 8)
+        let stackView = UIStackView(axis: .vertical, alignment: .center, distribution: .fill, spacing: 5)
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.backgroundColor = .clear
         stackView.directionalLayoutMargins = NSDirectionalEdgeInsets(
             top: .zero,
             leading: 12,
-            bottom: 2,
+            bottom: .zero,
             trailing: 12
         )
         stackView.addArrangedSubviews(hourLabel, weatherIconImageView)
@@ -40,7 +41,7 @@ final class WeatherCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .systemGray
         label.textAlignment = .center
-        label.font = .preferredFont(for: .footnote, weight: .semibold)
+        label.font = FitftyFont.appleSDSemiBold(size: 12).font
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         label.text = "24시"
         label.backgroundColor = .white
@@ -53,9 +54,9 @@ final class WeatherCell: UICollectionViewCell {
     
     private lazy var weatherIconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "cloud")?.withTintColor(.label, renderingMode: .alwaysOriginal)
+        imageView.image = CommonAsset.Images.lostOfCloudy.image
         imageView.widthAnchor.constraint(equalToConstant: 48).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         return imageView
     }()
     
@@ -92,7 +93,7 @@ final class WeatherCell: UICollectionViewCell {
     
     private func reset() {
         hourLabel.text = "24시"
-        weatherIconImageView.image = UIImage(systemName: "cloud")?.withTintColor(.label, renderingMode: .alwaysOriginal)
+        weatherIconImageView.image = CommonAsset.Images.sunny.image
         hourLabel.textColor = .systemGray
         hourLabel.backgroundColor = .white
         separatorView.isHidden = false

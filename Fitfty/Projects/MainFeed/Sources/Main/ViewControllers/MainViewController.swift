@@ -158,8 +158,8 @@ public final class MainViewController: UIViewController {
     
     private func weatherSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(74),
-            heightDimension: .absolute(72)
+            widthDimension: .absolute(72),
+            heightDimension: .absolute(75)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
