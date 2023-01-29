@@ -21,10 +21,10 @@ final class StyleCell: UICollectionViewCell {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = CommonAsset.Colors.fTtext.color
-        label.font = .preferredFont(for: .headline, weight: .semibold)
+        label.font = FitftyFont.appleSDBold(size: 18).font
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         label.backgroundColor = CommonAsset.Colors.ftSecondaryText.color
-        label.layer.cornerRadius = 15
+        label.layer.cornerRadius = 18
         label.textAlignment = .center
         label.clipsToBounds = true
         return label

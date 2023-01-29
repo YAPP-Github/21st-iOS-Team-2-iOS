@@ -58,7 +58,7 @@ final class WeatherInfoView: UIStackView {
     private lazy var tempInfoLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
-        label.font = .preferredFont(for: .footnote, weight: .bold)
+        label.font = FitftyFont.appleSDBold(size: 13).font
         return label
     }()
     
@@ -89,7 +89,7 @@ extension WeatherInfoView {
     func setUp(temp: Int, condition: String, minimum: Int, maximum: Int) {
         tempLabel.text = temp.description
         conditionLabel.text = condition
-        tempInfoLabel.text = "최저\(minimum) ㆍ 최고\(maximum)"
+        tempInfoLabel.text = "최저 \(minimum) ㆍ 최고 \(maximum)"
     }
     
 }

@@ -16,7 +16,7 @@ final class WeatherCell: UICollectionViewCell {
     }
     
     private lazy var backgroundStackView: UIStackView = {
-        let stackView = UIStackView(axis: .vertical, alignment: .center, distribution: .fill, spacing: 5)
+        let stackView = UIStackView(axis: .vertical, alignment: .center, distribution: .fill, spacing: .zero)
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.backgroundColor = .clear
         stackView.directionalLayoutMargins = NSDirectionalEdgeInsets(
@@ -25,7 +25,7 @@ final class WeatherCell: UICollectionViewCell {
             bottom: .zero,
             trailing: 12
         )
-        stackView.addArrangedSubviews(hourLabel, weatherIconImageView)
+        stackView.addArrangedSubviews(hourLabel, weatherIconImageView, tempLabel)
         return stackView
     }()
     
@@ -48,7 +48,7 @@ final class WeatherCell: UICollectionViewCell {
         label.layer.cornerRadius = 10
         label.clipsToBounds = true
         label.widthAnchor.constraint(equalToConstant: 48).isActive = true
-        label.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        label.heightAnchor.constraint(equalToConstant: 20).isActive = true
         return label
     }()
     
@@ -58,6 +58,14 @@ final class WeatherCell: UICollectionViewCell {
         imageView.widthAnchor.constraint(equalToConstant: 48).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         return imageView
+    }()
+    
+    private lazy var tempLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = CommonAsset.Colors.gray04.color
+        label.font = FitftyFont.SFProDisplayBold(size: 12).font
+        label.text = "12°"
+        return label
     }()
     
     override func prepareForReuse() {
@@ -87,14 +95,16 @@ final class WeatherCell: UICollectionViewCell {
     }
     
     private func setUpHourLabel(by isCurrentTime: Bool) {
-        hourLabel.textColor = isCurrentTime ? .white : .systemGray
+        hourLabel.textColor = isCurrentTime ? .white : CommonAsset.Colors.gray04.color
         hourLabel.backgroundColor = isCurrentTime ? .black : .white
+        tempLabel.textColor = isCurrentTime ? CommonAsset.Colors.gray08.color : CommonAsset.Colors.gray04.color
     }
     
     private func reset() {
         hourLabel.text = "24시"
         weatherIconImageView.image = CommonAsset.Images.sunny.image
-        hourLabel.textColor = .systemGray
+        hourLabel.textColor = CommonAsset.Colors.gray04.color
+        tempLabel.textColor = CommonAsset.Colors.gray04.color
         hourLabel.backgroundColor = .white
         separatorView.isHidden = false
     }
@@ -103,10 +113,11 @@ final class WeatherCell: UICollectionViewCell {
 
 extension WeatherCell {
     
-    func setUp(hour: String, image: UIImage?, isCurrentTime: Bool) {
+    func setUp(hour: String, image: UIImage?, temp: Int, isCurrentTime: Bool) {
         setUpHourLabel(by: isCurrentTime)
         hourLabel.text = "\(hour)시"
         weatherIconImageView.image = image
+        tempLabel.text = "\(temp)°"
     }
     
     func setUpSeparator(isHidden: Bool) {

@@ -99,7 +99,7 @@ public final class MainViewController: UIViewController {
                 ) as? HeaderView
                 headerView?.setUp(
                     largeTitle: "오늘의 핏프티",
-                    smallTitle: "날씨에 맞는 코디 추천",
+                    smallTitle: "❄️ 날씨에 맞는 코디 추천",
                     largeTitleFont: FitftyFont.appleSDBold(size: 24).font ?? .systemFont(ofSize: 24),
                     smallTitleFont: FitftyFont.appleSDSemiBold(size: 14).font ?? .systemFont(ofSize: 14),
                     smallTitleColor: CommonAsset.Colors.gray04.color,
@@ -159,7 +159,7 @@ public final class MainViewController: UIViewController {
     private func weatherSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(72),
-            heightDimension: .absolute(75)
+            heightDimension: .absolute(86)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -168,9 +168,8 @@ public final class MainViewController: UIViewController {
             ),
             subitems: [.init(layoutSize: layoutSize)]
         )
-        
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: .zero, leading: 10, bottom: 28, trailing: 10)
+        section.contentInsets = .init(top: 8, leading: 10, bottom: 25, trailing: 10)
         section.orthogonalScrollingBehavior = .continuous
         
         section.boundarySupplementaryItems = [
@@ -193,7 +192,7 @@ public final class MainViewController: UIViewController {
     private func styleSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(100),
-            heightDimension: .absolute(32)
+            heightDimension: .absolute(35)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -221,8 +220,8 @@ public final class MainViewController: UIViewController {
     
     private func codySectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(300),
-            heightDimension: .absolute(336)
+            widthDimension: .absolute(256),
+            heightDimension: .absolute(256)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -231,11 +230,10 @@ public final class MainViewController: UIViewController {
             ),
             subitems: [.init(layoutSize: layoutSize)]
         )
-        group.interItemSpacing = .fixed(8)
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: .zero, leading: 20, bottom: .zero, trailing: 20)
-        section.interGroupSpacing = 8
+        section.interGroupSpacing = 16
         section.orthogonalScrollingBehavior = .groupPaging
         
         return section
