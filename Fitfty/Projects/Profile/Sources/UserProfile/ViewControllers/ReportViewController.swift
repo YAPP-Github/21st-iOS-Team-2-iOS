@@ -11,7 +11,7 @@ import Common
 
 final public class ReportViewController: UIViewController {
     
-    let coordinator: UserProfileCoordinatorInterface
+    let coordinator: ProfileCoordinatorInterface
     
     private lazy var reportButton: UIButton = {
         let button = UIButton()
@@ -27,7 +27,7 @@ final public class ReportViewController: UIViewController {
         
     }
     
-    public init(coordinator: UserProfileCoordinatorInterface) {
+    public init(coordinator: ProfileCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         setConstraintsLayout()
@@ -46,6 +46,6 @@ final public class ReportViewController: UIViewController {
     }
     
     @objc func didTapReportButton(_ sender: Any?) {
-        coordinator.dismissReport()
+        coordinator.dismiss()
     }
 }

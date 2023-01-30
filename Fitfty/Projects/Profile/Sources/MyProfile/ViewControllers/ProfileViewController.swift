@@ -9,17 +9,27 @@
 import UIKit
 import Common
 
-final public class MyProfileViewController: UIViewController {
+final public class ProfileViewController: UIViewController {
     
     enum Section: CaseIterable {
         case feed
     }
-    private var coordinator: MyProfileCoordinatorInterface
+    private var coordinator: ProfileCoordinatorInterface
+    private var profileType: ProfileType
+    
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: postLayout())
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.register(FeedImageCell.self,
+                                forCellWithReuseIdentifier: FeedImageCell.className)
+        collectionView.register(UserProfileHeaderView.self,
+                                forSupplementaryViewOfKind: UserProfileHeaderView.className)
+        collectionView.register(MyProfileHeaderView.self,
+                                forSupplementaryViewOfKind: MyProfileHeaderView.className)
+        collectionView.backgroundColor = .white
+        collectionView.delegate = self
         return collectionView
     }()
     
@@ -30,16 +40,19 @@ final public class MyProfileViewController: UIViewController {
     }()
     
     private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
-    private let headerHeight: CGFloat = 283
+    
+    private var headerHeight: CGFloat {
+        switch profileType {
+        case .myProfile:
+            return 283
+        case .userProfile:
+            return 196
+        }
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
-    }
-    
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.navigationBar.isHidden = true
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -47,8 +60,9 @@ final public class MyProfileViewController: UIViewController {
         navigationController?.navigationBar.isHidden = false
     }
     
-    public init(coordinator: MyProfileCoordinatorInterface) {
+    public init(coordinator: ProfileCoordinatorInterface, profileType: ProfileType) {
         self.coordinator = coordinator
+        self.profileType = profileType
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -59,15 +73,20 @@ final public class MyProfileViewController: UIViewController {
     
     private func setUp() {
         setUpConstraintLayout()
-        setUpCollectionView()
         setUpDataSource()
+        setNavigationBar()
         applySnapshot()
         setMiniProfileView(isHidden: true)
         miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
     }
+    
+    @objc func didTapMoreVerticalButton(_ sender: Any?) {
+        coordinator.showBottomSheet()
+    }
+    
 }
 
-private extension MyProfileViewController {
+private extension ProfileViewController {
     
     func setUpConstraintLayout() {
         view.addSubviews(collectionView, miniProfileView, seperatorView)
@@ -89,12 +108,15 @@ private extension MyProfileViewController {
         ])
     }
     
-    func setUpCollectionView() {
-        collectionView.delegate = self
-        collectionView.register(FeedImageCell.self,
-                                forCellWithReuseIdentifier: FeedImageCell.className)
-        collectionView.register(MyProfileHeaderView.self,
-                                forSupplementaryViewOfKind: MyProfileHeaderView.className)
+    func setNavigationBar() {
+        navigationItem.rightBarButtonItem =
+        UIBarButtonItem(
+            image: CommonAsset.Images.btnMoreVertical.image,
+            style: .plain,
+            target: self,
+            action: #selector(didTapMoreVerticalButton)
+        )
+        navigationItem.rightBarButtonItem?.tintColor = .black
     }
     
     func setMiniProfileView(isHidden: Bool) {
@@ -115,14 +137,27 @@ private extension MyProfileViewController {
             })
         
         dataSource?.supplementaryViewProvider = { (collectionView, kind, indexPath) -> UICollectionReusableView? in
-            guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: MyProfileHeaderView.className,
-                for: indexPath) as? MyProfileHeaderView else {
-                return UICollectionReusableView()
+            switch self.profileType {
+            case .userProfile:
+                guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: UserProfileHeaderView.className,
+                    for: indexPath) as? UserProfileHeaderView else {
+                    return UICollectionReusableView()
+                }
+                supplementaryView.profileView.setUp(nickname: "useriosLover", content: "안녕하세용!")
+                return supplementaryView
+                
+            case .myProfile:
+                guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: MyProfileHeaderView.className,
+                    for: indexPath) as? MyProfileHeaderView else {
+                    return UICollectionReusableView()
+                }
+                supplementaryView.profileView.setUp(nickname: "myiosLover", content: "안녕하세용!")
+                return supplementaryView
             }
-            supplementaryView.profileView.setUp(nickname: "iosLover", content: "안녕하세용!")
-            return supplementaryView
         }
     }
     
@@ -149,26 +184,43 @@ private extension MyProfileViewController {
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 27, leading: 12, bottom: 5, trailing: 12)
-        section.boundarySupplementaryItems = [
-            NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: .init(
-                    widthDimension: .absolute(UIScreen.main.bounds.width),
-                    heightDimension: .estimated(headerHeight)
-                ),
-                elementKind: MyProfileHeaderView.className,
-                alignment: .top
-            )
-        ]
+        
+        switch profileType {
+        case .userProfile:
+            section.boundarySupplementaryItems = [
+                NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: .init(
+                        widthDimension: .absolute(UIScreen.main.bounds.width),
+                        heightDimension: .estimated(headerHeight)
+                    ),
+                    elementKind: UserProfileHeaderView.className,
+                    alignment: .top
+                )
+            ]
+            
+        case .myProfile:
+            section.boundarySupplementaryItems = [
+                NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: .init(
+                        widthDimension: .absolute(UIScreen.main.bounds.width),
+                        heightDimension: .estimated(headerHeight)
+                    ),
+                    elementKind: MyProfileHeaderView.className,
+                    alignment: .top
+                )
+            ]
+        }
+       
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
     }
 
 }
 
-extension MyProfileViewController: UICollectionViewDelegate {
+extension ProfileViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        coordinator.showPost()
+        coordinator.showPost(profileType: profileType)
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {

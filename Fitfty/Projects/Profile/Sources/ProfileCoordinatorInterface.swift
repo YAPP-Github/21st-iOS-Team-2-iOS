@@ -6,11 +6,11 @@
 //  Copyright © 2022 Fitfty. All rights reserved.
 //
 
-public protocol MyProfileCoordinatorInterface: AnyObject {
+public protocol ProfileCoordinatorInterface: AnyObject {
     
-    func showPost()
+    func showPost(profileType: ProfileType)
     func showBottomSheet()
     func showUploadCody()
+    func showMainProfile()
     func dismiss()
-    func popToRoot()
 }
