@@ -8,7 +8,6 @@
 
 import UIKit
 import Common
-import MainFeed
 
 enum TabBarPage {
     

@@ -23,8 +23,8 @@ final class ProfileCoordinator: Coordinator {
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
-    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
-        self.navigationController = navigationConrtoller
+    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+        self.navigationController = navigationController
     }
     
     func start() {
@@ -45,8 +45,16 @@ private extension ProfileCoordinator {
     }
     
     func makePostCoordinator(profileType: ProfileType) -> PostCoordinator {
-       let coordinator = PostCoordinator(navigationConrtoller: navigationController)
+        let coordinator = PostCoordinator(navigationConrtoller: navigationController)
         coordinator.profileType = profileType
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
+    
+    func makeSettingCoordinator() -> SettingCoordinator {
+        let coordinator = SettingCoordinator(navigationConrtoller: navigationController)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -70,7 +78,7 @@ private extension ProfileCoordinator {
         bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
-
+    
 }
 
 extension ProfileCoordinator: ProfileCoordinatorInterface {
@@ -112,4 +120,10 @@ extension ProfileCoordinator: CoordinatorFinishDelegate {
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
     }
+    
+    func showSetting() {
+        let coordinator = makeSettingCoordinator()
+        coordinator.start()
+    }
+    
 }

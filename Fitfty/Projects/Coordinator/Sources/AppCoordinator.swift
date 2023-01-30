@@ -17,8 +17,8 @@ final public class AppCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    public init(navigationConrtoller: BaseNavigationController) {
-        self.navigationController = navigationConrtoller
+    public init(navigationController: BaseNavigationController) {
+        self.navigationController = navigationController
     }
     
     public func start() {
@@ -29,7 +29,7 @@ final public class AppCoordinator: Coordinator {
 
 private extension AppCoordinator {
     func makeAuthCoordinator() -> Coordinator {
-        let coordinator = AuthCoordinator(navigationConrtoller: navigationController)
+        let coordinator = AuthCoordinator(navigationController: navigationController)
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
