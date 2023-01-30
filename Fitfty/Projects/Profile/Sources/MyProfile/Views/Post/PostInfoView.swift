@@ -20,8 +20,9 @@ final class PostInfoView: UIView {
     
     private lazy var hitsImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "eye.fill")
+        imageView.image = CommonAsset.Images.eyeGray05.image
         imageView.tintColor = CommonAsset.Colors.gray05.color
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -63,15 +64,16 @@ final class PostInfoView: UIView {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .fill
-        stackView.spacing = 5
-        stackView.setCustomSpacing(6, after: weatherLabel)
-        stackView.setCustomSpacing(6, after: dotLabel1)
-        stackView.setCustomSpacing(6, after: hitsLabel)
-        stackView.setCustomSpacing(6, after: dotLabel2)
-        
+        let stackView = UIStackView(
+            axis: .horizontal,
+            alignment: .fill,
+            distribution: .fill,
+            spacing: 11
+        )
+        stackView.addArrangedSubviews(weatherLabel, dotLabel1, hitsImageView, hitsLabel, dotLabel2,
+                            bookmarkImageView, bookmarkLabel)
+        stackView.setCustomSpacing(4, after: hitsImageView)
+        stackView.setCustomSpacing(4, after: bookmarkImageView)
         return stackView
     }()
     
@@ -91,9 +93,6 @@ final class PostInfoView: UIView {
     
     private func setUpConstraintsLayout() {
         addSubviews(stackView)
-        stackView.addArrangedSubviews(weatherLabel, dotLabel1, hitsImageView, hitsLabel, dotLabel2,
-                            bookmarkImageView, bookmarkLabel)
-       
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 15),
