@@ -99,7 +99,7 @@ public final class MainViewController: UIViewController {
                 ) as? HeaderView
                 headerView?.setUp(
                     largeTitle: "오늘의 핏프티",
-                    smallTitle: "❄️ 날씨에 맞는 코디 추천",
+                    smallTitle: "날씨에 맞는 코디 추천",
                     largeTitleFont: FitftyFont.appleSDBold(size: 24).font ?? .systemFont(ofSize: 24),
                     smallTitleFont: FitftyFont.appleSDSemiBold(size: 14).font ?? .systemFont(ofSize: 14),
                     smallTitleColor: CommonAsset.Colors.gray04.color,
