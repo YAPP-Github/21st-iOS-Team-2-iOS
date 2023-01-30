@@ -167,7 +167,7 @@ final public class AlbumViewController: UIViewController {
                         cell?.setImage(image: image)
                     }
                 }
-                return cell
+                return cell ?? UICollectionViewCell()
             })
     }
     

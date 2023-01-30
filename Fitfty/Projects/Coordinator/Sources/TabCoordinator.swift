@@ -202,3 +202,17 @@ extension TabCoordinator: UITabBarControllerDelegate {
     }
     
 }
+
+extension TabCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
+        switch childCoordinator.type {
+        case .uploadCody:
+            navigationController.visibleViewController?.dismiss(animated: true) {
+                childCoordinator.navigationController.viewControllers.removeAll()
+            }
+        default: break
+        }
+    }
+}
