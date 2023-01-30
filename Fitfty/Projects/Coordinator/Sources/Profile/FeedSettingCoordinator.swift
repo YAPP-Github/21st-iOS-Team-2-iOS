@@ -1,19 +1,19 @@
 //
-//  AlbumCoordinator.swift
+//  FeedSettingCoordinator.swift
 //  Coordinator
 //
-//  Created by 임영선 on 2023/01/11.
+//  Created by Ari on 2023/01/28.
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
 import UIKit
-import MainFeed
 import Common
+import Setting
 
-final class AlbumCoordinator: Coordinator {
+final class FeedSettingCoordinator: Coordinator {
     
-    var type: CoordinatorType { .album }
-    var finishDelegate: CoordinatorFinishDelegate?
+    var type: CoordinatorType { .feedSetting }
+    weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
     var parentCoordinator: Coordinator?
@@ -25,24 +25,27 @@ final class AlbumCoordinator: Coordinator {
     }
     
     func start() {
-        let viewController = makeAlbumViewController()
+        let viewController = makeFeedSettingViewController()
         navigationController.pushViewController(viewController, animated: true)
         navigationController.setNavigationBarHidden(true, animated: false)
     }
 }
 
-private extension AlbumCoordinator {
-    func makeAlbumViewController() -> UIViewController {
-        let viewController = AlbumViewController(coordinator: self)
+private extension FeedSettingCoordinator {
+    
+    func makeFeedSettingViewController() -> UIViewController {
+        let viewController = FeedSettingViewController(coordinator: self, viewModel: FeedSettingViewModel())
         return viewController
     }
+    
 }
 
-extension AlbumCoordinator: AlbumCoordinatorInterface {
+extension FeedSettingCoordinator: FeedSettingCoordinatorInterface {
     
     func dismiss() {
         navigationController.viewControllers.removeAll()
         bottomSheetDelegate?.dismissBottomSheet()
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
+    
 }

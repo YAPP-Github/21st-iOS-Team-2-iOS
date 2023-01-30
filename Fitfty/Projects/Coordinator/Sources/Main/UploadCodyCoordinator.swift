@@ -39,12 +39,14 @@ private extension UploadCodyCoordinator {
     func makeAlbumViewController() -> UIViewController {
         let coordinator = AlbumCoordinator()
         coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
         coordinator.start()
         let bottomSheetViewController = BottomSheetViewController(
             style: .large,
             contentViewController: coordinator.navigationController
         )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
         
     }
@@ -60,5 +62,12 @@ extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
         let viewController = makeAlbumViewController()
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
+    }
+}
+
+extension UploadCodyCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
     }
 }

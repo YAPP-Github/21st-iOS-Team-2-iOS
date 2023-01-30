@@ -10,6 +10,7 @@ identifier_name:
         - a
         - b
         - app
+        - etc
 function_body_length:
     - 150 # warning
     - 300 # error
