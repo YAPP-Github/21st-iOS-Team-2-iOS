@@ -7,18 +7,16 @@
 //
 
 import UIKit
-import Common
 
-final class BarView: UIView {
+public final class BarView: UIView {
 
-    private lazy var albumStackView: UIStackView = {
+    private lazy var backgroundStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.spacing = 10
-        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapView)))
         return stackView
     }()
     
-    private lazy var albumNameLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "최근 항목"
         label.font = FitftyFont.appleSDBold(size: 20).font
@@ -41,21 +39,23 @@ final class BarView: UIView {
         return button
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    public init(title: String, isChevronButtonHidden: Bool) {
+        super.init(frame: .zero)
         setConstraintsLayout()
+        self.chevronButton.isHidden = isChevronButtonHidden
+        self.titleLabel.text = title
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     private func setConstraintsLayout() {
-        addSubviews(albumStackView, cancelButton)
-        albumStackView.addArrangedSubviews(albumNameLabel, chevronButton)
+        addSubviews(backgroundStackView, cancelButton)
+        backgroundStackView.addArrangedSubviews(titleLabel, chevronButton)
         NSLayoutConstraint.activate([
-            albumStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            albumStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            backgroundStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            backgroundStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
         
             cancelButton.centerYAnchor.constraint(equalTo: centerYAnchor),
             cancelButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
@@ -64,8 +64,12 @@ final class BarView: UIView {
         ])
     }
     
-    @objc func didTapView(_ sender: Any?) {
-        print("didTapView")
+    public func setCancelButtonTarget(target: Any?, action: Selector) {
+        cancelButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+    public func setTitleViewTarget(target: Any?, action: Selector) {
+        backgroundStackView.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
     }
 
 }

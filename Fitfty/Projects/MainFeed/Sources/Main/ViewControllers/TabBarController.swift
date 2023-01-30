@@ -13,6 +13,7 @@ public final class TabBarController: UITabBarController {
     public init() {
         super.init(nibName: nil, bundle: nil)
         object_setClass(self.tabBar, TabBar.self)
+        self.tabBar.backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {

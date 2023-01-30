@@ -1,27 +1,16 @@
 //
-//  AddressViewModel.swift
-//  MainFeed
+//  ProfileSettingViewModel.swift
+//  Profile
 //
-//  Created by Ari on 2023/01/07.
+//  Created by Ari on 2023/01/28.
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
 import Foundation
-import Combine
 import Common
+import Combine
 
-enum AddressViewSection {
-    case address
-    
-    init?(index: Int) {
-        switch index {
-        case 0: self = .address
-        default: return nil
-        }
-    }
-}
-
-public final class AddressViewModel {
+public final class ProfileSettingViewModel {
 
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
 
@@ -29,7 +18,7 @@ public final class AddressViewModel {
 
 }
 
-extension AddressViewModel: ViewModelType {
+extension ProfileSettingViewModel: ViewModelType {
     public enum ViewModelState {}
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
