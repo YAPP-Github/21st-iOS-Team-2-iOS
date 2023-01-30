@@ -25,14 +25,16 @@ enum MainViewSection {
     }
 }
 
-final class MainViewModel: ViewModelType {
-    
-    public enum ViewModelState {
-        
-    }
+public final class MainViewModel {
 
-    public var state: PassthroughSubject<ViewModelState, Never> = .init()
+    private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
 
     public init() {}
 
+}
+
+extension MainViewModel: ViewModelType {
+    public enum ViewModelState {}
+    
+    public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
 }
