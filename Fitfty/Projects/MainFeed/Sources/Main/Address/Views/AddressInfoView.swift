@@ -21,7 +21,7 @@ public final class AddressInfoView: UIView {
     private lazy var weatherView: UIStackView = {
         let stackView = UIStackView(axis: .horizontal, alignment: .center, distribution: .fill, spacing: 15)
         stackView.backgroundColor = .clear
-        stackView.addArrangedSubviews(weatherIconView, ellipseView, temperatureLabel)
+        stackView.addArrangedSubviews(weatherIconView, separator, tempView)
         return stackView
     }()
     
@@ -34,24 +34,39 @@ public final class AddressInfoView: UIView {
         return label
     }()
     
+    private lazy var tempView: UIStackView = {
+        let stackView = UIStackView(axis: .horizontal, alignment: .top, distribution: .fill, spacing: 6)
+        stackView.addArrangedSubviews(temperatureLabel, ellipseView)
+        return stackView
+    }()
+    
     private lazy var temperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "13°"
+        label.text = "13"
         label.textColor = .black
-        label.font = FitftyFont.SFProDisplayBold(size: 72).font
+        label.font = FitftyFont.antonRegular(size: 64).font
+        label.heightAnchor.constraint(equalToConstant: 64).isActive = true
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
     }()
     
+    private lazy var ellipseView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = CommonAsset.Images.ondo.image
+        imageView.widthAnchor.constraint(equalToConstant: 17).isActive = true
+        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        return imageView
+    }()
+    
     private lazy var weatherIconView: UIImageView = {
         let imageView = UIImageView()
-        imageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 66).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 66).isActive = true
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
-    private lazy var ellipseView: UIView = {
+    private lazy var separator: UIView = {
         let view = UIView()
         view.widthAnchor.constraint(equalToConstant: 6).isActive = true
         view.heightAnchor.constraint(equalToConstant: 6).isActive = true
@@ -72,7 +87,7 @@ public final class AddressInfoView: UIView {
     
     func setUp(address: String, temp: Int, icon: UIImage?) {
         addressLabel.text = address
-        temperatureLabel.text = "\(temp)°"
+        temperatureLabel.text = "\(temp)"
         weatherIconView.image = icon
     }
 }
@@ -84,7 +99,7 @@ private extension AddressInfoView {
         backgroundColor = .white
         NSLayoutConstraint.activate([
             backgroundStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            backgroundStackView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            backgroundStackView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -35)
         ])
     }
 }
