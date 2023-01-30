@@ -59,6 +59,7 @@ final class WeatherInfoView: UIStackView {
         let label = UILabel()
         label.textColor = .label
         label.font = FitftyFont.appleSDBold(size: 13).font
+        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
     }()
     
