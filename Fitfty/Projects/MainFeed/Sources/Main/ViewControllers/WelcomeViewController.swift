@@ -61,7 +61,7 @@ public class WelcomeViewController: UIViewController {
         label.textAlignment = .left
         label.textColor = .black
         label.numberOfLines = 2
-        label.setTextWithLineHeight(text: label.text, lineHeight: 32)
+        label.setTextWithLineHeight(lineHeight: 32)
         label.font = FitftyFont.appleSDBold(size: 24).font
         return label
     }()
