@@ -27,10 +27,12 @@ public final class MainViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setUpLayout()
-        setUpNavigationBar()
-        setUpDataSource()
-        applySnapshot()
+        setUp()
+    }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        showWelcomeView()
     }
     
     public init(coordinator: MainCoordinatorInterface) {
@@ -42,19 +44,22 @@ public final class MainViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+private extension MainViewController {
     
-    private func setUpNavigationBar() {
-        let locationView = LocationView("성북구 정릉동")
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: locationView)
-        let tappedLoacationView = UITapGestureRecognizer(target: self, action: #selector(didTapLoactionView(_:)))
-        locationView.addGestureRecognizer(tappedLoacationView)
+    func showWelcomeView() {
+        coordinator.showWelcomeSheet()
     }
     
-    @objc private func didTapLoactionView(_ sender: UITapGestureRecognizer) {
-        coordinator.showSettingAddress()
+    func setUp() {
+        setUpLayout()
+        setUpNavigationBar()
+        setUpDataSource()
+        applySnapshot()
     }
     
-    private func setUpLayout() {
+    func setUpLayout() {
         view.addSubviews(collectionView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -64,7 +69,18 @@ public final class MainViewController: UIViewController {
         ])
     }
     
-    private func setUpDataSource() {
+    func setUpNavigationBar() {
+        let locationView = LocationView("성북구 정릉동")
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: locationView)
+        let tappedLoacationView = UITapGestureRecognizer(target: self, action: #selector(didTapLoactionView(_:)))
+        locationView.addGestureRecognizer(tappedLoacationView)
+    }
+    
+    @objc func didTapLoactionView(_ sender: UITapGestureRecognizer) {
+        coordinator.showSettingAddress()
+    }
+    
+    func setUpDataSource() {
         dataSource = UICollectionViewDiffableDataSource<MainViewSection, UUID>(
             collectionView: collectionView,
             cellProvider: { collectionView, indexPath, _ in
@@ -133,7 +149,7 @@ public final class MainViewController: UIViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applySnapshot() {
+    func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<MainViewSection, UUID>()
         snapshot.appendSections([.weather])
         snapshot.appendItems(Array(0...23).map { _ in UUID() })
@@ -144,7 +160,7 @@ public final class MainViewController: UIViewController {
         dataSource?.apply(snapshot)
     }
     
-    private func createLayout() -> UICollectionViewCompositionalLayout {
+    func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
             let section = MainViewSection(index: sectionNumber)
             switch section {
@@ -156,7 +172,7 @@ public final class MainViewController: UIViewController {
         }
     }
     
-    private func weatherSectionLayout() -> NSCollectionLayoutSection? {
+    func weatherSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(72),
             heightDimension: .absolute(86)
@@ -189,7 +205,7 @@ public final class MainViewController: UIViewController {
         return section
     }
     
-    private func styleSectionLayout() -> NSCollectionLayoutSection? {
+    func styleSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(100),
             heightDimension: .absolute(35)
@@ -218,7 +234,7 @@ public final class MainViewController: UIViewController {
         return section
     }
     
-    private func codySectionLayout() -> NSCollectionLayoutSection? {
+    func codySectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(256),
             heightDimension: .absolute(256)
@@ -239,17 +255,14 @@ public final class MainViewController: UIViewController {
         return section
     }
     
+    @objc func didTapWeather(_ sender: UIGestureRecognizer? = nil) {
+        coordinator.showWeatherInfo()
+    }
+    
     @objc func didTapProfileStackView(_ sender: Any?) {
         coordinator.showUserProfile()
     }
     
-}
-
-private extension MainViewController {
-    
-    @objc func didTapWeather(_ sender: UIGestureRecognizer? = nil) {
-        coordinator.showWeatherInfo()
-    }
 }
 
 extension MainViewController: UICollectionViewDelegate {

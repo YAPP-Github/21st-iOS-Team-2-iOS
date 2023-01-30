@@ -1,8 +1,8 @@
 //
-//  AddressCoordinator.swift
+//  WelcomeCoordinator.swift
 //  Coordinator
 //
-//  Created by Ari on 2023/01/07.
+//  Created by Ari on 2023/01/28.
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
@@ -10,9 +10,9 @@ import UIKit
 import MainFeed
 import Common
 
-final class AddressCoordinator: Coordinator {
+final class WelcomeCoordinator: Coordinator {
     
-    var type: CoordinatorType { .address }
+    var type: CoordinatorType { .welcome }
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
@@ -31,16 +31,16 @@ final class AddressCoordinator: Coordinator {
     }
 }
 
-private extension AddressCoordinator {
+private extension WelcomeCoordinator {
     
     func makeAddressViewController() -> UIViewController {
-        let viewController = AddressViewController(coordinator: self, viewModel: AddressViewModel())
+        let viewController = WelcomeViewController(coordinator: self, viewModel: WelcomeViewModel())
         return viewController
     }
     
 }
 
-extension AddressCoordinator: AddressCoordinatorInterface {
+extension WelcomeCoordinator: WelcomeCoordinatorInterface {
     
     func dismiss() {
         navigationController.viewControllers.removeAll()
