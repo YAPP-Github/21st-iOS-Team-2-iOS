@@ -12,5 +12,5 @@ import Combine
 public protocol ViewModelType {
     associatedtype ViewModelState
     
-    var state: PassthroughSubject<ViewModelState, Never> { get set }
+    var state: AnyPublisher<ViewModelState, Never> { get }
 }

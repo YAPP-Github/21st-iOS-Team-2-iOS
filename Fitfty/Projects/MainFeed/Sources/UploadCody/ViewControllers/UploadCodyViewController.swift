@@ -342,7 +342,7 @@ extension UploadCodyViewController {
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
-                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width) ,
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width),
                     heightDimension: .absolute(8)
                 ),
                 elementKind: FooterView.className,

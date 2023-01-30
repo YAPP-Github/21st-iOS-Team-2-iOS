@@ -23,14 +23,16 @@ enum WeatherViewSection {
     }
 }
 
-public final class WeatherViewModel: ViewModelType {
-    
-    public enum ViewModelState {
-        
-    }
+public final class WeatherViewModel {
 
-    public var state: PassthroughSubject<ViewModelState, Never> = .init()
+    private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
 
     public init() {}
 
+}
+
+extension WeatherViewModel: ViewModelType {
+    public enum ViewModelState {}
+    
+    public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
 }
