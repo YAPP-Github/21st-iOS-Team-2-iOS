@@ -23,7 +23,7 @@ final class WeatherAPITests: XCTestCase {
     
     /// 로컬환경에서는 해당 테스트 Skip
     func test_EnviornmentVariable가_파싱됐는지() throws {
-        try XCTSkipIf(!APIKey.apiKey.isEmpty)
+        try XCTSkipIf(!APIKey.weatherApiKey.isEmpty)
         XCTAssertFalse(apiKey == "NoAPIKey", "Fail To Parsing")
     }
     

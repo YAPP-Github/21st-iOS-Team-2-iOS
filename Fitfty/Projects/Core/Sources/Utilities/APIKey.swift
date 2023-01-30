@@ -9,5 +9,6 @@
 import Foundation
 
 struct APIKey {
-    static let apiKey = ""
+    static let weatherApiKey = ""
+    static let kakaoApiKey = ""
 }
