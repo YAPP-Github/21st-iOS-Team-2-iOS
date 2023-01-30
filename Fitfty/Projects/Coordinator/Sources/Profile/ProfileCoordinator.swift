@@ -14,6 +14,7 @@ import Common
 final class ProfileCoordinator: Coordinator {
     
     var type: CoordinatorType { .profile }
+    var profileType: ProfileType?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -28,24 +29,28 @@ final class ProfileCoordinator: Coordinator {
     
     func start() {
         let viewController = makeProfileViewController()
+        navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(viewController, animated: true)
     }
 }
 
 private extension ProfileCoordinator {
+    
     func makeProfileViewController() -> UIViewController {
-        let viewController = MyProfileViewController(coordinator: self)
-        return viewController
+        if let profileType = profileType {
+            let viewController = ProfileViewController(coordinator: self, profileType: profileType)
+            return viewController
+        }
+        return UIViewController()
     }
     
-    func makeProfileBottomSheetViewController() -> UIViewController {
-        let viewController = MyPostBottomSheetViewController(coordinator: self)
-        let bottomSheetViewController = BottomSheetViewController(
-            style: .custom(196),
-            contentViewController: viewController
-        )
-        bottomSheetDelegate = bottomSheetViewController
-        return bottomSheetViewController
+    func makePostCoordinator(profileType: ProfileType) -> PostCoordinator {
+       let coordinator = PostCoordinator(navigationConrtoller: navigationController)
+        coordinator.profileType = profileType
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
     }
     
     func makeUploadCodyCoordinator() -> UploadCodyCoordinator {
@@ -55,18 +60,28 @@ private extension ProfileCoordinator {
         childCoordinators.append(coordinator)
         return coordinator
     }
+    
+    func makeReportViewController() -> UIViewController {
+        let bottomSheetViewController =
+        BottomSheetViewController(
+            style: .small,
+            contentViewController: ReportViewController(coordinator: self)
+        )
+        bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
+    }
+
 }
 
-extension ProfileCoordinator: MyProfileCoordinatorInterface {
+extension ProfileCoordinator: ProfileCoordinatorInterface {
     
-    func showPost() {
-        let postViewController = MyPostViewController(coordinator: self)
-        postViewController.hidesBottomBarWhenPushed = true
-        navigationController.pushViewController(postViewController, animated: true)
+    func showPost(profileType: Profile.ProfileType) {
+        let coordinator = makePostCoordinator(profileType: profileType)
+        coordinator.start()
     }
     
     func showBottomSheet() {
-        let bottomSheetViewController = makeProfileBottomSheetViewController()
+        let bottomSheetViewController = makeReportViewController()
         bottomSheetViewController.modalPresentationStyle = .overFullScreen
         navigationController.present(bottomSheetViewController, animated: false)
     }
@@ -78,13 +93,16 @@ extension ProfileCoordinator: MyProfileCoordinatorInterface {
         navigationController.present(coordinator.navigationController, animated: true)
     }
     
+    func showMainProfile() {
+        let viewController = makeProfileViewController()
+        viewController.hidesBottomBarWhenPushed = true
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
     func dismiss() {
         navigationController.dismiss(animated: false)
         bottomSheetDelegate?.dismissBottomSheet()
-    }
-    
-    func popToRoot() {
-        navigationController.popToRootViewController(animated: true)
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
     
 }

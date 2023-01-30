@@ -128,6 +128,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             
         case .profile:
             let coordinator = ProfileCoordinator()
+            coordinator.profileType = .myProfile
             coordinator.start()
             let tabBarItem =  UITabBarItem.init(
                 title: nil,

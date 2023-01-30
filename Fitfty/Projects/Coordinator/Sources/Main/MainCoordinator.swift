@@ -9,6 +9,7 @@
 import UIKit
 import MainFeed
 import Common
+import Profile
 
 final class MainCoordinator: Coordinator {
     
@@ -50,8 +51,16 @@ private extension MainCoordinator {
         return bottomSheetViewController
     }
     
-    func makeUserCoordinator() -> UserCoordinator {
-        let coordinator = UserCoordinator(navigationConrtoller: navigationController)
+    func makePostCoordinator() -> PostCoordinator {
+        let coordinator = PostCoordinator(navigationConrtoller: navigationController)
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
+    
+    func makeProfileCoordinator() -> ProfileCoordinator {
+        let coordinator = ProfileCoordinator(navigationConrtoller: navigationController)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -76,14 +85,17 @@ extension MainCoordinator: MainCoordinatorInterface {
         navigationController.present(viewController, animated: false)
     }
     
-    public func showUserProfile() {
-        let coordinator = makeUserCoordinator()
+    public func showPost(profileType: ProfileType) {
+        let coordinator = makePostCoordinator()
+        coordinator.profileType = profileType
         coordinator.start()
     }
     
-    public func showUserPost() {
-        let coordinator = makeUserCoordinator()
-        coordinator.showPost()
+    public func showProfile(profileType: ProfileType) {
+        let coordinator = makeProfileCoordinator()
+        coordinator.profileType = profileType
+        coordinator.navigationController.setCustomBackButton()
+        coordinator.showMainProfile()
     }
     
     public func showWeatherInfo() {

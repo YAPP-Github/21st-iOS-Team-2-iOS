@@ -10,7 +10,7 @@ import UIKit
 
 final public class MyPostBottomSheetViewController: UIViewController {
     
-    private var coordinator: MyProfileCoordinatorInterface
+    private var coordinator: PostCoordinatorInterface
     private let myPostBottomSheetView = MyPostBottomSheetView()
 
     public override func viewDidLoad() {
@@ -19,7 +19,7 @@ final public class MyPostBottomSheetViewController: UIViewController {
         setButtonAction()
     }
     
-    public init(coordinator: MyProfileCoordinatorInterface) {
+    public init(coordinator: PostCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
