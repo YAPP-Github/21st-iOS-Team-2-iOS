@@ -55,11 +55,6 @@ final public class ProfileViewController: UIViewController {
         setUp()
     }
     
-    public override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.navigationBar.isHidden = false
-    }
-    
     public init(coordinator: ProfileCoordinatorInterface, profileType: ProfileType) {
         self.coordinator = coordinator
         self.profileType = profileType
