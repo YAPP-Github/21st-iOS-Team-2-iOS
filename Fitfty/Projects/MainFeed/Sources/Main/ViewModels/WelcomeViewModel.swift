@@ -10,14 +10,16 @@ import Foundation
 import Combine
 import Common
 
-public final class WelcomeViewModel: ViewModelType {
-    
-    public enum ViewModelState {
-        
-    }
+public final class WelcomeViewModel {
 
-    public var state: PassthroughSubject<ViewModelState, Never> = .init()
+    private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
 
     public init() {}
 
+}
+
+extension WelcomeViewModel: ViewModelType {
+    public enum ViewModelState {}
+    
+    public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
 }
