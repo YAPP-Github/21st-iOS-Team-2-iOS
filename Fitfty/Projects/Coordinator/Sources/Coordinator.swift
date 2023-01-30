@@ -25,11 +25,10 @@ extension Coordinator {
             return
         }
         
-        for (index, coordinator) in parent.childCoordinators.enumerated() {
-            if coordinator === child {
-                parent.childCoordinators.remove(at: index)
-                break
-            }
+        for (index, coordinator) in parent.childCoordinators.enumerated() where coordinator === child {
+            parent.childCoordinators.remove(at: index)
+            break
+            
         }
     }
 }
@@ -49,4 +48,8 @@ enum CoordinatorType {
     case weather
     case uploadCody
     case album
+    case setting
+    case profileSetting
+    case feedSetting
+    case personalInfo
 }
