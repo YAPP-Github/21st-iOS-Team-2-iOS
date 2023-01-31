@@ -11,19 +11,29 @@ import Common
 
 final public class DetailReportViewController: UIViewController {
     
-    let coordinator: ProfileCoordinatorInterface
+    let coordinator: DetailReportCoordinatorInterface
+    private let allReportView = AllReportView()
     
-   private let allReportView = AllReportView()
-
+    private lazy var navigationBarView: BarView = {
+        let barView = BarView(title: "신고 사유", isChevronButtonHidden: true)
+        barView.setCancelButtonTarget(target: self, action: #selector(didTapCancelButton(_:)))
+        return barView
+    }()
+    
+    private lazy var cancelButton: FitftyButton = {
+        let button = FitftyButton(style: .enabled, title: "신고하기")
+        button.setButtonTarget(target: self, action: #selector(didTapCancelButton(_:)))
+        return button
+    }()
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setConstraintsLayout()
     }
     
-    public init(coordinator: ProfileCoordinatorInterface) {
+    public init(coordinator: DetailReportCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
-        setConstraintsLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -31,14 +41,26 @@ final public class DetailReportViewController: UIViewController {
     }
     
     private func setConstraintsLayout() {
-        view.addSubviews(allReportView)
+        view.addSubviews(navigationBarView, allReportView, cancelButton)
         NSLayoutConstraint.activate([
+            navigationBarView.topAnchor.constraint(equalTo: view.topAnchor),
+            navigationBarView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            navigationBarView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            navigationBarView.heightAnchor.constraint(equalToConstant: 76),
+            
             allReportView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             allReportView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            allReportView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-            allReportView.heightAnchor.constraint(equalToConstant: 240)
+            allReportView.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor, constant: 10),
+            allReportView.heightAnchor.constraint(equalToConstant: 240),
+            
+            cancelButton.topAnchor.constraint(equalTo: allReportView.bottomAnchor, constant: 35),
+            cancelButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            cancelButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
         ])
     }
     
+    @objc func didTapCancelButton(_ sender: UITapGestureRecognizer) {
+        coordinator.dismiss()
+    }
+    
 }
-

@@ -47,5 +47,6 @@ final public class ReportViewController: UIViewController {
     
     @objc func didTapReportButton(_ sender: Any?) {
         coordinator.dismiss()
+        coordinator.showDetailReport()
     }
 }

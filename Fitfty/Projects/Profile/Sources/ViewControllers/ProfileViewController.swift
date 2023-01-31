@@ -78,7 +78,7 @@ final public class ProfileViewController: UIViewController {
     }
     
     @objc func didTapMoreVerticalButton(_ sender: Any?) {
-        coordinator.showBottomSheet()
+        coordinator.showReport()
     }
     
 }

@@ -9,7 +9,8 @@
 public protocol ProfileCoordinatorInterface: AnyObject {
     
     func showPost(profileType: ProfileType)
-    func showBottomSheet()
+    func showReport()
     func showUploadCody()
+    func showDetailReport()
     func dismiss()
 }
