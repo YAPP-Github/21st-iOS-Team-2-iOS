@@ -30,6 +30,10 @@ public final class WeatherViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        coordinator.finished()
+    }
+    
     private lazy var locationView: LocationView = {
         let locationView = LocationView("성북구 정릉동")
         let tappedLoacationView = UITapGestureRecognizer(target: self, action: #selector(didTapLoactionView(_:)))
