@@ -33,8 +33,8 @@ final class AllReportView: UIStackView {
         addArrangedSubviews(reportViews.map { $0 })
         self.distribution = .fill
         self.alignment = .fill
+        self.axis = .vertical
         self.spacing = 23
     }
     
 }
-

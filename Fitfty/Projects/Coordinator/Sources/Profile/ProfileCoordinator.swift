@@ -88,6 +88,21 @@ private extension ProfileCoordinator {
         return bottomSheetViewController
     }
     
+    func makeDetailReportViewController() -> UIViewController {
+        let coordinator = DetailReportCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .custom(480),
+            contentViewController: coordinator.navigationController
+        )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
+    }
+    
 }
 
 extension ProfileCoordinator: ProfileCoordinatorInterface {
@@ -97,7 +112,7 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         coordinator.start()
     }
     
-    func showBottomSheet() {
+    func showReport() {
         let bottomSheetViewController = makeReportViewController()
         bottomSheetViewController.modalPresentationStyle = .overFullScreen
         navigationController.present(bottomSheetViewController, animated: false)
@@ -108,6 +123,12 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
         navigationController.present(coordinator.navigationController, animated: true)
+    }
+    
+    func showDetailReport() {
+        let viewController = makeDetailReportViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
     func dismiss() {
