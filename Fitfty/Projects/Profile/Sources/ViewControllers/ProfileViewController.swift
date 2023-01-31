@@ -39,11 +39,11 @@ final public class ProfileViewController: UIViewController {
     private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
     
     private var headerHeight: CGFloat {
-        switch profileType {
-        case .myProfile:
-            return 283
-        case .userProfile:
+        switch presentType {
+        case .main:
             return 196
+        case .tab:
+            return 283
         }
     }
     
@@ -106,6 +106,7 @@ private extension ProfileViewController {
     }
     
     func setNavigationBar() {
+        navigationController?.navigationBar.topItem?.title = ""
         switch presentType {
         case .tab:
             navigationController?.navigationBar.isHidden = true
@@ -205,8 +206,8 @@ private extension ProfileViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 27, leading: 12, bottom: 5, trailing: 12)
         
-        switch profileType {
-        case .userProfile:
+        switch presentType {
+        case .main:
             section.boundarySupplementaryItems = [
                 NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: .init(
@@ -218,7 +219,7 @@ private extension ProfileViewController {
                 )
             ]
             
-        case .myProfile:
+        case .tab:
             section.boundarySupplementaryItems = [
                 NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: .init(
