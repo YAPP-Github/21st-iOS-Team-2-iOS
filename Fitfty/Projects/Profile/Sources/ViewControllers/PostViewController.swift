@@ -39,7 +39,7 @@ final public class PostViewController: UIViewController {
     }()
     
     private var profileType: ProfileType
-    private var presentType: PresentType
+    private var presentType: ProfilePresentType
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,7 +89,7 @@ final public class PostViewController: UIViewController {
         showNavigationBar()
     }
     
-    public init(coordinator: PostCoordinatorInterface, profileType: ProfileType, presentType: PresentType) {
+    public init(coordinator: PostCoordinatorInterface, profileType: ProfileType, presentType: ProfilePresentType) {
         self.coordinator = coordinator
         self.profileType = profileType
         self.presentType = presentType

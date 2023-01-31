@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum PresentType {
+public enum ProfilePresentType {
     case main
     case tab
 }
