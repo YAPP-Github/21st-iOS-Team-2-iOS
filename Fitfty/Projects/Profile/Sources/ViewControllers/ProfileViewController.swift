@@ -16,6 +16,7 @@ final public class ProfileViewController: UIViewController {
     }
     private var coordinator: ProfileCoordinatorInterface
     private var profileType: ProfileType
+    private var presentType: PresentType
     
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
@@ -24,10 +25,6 @@ final public class ProfileViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(FeedImageCell.self,
                                 forCellWithReuseIdentifier: FeedImageCell.className)
-        collectionView.register(UserProfileHeaderView.self,
-                                forSupplementaryViewOfKind: UserProfileHeaderView.className)
-        collectionView.register(MyProfileHeaderView.self,
-                                forSupplementaryViewOfKind: MyProfileHeaderView.className)
         collectionView.backgroundColor = .white
         collectionView.delegate = self
         return collectionView
@@ -55,9 +52,14 @@ final public class ProfileViewController: UIViewController {
         setUp()
     }
     
-    public init(coordinator: ProfileCoordinatorInterface, profileType: ProfileType) {
+    public override func viewWillAppear(_ animated: Bool) {
+        setNavigationBar()
+    }
+    
+    public init(coordinator: ProfileCoordinatorInterface, profileType: ProfileType, presentType: PresentType) {
         self.coordinator = coordinator
         self.profileType = profileType
+        self.presentType = presentType
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -69,7 +71,7 @@ final public class ProfileViewController: UIViewController {
     private func setUp() {
         setUpConstraintLayout()
         setUpDataSource()
-        setNavigationBar()
+        registerHeaderView()
         applySnapshot()
         setMiniProfileView(isHidden: true)
         miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
@@ -104,14 +106,37 @@ private extension ProfileViewController {
     }
     
     func setNavigationBar() {
-        navigationItem.rightBarButtonItem =
-        UIBarButtonItem(
-            image: CommonAsset.Images.btnMoreVertical.image,
-            style: .plain,
-            target: self,
-            action: #selector(didTapMoreVerticalButton)
-        )
-        navigationItem.rightBarButtonItem?.tintColor = .black
+        switch presentType {
+        case .tab:
+            navigationController?.navigationBar.isHidden = true
+        case .main:
+            navigationController?.navigationBar.isHidden = false
+        }
+        
+        switch profileType {
+        case .userProfile:
+            navigationItem.rightBarButtonItem =
+            UIBarButtonItem(
+                image: CommonAsset.Images.btnMoreVertical.image,
+                style: .plain,
+                target: self,
+                action: #selector(didTapMoreVerticalButton)
+            )
+            navigationItem.rightBarButtonItem?.tintColor = .black
+        case .myProfile:
+            break
+        }
+    }
+    
+    func registerHeaderView() {
+        switch presentType {
+        case .main:
+            collectionView.register(UserProfileHeaderView.self,
+                                    forSupplementaryViewOfKind: UserProfileHeaderView.className)
+        case .tab:
+            collectionView.register(MyProfileHeaderView.self,
+                                    forSupplementaryViewOfKind: MyProfileHeaderView.className)
+        }
     }
     
     func setMiniProfileView(isHidden: Bool) {
@@ -132,8 +157,8 @@ private extension ProfileViewController {
             })
         
         dataSource?.supplementaryViewProvider = { (collectionView, kind, indexPath) -> UICollectionReusableView? in
-            switch self.profileType {
-            case .userProfile:
+            switch self.presentType {
+            case .main:
                 guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: UserProfileHeaderView.className,
@@ -143,7 +168,7 @@ private extension ProfileViewController {
                 supplementaryView.profileView.setUp(nickname: "useriosLover", content: "안녕하세용!")
                 return supplementaryView
                 
-            case .myProfile:
+            case .tab:
                 guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: MyProfileHeaderView.className,

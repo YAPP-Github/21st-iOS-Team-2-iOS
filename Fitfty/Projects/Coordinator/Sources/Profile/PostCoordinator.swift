@@ -14,6 +14,7 @@ final class PostCoordinator: Coordinator {
     
     var type: CoordinatorType { .post }
     var profileType: ProfileType?
+    var presentType: PresentType?
     
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
@@ -36,8 +37,13 @@ final class PostCoordinator: Coordinator {
 private extension PostCoordinator {
    
     func makePostViewController() -> UIViewController {
-        if let profileType = profileType {
-            let viewController = PostViewController(coordinator: self, profileType: profileType)
+        if let profileType = profileType,
+           let presentType = presentType {
+            let viewController = PostViewController(
+                coordinator: self,
+                profileType: profileType,
+                presentType: presentType
+            )
             viewController.hidesBottomBarWhenPushed = true
             return viewController
         }
