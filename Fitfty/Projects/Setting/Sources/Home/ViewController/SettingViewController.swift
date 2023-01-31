@@ -59,6 +59,7 @@ private extension SettingViewController {
             action: #selector(didTapBackButton(_:))
         )
         navigationItem.leftBarButtonItem = cancelButton
+        navigationController?.navigationBar.isHidden = false
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes =
         [NSAttributedString.Key.font: FitftyFont.appleSDBold(size: 28).font ?? UIFont.systemFont(ofSize: 28)]
