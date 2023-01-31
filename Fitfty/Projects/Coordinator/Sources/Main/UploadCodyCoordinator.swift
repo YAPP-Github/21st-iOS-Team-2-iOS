@@ -19,8 +19,8 @@ final class UploadCodyCoordinator: Coordinator {
     
     var finishDelegate: CoordinatorFinishDelegate?
     
-    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
-        self.navigationController = navigationConrtoller
+    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+        self.navigationController = navigationController
     }
     
     func start() {
