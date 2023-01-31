@@ -20,13 +20,62 @@ final public class PostViewController: UIViewController {
         return view
     }()
     
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.alwaysBounceVertical = true
+        return scrollView
+    }()
+    
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView(
+            axis: .vertical,
+            alignment: .fill,
+            distribution: .fill,
+            spacing: 0
+        )
+        stackView.addArrangedSubviews(postView)
+       return stackView
+    }()
+    
     private var profileType: ProfileType
     private var presentType: PresentType
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUpConstraintLayout()
-        postView.setUp(content: "오늘 날씨 너무 좋앗따~~~ 새로 산 원피스 입고!", hits: "51254", bookmark: "312", date: "22.08.15")
+        postView.setUp(content: """
+                        (1,2,3,4)
+
+                        Baby, got me looking so crazy
+
+                        빠져버리는 daydream
+
+                        Got me feeling you
+
+                        너도 말해줄래
+
+                        누가 내게 뭐라든
+
+                        남들과는 달라 넌
+
+                        Maybe you could be the one
+
+                        날 믿어봐 한번
+
+                        I'm not looking for just fun
+
+                        Maybe I could be the one
+
+                        Oh baby
+                        예민하대 나 lately
+
+                        너 없이는 매일 매일이 yeah
+                        """,
+                       hits: "51254",
+                       bookmark: "312",
+                       date: "22.08.15"
+        )
         miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
     }
     
@@ -74,17 +123,22 @@ final public class PostViewController: UIViewController {
     }
     
     private func setUpConstraintLayout() {
-        view.addSubviews(postView, miniProfileView)
+        view.addSubviews(miniProfileView, scrollView)
+       scrollView.addSubviews(stackView)
         NSLayoutConstraint.activate([
             miniProfileView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             miniProfileView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             miniProfileView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             miniProfileView.heightAnchor.constraint(equalToConstant: 48),
             
-            postView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            postView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            postView.topAnchor.constraint(equalTo: miniProfileView.bottomAnchor),
-            postView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            scrollView.topAnchor.constraint(equalTo: miniProfileView.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
     }
     
