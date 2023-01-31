@@ -103,6 +103,7 @@ final public class PostViewController: UIViewController {
     
     private func setNavigationBar() {
         navigationController?.navigationBar.topItem?.title = ""
+        navigationController?.navigationBar.prefersLargeTitles = false
         if presentType == .tab {
             navigationController?.navigationBar.isHidden = false
         }
