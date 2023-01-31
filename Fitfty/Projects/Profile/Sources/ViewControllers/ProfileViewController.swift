@@ -81,6 +81,10 @@ final public class ProfileViewController: UIViewController {
         coordinator.showReport()
     }
     
+    @objc func didTapSettingButton(_ sender: UIButton) {
+        coordinator.showSetting()
+    }
+    
 }
 
 private extension ProfileViewController {
@@ -157,8 +161,8 @@ private extension ProfileViewController {
                 return cell
             })
         
-        dataSource?.supplementaryViewProvider = { (collectionView, kind, indexPath) -> UICollectionReusableView? in
-            switch self.presentType {
+        dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
+            switch self?.presentType {
             case .main:
                 guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
@@ -177,7 +181,11 @@ private extension ProfileViewController {
                     return UICollectionReusableView()
                 }
                 supplementaryView.profileView.setUp(nickname: "myiosLover", content: "안녕하세용!")
+                supplementaryView.setButtonTarget(target: self, action: #selector(self?.didTapSettingButton(_:)))
                 return supplementaryView
+                
+            default:
+                return UICollectionReusableView()
             }
         }
     }
