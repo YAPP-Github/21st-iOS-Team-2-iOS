@@ -12,5 +12,6 @@ public protocol ProfileCoordinatorInterface: AnyObject {
     func showReport()
     func showUploadCody()
     func showDetailReport()
+    func showSetting()
     func dismiss()
 }

@@ -131,6 +131,11 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         navigationController.present(viewController, animated: false)
     }
     
+    func showSetting() {
+        let coordinator = makeSettingCoordinator()
+        coordinator.start()
+    }
+    
     func dismiss() {
         navigationController.dismiss(animated: false)
         bottomSheetDelegate?.dismissBottomSheet()
@@ -143,11 +148,6 @@ extension ProfileCoordinator: CoordinatorFinishDelegate {
     
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
-    }
-    
-    func showSetting() {
-        let coordinator = makeSettingCoordinator()
-        coordinator.start()
     }
     
 }
