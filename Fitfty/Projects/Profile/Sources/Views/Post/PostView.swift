@@ -77,10 +77,11 @@ final class PostView: UIView {
             
             contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             contentLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            contentLabel.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 20),
+            contentLabel.topAnchor.constraint(equalTo: postInfoView.bottomAnchor, constant: 12),
             
             dateLabel.leadingAnchor.constraint(equalTo: contentLabel.leadingAnchor),
             dateLabel.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: 8),
+            dateLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             bookmarkView.widthAnchor.constraint(equalToConstant: 48),
             bookmarkView.heightAnchor.constraint(equalToConstant: 48),
