@@ -19,9 +19,9 @@ final class UserCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
-        self.navigationController = navigationConrtoller
-        navigationConrtoller.setCustomBackButton()
+    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+        self.navigationController = navigationController
+        navigationController.setCustomBackButton()
 
     }
     

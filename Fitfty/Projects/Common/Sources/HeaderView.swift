@@ -13,6 +13,7 @@ final public class HeaderView: UICollectionReusableView {
     private lazy var largeTitleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
+        label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return label
     }()
     

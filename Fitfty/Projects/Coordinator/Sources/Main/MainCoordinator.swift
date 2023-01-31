@@ -19,8 +19,8 @@ final class MainCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
-        self.navigationController = navigationConrtoller
+    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+        self.navigationController = navigationController
     }
     
     func start() {
@@ -51,7 +51,7 @@ private extension MainCoordinator {
     }
     
     func makeUserCoordinator() -> UserCoordinator {
-        let coordinator = UserCoordinator(navigationConrtoller: navigationController)
+        let coordinator = UserCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -64,6 +64,21 @@ private extension MainCoordinator {
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
         return coordinator
+    }
+    
+    func makeWelcomeViewController() -> UIViewController {
+        let coordinator = WelcomeCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .custom(420),
+            contentViewController: coordinator.navigationController
+        )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
     }
     
 }
@@ -89,6 +104,12 @@ extension MainCoordinator: MainCoordinatorInterface {
     public func showWeatherInfo() {
         let coordinator = makeWeatherCoordinator()
         coordinator.start()
+    }
+    
+    public func showWelcomeSheet() {
+        let viewController = makeWelcomeViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
 }
