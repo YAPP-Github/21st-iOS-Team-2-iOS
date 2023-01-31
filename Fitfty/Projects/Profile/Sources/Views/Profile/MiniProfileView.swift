@@ -64,4 +64,8 @@ extension MiniProfileView {
         profileImageView.image = image
         nicknameLabel.text = nickname
     }
+    
+    func setActionMiniProfileView(_ target: Any?, action: Selector) {
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
+    }
 }

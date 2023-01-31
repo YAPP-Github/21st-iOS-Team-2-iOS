@@ -13,7 +13,13 @@ final public class PostViewController: UIViewController {
 
     private var coordinator: PostCoordinatorInterface
     private let postView = PostView()
-    private let miniProfileView = MiniProfileView(imageSize: 32, frame: .zero)
+    
+    private lazy var miniProfileView: MiniProfileView = {
+        let view = MiniProfileView(imageSize: 32, frame: .zero)
+        view.setActionMiniProfileView(self, action: #selector(didTapMiniProfile))
+        return view
+    }()
+    
     private var profileType: ProfileType
     private var presentType: PresentType
     
@@ -26,7 +32,7 @@ final public class PostViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setCustomNavigationItem()
+        setNavigationBar()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -46,8 +52,8 @@ final public class PostViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setCustomNavigationItem() {
-        //navigationController?.navigationItem.setCustomBackButton(self)
+    private func setNavigationBar() {
+        navigationController?.navigationBar.topItem?.title = ""
         if presentType == .tab {
             navigationController?.navigationBar.isHidden = false
         }
@@ -84,6 +90,10 @@ final public class PostViewController: UIViewController {
     
     @objc private func didTapRightBarButton(_ sender: Any) {
         coordinator.showBottomSheet()
+    }
+    
+    @objc private func didTapMiniProfile(_ sender: Any) {
+        coordinator.showProfile()
     }
     
 }
