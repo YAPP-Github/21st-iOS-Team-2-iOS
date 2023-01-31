@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Profile
+import Common
 
 public protocol MainCoordinatorInterface: AnyObject {
     

@@ -15,7 +15,7 @@ final class ProfileCoordinator: Coordinator {
     
     var type: CoordinatorType { .profile }
     var profileType: ProfileType?
-    var presentType: PresentType?
+    var presentType: ProfilePresentType?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -107,7 +107,7 @@ private extension ProfileCoordinator {
 
 extension ProfileCoordinator: ProfileCoordinatorInterface {
     
-    func showPost(profileType: Profile.ProfileType) {
+    func showPost(profileType: ProfileType) {
         let coordinator = makePostCoordinator(profileType: profileType)
         coordinator.start()
     }

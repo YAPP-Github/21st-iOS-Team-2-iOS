@@ -14,7 +14,7 @@ final class PostCoordinator: Coordinator {
     
     var type: CoordinatorType { .post }
     var profileType: ProfileType?
-    var presentType: PresentType?
+    var presentType: ProfilePresentType?
     
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?

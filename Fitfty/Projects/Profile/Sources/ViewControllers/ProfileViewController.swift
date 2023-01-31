@@ -16,7 +16,7 @@ final public class ProfileViewController: UIViewController {
     }
     private var coordinator: ProfileCoordinatorInterface
     private var profileType: ProfileType
-    private var presentType: PresentType
+    private var presentType: ProfilePresentType
     
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
@@ -56,7 +56,7 @@ final public class ProfileViewController: UIViewController {
         setNavigationBar()
     }
     
-    public init(coordinator: ProfileCoordinatorInterface, profileType: ProfileType, presentType: PresentType) {
+    public init(coordinator: ProfileCoordinatorInterface, profileType: ProfileType, presentType: ProfilePresentType) {
         self.coordinator = coordinator
         self.profileType = profileType
         self.presentType = presentType
