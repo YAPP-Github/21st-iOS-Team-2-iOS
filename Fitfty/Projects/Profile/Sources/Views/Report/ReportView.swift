@@ -42,11 +42,18 @@ final class ReportView: UIStackView {
         self.alignment = .leading
         self.distribution = .fill
         self.spacing = 12
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapReportView)))
     }
 }
 
 extension ReportView {
-    func setButton(isSelected: Bool) {
-        checkBoxButton.isSelected = isSelected
+    
+    @objc func didTapReportView(_ sender: UITapGestureRecognizer?) {
+        if checkBoxButton.isSelected {
+            checkBoxButton.isSelected = false
+        } else {
+            checkBoxButton.isSelected = true
+        }
     }
+   
 }
