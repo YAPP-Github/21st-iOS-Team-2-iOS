@@ -110,6 +110,7 @@ private extension ProfileViewController {
     }
     
     func setNavigationBar() {
+        navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.topItem?.title = ""
         switch presentType {
         case .tab:
