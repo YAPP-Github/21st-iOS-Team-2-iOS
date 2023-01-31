@@ -9,6 +9,6 @@
 import Foundation
 
 public enum ProfilePresentType {
-    case main
-    case tab
+    case mainProfile
+    case tabProfile
 }
