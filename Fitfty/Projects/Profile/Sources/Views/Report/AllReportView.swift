@@ -36,5 +36,5 @@ final class AllReportView: UIStackView {
         self.axis = .vertical
         self.spacing = 23
     }
-    
+
 }
