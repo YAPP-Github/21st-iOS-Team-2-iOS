@@ -15,6 +15,7 @@ final public class PostViewController: UIViewController {
     private let postView = PostView()
     private let miniProfileView = MiniProfileView(imageSize: 32, frame: .zero)
     private var profileType: ProfileType
+    private var presentType: PresentType
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,9 +29,15 @@ final public class PostViewController: UIViewController {
         setCustomNavigationItem()
     }
     
-    public init(coordinator: PostCoordinatorInterface, profileType: ProfileType) {
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        showNavigationBar()
+    }
+    
+    public init(coordinator: PostCoordinatorInterface, profileType: ProfileType, presentType: PresentType) {
         self.coordinator = coordinator
         self.profileType = profileType
+        self.presentType = presentType
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -40,7 +47,10 @@ final public class PostViewController: UIViewController {
     }
     
     private func setCustomNavigationItem() {
-        navigationController?.navigationItem.setCustomBackButton(self)
+        //navigationController?.navigationItem.setCustomBackButton(self)
+        if presentType == .tab {
+            navigationController?.navigationBar.isHidden = false
+        }
         if profileType == .myProfile {
             navigationController?.navigationItem.setCustomRightBarButton(
                 self,
@@ -48,6 +58,12 @@ final public class PostViewController: UIViewController {
                 image: CommonAsset.Images.btnMoreVertical.image,
                 size: 24
             )
+        }
+    }
+    
+    private func showNavigationBar() {
+        if presentType == .tab {
+            navigationController?.navigationBar.isHidden = true
         }
     }
     

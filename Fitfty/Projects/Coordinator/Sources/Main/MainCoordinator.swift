@@ -93,7 +93,7 @@ private extension MainCoordinator {
 }
 
 extension MainCoordinator: MainCoordinatorInterface {
-    
+   
     public func showSettingAddress() {
         let viewController = makeAddressViewController()
         viewController.modalPresentationStyle = .overFullScreen
@@ -103,14 +103,16 @@ extension MainCoordinator: MainCoordinatorInterface {
     public func showPost(profileType: ProfileType) {
         let coordinator = makePostCoordinator()
         coordinator.profileType = profileType
+        coordinator.presentType = .main
         coordinator.start()
     }
     
     public func showProfile(profileType: ProfileType) {
         let coordinator = makeProfileCoordinator()
         coordinator.profileType = profileType
+        coordinator.presentType = .main
         coordinator.navigationController.setCustomBackButton()
-        coordinator.showMainProfile()
+        coordinator.start()
     }
     
     public func showWeatherInfo() {

@@ -15,6 +15,7 @@ final class ProfileCoordinator: Coordinator {
     
     var type: CoordinatorType { .profile }
     var profileType: ProfileType?
+    var presentType: PresentType?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -29,7 +30,9 @@ final class ProfileCoordinator: Coordinator {
     
     func start() {
         let viewController = makeProfileViewController()
-        navigationController.navigationBar.isHidden = true
+        if presentType == .main {
+            viewController.hidesBottomBarWhenPushed = true
+        }
         navigationController.pushViewController(viewController, animated: true)
     }
 }
@@ -37,8 +40,13 @@ final class ProfileCoordinator: Coordinator {
 private extension ProfileCoordinator {
     
     func makeProfileViewController() -> UIViewController {
-        if let profileType = profileType {
-            let viewController = ProfileViewController(coordinator: self, profileType: profileType)
+        if let profileType = profileType,
+           let presentType = presentType {
+            let viewController = ProfileViewController(
+                coordinator: self,
+                profileType: profileType,
+                presentType: presentType
+            )
             return viewController
         }
         return UIViewController()
@@ -47,6 +55,7 @@ private extension ProfileCoordinator {
     func makePostCoordinator(profileType: ProfileType) -> PostCoordinator {
         let coordinator = PostCoordinator(navigationConrtoller: navigationController)
         coordinator.profileType = profileType
+        coordinator.presentType = presentType
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -99,12 +108,6 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
         navigationController.present(coordinator.navigationController, animated: true)
-    }
-    
-    func showMainProfile() {
-        let viewController = makeProfileViewController()
-        viewController.hidesBottomBarWhenPushed = true
-        navigationController.pushViewController(viewController, animated: true)
     }
     
     func dismiss() {
