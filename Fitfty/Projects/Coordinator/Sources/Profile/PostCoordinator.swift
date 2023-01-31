@@ -83,7 +83,7 @@ extension PostCoordinator: PostCoordinatorInterface {
     
     func showProfile() {
         let coordinator = makeProfileCoordinator()
-        coordinator.presentType = .main
+        coordinator.presentType = .mainProfile
         coordinator.start()
     }
     

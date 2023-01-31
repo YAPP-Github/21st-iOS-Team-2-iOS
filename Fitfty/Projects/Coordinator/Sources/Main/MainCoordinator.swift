@@ -103,14 +103,14 @@ extension MainCoordinator: MainCoordinatorInterface {
     public func showPost(profileType: ProfileType) {
         let coordinator = makePostCoordinator()
         coordinator.profileType = profileType
-        coordinator.presentType = .main
+        coordinator.presentType = .mainProfile
         coordinator.start()
     }
     
     public func showProfile(profileType: ProfileType) {
         let coordinator = makeProfileCoordinator()
         coordinator.profileType = profileType
-        coordinator.presentType = .main
+        coordinator.presentType = .mainProfile
         coordinator.navigationController.setCustomBackButton()
         coordinator.start()
     }

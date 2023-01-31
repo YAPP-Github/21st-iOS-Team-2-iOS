@@ -30,7 +30,7 @@ final class ProfileCoordinator: Coordinator {
     
     func start() {
         let viewController = makeProfileViewController()
-        if presentType == .main {
+        if presentType == .mainProfile {
             viewController.hidesBottomBarWhenPushed = true
         }
         navigationController.pushViewController(viewController, animated: true)

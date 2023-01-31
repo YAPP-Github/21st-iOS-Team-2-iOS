@@ -104,7 +104,7 @@ final public class PostViewController: UIViewController {
     private func setNavigationBar() {
         navigationController?.navigationBar.topItem?.title = ""
         navigationController?.navigationBar.prefersLargeTitles = false
-        if presentType == .tab {
+        if presentType == .tabProfile {
             navigationController?.navigationBar.isHidden = false
         }
         if profileType == .myProfile {
@@ -118,7 +118,7 @@ final public class PostViewController: UIViewController {
     }
     
     private func showNavigationBar() {
-        if presentType == .tab {
+        if presentType == .tabProfile {
             navigationController?.navigationBar.isHidden = true
         }
     }

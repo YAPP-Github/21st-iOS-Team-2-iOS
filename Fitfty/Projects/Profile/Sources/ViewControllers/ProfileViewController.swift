@@ -40,9 +40,9 @@ final public class ProfileViewController: UIViewController {
     
     private var headerHeight: CGFloat {
         switch presentType {
-        case .main:
+        case .mainProfile:
             return 196
-        case .tab:
+        case .tabProfile:
             return 283
         }
     }
@@ -113,9 +113,9 @@ private extension ProfileViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.topItem?.title = ""
         switch presentType {
-        case .tab:
+        case .tabProfile:
             navigationController?.navigationBar.isHidden = true
-        case .main:
+        case .mainProfile:
             navigationController?.navigationBar.isHidden = false
         }
         
@@ -136,10 +136,10 @@ private extension ProfileViewController {
     
     func registerHeaderView() {
         switch presentType {
-        case .main:
+        case .mainProfile:
             collectionView.register(UserProfileHeaderView.self,
                                     forSupplementaryViewOfKind: UserProfileHeaderView.className)
-        case .tab:
+        case .tabProfile:
             collectionView.register(MyProfileHeaderView.self,
                                     forSupplementaryViewOfKind: MyProfileHeaderView.className)
         }
@@ -164,7 +164,7 @@ private extension ProfileViewController {
         
         dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
             switch self?.presentType {
-            case .main:
+            case .mainProfile:
                 guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: UserProfileHeaderView.className,
@@ -174,7 +174,7 @@ private extension ProfileViewController {
                 supplementaryView.profileView.setUp(nickname: "useriosLover", content: "안녕하세용!")
                 return supplementaryView
                 
-            case .tab:
+            case .tabProfile:
                 guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: MyProfileHeaderView.className,
@@ -216,7 +216,7 @@ private extension ProfileViewController {
         section.contentInsets = .init(top: 27, leading: 12, bottom: 5, trailing: 12)
         
         switch presentType {
-        case .main:
+        case .mainProfile:
             section.boundarySupplementaryItems = [
                 NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: .init(
@@ -228,7 +228,7 @@ private extension ProfileViewController {
                 )
             ]
             
-        case .tab:
+        case .tabProfile:
             section.boundarySupplementaryItems = [
                 NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: .init(
