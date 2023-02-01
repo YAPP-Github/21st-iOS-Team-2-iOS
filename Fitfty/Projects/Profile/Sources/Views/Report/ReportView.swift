@@ -16,6 +16,7 @@ final class ReportView: UIStackView {
         button.setImage(CommonAsset.Images.btnCheckBoxUnSelected.image, for: .normal)
         button.setImage(CommonAsset.Images.btnCheckBoxSelected.image, for: .selected)
         button.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        button.isUserInteractionEnabled = false
         return button
     }()
     
