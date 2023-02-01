@@ -9,6 +9,17 @@
 import Foundation
 
 public enum ProfilePresentType {
+    
     case mainProfile
     case tabProfile
+    
+    public var headerHeight: CGFloat {
+        switch self {
+        case .mainProfile:
+            return 196
+        case .tabProfile:
+            return 283
+        }
+    }
+    
 }
