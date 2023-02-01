@@ -38,12 +38,12 @@ final public class ProfileViewController: UIViewController {
     
     private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
     
-    private var headerHeight: CGFloat {
+    private var headerViewElementKind: String {
         switch presentType {
         case .mainProfile:
-            return 196
+            return UserProfileHeaderView.className
         case .tabProfile:
-            return 283
+            return MyProfileHeaderView.className
         }
     }
     
@@ -138,10 +138,10 @@ private extension ProfileViewController {
         switch presentType {
         case .mainProfile:
             collectionView.register(UserProfileHeaderView.self,
-                                    forSupplementaryViewOfKind: UserProfileHeaderView.className)
+                                    forSupplementaryViewOfKind: headerViewElementKind)
         case .tabProfile:
             collectionView.register(MyProfileHeaderView.self,
-                                    forSupplementaryViewOfKind: MyProfileHeaderView.className)
+                                    forSupplementaryViewOfKind: headerViewElementKind)
         }
     }
     
@@ -215,36 +215,21 @@ private extension ProfileViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 27, leading: 12, bottom: 5, trailing: 12)
         
-        switch presentType {
-        case .mainProfile:
-            section.boundarySupplementaryItems = [
-                NSCollectionLayoutBoundarySupplementaryItem(
-                    layoutSize: .init(
-                        widthDimension: .absolute(UIScreen.main.bounds.width),
-                        heightDimension: .estimated(headerHeight)
-                    ),
-                    elementKind: UserProfileHeaderView.className,
-                    alignment: .top
-                )
-            ]
-            
-        case .tabProfile:
-            section.boundarySupplementaryItems = [
-                NSCollectionLayoutBoundarySupplementaryItem(
-                    layoutSize: .init(
-                        widthDimension: .absolute(UIScreen.main.bounds.width),
-                        heightDimension: .estimated(headerHeight)
-                    ),
-                    elementKind: MyProfileHeaderView.className,
-                    alignment: .top
-                )
-            ]
-        }
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(UIScreen.main.bounds.width),
+                    heightDimension: .estimated(presentType.headerHeight)
+                ),
+                elementKind: headerViewElementKind,
+                alignment: .top
+            )
+        ]
        
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
     }
-
+    
 }
 
 extension ProfileViewController: UICollectionViewDelegate {
@@ -254,7 +239,7 @@ extension ProfileViewController: UICollectionViewDelegate {
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y >= headerHeight {
+        if scrollView.contentOffset.y >= presentType.headerHeight {
             setMiniProfileView(isHidden: false)
         } else {
             setMiniProfileView(isHidden: true)
