@@ -208,7 +208,7 @@ extension TabCoordinator: CoordinatorFinishDelegate {
         childDidFinish(childCoordinator, parent: self)
         switch childCoordinator.type {
         case .uploadCody:
-            navigationController.visibleViewController?.dismiss(animated: true) {
+            tabBarController.dismiss(animated: true) {
                 childCoordinator.navigationController.viewControllers.removeAll()
             }
         default: break
