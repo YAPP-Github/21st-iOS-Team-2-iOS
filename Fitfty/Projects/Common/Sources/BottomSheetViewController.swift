@@ -188,7 +188,7 @@ private extension BottomSheetViewController {
         let bottomPadding = view.safeAreaInsets.bottom + view.safeAreaInsets.top
         bottomSheetViewTopConstraint.constant = safeAreaHeight + bottomPadding
         
-        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) { [weak self] in
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
             self?.dimmedView.alpha = 0.0
             self?.view.layoutIfNeeded()
         } completion: { [weak self] _ in
@@ -207,8 +207,12 @@ private extension BottomSheetViewController {
     
     func showBottomSheet() {
         bottomSheetViewTopConstraint.constant = style.topConstant
-        
-        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
+        UIView.animate(
+            withDuration: 0.55,
+            delay: 0,
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 1,
+            animations: { [weak self] in
             self?.dimmedView.alpha = 0.7
             self?.view.layoutIfNeeded()
         }, completion: nil)
