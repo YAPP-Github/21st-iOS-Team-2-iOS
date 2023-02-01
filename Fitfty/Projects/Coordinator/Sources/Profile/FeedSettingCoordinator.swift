@@ -43,9 +43,14 @@ private extension FeedSettingCoordinator {
 extension FeedSettingCoordinator: FeedSettingCoordinatorInterface {
     
     func dismiss() {
-        navigationController.viewControllers.removeAll()
-        bottomSheetDelegate?.dismissBottomSheet()
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+        bottomSheetDelegate?.dismissBottomSheet { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.navigationController.viewControllers.removeAll()
+            self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+        }
+        
     }
     
 }
