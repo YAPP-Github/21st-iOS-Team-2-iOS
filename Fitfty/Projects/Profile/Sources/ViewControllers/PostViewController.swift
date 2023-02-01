@@ -101,6 +101,10 @@ final public class PostViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        coordinator.finished()
+    }
+    
     private func setNavigationBar() {
         navigationController?.navigationBar.topItem?.title = ""
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -123,6 +127,14 @@ final public class PostViewController: UIViewController {
         case .userProfile:
             break
         }
+        
+        let cancelButton = UIBarButtonItem(
+                image: CommonAsset.Images.btnArrowleft.image,
+                style: .plain,
+                target: self,
+                action: #selector(didTapBackButton(_:))
+            )
+        navigationItem.leftBarButtonItem = cancelButton
         
     }
     
@@ -163,6 +175,10 @@ final public class PostViewController: UIViewController {
     
     @objc private func didTapMiniProfile(_ sender: Any) {
         coordinator.showProfile()
+    }
+    
+    @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {
+        coordinator.finished()
     }
     
 }

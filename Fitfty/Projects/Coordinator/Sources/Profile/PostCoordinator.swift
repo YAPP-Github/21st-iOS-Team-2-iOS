@@ -24,8 +24,6 @@ final class PostCoordinator: Coordinator {
     
     init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
         self.navigationController = navigationConrtoller
-        navigationConrtoller.setCustomBackButton()
-
     }
     
     func start() {
@@ -108,8 +106,14 @@ extension PostCoordinator: PostCoordinatorInterface {
     
     func popToRoot() {
         navigationController.popToRootViewController(animated: true)
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
     
+    func finished() {
+        navigationController.popViewController(animated: true)
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+    }
+   
 }
 
 extension PostCoordinator: CoordinatorFinishDelegate {

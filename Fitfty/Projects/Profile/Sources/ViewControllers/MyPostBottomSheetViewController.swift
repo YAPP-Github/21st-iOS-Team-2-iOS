@@ -12,6 +12,11 @@ final public class MyPostBottomSheetViewController: UIViewController {
     
     private var coordinator: PostCoordinatorInterface
     private let myPostBottomSheetView = MyPostBottomSheetView()
+    
+    override public func removeFromParent() {
+        super.removeFromParent()
+        coordinator.dismiss()
+    }
 
     public override func viewDidLoad() {
         super.viewDidLoad()

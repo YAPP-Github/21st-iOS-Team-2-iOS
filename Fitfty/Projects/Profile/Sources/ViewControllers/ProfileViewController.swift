@@ -53,6 +53,7 @@ final public class ProfileViewController: UIViewController {
     }
     
     public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         setNavigationBar()
     }
     
@@ -66,6 +67,10 @@ final public class ProfileViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        coordinator.finished()
     }
     
     private func setUp() {
@@ -83,6 +88,10 @@ final public class ProfileViewController: UIViewController {
     
     @objc func didTapSettingButton(_ sender: UIButton) {
         coordinator.showSetting()
+    }
+    
+    @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {
+        coordinator.finished()
     }
     
 }
@@ -132,6 +141,14 @@ private extension ProfileViewController {
         case .myProfile:
             break
         }
+        
+        let cancelButton = UIBarButtonItem(
+                image: CommonAsset.Images.btnArrowleft.image,
+                style: .plain,
+                target: self,
+                action: #selector(didTapBackButton(_:))
+            )
+        navigationItem.leftBarButtonItem = cancelButton
     }
     
     func registerHeaderView() {

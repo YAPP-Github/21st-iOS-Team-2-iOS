@@ -111,7 +111,6 @@ extension MainCoordinator: MainCoordinatorInterface {
         let coordinator = makeProfileCoordinator()
         coordinator.profileType = profileType
         coordinator.presentType = .mainProfile
-        coordinator.navigationController.setCustomBackButton()
         coordinator.start()
     }
     

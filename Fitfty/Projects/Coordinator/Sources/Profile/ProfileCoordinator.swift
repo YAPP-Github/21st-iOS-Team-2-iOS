@@ -142,6 +142,11 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
     
+    func finished() {
+        navigationController.popViewController(animated: true)
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+    }
+    
 }
 
 extension ProfileCoordinator: CoordinatorFinishDelegate {

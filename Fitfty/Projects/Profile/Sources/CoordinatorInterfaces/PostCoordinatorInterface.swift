@@ -15,4 +15,5 @@ public protocol PostCoordinatorInterface: AnyObject {
     func showUploadCody()
     func dismiss()
     func popToRoot()
+    func finished()
 }
