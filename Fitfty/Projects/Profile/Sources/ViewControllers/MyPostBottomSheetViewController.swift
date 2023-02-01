@@ -34,8 +34,7 @@ final public class MyPostBottomSheetViewController: UIViewController {
         NSLayoutConstraint.activate([
             myPostBottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             myPostBottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            myPostBottomSheetView.topAnchor.constraint(equalTo: view.topAnchor, constant: 44),
-            myPostBottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -44)
+            myPostBottomSheetView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40)
         ])
     }
     

@@ -46,7 +46,8 @@ final class MyPostBottomSheetView: UIStackView {
     
     private func setConstraintsLayout() {
         self.axis = .vertical
-        self.distribution = .equalSpacing
+        self.distribution = .fill
+        self.spacing = 24
         addArrangedSubviews(modifyButton, seperatorView, deleteButton)
         NSLayoutConstraint.activate([
             seperatorView.heightAnchor.constraint(equalToConstant: 1)
