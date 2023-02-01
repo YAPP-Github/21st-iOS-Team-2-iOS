@@ -119,6 +119,10 @@ extension PostCoordinator: PostCoordinatorInterface {
         navigationController.popViewController(animated: true)
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
+    
+    func finishedTapGesture() {
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+    }
    
 }
 

@@ -70,7 +70,7 @@ final public class ProfileViewController: UIViewController {
     }
     
     deinit {
-        coordinator.finished()
+        coordinator.finishedTapGesture()
     }
     
     private func setUp() {

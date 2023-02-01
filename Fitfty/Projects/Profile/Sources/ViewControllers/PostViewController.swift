@@ -102,7 +102,7 @@ final public class PostViewController: UIViewController {
     }
     
     deinit {
-        coordinator.finished()
+        coordinator.finishedTapGesture()
     }
     
     private func setNavigationBar() {

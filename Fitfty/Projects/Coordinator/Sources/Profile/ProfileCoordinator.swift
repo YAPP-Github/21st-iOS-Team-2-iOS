@@ -153,6 +153,10 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
     
+    func finishedTapGesture() {
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+    }
+    
 }
 
 extension ProfileCoordinator: CoordinatorFinishDelegate {
