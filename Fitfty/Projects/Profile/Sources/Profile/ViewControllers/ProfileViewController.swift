@@ -11,14 +11,11 @@ import Common
 
 final public class ProfileViewController: UIViewController {
     
-    enum Section: CaseIterable {
-        case feed
-    }
     private var coordinator: ProfileCoordinatorInterface
     private var profileType: ProfileType
     private var presentType: ProfilePresentType
     
-    private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<ProfileSection, UUID>?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: postLayout())
@@ -168,7 +165,7 @@ private extension ProfileViewController {
     }
     
     func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<ProfileSection, UUID>(
             collectionView: collectionView,
             cellProvider: { (collectionView, indexPath, _) -> UICollectionViewCell? in
                 guard let cell = collectionView.dequeueReusableCell(
@@ -209,7 +206,7 @@ private extension ProfileViewController {
     }
     
     func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
+        var snapshot = NSDiffableDataSourceSnapshot<ProfileSection, UUID>()
         snapshot.appendSections([.feed])
         snapshot.appendItems(Array(0..<10).map {_ in UUID() })
         dataSource?.apply(snapshot, animatingDifferences: true)
