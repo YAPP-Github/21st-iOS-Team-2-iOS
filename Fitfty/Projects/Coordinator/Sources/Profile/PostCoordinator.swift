@@ -99,15 +99,13 @@ extension PostCoordinator: PostCoordinatorInterface {
     }
     
     func dismiss() {
-        navigationController.dismiss(animated: false)
         bottomSheetDelegate?.dismissBottomSheet { [weak self] in
             guard let self = self else {
                 return
             }
-            self.navigationController.viewControllers.removeAll()
+            self.navigationController.dismiss(animated: false)
             self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         }
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
     
     func popToRoot() {
