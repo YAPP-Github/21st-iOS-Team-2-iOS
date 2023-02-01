@@ -45,7 +45,13 @@ extension DetailReportCoordinator: DetailReportCoordinatorInterface {
     
     func dismiss() {
         navigationController.viewControllers.removeAll()
-        bottomSheetDelegate?.dismissBottomSheet()
+        bottomSheetDelegate?.dismissBottomSheet { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.navigationController.viewControllers.removeAll()
+            self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+        }
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
