@@ -11,6 +11,8 @@ import Common
 
 final class PostView: UIView {
     
+    private var isBookmark: Bool = true
+    
     private lazy var postImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = CommonAsset.Images.profileSample.image
@@ -38,6 +40,7 @@ final class PostView: UIView {
         button.tintColor = .white
         button.setImage(CommonAsset.Images.bookmarkFill.image, for: .normal)
         button.setPreferredSymbolConfiguration(.init(scale: .large), forImageIn: .normal)
+        button.addTarget(self, action: #selector(didTapBookmarkButton), for: .touchUpInside)
         return button
     }()
     
@@ -91,6 +94,13 @@ final class PostView: UIView {
             bookmarkButton.centerXAnchor.constraint(equalTo: bookmarkView.centerXAnchor),
             bookmarkButton.centerYAnchor.constraint(equalTo: bookmarkView.centerYAnchor)
         ])
+    }
+    
+    @objc func didTapBookmarkButton(_ sender: UIButton) {
+        isBookmark = !isBookmark
+        bookmarkButton.setImage(
+            isBookmark ? CommonAsset.Images.bookmarkFill.image : CommonAsset.Images.bookmark.image, for: .normal
+        )
     }
 }
 
