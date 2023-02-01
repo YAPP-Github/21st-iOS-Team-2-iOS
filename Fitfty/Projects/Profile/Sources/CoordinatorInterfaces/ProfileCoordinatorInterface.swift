@@ -16,4 +16,5 @@ public protocol ProfileCoordinatorInterface: AnyObject {
     func showSetting()
     func dismiss()
     func finished()
+    func finishedTapGesture()
 }

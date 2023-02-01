@@ -16,4 +16,5 @@ public protocol PostCoordinatorInterface: AnyObject {
     func dismiss()
     func popToRoot()
     func finished()
+    func finishedTapGesture()
 }
