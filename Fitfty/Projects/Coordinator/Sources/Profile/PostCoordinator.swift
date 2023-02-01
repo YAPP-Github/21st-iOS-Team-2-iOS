@@ -22,8 +22,8 @@ final class PostCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
-        self.navigationController = navigationConrtoller
+    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+        self.navigationController = navigationController
     }
     
     func start() {
@@ -92,6 +92,7 @@ extension PostCoordinator: PostCoordinatorInterface {
     }
     
     func showUploadCody() {
+        navigationController.dismiss(animated: false)
         let coordinator = makeUploadCodyCoordinator()
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
@@ -109,6 +110,7 @@ extension PostCoordinator: PostCoordinatorInterface {
     }
     
     func popToRoot() {
+        navigationController.dismiss(animated: false)
         navigationController.popToRootViewController(animated: true)
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
