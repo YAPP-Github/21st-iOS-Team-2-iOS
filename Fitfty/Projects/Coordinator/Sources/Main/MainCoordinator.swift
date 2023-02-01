@@ -52,7 +52,7 @@ private extension MainCoordinator {
     }
     
     func makePostCoordinator() -> PostCoordinator {
-        let coordinator = PostCoordinator(navigationConrtoller: navigationController)
+        let coordinator = PostCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)

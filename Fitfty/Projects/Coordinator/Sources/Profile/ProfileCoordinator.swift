@@ -53,7 +53,7 @@ private extension ProfileCoordinator {
     }
     
     func makePostCoordinator(profileType: ProfileType) -> PostCoordinator {
-        let coordinator = PostCoordinator(navigationConrtoller: navigationController)
+        let coordinator = PostCoordinator(navigationController: navigationController)
         coordinator.profileType = profileType
         coordinator.presentType = presentType
         coordinator.parentCoordinator = self
@@ -126,6 +126,7 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
     }
     
     func showDetailReport() {
+        navigationController.dismiss(animated: false)
         let viewController = makeDetailReportViewController()
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)

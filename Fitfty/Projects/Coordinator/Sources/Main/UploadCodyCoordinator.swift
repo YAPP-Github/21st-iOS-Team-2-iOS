@@ -48,12 +48,13 @@ private extension UploadCodyCoordinator {
         )
         coordinator.bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
-        
     }
 }
 
 extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
-    func dismissUploadCody(_ viewController: UIViewController) {
+    
+    func dismiss() {
+        navigationController.dismiss(animated: true)
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
     
@@ -62,6 +63,7 @@ extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
     }
+    
 }
 
 extension UploadCodyCoordinator: CoordinatorFinishDelegate {
@@ -69,4 +71,5 @@ extension UploadCodyCoordinator: CoordinatorFinishDelegate {
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
     }
+    
 }
