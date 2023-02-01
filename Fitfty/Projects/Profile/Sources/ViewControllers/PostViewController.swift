@@ -86,7 +86,7 @@ final public class PostViewController: UIViewController {
     
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        showNavigationBar()
+        hideNavigationBar()
     }
     
     public init(coordinator: PostCoordinatorInterface, profileType: ProfileType, presentType: ProfilePresentType) {
@@ -104,22 +104,34 @@ final public class PostViewController: UIViewController {
     private func setNavigationBar() {
         navigationController?.navigationBar.topItem?.title = ""
         navigationController?.navigationBar.prefersLargeTitles = false
-        if presentType == .tabProfile {
+        
+        switch presentType {
+        case .tabProfile:
             navigationController?.navigationBar.isHidden = false
+        case .mainProfile:
+            break
         }
-        if profileType == .myProfile {
+        
+        switch profileType {
+        case .myProfile:
             navigationController?.navigationItem.setCustomRightBarButton(
                 self,
                 action: #selector(didTapRightBarButton),
                 image: CommonAsset.Images.btnMoreVertical.image,
                 size: 24
             )
+        case .userProfile:
+            break
         }
+        
     }
     
-    private func showNavigationBar() {
-        if presentType == .tabProfile {
+    private func hideNavigationBar() {
+        switch presentType {
+        case .tabProfile:
             navigationController?.navigationBar.isHidden = true
+        case .mainProfile:
+            break
         }
     }
     
