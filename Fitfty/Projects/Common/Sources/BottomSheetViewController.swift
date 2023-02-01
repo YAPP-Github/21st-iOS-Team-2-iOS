@@ -183,7 +183,7 @@ private extension BottomSheetViewController {
         return fullDimAlpha * (1 - ((value - fullDimPosition) / (noDimPosition - fullDimPosition)))
     }
     
-    func dismiss() {
+    func dismiss(_ completion: (() -> Void)? = nil) {
         let safeAreaHeight = view.safeAreaLayoutGuide.layoutFrame.height
         let bottomPadding = view.safeAreaInsets.bottom + view.safeAreaInsets.top
         bottomSheetViewTopConstraint.constant = safeAreaHeight + bottomPadding
@@ -200,7 +200,7 @@ private extension BottomSheetViewController {
                 navigationController?.popToRootViewController(animated: false)
                 navigationController?.topViewController?.removeFromParent()
                 self?.contentViewController = nil
-                self?.dismiss(animated: false, completion: nil)
+                self?.dismiss(animated: false, completion: completion)
             }
         }
     }
@@ -222,13 +222,11 @@ private extension BottomSheetViewController {
 
 public protocol BottomSheetViewControllerDelegate: AnyObject {
     
-    func dismissBottomSheet()
+    func dismissBottomSheet(_ completion: (() -> Void)?)
 }
 
 extension BottomSheetViewController: BottomSheetViewControllerDelegate {
-    
-    public func dismissBottomSheet() {
-        dismiss()
+    public func dismissBottomSheet(_ completion: (() -> Void)?) {
+        dismiss(completion)
     }
-    
 }
