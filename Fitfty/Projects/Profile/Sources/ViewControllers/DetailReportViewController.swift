@@ -51,8 +51,7 @@ final public class DetailReportViewController: UIViewController {
             allReportView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             allReportView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             allReportView.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor, constant: 10),
-            allReportView.heightAnchor.constraint(equalToConstant: 240),
-            
+           
             cancelButton.topAnchor.constraint(equalTo: allReportView.bottomAnchor, constant: 35),
             cancelButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             cancelButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
