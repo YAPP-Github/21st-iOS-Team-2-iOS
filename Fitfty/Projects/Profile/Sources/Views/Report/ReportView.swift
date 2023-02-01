@@ -57,11 +57,7 @@ final class ReportView: UIStackView {
 extension ReportView {
     
     @objc func didTapReportView(_ sender: UITapGestureRecognizer?) {
-        if checkBoxButton.isSelected {
-            checkBoxButton.isSelected = false
-        } else {
-            checkBoxButton.isSelected = true
-        }
+        checkBoxButton.isSelected = checkBoxButton.isSelected ? false : true
     }
    
 }
