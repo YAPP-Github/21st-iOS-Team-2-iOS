@@ -15,7 +15,6 @@ final class ReportView: UIStackView {
         let button = UIButton()
         button.setImage(CommonAsset.Images.btnCheckBoxUnSelected.image, for: .normal)
         button.setImage(CommonAsset.Images.btnCheckBoxSelected.image, for: .selected)
-        button.widthAnchor.constraint(equalToConstant: 20).isActive = true
         button.isUserInteractionEnabled = false
         return button
     }()
@@ -31,6 +30,7 @@ final class ReportView: UIStackView {
         super.init(frame: .zero)
         titleLabel.text = title
         setStackView()
+        setConstraintsLayout()
     }
     
     required init(coder: NSCoder) {
@@ -44,6 +44,13 @@ final class ReportView: UIStackView {
         self.distribution = .fill
         self.spacing = 12
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapReportView)))
+    }
+    
+    private func setConstraintsLayout() {
+        NSLayoutConstraint.activate([
+            checkBoxButton.widthAnchor.constraint(equalToConstant: 20),
+            checkBoxButton.heightAnchor.constraint(equalToConstant: 20)
+        ])
     }
 }
 
