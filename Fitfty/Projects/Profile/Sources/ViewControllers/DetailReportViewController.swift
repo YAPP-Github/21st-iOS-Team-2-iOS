@@ -26,6 +26,11 @@ final public class DetailReportViewController: UIViewController {
         return button
     }()
     
+    override public func removeFromParent() {
+        super.removeFromParent()
+        coordinator.dismiss()
+    }
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setConstraintsLayout()

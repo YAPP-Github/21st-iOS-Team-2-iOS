@@ -179,8 +179,7 @@ extension TabCoordinator: UITabBarControllerDelegate {
             coordinator.start()
             coordinator.navigationController.modalPresentationStyle = .fullScreen
             tabBarController.present(coordinator.navigationController, animated: true)
-            return
-            false
+            return false
         }
         return true
     }

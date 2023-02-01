@@ -21,6 +21,11 @@ final public class ReportViewController: UIViewController {
         button.addTarget(self, action: #selector(didTapReportButton), for: .touchUpInside)
         return button
     }()
+    
+    override public func removeFromParent() {
+        super.removeFromParent()
+        coordinator.dismiss()
+    }
 
     public override func viewDidLoad() {
         super.viewDidLoad()
