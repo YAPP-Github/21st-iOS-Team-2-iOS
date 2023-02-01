@@ -103,6 +103,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
         switch page {
         case .weather:
             let coordinator = MainCoordinator()
+            childCoordinators.append(coordinator)
             coordinator.start()
             let tabBarItem =  UITabBarItem.init(
                 title: nil,
@@ -114,21 +115,21 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             tabBarController.addChild(coordinator.navigationController)
             
         case .createCody:
-            let coordinator = UploadCodyCoordinator()
-            coordinator.start()
+            let dummyController = UINavigationController()
             let tabBarItem =  UITabBarItem.init(
                 title: nil,
                 image: page.pageIconImage,
                 tag: page.pageOrderNumber
             )
-            coordinator.navigationController.tabBarItem = tabBarItem
+            dummyController.tabBarItem = tabBarItem
             tabBarItem.imageInsets = UIEdgeInsets(top: 13, left: 0, bottom: -15, right: 0)
-            tabBarController.addChild(coordinator.navigationController)
+            tabBarController.addChild(dummyController)
             
         case .profile:
             let coordinator = ProfileCoordinator()
             coordinator.profileType = .myProfile
             coordinator.presentType = .tabProfile
+            childCoordinators.append(coordinator)
             coordinator.start()
             let tabBarItem =  UITabBarItem.init(
                 title: nil,
@@ -172,10 +173,14 @@ extension TabCoordinator: UITabBarControllerDelegate {
         }
         if tabBar == .createCody {
             let coordinator = UploadCodyCoordinator()
+            childCoordinators.append(coordinator)
+            coordinator.finishDelegate = self
+            coordinator.parentCoordinator = self
             coordinator.start()
             coordinator.navigationController.modalPresentationStyle = .fullScreen
             tabBarController.present(coordinator.navigationController, animated: true)
-            return false
+            return
+            false
         }
         return true
     }
@@ -198,4 +203,18 @@ extension TabCoordinator: UITabBarControllerDelegate {
         }
     }
     
+}
+
+extension TabCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
+        switch childCoordinator.type {
+        case .uploadCody:
+            tabBarController.dismiss(animated: true) {
+                childCoordinator.navigationController.viewControllers.removeAll()
+            }
+        default: break
+        }
+    }
 }
