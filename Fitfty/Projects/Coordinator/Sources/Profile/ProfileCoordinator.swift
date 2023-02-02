@@ -14,8 +14,8 @@ import Common
 final class ProfileCoordinator: Coordinator {
     
     var type: CoordinatorType { .profile }
-    var profileType: ProfileType?
-    var presentType: ProfilePresentType?
+    var profileType: ProfileType
+    var presentType: ProfilePresentType
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -24,8 +24,14 @@ final class ProfileCoordinator: Coordinator {
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
-    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+    init(
+        navigationController: BaseNavigationController = BaseNavigationController(),
+        profileType: ProfileType,
+        presentType: ProfilePresentType
+    ) {
         self.navigationController = navigationController
+        self.profileType = profileType
+        self.presentType = presentType
     }
     
     func start() {
@@ -40,22 +46,20 @@ final class ProfileCoordinator: Coordinator {
 private extension ProfileCoordinator {
     
     func makeProfileViewController() -> UIViewController {
-        if let profileType = profileType,
-           let presentType = presentType {
-            let viewController = ProfileViewController(
-                coordinator: self,
-                profileType: profileType,
-                presentType: presentType
-            )
-            return viewController
-        }
-        return UIViewController()
+        let viewController = ProfileViewController(
+            coordinator: self,
+            profileType: profileType,
+            presentType: presentType
+        )
+        return viewController
     }
     
     func makePostCoordinator(profileType: ProfileType) -> PostCoordinator {
-        let coordinator = PostCoordinator(navigationController: navigationController)
-        coordinator.profileType = profileType
-        coordinator.presentType = presentType
+        let coordinator = PostCoordinator(
+            navigationController: navigationController,
+            profileType: profileType,
+            presentType: presentType
+        )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
