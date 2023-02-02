@@ -39,14 +39,15 @@ final class ContentCell: UICollectionViewCell {
         return imageView
     }()
     
-    private let textViewPlaceHolder = "100자 이내로 설명을 남길 수 있어요."
-    
+    private let maxTextCount = 500
+    private let textViewPlaceHolder = "500자 이내로 설명을 남길 수 있어요."
+   
     private lazy var contentTextView: UITextView = {
         let textView = UITextView()
         textView.text = textViewPlaceHolder
         textView.font = FitftyFont.appleSDMedium(size: 16).font
         textView.textColor = CommonAsset.Colors.gray04.color
-        textView.returnKeyType = .done
+        textView.scrollIndicatorInsets = .init(top: 0, left: 0, bottom: 0, right: -3)
         textView.delegate = self
         return textView
     }()
@@ -129,12 +130,39 @@ extension ContentCell: UITextViewDelegate {
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if text == "\n" {
-            textView.resignFirstResponder()
+        let newLength = textView.text.count - range.length + text.count
+        //글자수가 초과 된 경우
+        if newLength > maxTextCount + 1 {
+            let overflow = newLength - maxTextCount + 1
+            if text.count < overflow {
+                return true
+            }
+            let index = text.index(text.endIndex, offsetBy: -overflow)
+            let newText = text[..<index]
+            guard let startPosition =
+                    textView.position(
+                        from: textView.beginningOfDocument,
+                        offset: range.location
+                    ) else { return false }
+            
+            guard let endPosition =
+                    textView.position(
+                        from: textView.beginningOfDocument,
+                        offset: NSMaxRange(range)
+                    ) else { return false }
+            
+            guard let textRange =
+                    textView.textRange(
+                        from: startPosition,
+                        to: endPosition
+                    ) else { return false }
+            
+            textView.replace(textRange, withText: String(newText))
             return false
         }
         return true
     }
+    
 }
 
 extension ContentCell {
