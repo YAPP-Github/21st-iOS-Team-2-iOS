@@ -12,6 +12,7 @@ import Common
 
 final class UploadCodyCoordinator: Coordinator {
     var type: CoordinatorType { .uploadCody }
+    var myFitftyType: MyFitftyType
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -19,8 +20,9 @@ final class UploadCodyCoordinator: Coordinator {
     
     var finishDelegate: CoordinatorFinishDelegate?
     
-    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+    init(navigationController: BaseNavigationController = BaseNavigationController(), myFitftyType: MyFitftyType) {
         self.navigationController = navigationController
+        self.myFitftyType = myFitftyType
     }
     
     func start() {
@@ -31,7 +33,7 @@ final class UploadCodyCoordinator: Coordinator {
 
 private extension UploadCodyCoordinator {
     func makeUploadCodyViewController() -> UIViewController {
-        let viewController = UploadCodyViewController(coordinator: self)
+        let viewController = UploadCodyViewController(coordinator: self, myFitftyType: myFitftyType)
         viewController.modalPresentationStyle = .fullScreen
         return viewController
     }

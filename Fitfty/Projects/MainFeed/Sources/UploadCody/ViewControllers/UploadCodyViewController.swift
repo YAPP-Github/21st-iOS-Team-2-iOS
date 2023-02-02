@@ -30,6 +30,7 @@ final public class UploadCodyViewController: UIViewController {
     }
     
     private var coordinator: UploadCodyCoordinatorInterface
+    private var myFitftyType: MyFitftyType
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
@@ -78,8 +79,9 @@ final public class UploadCodyViewController: UIViewController {
         removeNotificationCenter()
     }
     
-    public init(coordinator: UploadCodyCoordinatorInterface) {
+    public init(coordinator: UploadCodyCoordinatorInterface, myFitftyType: MyFitftyType) {
         self.coordinator = coordinator
+        self.myFitftyType = myFitftyType
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -89,7 +91,7 @@ final public class UploadCodyViewController: UIViewController {
     }
     
     private func setUpNavigationBar() {
-        navigationItem.title = "새 핏프티 등록"
+        navigationItem.title = myFitftyType.navigationBarTitle
         
         let leftButton: UIButton = {
           let button = UIButton()
@@ -103,7 +105,7 @@ final public class UploadCodyViewController: UIViewController {
         
         let rightBarButton: UIBarButtonItem = {
             let button = UIButton()
-            button.setTitle("등록", for: .normal)
+            button.setTitle(myFitftyType.buttonTitle, for: .normal)
             button.setTitleColor(CommonAsset.Colors.gray03.color, for: .normal)
             button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 16).font
             button.addTarget(self, action: #selector(didTapUploadButton), for: .touchUpInside)
@@ -115,7 +117,7 @@ final public class UploadCodyViewController: UIViewController {
     private func setUpEnableUploadButton() {
         let rightBarButton: UIBarButtonItem = {
             let button = UIButton()
-            button.setTitle("등록", for: .normal)
+            button.setTitle(myFitftyType.buttonTitle, for: .normal)
             button.setTitleColor(.white, for: .normal)
             button.titleLabel?.font = FitftyFont.appleSDMedium(size: 15).font
             button.frame = CGRect(x: 0, y: 0, width: 65, height: 37)
