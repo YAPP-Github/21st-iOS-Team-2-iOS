@@ -174,7 +174,7 @@ final public class PostViewController: UIViewController {
     }
     
     @objc private func didTapMiniProfile(_ sender: Any) {
-        coordinator.showProfile()
+        coordinator.showProfile(profileType: .myProfile)
     }
     
     @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {

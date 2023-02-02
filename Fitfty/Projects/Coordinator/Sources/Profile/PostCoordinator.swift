@@ -13,8 +13,8 @@ import Common
 final class PostCoordinator: Coordinator {
     
     var type: CoordinatorType { .post }
-    var profileType: ProfileType?
-    var presentType: ProfilePresentType?
+    var profileType: ProfileType
+    var presentType: ProfilePresentType
     
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
@@ -22,8 +22,14 @@ final class PostCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+    init(
+        navigationController: BaseNavigationController = BaseNavigationController(),
+        profileType: ProfileType,
+        presentType: ProfilePresentType
+    ) {
         self.navigationController = navigationController
+        self.profileType = profileType
+        self.presentType = presentType
     }
     
     func start() {
@@ -35,17 +41,13 @@ final class PostCoordinator: Coordinator {
 private extension PostCoordinator {
    
     func makePostViewController() -> UIViewController {
-        if let profileType = profileType,
-           let presentType = presentType {
-            let viewController = PostViewController(
-                coordinator: self,
-                profileType: profileType,
-                presentType: presentType
-            )
-            viewController.hidesBottomBarWhenPushed = true
-            return viewController
-        }
-        return UIViewController()
+        let viewController = PostViewController(
+            coordinator: self,
+            profileType: profileType,
+            presentType: presentType
+        )
+        viewController.hidesBottomBarWhenPushed = true
+        return viewController
     }
     
     func makeProfileBottomSheetViewController() -> UIViewController {
@@ -66,10 +68,12 @@ private extension PostCoordinator {
         return coordinator
     }
     
-    func makeProfileCoordinator() -> ProfileCoordinator {
-        let coordinator = ProfileCoordinator(navigationController: navigationController)
-        coordinator.presentType = presentType
-        coordinator.profileType = profileType
+    func makeProfileCoordinator(profileType: ProfileType) -> ProfileCoordinator {
+        let coordinator = ProfileCoordinator(
+            navigationController: navigationController,
+            profileType: profileType,
+            presentType: .mainProfile
+        )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -79,9 +83,8 @@ private extension PostCoordinator {
 
 extension PostCoordinator: PostCoordinatorInterface {
     
-    func showProfile() {
-        let coordinator = makeProfileCoordinator()
-        coordinator.presentType = .mainProfile
+    func showProfile(profileType: ProfileType) {
+        let coordinator = makeProfileCoordinator(profileType: profileType)
         coordinator.start()
     }
     

@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import Common
 
 public protocol PostCoordinatorInterface: AnyObject {
     
-    func showProfile()
+    func showProfile(profileType: ProfileType)
     func showBottomSheet()
     func showUploadCody()
     func dismiss()
