@@ -58,6 +58,26 @@ final public class UploadCodyViewController: UIViewController {
         return collectionView
     }()
     
+    private lazy var disableRightBarButton: UIBarButtonItem = {
+        let button = UIButton()
+        button.setTitle(myFitftyType.buttonTitle, for: .normal)
+        button.setTitleColor(CommonAsset.Colors.gray03.color, for: .normal)
+        button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 16).font
+        return UIBarButtonItem(customView: button)
+    }()
+    
+    private lazy var enableRightBarButton: UIBarButtonItem = {
+        let button = UIButton()
+        button.setTitle(myFitftyType.buttonTitle, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = FitftyFont.appleSDMedium(size: 15).font
+        button.frame = CGRect(x: 0, y: 0, width: 65, height: 37)
+        button.backgroundColor = .black
+        button.layer.cornerRadius = 18
+        button.addTarget(self, action: #selector(didTapUploadButton), for: .touchUpInside)
+        return UIBarButtonItem(customView: button)
+    }()
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUpConstraintLayout()
@@ -103,29 +123,13 @@ final public class UploadCodyViewController: UIViewController {
         }()
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
         
-        let rightBarButton: UIBarButtonItem = {
-            let button = UIButton()
-            button.setTitle(myFitftyType.buttonTitle, for: .normal)
-            button.setTitleColor(CommonAsset.Colors.gray03.color, for: .normal)
-            button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 16).font
-            button.addTarget(self, action: #selector(didTapUploadButton), for: .touchUpInside)
-            return UIBarButtonItem(customView: button)
-        }()
-        navigationItem.rightBarButtonItem = rightBarButton
-    }
-    
-    private func setUpEnableUploadButton() {
-        let rightBarButton: UIBarButtonItem = {
-            let button = UIButton()
-            button.setTitle(myFitftyType.buttonTitle, for: .normal)
-            button.setTitleColor(.white, for: .normal)
-            button.titleLabel?.font = FitftyFont.appleSDMedium(size: 15).font
-            button.frame = CGRect(x: 0, y: 0, width: 65, height: 37)
-            button.backgroundColor = .black
-            button.layer.cornerRadius = 18
-            return UIBarButtonItem(customView: button)
-        }()
-        navigationItem.rightBarButtonItem = rightBarButton
+        switch myFitftyType {
+        case .uploadMyFitfty:
+            navigationItem.rightBarButtonItem = disableRightBarButton
+        case .modifyMyFitfty:
+            navigationItem.rightBarButtonItem = enableRightBarButton
+        }
+        
     }
     
     private func setUpConstraintLayout() {
@@ -171,7 +175,7 @@ final public class UploadCodyViewController: UIViewController {
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
-        setUpEnableUploadButton()
+        coordinator.dismissUploadCody(self)
     }
     
     @objc func scrollToBottom() {
@@ -208,6 +212,16 @@ extension UploadCodyViewController {
                 case .content:
                     let cell = collectionView.dequeueReusableCell(ContentCell.self, for: indexPath)
                     cell?.setActionUploadPhotoButton(self, action: #selector(self.didTapUploadPhotoButton))
+                    
+                    switch self.myFitftyType {
+                    case .modifyMyFitfty:
+                        cell?.setUp(codyImage: CommonAsset.Images.profileSample.image, content: "오늘의 핏프티~")
+                        cell?.setDisableEditting()
+                        
+                    case .uploadMyFitfty:
+                        break
+                    }
+                    
                     return cell ?? UICollectionViewCell()
                     
                 case .weatherTag:
