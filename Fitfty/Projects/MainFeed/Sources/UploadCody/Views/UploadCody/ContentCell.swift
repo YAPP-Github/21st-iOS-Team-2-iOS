@@ -33,7 +33,7 @@ final class ContentCell: UICollectionViewCell {
         return button
     }()
     
-    private lazy var imageView: UIImageView = {
+    private lazy var codyImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
         return imageView
@@ -52,6 +52,18 @@ final class ContentCell: UICollectionViewCell {
         return textView
     }()
     
+    private lazy var guidanceLabel: UILabel = {
+        let label = UILabel()
+        label.font = FitftyFont.appleSDMedium(size: 16).font
+        label.textColor = CommonAsset.Colors.gray02.color
+        label.text = "사진은 수정이 불가능해요.\n사진 수정을 원한다면 새로운 게시글로 올려보세요."
+        label.numberOfLines = 0
+        label.setTextWithLineHeight(lineHeight: 22)
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
+    
     override func prepareForReuse() {
         contentTextView.text = "100자 이내로 설명을 남길 수 있어요."
         contentTextView.textColor = CommonAsset.Colors.gray04.color
@@ -67,19 +79,19 @@ final class ContentCell: UICollectionViewCell {
     }
     
     private func setUpConstraintsLayout() {
-        contentView.addSubviews(backgroundButton, uploadPhotoButton, imageView, contentTextView)
+        contentView.addSubviews(codyImageView, backgroundButton, uploadPhotoButton, contentTextView, guidanceLabel)
         
         NSLayoutConstraint.activate([
             
             backgroundButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             backgroundButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             backgroundButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            backgroundButton.heightAnchor.constraint(equalToConstant: 350),
+            backgroundButton.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width*0.936),
             
-            imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: 350),
+            codyImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
+            codyImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            codyImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            codyImageView.heightAnchor.constraint(equalTo: backgroundButton.heightAnchor),
             
             uploadPhotoButton.centerXAnchor.constraint(equalTo: backgroundButton.centerXAnchor),
             uploadPhotoButton.centerYAnchor.constraint(equalTo: backgroundButton.centerYAnchor),
@@ -89,7 +101,10 @@ final class ContentCell: UICollectionViewCell {
             contentTextView.topAnchor.constraint(equalTo: backgroundButton.bottomAnchor, constant: 20),
             contentTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             contentTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3)
+            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
+            
+            guidanceLabel.centerXAnchor.constraint(equalTo: backgroundButton.centerXAnchor),
+            guidanceLabel.centerYAnchor.constraint(equalTo: backgroundButton.centerYAnchor)
         ])
     }
     
@@ -125,7 +140,21 @@ extension ContentCell: UITextViewDelegate {
 }
 
 extension ContentCell {
+    
+    public func setUp(codyImage: UIImage, content: String) {
+        codyImageView.image = codyImage
+        contentTextView.text = content
+        contentTextView.textColor = .black
+    }
+    
     public func setActionUploadPhotoButton(_ target: Any?, action: Selector) {
         uploadPhotoButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+    public func setDisableEditting() {
+        backgroundButton.backgroundColor = .black
+        backgroundButton.alpha = 0.5
+        uploadPhotoButton.isHidden = true
+        guidanceLabel.isHidden = false
     }
 }
