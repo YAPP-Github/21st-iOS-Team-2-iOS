@@ -344,7 +344,7 @@ extension UploadCodyViewController {
     private func contentSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(500)
+            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+290)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(

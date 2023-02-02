@@ -46,7 +46,6 @@ final class ContentCell: UICollectionViewCell {
         textView.text = textViewPlaceHolder
         textView.font = FitftyFont.appleSDMedium(size: 16).font
         textView.textColor = CommonAsset.Colors.gray04.color
-        textView.isScrollEnabled = false
         textView.returnKeyType = .done
         textView.delegate = self
         return textView
@@ -82,7 +81,6 @@ final class ContentCell: UICollectionViewCell {
         contentView.addSubviews(codyImageView, backgroundButton, uploadPhotoButton, contentTextView, guidanceLabel)
         
         NSLayoutConstraint.activate([
-            
             backgroundButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             backgroundButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             backgroundButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
