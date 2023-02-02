@@ -170,7 +170,7 @@ extension TabCoordinator: UITabBarControllerDelegate {
             return true
         }
         if tabBar == .createCody {
-            let coordinator = UploadCodyCoordinator()
+            let coordinator = UploadCodyCoordinator(myFitftyType: .modifyMyFitfty)
             childCoordinators.append(coordinator)
             coordinator.finishDelegate = self
             coordinator.parentCoordinator = self

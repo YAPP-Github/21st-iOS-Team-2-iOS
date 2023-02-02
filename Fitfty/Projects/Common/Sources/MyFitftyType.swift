@@ -12,7 +12,7 @@ public enum MyFitftyType {
     case uploadMyFitfty
     case modifyMyFitfty
     
-    var navigationBarTitle: String {
+    public var navigationBarTitle: String {
         switch self {
         case .modifyMyFitfty:
             return "내 핏프티 수정"
@@ -21,7 +21,7 @@ public enum MyFitftyType {
         }
     }
     
-    var buttonTitle: String {
+    public var buttonTitle: String {
         switch self {
         case .modifyMyFitfty:
             return "수정"
