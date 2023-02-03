@@ -54,4 +54,7 @@ final class LocationView: UIStackView {
         print(#function)
     }
     
+    func update(location: String) {
+        locationLabel.text = location
+    }
 }

@@ -7,10 +7,14 @@
 
 import UIKit
 import Common
+import Combine
 
 public final class MainViewController: UIViewController {
     
-    private var coordinator: MainCoordinatorInterface
+    private let viewModel: MainViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
+    
+    private let coordinator: MainCoordinatorInterface
     private var dataSource: UICollectionViewDiffableDataSource<MainViewSection, UUID>?
     
     private lazy var collectionView: UICollectionView = {
@@ -25,18 +29,31 @@ public final class MainViewController: UIViewController {
         return collectionView
     }()
     
+    private lazy var locationView = {
+        return LocationView("성북구 정릉동")
+    }()
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
+        bind()
+        viewModel.input.viewDidLoad()
+    }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.input.viewWillAppear()
     }
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         showWelcomeView()
+        viewModel.input.viewDidAppear()
     }
     
-    public init(coordinator: MainCoordinatorInterface) {
+    public init(coordinator: MainCoordinatorInterface, viewModel: MainViewModel) {
         self.coordinator = coordinator
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -47,6 +64,18 @@ public final class MainViewController: UIViewController {
 }
 
 private extension MainViewController {
+    
+    func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .currentLocation(let address):
+                    self?.locationView.update(location: "\(address.secondName) \(address.thirdName)")
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                }
+            }).store(in: &cancellables)
+    }
     
     func showWelcomeView() {
         coordinator.showWelcomeSheet()
@@ -70,7 +99,6 @@ private extension MainViewController {
     }
     
     func setUpNavigationBar() {
-        let locationView = LocationView("성북구 정릉동")
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: locationView)
         let tappedLoacationView = UITapGestureRecognizer(target: self, action: #selector(didTapLoactionView(_:)))
         locationView.addGestureRecognizer(tappedLoacationView)
