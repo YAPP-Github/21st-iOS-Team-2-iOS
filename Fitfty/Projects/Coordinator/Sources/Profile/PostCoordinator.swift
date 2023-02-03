@@ -133,5 +133,13 @@ extension PostCoordinator: CoordinatorFinishDelegate {
     
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
+        switch childCoordinator.type {
+        case .uploadCody:
+            navigationController.dismiss(animated: true) {
+                childCoordinator.navigationController.viewControllers.removeAll()
+            }
+        default:
+             break
+        }
     }
 }
