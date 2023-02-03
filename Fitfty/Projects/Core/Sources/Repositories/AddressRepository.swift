@@ -8,9 +8,11 @@
 
 import Foundation
 
-protocol AddressRepository {
+public protocol AddressRepository {
     
     func fetchAddressList(search: String) async throws -> [Address]
+    
+    func fetchAddress(longitude: Double, latitude: Double) async throws -> Address
     
 }
 
@@ -39,6 +41,25 @@ public final class DefaultAddressRepository: AddressRepository {
                 thirdName: thirdName
             )
         }
+    }
+    
+    public func fetchAddress(longitude: Double, latitude: Double) async throws -> Address {
+        let searchAddress = AddressConversionRequest(x: longitude, y: latitude)
+        let response = try await KakaoAKAPI.request(
+            target: KakaoAKAPI.fetchAddressConversion(parameter: try searchAddress.asDictionary()),
+            dataType: AddressConversionResponse.self
+        )
+        guard let address = response.documents.first?.address else {
+            throw ResultCode.nodataError
+        }
+        return Address(
+            fullName: address.addressName,
+            x: longitude.description,
+            y: latitude.description,
+            firstName: address.region1DepthName,
+            secondName: address.region2DepthName,
+            thirdName: address.region3DepthName
+        )
     }
     
 }
