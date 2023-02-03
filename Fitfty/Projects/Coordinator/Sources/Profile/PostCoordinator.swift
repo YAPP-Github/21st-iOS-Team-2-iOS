@@ -138,8 +138,7 @@ extension PostCoordinator: CoordinatorFinishDelegate {
             navigationController.dismiss(animated: true) {
                 childCoordinator.navigationController.viewControllers.removeAll()
             }
-        default:
-             break
+        default: break
         }
     }
 }
