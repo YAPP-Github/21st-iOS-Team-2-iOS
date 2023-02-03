@@ -10,7 +10,6 @@ import Foundation
 import Combine
 import Common
 import Core
-import CoreLocation
 
 enum MainViewSection {
     case weather
@@ -45,8 +44,6 @@ public final class MainViewModel {
     
     private let addressRepository: AddressRepository
     private let userManager: UserManager
-    
-    private var _location: CurrentValueSubject<CLLocation?, Never> = .init(nil)
 
     public init(
         addressRepository: AddressRepository = DefaultAddressRepository(),
@@ -79,7 +76,10 @@ extension MainViewModel: MainViewModelInput {
                         return
                     }
                     do {
-                        let address = try await self.getAddress(location: location)
+                        let address = try await self.getAddress(
+                            longitude: location.coordinate.longitude,
+                            latitude: location.coordinate.latitude
+                        )
                         self.currentState.send(.currentLocation(address))
                         self.userManager.updateCurrentLocation(address)
                     } catch {
@@ -102,13 +102,13 @@ extension MainViewModel: MainViewModelInput {
 
 private extension MainViewModel {
     
-    func getAddress(location: CLLocation) async throws -> Address {
+    func getAddress(longitude: Double, latitude: Double) async throws -> Address {
         if let address = userManager.currentLocation {
             return address
         } else {
             let address = try await self.addressRepository.fetchAddress(
-                longitude: location.coordinate.longitude,
-                latitude: location.coordinate.latitude
+                longitude: longitude,
+                latitude: latitude
             )
             userManager.updateCurrentLocation(address)
             return address
