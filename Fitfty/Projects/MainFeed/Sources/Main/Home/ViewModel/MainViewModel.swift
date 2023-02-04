@@ -64,7 +64,7 @@ extension MainViewModel: ViewModelType, MainViewModelOutput {
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
     
-    var weatherInfoViewModel: WeatherInfoHeaderViewModel { .init() }
+    var weatherInfoViewModel: WeatherInfoHeaderViewModel { .init(weatherRepository: weatherRepository) }
     
 }
 
