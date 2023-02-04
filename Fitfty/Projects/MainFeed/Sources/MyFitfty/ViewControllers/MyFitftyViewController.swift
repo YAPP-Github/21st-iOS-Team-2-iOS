@@ -10,7 +10,7 @@ import UIKit
 import Common
 import Photos
 
-final public class UploadCodyViewController: UIViewController {
+final public class MyFitftyViewController: UIViewController {
     
     enum Section {
         
@@ -29,7 +29,7 @@ final public class UploadCodyViewController: UIViewController {
         
     }
     
-    private var coordinator: UploadCodyCoordinatorInterface
+    private var coordinator: MyFitftyCoordinatorInterface
     private var myFitftyType: MyFitftyType
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
@@ -99,7 +99,7 @@ final public class UploadCodyViewController: UIViewController {
         removeNotificationCenter()
     }
     
-    public init(coordinator: UploadCodyCoordinatorInterface, myFitftyType: MyFitftyType) {
+    public init(coordinator: MyFitftyCoordinatorInterface, myFitftyType: MyFitftyType) {
         self.coordinator = coordinator
         self.myFitftyType = myFitftyType
         super.init(nibName: nil, bundle: nil)
@@ -175,7 +175,7 @@ final public class UploadCodyViewController: UIViewController {
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
-        coordinator.dismissUploadCody(self)
+        coordinator.dismiss()
     }
     
     @objc func scrollToBottom() {
@@ -198,7 +198,7 @@ final public class UploadCodyViewController: UIViewController {
 }
 
 // MARK: - UICollectionViewDiffableDataSource
-extension UploadCodyViewController {
+extension MyFitftyViewController {
     
     private func setUpDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
@@ -327,7 +327,7 @@ extension UploadCodyViewController {
 }
 
 // MARK: - UICollectionViewCompositionalLayout
-extension UploadCodyViewController {
+extension MyFitftyViewController {
     
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
@@ -442,7 +442,7 @@ extension UploadCodyViewController {
 }
 
 // MARK: - UICollectionViewDelegate
-extension UploadCodyViewController: UICollectionViewDelegate {
+extension MyFitftyViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let section = Section(index: indexPath.section)
@@ -474,7 +474,7 @@ extension UploadCodyViewController: UICollectionViewDelegate {
 }
 
 // MARK: - AlbumAuthorization
-extension UploadCodyViewController {
+extension MyFitftyViewController {
     @objc private func didTapUploadPhotoButton(_ sender: UIButton) {
         requestAlbumAuthorization { [weak self] isAuthorized in
             if isAuthorized {

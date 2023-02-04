@@ -74,8 +74,8 @@ private extension ProfileCoordinator {
         return coordinator
     }
     
-    func makeUploadCodyCoordinator() -> UploadCodyCoordinator {
-        let coordinator = UploadCodyCoordinator()
+    func myFitftyCoordinator() -> MyFitftyCoordinator {
+        let coordinator = MyFitftyCoordinator(myFitftyType: .modifyMyFitfty)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -122,8 +122,8 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         navigationController.present(bottomSheetViewController, animated: false)
     }
     
-    func showUploadCody() {
-        let coordinator = makeUploadCodyCoordinator()
+    func showModifyMyFitfty() {
+        let coordinator = myFitftyCoordinator()
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
         navigationController.present(coordinator.navigationController, animated: true)
