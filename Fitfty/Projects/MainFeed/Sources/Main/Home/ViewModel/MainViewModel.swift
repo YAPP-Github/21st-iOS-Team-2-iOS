@@ -82,34 +82,8 @@ extension MainViewModel: MainViewModelInput {
             }).store(in: &cancellables)
         _location
             .map { ($0.longitude ?? 127.016702905651, $0.latitude ?? 37.5893588153919) }
-            .sink(receiveValue: { (longitude: Double, latitude: Double) in
-                Task { [weak self] in
-                    guard let self = self else {
-                        return
-                    }
-                    do {
-                        let address = try await self.getAddress(
-                            longitude: longitude,
-                            latitude: latitude
-                        )
-                        self.currentState.send(.currentLocation(address))
-                        self.userManager.updateCurrentLocation(address)
-                        self.currentState.send(.sections([
-                            self.configureWeathers(
-                                try await self.getWeathers(longitude: longitude, latitude: latitude)
-                            ),
-                            MainFeedSection(
-                                sectionKind: .style, items: Array(0...6).map { _ in MainCellModel.styleTag(UUID()) }
-                            ),
-                            MainFeedSection(
-                                sectionKind: .cody, items: Array(0...10).map { _ in MainCellModel.cody(UUID()) }
-                            )
-                        ]))
-                    } catch {
-                        Logger.debug(error: error, message: "사용자 위치 가져오기 실패")
-                        self.currentState.send(.errorMessage("현재 위치를 가져오는데 알 수 없는 에러가 발생했습니다."))
-                    }
-                }
+            .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                self?.update(longitude: longitude, latitude: latitude)
         }).store(in: &cancellables)
         
         currentState.sink(receiveValue: { [weak self] state in
@@ -123,7 +97,10 @@ extension MainViewModel: MainViewModelInput {
     }
     
     func viewWillAppear() {
-        print(#function)
+        guard case .isLoading(let isLoading) = currentState.value, isLoading == false else {
+            return
+        }
+        _location.send(_location.value)
     }
     
     func viewDidAppear() {
@@ -133,6 +110,36 @@ extension MainViewModel: MainViewModelInput {
 }
 
 private extension MainViewModel {
+    
+    func update(longitude: Double, latitude: Double) {
+        Task { [weak self] in
+            guard let self = self else {
+                return
+            }
+            do {
+                let address = try await self.getAddress(
+                    longitude: longitude,
+                    latitude: latitude
+                )
+                self.currentState.send(.currentLocation(address))
+                self.userManager.updateCurrentLocation(address)
+                self.currentState.send(.sections([
+                    self.configureWeathers(
+                        try await self.getWeathers(longitude: longitude, latitude: latitude)
+                    ),
+                    MainFeedSection(
+                        sectionKind: .style, items: Array(0...6).map { _ in MainCellModel.styleTag(UUID()) }
+                    ),
+                    MainFeedSection(
+                        sectionKind: .cody, items: Array(0...10).map { _ in MainCellModel.cody(UUID()) }
+                    )
+                ]))
+            } catch {
+                Logger.debug(error: error, message: "사용자 위치 가져오기 실패")
+                self.currentState.send(.errorMessage("현재 위치를 가져오는데 알 수 없는 에러가 발생했습니다."))
+            }
+        }
+    }
     
     func getAddress(longitude: Double, latitude: Double) async throws -> Address {
         currentState.send(.isLoading(true))
