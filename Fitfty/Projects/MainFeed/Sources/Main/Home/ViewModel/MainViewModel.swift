@@ -73,6 +73,7 @@ extension MainViewModel: ViewModelType, MainViewModelOutput {
     public enum ViewModelState {
         case currentLocation(Address)
         case errorMessage(String)
+        case isLoading(Bool)
     }
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
@@ -86,13 +87,13 @@ extension MainViewModel: MainViewModelInput {
     var input: MainViewModelInput { self }
     
     func viewDidLoad() {
+        currentState.send(.isLoading(true))
         LocationManager.shared.currentLocation()
             .sink(receiveValue: { [weak self] location in
                 let longitude = location?.coordinate.longitude ?? 127.016702905651
                 let latitude = location?.coordinate.latitude ?? 37.5893588153919
                 self?._location.send((longitude, latitude))
             }).store(in: &cancellables)
-        
         _location
             .map { ($0.longitude ?? 127.016702905651, $0.latitude ?? 37.5893588153919) }
             .sink(receiveValue: { (longitude: Double, latitude: Double) in
@@ -112,6 +113,15 @@ extension MainViewModel: MainViewModelInput {
                         self.currentState.send(.errorMessage("현재 위치를 가져오는데 알 수 없는 에러가 발생했습니다."))
                     }
                 }
+        }).store(in: &cancellables)
+        
+        currentState.sink(receiveValue: { [weak self] state in
+            switch state {
+            case .currentLocation, .errorMessage:
+                self?.currentState.send(.isLoading(false))
+                
+            default: return
+            }
         }).store(in: &cancellables)
     }
     
