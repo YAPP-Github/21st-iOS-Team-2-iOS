@@ -126,7 +126,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             tabBarController.addChild(dummyController)
             
         case .profile:
-            let coordinator = ProfileCoordinator()
+            let coordinator = ProfileCoordinator(profileType: .myProfile, presentType: .tabProfile)
             childCoordinators.append(coordinator)
             coordinator.start()
             let tabBarItem =  UITabBarItem.init(
