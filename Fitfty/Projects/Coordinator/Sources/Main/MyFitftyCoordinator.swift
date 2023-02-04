@@ -10,8 +10,8 @@ import UIKit
 import MainFeed
 import Common
 
-final class UploadCodyCoordinator: Coordinator {
-    var type: CoordinatorType { .uploadCody }
+final class MyFitftyCoordinator: Coordinator {
+    var type: CoordinatorType { .myFitfty }
     var myFitftyType: MyFitftyType
     
     var parentCoordinator: Coordinator?
@@ -26,14 +26,14 @@ final class UploadCodyCoordinator: Coordinator {
     }
     
     func start() {
-        let viewController = makeUploadCodyViewController()
+        let viewController = makeMyFitftyViewController()
         navigationController.pushViewController(viewController, animated: true)
     }
 }
 
-private extension UploadCodyCoordinator {
-    func makeUploadCodyViewController() -> UIViewController {
-        let viewController = UploadCodyViewController(coordinator: self, myFitftyType: myFitftyType)
+private extension MyFitftyCoordinator {
+    func makeMyFitftyViewController() -> UIViewController {
+        let viewController = MyFitftyViewController(coordinator: self, myFitftyType: myFitftyType)
         viewController.modalPresentationStyle = .fullScreen
         return viewController
     }
@@ -53,7 +53,7 @@ private extension UploadCodyCoordinator {
     }
 }
 
-extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
+extension MyFitftyCoordinator: MyFitftyCoordinatorInterface {
     
     func dismiss() {
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
@@ -67,7 +67,7 @@ extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
     
 }
 
-extension UploadCodyCoordinator: CoordinatorFinishDelegate {
+extension MyFitftyCoordinator: CoordinatorFinishDelegate {
     
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)

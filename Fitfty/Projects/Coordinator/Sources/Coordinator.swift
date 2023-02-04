@@ -47,7 +47,7 @@ enum CoordinatorType {
     case post
     case address
     case weather
-    case uploadCody
+    case myFitfty
     case album
     case setting
     case profileSetting
