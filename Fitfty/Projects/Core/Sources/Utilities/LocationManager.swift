@@ -30,13 +30,12 @@ public final class LocationManager: NSObject {
         self.manager.delegate = self
     }
     
-    public func currentLocation() -> AnyPublisher<CLLocation, Never> {
+    public func currentLocation() -> AnyPublisher<CLLocation?, Never> {
         guard _location.value == nil else {
             return Empty().eraseToAnyPublisher()
         }
         manager.startUpdatingLocation()
         return _location
-            .compactMap { $0 }
             .eraseToAnyPublisher()
     }
     

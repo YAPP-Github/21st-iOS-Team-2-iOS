@@ -37,31 +37,48 @@ protocol MainViewModelInput {
     func viewDidAppear()
 }
 
+protocol MainViewModelOutput {
+    
+    var weatherInfoViewModel: WeatherInfoHeaderViewModel { get }
+    
+}
+
 public final class MainViewModel {
     
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
     
     private let addressRepository: AddressRepository
+    private let weatherRepository: WeatherRepository
     private let userManager: UserManager
+    
+    private var _location: CurrentValueSubject<(longitude: Double?, latitude: Double?), Never> = .init(
+        (nil, nil)
+    )
 
     public init(
         addressRepository: AddressRepository = DefaultAddressRepository(),
+        weatherRepository: WeatherRepository = DefaultWeatherRepository(),
         userManager: UserManager = DefaultUserManager()
     ) {
         self.addressRepository = addressRepository
+        self.weatherRepository = weatherRepository
         self.userManager = userManager
     }
 
 }
 
-extension MainViewModel: ViewModelType {
+extension MainViewModel: ViewModelType, MainViewModelOutput {
+    
     public enum ViewModelState {
         case currentLocation(Address)
         case errorMessage(String)
     }
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
+    
+    var weatherInfoViewModel: WeatherInfoHeaderViewModel { .init() }
+    
 }
 
 extension MainViewModel: MainViewModelInput {
@@ -71,14 +88,22 @@ extension MainViewModel: MainViewModelInput {
     func viewDidLoad() {
         LocationManager.shared.currentLocation()
             .sink(receiveValue: { [weak self] location in
+                let longitude = location?.coordinate.longitude ?? 127.016702905651
+                let latitude = location?.coordinate.latitude ?? 37.5893588153919
+                self?._location.send((longitude, latitude))
+            }).store(in: &cancellables)
+        
+        _location
+            .map { ($0.longitude ?? 127.016702905651, $0.latitude ?? 37.5893588153919) }
+            .sink(receiveValue: { (longitude: Double, latitude: Double) in
                 Task { [weak self] in
                     guard let self = self else {
                         return
                     }
                     do {
                         let address = try await self.getAddress(
-                            longitude: location.coordinate.longitude,
-                            latitude: location.coordinate.latitude
+                            longitude: longitude,
+                            latitude: latitude
                         )
                         self.currentState.send(.currentLocation(address))
                         self.userManager.updateCurrentLocation(address)
@@ -87,7 +112,7 @@ extension MainViewModel: MainViewModelInput {
                         self.currentState.send(.errorMessage("현재 위치를 가져오는데 알 수 없는 에러가 발생했습니다."))
                     }
                 }
-            }).store(in: &cancellables)
+        }).store(in: &cancellables)
     }
     
     func viewWillAppear() {

@@ -149,7 +149,7 @@ private extension WeatherViewController {
                     withReuseIdentifier: WeatherInfoHeaderView.className,
                     for: indexPath
                 ) as? WeatherInfoHeaderView
-                reusableView?.setUp(temp: 12, condition: "구름 많음", minimum: 12, maximum: 12)
+                reusableView?.setUp(viewModel: .init())
                 return reusableView
                 
             default: return UICollectionReusableView()

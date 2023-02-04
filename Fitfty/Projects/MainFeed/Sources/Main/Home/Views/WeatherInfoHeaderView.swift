@@ -7,9 +7,13 @@
 //
 
 import UIKit
+import Combine
 
 final class WeatherInfoHeaderView: UICollectionReusableView {
 
+    private var viewModel: WeatherInfoHeaderViewModel?
+    private var cancellables: Set<AnyCancellable> = .init()
+    
     private lazy var weatherInfoView: WeatherInfoView = .init()
     
     override init(frame: CGRect) {
@@ -18,7 +22,7 @@ final class WeatherInfoHeaderView: UICollectionReusableView {
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func configure() {
@@ -31,12 +35,28 @@ final class WeatherInfoHeaderView: UICollectionReusableView {
         ])
     }
     
+    private func bind() {
+        viewModel?.state.sinkOnMainThread(receiveValue: { [weak self] state in
+            switch state {
+            case .currentWeather(let weather):
+                self?.weatherInfoView.setUp(
+                    temp: weather.temp,
+                    condition: weather.forecast.rawValue,
+                    minimum: weather.minTemp,
+                    maximum: weather.maxTemp
+                )
+            }
+        }).store(in: &cancellables)
+    }
+    
 }
 
 extension WeatherInfoHeaderView {
     
-    func setUp(temp: Int, condition: String, minimum: Int, maximum: Int) {
-        weatherInfoView.setUp(temp: temp, condition: condition, minimum: minimum, maximum: maximum)
+    func setUp(viewModel: WeatherInfoHeaderViewModel) {
+        self.viewModel = viewModel
+        bind()
+        viewModel.input.fetch()
     }
     
 }
