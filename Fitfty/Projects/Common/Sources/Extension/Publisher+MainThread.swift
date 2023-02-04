@@ -11,7 +11,10 @@ import Combine
 
 public extension Publisher {
     
-    func sinkOnMainThread(receiveCompletion: @escaping ((Subscribers.Completion<Self.Failure>) -> Void), receiveValue: @escaping ((Self.Output) -> Void)) -> AnyCancellable {
+    func sinkOnMainThread(
+        receiveCompletion: @escaping ((Subscribers.Completion<Self.Failure>) -> Void),
+        receiveValue: @escaping ((Self.Output) -> Void)
+    ) -> AnyCancellable {
         if #available(iOS 14, *) {
             return receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: receiveCompletion, receiveValue: receiveValue)
@@ -28,7 +31,9 @@ public extension Publisher {
         }
     }
     
-    func sinkOnMainThread(receiveValue: @escaping ((Self.Output) -> Void)) -> AnyCancellable where Self.Failure == Never {
+    func sinkOnMainThread(
+        receiveValue: @escaping ((Self.Output) -> Void)
+    ) -> AnyCancellable where Self.Failure == Never {
         if #available(iOS 14, *) {
             return receive(on: DispatchQueue.main)
                 .sink(receiveValue: receiveValue)
