@@ -44,7 +44,7 @@ enum CoordinatorType {
     case main
     case welcome
     case profile
-    case user
+    case post
     case address
     case weather
     case uploadCody
