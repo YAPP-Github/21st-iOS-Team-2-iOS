@@ -51,10 +51,7 @@ private extension ProfileSettingCoordinator {
 extension ProfileSettingCoordinator: ProfileSettingCoordinatorInterface {
     
     func dismiss() {
-        bottomSheetDelegate?.dismissBottomSheet { [weak self] in
-            guard let self = self else {
-                return
-            }
+        bottomSheetDelegate?.dismissBottomSheet {
             self.navigationController.viewControllers.removeAll()
             self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         }
