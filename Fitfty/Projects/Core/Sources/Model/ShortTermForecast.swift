@@ -41,6 +41,24 @@ public extension ShortTermForecast {
     }
 }
 
+extension ShortTermForecast: Equatable, Hashable {
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.date == rhs.date &&
+        lhs.precipitation == rhs.precipitation &&
+        lhs.temp == rhs.temp &&
+        lhs.forecast == rhs.forecast
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(date)
+        hasher.combine(precipitation)
+        hasher.combine(temp)
+        hasher.combine(forecast)
+    }
+    
+}
+
 public enum SkyState: String {
     case sunny = "1"
     case lostOfCloudy = "3"
