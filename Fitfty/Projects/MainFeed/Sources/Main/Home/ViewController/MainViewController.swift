@@ -6,8 +6,9 @@
 //
 
 import UIKit
-import Common
 import Combine
+import Common
+import Core
 
 public final class MainViewController: UIViewController {
     
@@ -15,7 +16,7 @@ public final class MainViewController: UIViewController {
     private var cancellables: Set<AnyCancellable> = .init()
     
     private let coordinator: MainCoordinatorInterface
-    private var dataSource: UICollectionViewDiffableDataSource<MainViewSection, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<MainSectionKind, MainCellModel>?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
@@ -83,6 +84,9 @@ private extension MainViewController {
                     
                 case .isLoading(let isLoading):
                     isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                    
+                case .sections(let sections):
+                    self?.applySnapshot(sections)
                 }
             }).store(in: &cancellables)
     }
@@ -95,7 +99,6 @@ private extension MainViewController {
         setUpLayout()
         setUpNavigationBar()
         setUpDataSource()
-        applySnapshot()
     }
     
     func setUpLayout() {
@@ -123,16 +126,21 @@ private extension MainViewController {
     }
     
     func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<MainViewSection, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<MainSectionKind, MainCellModel>(
             collectionView: collectionView,
-            cellProvider: { collectionView, indexPath, _ in
-                let section = MainViewSection(index: indexPath.section)
-                switch section {
-                case .weather:
+            cellProvider: { collectionView, indexPath, item in
+                switch item {
+                case .weather(let weather):
                     let cell = collectionView.dequeueReusableCell(WeatherCell.self, for: indexPath)
+                    cell?.setUp(
+                        hour: weather.date.toString(.meridiemHour),
+                        image: weather.forecast.icon,
+                        temp: weather.temp,
+                        isCurrentTime: weather.isCurrent
+                    )
                     return cell ?? UICollectionViewCell()
                     
-                case .style:
+                case .styleTag:
                     let items = ["포멀", "캐주얼", "미니멀", "포멀", "캐주얼", "미니멀", "포멀"]
                     let cell = collectionView.dequeueReusableCell(StyleCell.self, for: indexPath)
                     cell?.setUp(text: items[indexPath.item])
@@ -142,9 +150,6 @@ private extension MainViewController {
                     let cell = collectionView.dequeueReusableCell(CodyCell.self, for: indexPath)
                     cell?.addProfileViewGestureRecognizer(self, action: #selector(self.didTapProfileStackView))
                     return cell
-                    
-                default:
-                    return UICollectionViewCell()
                 }
             })
         dataSource?.supplementaryViewProvider = { [weak self] collectionView, elementKind, indexPath in
@@ -194,20 +199,18 @@ private extension MainViewController {
         collectionView.dataSource = dataSource
     }
     
-    func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<MainViewSection, UUID>()
-        snapshot.appendSections([.weather])
-        snapshot.appendItems(Array(0...23).map { _ in UUID() })
-        snapshot.appendSections([.style])
-        snapshot.appendItems(Array(0...6).map { _ in UUID() })
-        snapshot.appendSections([.cody])
-        snapshot.appendItems(Array(0...10).map { _ in UUID() })
-        dataSource?.apply(snapshot)
+    func applySnapshot(_ sections: [MainFeedSection]) {
+        var snapshot = NSDiffableDataSourceSnapshot<MainSectionKind, MainCellModel>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
+        }
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
     
     func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
-            let section = MainViewSection(index: sectionNumber)
+            let section = MainSectionKind(index: sectionNumber)
             switch section {
             case .weather: return self?.weatherSectionLayout()
             case .style: return self?.styleSectionLayout()
@@ -313,7 +316,7 @@ private extension MainViewController {
 extension MainViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = MainViewSection(index: indexPath.section)
+        let section = MainSectionKind(index: indexPath.section)
         
         switch section {
         case .weather:

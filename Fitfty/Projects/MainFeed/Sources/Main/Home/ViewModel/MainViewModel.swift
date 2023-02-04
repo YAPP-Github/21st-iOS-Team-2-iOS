@@ -11,21 +11,6 @@ import Combine
 import Common
 import Core
 
-enum MainViewSection {
-    case weather
-    case style
-    case cody
-    
-    init?(index: Int) {
-        switch index {
-        case 0: self = .weather
-        case 1: self = .style
-        case 2: self = .cody
-        default: return nil
-        }
-    }
-}
-
 protocol MainViewModelInput {
     
     var input: MainViewModelInput { get }
@@ -74,6 +59,7 @@ extension MainViewModel: ViewModelType, MainViewModelOutput {
         case currentLocation(Address)
         case errorMessage(String)
         case isLoading(Bool)
+        case sections([MainFeedSection])
     }
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
@@ -108,6 +94,17 @@ extension MainViewModel: MainViewModelInput {
                         )
                         self.currentState.send(.currentLocation(address))
                         self.userManager.updateCurrentLocation(address)
+                        self.currentState.send(.sections([
+                            self.configureWeathers(
+                                try await self.getWeathers(longitude: longitude, latitude: latitude)
+                            ),
+                            MainFeedSection(
+                                sectionKind: .style, items: Array(0...6).map { _ in MainCellModel.styleTag(UUID()) }
+                            ),
+                            MainFeedSection(
+                                sectionKind: .cody, items: Array(0...10).map { _ in MainCellModel.cody(UUID()) }
+                            )
+                        ]))
                     } catch {
                         Logger.debug(error: error, message: "사용자 위치 가져오기 실패")
                         self.currentState.send(.errorMessage("현재 위치를 가져오는데 알 수 없는 에러가 발생했습니다."))
@@ -117,7 +114,7 @@ extension MainViewModel: MainViewModelInput {
         
         currentState.sink(receiveValue: { [weak self] state in
             switch state {
-            case .currentLocation, .errorMessage:
+            case .currentLocation, .errorMessage, .sections:
                 self?.currentState.send(.isLoading(false))
                 
             default: return
@@ -138,6 +135,7 @@ extension MainViewModel: MainViewModelInput {
 private extension MainViewModel {
     
     func getAddress(longitude: Double, latitude: Double) async throws -> Address {
+        currentState.send(.isLoading(true))
         if let address = userManager.currentLocation {
             return address
         } else {
@@ -148,5 +146,19 @@ private extension MainViewModel {
             userManager.updateCurrentLocation(address)
             return address
         }
+    }
+    
+    func getWeathers(longitude: Double, latitude: Double) async throws -> [ShortTermForecast] {
+        currentState.send(.isLoading(true))
+        return try await weatherRepository.fetchShortTermForecast(
+            longitude: longitude.description, latitude: latitude.description
+        )
+    }
+    
+    func configureWeathers(_ weathers: [ShortTermForecast]) -> MainFeedSection {
+        return MainFeedSection(
+            sectionKind: .weather,
+            items: weathers.map { MainCellModel.weather($0)}
+        )
     }
 }
