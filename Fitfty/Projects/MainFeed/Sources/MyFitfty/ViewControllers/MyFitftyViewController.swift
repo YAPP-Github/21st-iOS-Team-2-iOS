@@ -34,11 +34,17 @@ final public class MyFitftyViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
-        (.formal, true),
-        (.casual, false)
+        (.minimal, false),
+        (.modern, false),
+        (.casual, false),
+        (.street, false),
+        (.lovely, false),
+        (.hip, false),
+        (.luxury, false)
     ]
+    
     private var weatherTagItems: [(weatherTag: WeatherTag, isSelected: Bool)] = [
-        (.coldWaveWeather, true),
+        (.coldWaveWeather, false),
         (.coldWeather, false),
         (.chillyWeather, false),
         (.warmWeather, false),
