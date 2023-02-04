@@ -160,13 +160,16 @@ private extension MainViewController {
                 )
                 
             case WeatherInfoHeaderView.className:
+                guard let self = self else {
+                    return UICollectionReusableView()
+                }
                 let reusableView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
                     withReuseIdentifier: WeatherInfoHeaderView.className,
                     for: indexPath
                 ) as? WeatherInfoHeaderView
-                reusableView?.setUp(temp: 12, condition: "구름 많음", minimum: 12, maximum: 12)
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.didTapWeather(_:)))
+                reusableView?.setUp(viewModel: self.viewModel.weatherInfoViewModel)
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.didTapWeather(_:)))
                 reusableView?.addGestureRecognizer(tapGesture)
                 return reusableView
                 
