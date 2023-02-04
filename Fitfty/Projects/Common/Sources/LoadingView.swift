@@ -19,5 +19,6 @@ public final class LoadingView: UIActivityIndicatorView {
         self.style = style
         self.backgroundColor = backgroundColor
         self.alpha = alpha
+        self.color = CommonAsset.Colors.primaryBlueLight.color
     }
 }

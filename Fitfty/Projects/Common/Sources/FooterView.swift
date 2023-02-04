@@ -12,7 +12,7 @@ public final class FooterView: UICollectionReusableView {
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .systemGray6
+        backgroundColor = CommonAsset.Colors.gray01.color
     }
     
     public required init?(coder: NSCoder) {

@@ -35,7 +35,7 @@ public final class MainViewController: UIViewController {
     }()
     
     private lazy var loadingIndicatorView: LoadingView = {
-        let loadingView: LoadingView = .init(backgroundColor: .white, alpha: 1)
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.5), alpha: 1)
         loadingView.startAnimating()
         return loadingView
     }()
@@ -102,6 +102,7 @@ private extension MainViewController {
     }
     
     func setUpLayout() {
+        view.backgroundColor = .white
         view.addSubviews(collectionView, loadingIndicatorView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
