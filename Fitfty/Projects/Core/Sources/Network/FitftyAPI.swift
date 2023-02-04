@@ -80,7 +80,6 @@ public extension FitftyAPI {
                         continuation.resume(returning: data)
                         print("didFinishRequest URL [\(response.request?.url?.absoluteString ?? "")]")
                     } catch {
-                        print(error)
                         continuation.resume(throwing: error)
                     }
                 case .failure(let error):
@@ -97,7 +96,6 @@ public extension FitftyAPI {
                 switch result {
                 case .success(let response):
                     print("didFinishRequest URL [\(response.request?.url?.absoluteString ?? "")]")
-                    print(response)
                     continuation.resume(returning: response)
                 case .failure(let error):
                     continuation.resume(throwing: error)
