@@ -11,23 +11,28 @@ import Common
 
 final public class ReportViewController: UIViewController {
     
-    let coordinator: UserProfileCoordinatorInterface
+    let coordinator: ProfileCoordinatorInterface
     
     private lazy var reportButton: UIButton = {
         let button = UIButton()
         button.setTitle("계정 신고", for: .normal)
-        button.setTitleColor(UIColor(red: 1, green: 0.402, blue: 0.367, alpha: 1), for: .normal)
+        button.setTitleColor(CommonAsset.Colors.error.color, for: .normal)
         button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 18).font
         button.addTarget(self, action: #selector(didTapReportButton), for: .touchUpInside)
         return button
     }()
+    
+    override public func removeFromParent() {
+        super.removeFromParent()
+        coordinator.dismiss()
+    }
 
     public override func viewDidLoad() {
         super.viewDidLoad()
         
     }
     
-    public init(coordinator: UserProfileCoordinatorInterface) {
+    public init(coordinator: ProfileCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         setConstraintsLayout()
@@ -46,6 +51,6 @@ final public class ReportViewController: UIViewController {
     }
     
     @objc func didTapReportButton(_ sender: Any?) {
-        coordinator.dismissReport(self)
+        coordinator.showDetailReport()
     }
 }

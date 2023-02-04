@@ -6,11 +6,11 @@
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
-enum StyleTag {
+public enum StyleTag {
     case formal
     case casual
     
-    var styleTagString: String {
+    public var styleTagString: String {
         switch self {
         case .formal:
             return "포멀"

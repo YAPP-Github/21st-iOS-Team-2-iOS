@@ -260,7 +260,7 @@ private extension MainViewController {
     }
     
     @objc func didTapProfileStackView(_ sender: Any?) {
-        coordinator.showUserProfile()
+        coordinator.showProfile(profileType: .userProfile)
     }
     
 }
@@ -274,7 +274,7 @@ extension MainViewController: UICollectionViewDelegate {
         case .weather:
             didTapWeather()
         case .cody:
-            coordinator.showUserPost()
+            coordinator.showPost(profileType: .userProfile)
         default: return
         }
     }
