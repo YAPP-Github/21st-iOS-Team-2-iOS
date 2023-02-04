@@ -22,9 +22,11 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     
     public var authorizationType: AuthorizationType? {
         switch self {
-        case .signInKakao: return .none
-        case .signInApple: return .none
-        default: return .bearer
+        case .signInKakao,
+             .signInApple:
+            return .none
+        default:
+            return .bearer
         }
     }
     
@@ -41,9 +43,11 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     
     public var method: Moya.Method {
         switch self {
-        case .signInKakao: return .post
-        case .signInApple: return .post
-        case .getMyProfile: return .get
+        case .signInKakao,
+             .signInApple:
+            return .post
+        case .getMyProfile:
+            return .get
         }
     }
     
@@ -91,7 +95,13 @@ public extension FitftyAPI {
     
     static func request(target: FitftyAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<FitftyAPI>()
+            // TODO: 임시로 구현해둔 어드민 토큰 사용 코드. 로그인 기능 구현 완료 후 삭제할 코드입니다.
+            let tokenClosure: (TargetType) -> String = { _ in
+                return APIKey.adminToken
+            }
+            let authPlugin = AccessTokenPlugin(tokenClosure: tokenClosure)
+            let provider = MoyaProvider<FitftyAPI>(plugins: [authPlugin])
+            
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
