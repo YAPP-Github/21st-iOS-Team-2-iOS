@@ -84,7 +84,7 @@ public final class DefaultWeatherRepository: WeatherRepository {
         let minMaxTemp = transferService.minMaxTemp(
             _pastShortTermForecast.filter { $0.isToday }
         )
-        guard let currentShortTermForecast = _pastShortTermForecast.filter({ $0.isCurrent }).first else {
+        guard let currentShortTermForecast = _shortTermForecast.filter({ $0.isCurrent }).first else {
             throw ResultCode.nodataError
         }
         return CurrentWeather(
