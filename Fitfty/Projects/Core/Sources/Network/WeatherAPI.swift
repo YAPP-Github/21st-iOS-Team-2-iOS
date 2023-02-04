@@ -84,7 +84,7 @@ public extension WeatherAPI {
     
     static func request(target: WeatherAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<WeatherAPI>()
+            let provider = MoyaProvider<WeatherAPI>(plugins: [MoyaCacheablePlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -104,5 +104,13 @@ private extension TargetType {
         parameter.updateValue(APIKey.weatherApiKey.removingPercentEncoding ?? "", forKey: "serviceKey")
         parameter.updateValue("json", forKey: "dataType")
         return parameter
+    }
+}
+
+extension WeatherAPI: MoyaCacheable {
+    var cachePolicy: MoyaCacheablePolicy {
+        switch self {
+        default: return .returnCacheDataElseLoad
+        }
     }
 }
