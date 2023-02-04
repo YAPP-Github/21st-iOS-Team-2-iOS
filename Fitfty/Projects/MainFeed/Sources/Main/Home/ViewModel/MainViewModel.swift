@@ -135,8 +135,8 @@ private extension MainViewModel {
                     )
                 ]))
             } catch {
-                Logger.debug(error: error, message: "사용자 위치 가져오기 실패")
-                self.currentState.send(.errorMessage("현재 위치를 가져오는데 알 수 없는 에러가 발생했습니다."))
+                Logger.debug(error: error, message: "사용자 위치 및 날씨 가져오기 실패")
+                self.currentState.send(.errorMessage("현재 위치의 날씨 정보를 가져오는데 알 수 없는 에러가 발생했습니다."))
             }
         }
     }
