@@ -115,7 +115,7 @@ extension WeatherCell {
     
     func setUp(hour: String, image: UIImage?, temp: Int, isCurrentTime: Bool) {
         setUpHourLabel(by: isCurrentTime)
-        hourLabel.text = "\(hour)시"
+        hourLabel.text = isCurrentTime ? "지금" : hour
         weatherIconImageView.image = image
         tempLabel.text = "\(temp)°"
     }
