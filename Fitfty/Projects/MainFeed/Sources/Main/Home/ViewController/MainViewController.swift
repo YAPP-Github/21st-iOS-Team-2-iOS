@@ -33,6 +33,12 @@ public final class MainViewController: UIViewController {
         return LocationView("성북구 정릉동")
     }()
     
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white, alpha: 1)
+        loadingView.startAnimating()
+        return loadingView
+    }()
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
@@ -71,8 +77,12 @@ private extension MainViewController {
                 switch state {
                 case .currentLocation(let address):
                     self?.locationView.update(location: "\(address.secondName) \(address.thirdName)")
+                    
                 case .errorMessage(let message):
                     self?.showAlert(message: message)
+                    
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
                 }
             }).store(in: &cancellables)
     }
@@ -89,12 +99,16 @@ private extension MainViewController {
     }
     
     func setUpLayout() {
-        view.addSubviews(collectionView)
+        view.addSubviews(collectionView, loadingIndicatorView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         ])
     }
     
