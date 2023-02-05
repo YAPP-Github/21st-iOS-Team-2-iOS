@@ -41,20 +41,8 @@ extension WeatherInfoHeaderViewModel: WeatherInfoHeaderViewModelInput {
         currentState.send(.isLoading(true))
         userManager.location
             .compactMap { $0 }
-            .sink(receiveValue: { (longitude: Double, latitude: Double) in
-                Task { [weak self] in
-                    guard let self = self else {
-                        return
-                    }
-                    do {
-                        let currentWeather = try await self.weatherRepository.fetchCurrentWeather(
-                            longitude: longitude.description, latitude: latitude.description
-                        )
-                        self.currentState.send(.currentWeather(currentWeather))
-                    } catch {
-                        Logger.debug(error: error, message: "현재 날씨 가져오기 실패")
-                    }
-                }
+            .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                self?.getCurrentWeather(longitude: longitude, latitude: latitude)
             }).store(in: &cancellables)
         
         currentState.sink(receiveValue: { [weak self] state in
@@ -76,5 +64,24 @@ extension WeatherInfoHeaderViewModel: ViewModelType {
     enum ViewModelState {
         case currentWeather(CurrentWeather)
         case isLoading(Bool)
+    }
+}
+
+private extension WeatherInfoHeaderViewModel {
+    
+    func getCurrentWeather(longitude: Double, latitude: Double) {
+        Task { [weak self] in
+            guard let self = self else {
+                return
+            }
+            do {
+                let currentWeather = try await self.weatherRepository.fetchCurrentWeather(
+                    longitude: longitude.description, latitude: latitude.description
+                )
+                self.currentState.send(.currentWeather(currentWeather))
+            } catch {
+                Logger.debug(error: error, message: "현재 날씨 가져오기 실패")
+            }
+        }
     }
 }
