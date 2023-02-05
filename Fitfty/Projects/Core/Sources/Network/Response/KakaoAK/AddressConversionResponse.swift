@@ -16,7 +16,7 @@ struct AddressConversionResponse: Codable {
 
 // MARK: - Document
 struct AddressConversionResult: Codable {
-    let roadAddress: AddressConversionRoadAddress
+    let roadAddress: AddressConversionRoadAddress?
     let address: AddressConversionAddress
 
     enum CodingKeys: String, CodingKey {
