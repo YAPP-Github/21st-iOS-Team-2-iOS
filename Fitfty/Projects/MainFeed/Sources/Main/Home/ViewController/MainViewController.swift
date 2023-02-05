@@ -31,7 +31,9 @@ public final class MainViewController: UIViewController {
     }()
     
     private lazy var locationView = {
-        return LocationView("성북구 정릉동")
+        let loacationView = LocationView("성북구 정릉동")
+        loacationView.isHidden = true
+        return loacationView
     }()
     
     private lazy var loadingIndicatorView: LoadingView = {
@@ -54,7 +56,6 @@ public final class MainViewController: UIViewController {
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        showWelcomeView()
         viewModel.input.viewDidAppear()
     }
     
@@ -78,6 +79,8 @@ private extension MainViewController {
                 switch state {
                 case .currentLocation(let address):
                     self?.locationView.update(location: "\(address.secondName) \(address.thirdName)")
+                    self?.locationView.isHidden = false
+                    self?.showWelcomeView()
                     
                 case .errorMessage(let message):
                     self?.showAlert(message: message)
