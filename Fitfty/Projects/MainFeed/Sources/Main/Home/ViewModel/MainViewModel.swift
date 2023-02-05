@@ -81,6 +81,7 @@ extension MainViewModel: MainViewModelInput {
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
                 print(longitude, latitude)
                 self?.update(longitude: longitude, latitude: latitude)
+                self?._location.send((longitude, latitude))
         }).store(in: &cancellables)
         
         currentState.sink(receiveValue: { [weak self] state in
@@ -94,10 +95,12 @@ extension MainViewModel: MainViewModelInput {
     }
     
     func viewWillAppear() {
-        guard case .isLoading(let isLoading) = currentState.value, isLoading == false else {
+        guard case .isLoading(let isLoading) = currentState.value, isLoading == false,
+              let longitude = _location.value.longitude, let latitude = _location.value.latitude
+        else {
             return
         }
-        _location.send(_location.value)
+        update(longitude: longitude, latitude: latitude)
     }
     
     func viewDidAppear() {
