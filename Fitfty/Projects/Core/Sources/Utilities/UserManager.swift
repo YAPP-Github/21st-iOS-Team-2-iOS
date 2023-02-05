@@ -20,13 +20,15 @@ public protocol UserManager {
 
 public final class DefaultUserManager {
     
+    public static let shared = DefaultUserManager(localStorage: UserDefaults.standard)
+    
     private let localStorage: LocalStorageService
     
     private var _location: CurrentValueSubject<(longitude: Double, latitude: Double)?, Never> = .init(nil)
     
     private var cancellables: Set<AnyCancellable> = .init()
     
-    public init(localStorage: LocalStorageService = UserDefaults.standard) {
+    private init(localStorage: LocalStorageService) {
         self.localStorage = localStorage
         fetchCurrentLocation()
     }

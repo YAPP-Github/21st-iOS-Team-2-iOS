@@ -42,9 +42,9 @@ public final class MainViewModel {
     )
 
     public init(
-        addressRepository: AddressRepository = DefaultAddressRepository(),
-        weatherRepository: WeatherRepository = DefaultWeatherRepository(),
-        userManager: UserManager = DefaultUserManager()
+        addressRepository: AddressRepository,
+        weatherRepository: WeatherRepository,
+        userManager: UserManager
     ) {
         self.addressRepository = addressRepository
         self.weatherRepository = weatherRepository

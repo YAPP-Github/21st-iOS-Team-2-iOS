@@ -9,6 +9,7 @@
 import UIKit
 import MainFeed
 import Common
+import Core
 
 final class MainCoordinator: Coordinator {
     
@@ -31,7 +32,14 @@ final class MainCoordinator: Coordinator {
 
 private extension MainCoordinator {
     func makeMainViewController() -> UIViewController {
-        let viewController = MainViewController(coordinator: self, viewModel: MainViewModel())
+        let viewController = MainViewController(
+            coordinator: self,
+            viewModel: MainViewModel(
+                addressRepository: DefaultAddressRepository(),
+                weatherRepository: DefaultWeatherRepository(),
+                userManager: DefaultUserManager.shared
+            )
+        )
         return viewController
     }
     
