@@ -165,7 +165,7 @@ final public class UploadCodyViewController: UIViewController {
     }
     
     @objc func didTapCancelButton(_ sender: UIButton) {
-        coordinator.dismissUploadCody(self)
+        coordinator.dismiss()
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
