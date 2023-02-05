@@ -43,7 +43,7 @@ private extension AlbumListCoordinator {
 extension AlbumListCoordinator: AlbumListCoordinatorInterface {
     
     func dismiss() {
-        
+        navigationController.dismiss(animated: true)
     }
     
 }
