@@ -26,7 +26,7 @@ final class WeatherInfoHeaderViewModel {
     
     init(
         weatherRepository: WeatherRepository = DefaultWeatherRepository(),
-        userManager: UserManager = DefaultUserManager()
+        userManager: UserManager = DefaultUserManager.shared
     ) {
         self.weatherRepository = weatherRepository
         self.userManager = userManager
