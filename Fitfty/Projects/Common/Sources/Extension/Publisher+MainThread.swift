@@ -15,34 +15,14 @@ public extension Publisher {
         receiveCompletion: @escaping ((Subscribers.Completion<Self.Failure>) -> Void),
         receiveValue: @escaping ((Self.Output) -> Void)
     ) -> AnyCancellable {
-        if #available(iOS 14, *) {
-            return receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: receiveCompletion, receiveValue: receiveValue)
-        } else {
-            return sink { completion in
-                DispatchQueue.main.async {
-                    receiveCompletion(completion)
-                }
-            } receiveValue: { output in
-                DispatchQueue.main.async {
-                    receiveValue(output)
-                }
-            }
-        }
+        return receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: receiveCompletion, receiveValue: receiveValue)
     }
     
     func sinkOnMainThread(
         receiveValue: @escaping ((Self.Output) -> Void)
     ) -> AnyCancellable where Self.Failure == Never {
-        if #available(iOS 14, *) {
-            return receive(on: DispatchQueue.main)
-                .sink(receiveValue: receiveValue)
-        } else {
-            return sink { output in
-                DispatchQueue.main.async {
-                    receiveValue(output)
-                }
-            }
-        }
+        return receive(on: DispatchQueue.main)
+            .sink(receiveValue: receiveValue)
     }
 }
