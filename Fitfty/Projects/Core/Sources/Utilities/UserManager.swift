@@ -7,10 +7,12 @@
 //
 
 import Foundation
+import Combine
 
 public protocol UserManager {
     var isNewUser: Bool { get }
     var currentLocation: Address? { get }
+    var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { get }
     
     func updateUserState(_ state: Bool)
     func updateCurrentLocation(_ address: Address)
@@ -20,8 +22,19 @@ public final class DefaultUserManager {
     
     private let localStorage: LocalStorageService
     
+    private var _location: CurrentValueSubject<(longitude: Double, latitude: Double)?, Never> = .init(nil)
+    
+    private var cancellables: Set<AnyCancellable> = .init()
+    
     public init(localStorage: LocalStorageService = UserDefaults.standard) {
         self.localStorage = localStorage
+
+        LocationManager.shared.currentLocation()
+            .compactMap { $0 }
+            .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
+            .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                self?._location.send((longitude, latitude))
+            }).store(in: &cancellables)
     }
 }
 
@@ -36,15 +49,20 @@ extension DefaultUserManager: UserManager {
         return Address(address)
     }
     
+    public var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { _location.eraseToAnyPublisher() }
+    
     public func updateUserState(_ state: Bool) {
         localStorage.write(key: .isNewUser, value: state)
     }
     
     public func updateCurrentLocation(_ address: Address) {
-        guard let address = try? address.asDictionary() else {
+        guard let addressDictionary = try? address.asDictionary() else {
             return
         }
-        localStorage.write(key: .currentLocation, value: address)
+        localStorage.write(key: .currentLocation, value: addressDictionary)
+        _location.send(
+            (Double(address.x) ?? 127.016702905651, Double(address.y) ?? 37.5893588153919)
+        )
     }
     
 }
