@@ -134,7 +134,7 @@ private extension WeatherViewController {
                     largeTitleTopAnchorConstant: 24,
                     smallTitleTopAchorConstant: 4
                 )
-                return headerView
+                return headerView ?? UICollectionReusableView()
                 
             case FooterView.className:
                 return collectionView.dequeueReusableSupplementaryView(
@@ -149,7 +149,6 @@ private extension WeatherViewController {
                     withReuseIdentifier: WeatherInfoHeaderView.className,
                     for: indexPath
                 ) as? WeatherInfoHeaderView
-                reusableView?.setUp(viewModel: .init())
                 return reusableView
                 
             default: return UICollectionReusableView()

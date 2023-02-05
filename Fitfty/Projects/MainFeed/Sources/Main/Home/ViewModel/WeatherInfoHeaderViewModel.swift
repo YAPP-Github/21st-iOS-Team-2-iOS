@@ -25,8 +25,8 @@ final class WeatherInfoHeaderViewModel {
     private let userManager: UserManager
     
     init(
-        weatherRepository: WeatherRepository = DefaultWeatherRepository(),
-        userManager: UserManager = DefaultUserManager()
+        weatherRepository: WeatherRepository,
+        userManager: UserManager
     ) {
         self.weatherRepository = weatherRepository
         self.userManager = userManager
