@@ -55,7 +55,7 @@ extension DefaultUserManager: UserManager {
         }
         localStorage.write(key: .currentLocation, value: addressDictionary)
         _location.send(
-            (Double(address.x) ?? 127.016702905651, Double(address.y) ?? 37.5893588153919)
+            (Double(address.x) ?? 126.977829174031, Double(address.y) ?? 37.5663174209601)
         )
     }
     
