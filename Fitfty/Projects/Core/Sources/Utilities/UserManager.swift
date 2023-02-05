@@ -28,13 +28,7 @@ public final class DefaultUserManager {
     
     public init(localStorage: LocalStorageService = UserDefaults.standard) {
         self.localStorage = localStorage
-
-        LocationManager.shared.currentLocation()
-            .compactMap { $0 }
-            .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
-            .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
-                self?._location.send((longitude, latitude))
-            }).store(in: &cancellables)
+        fetchCurrentLocation()
     }
 }
 
@@ -65,4 +59,16 @@ extension DefaultUserManager: UserManager {
         )
     }
     
+}
+
+private extension DefaultUserManager {
+    
+    func fetchCurrentLocation() {
+        LocationManager.shared.currentLocation()
+            .compactMap { $0 }
+            .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
+            .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                self?._location.send((longitude, latitude))
+            }).store(in: &cancellables)
+    }
 }
