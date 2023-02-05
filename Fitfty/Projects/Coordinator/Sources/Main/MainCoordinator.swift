@@ -10,6 +10,7 @@ import UIKit
 import MainFeed
 import Common
 import Core
+import Profile
 
 final class MainCoordinator: Coordinator {
     
@@ -58,8 +59,24 @@ private extension MainCoordinator {
         return bottomSheetViewController
     }
     
-    func makeUserCoordinator() -> UserCoordinator {
-        let coordinator = UserCoordinator(navigationController: navigationController)
+    func makePostCoordinator(profileType: ProfileType) -> PostCoordinator {
+        let coordinator = PostCoordinator(
+            navigationController: navigationController,
+            profileType: profileType,
+            presentType: .mainProfile
+        )
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
+    
+    func makeProfileCoordinator(profileType: ProfileType) -> ProfileCoordinator {
+        let coordinator = ProfileCoordinator(
+            navigationController: navigationController,
+            profileType: profileType,
+            presentType: .mainProfile
+        )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -92,21 +109,21 @@ private extension MainCoordinator {
 }
 
 extension MainCoordinator: MainCoordinatorInterface {
-    
+   
     public func showSettingAddress() {
         let viewController = makeAddressViewController()
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
     }
     
-    public func showUserProfile() {
-        let coordinator = makeUserCoordinator()
+    public func showPost(profileType: ProfileType) {
+        let coordinator = makePostCoordinator(profileType: profileType)
         coordinator.start()
     }
     
-    public func showUserPost() {
-        let coordinator = makeUserCoordinator()
-        coordinator.showPost()
+    public func showProfile(profileType: ProfileType) {
+        let coordinator = makeProfileCoordinator(profileType: profileType)
+        coordinator.start()
     }
     
     public func showWeatherInfo() {

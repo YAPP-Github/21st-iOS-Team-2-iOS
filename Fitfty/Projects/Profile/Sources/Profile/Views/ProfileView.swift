@@ -30,7 +30,7 @@ final class ProfileView: UIView {
     private lazy var contentLabel: UILabel = {
         let label = UILabel()
         label.font = FitftyFont.appleSDMedium(size: 15).font
-        label.textColor = UIColor(red: 0.512, green: 0.512, blue: 0.567, alpha: 1)
+        label.textColor = CommonAsset.Colors.gray05.color
         label.textAlignment = .center
         return label
     }()

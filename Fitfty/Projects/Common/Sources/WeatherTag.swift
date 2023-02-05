@@ -7,14 +7,14 @@
 //
 import UIKit
 
-enum WeatherTag {
+public enum WeatherTag {
     case coldWaveWeather
     case coldWeather
     case chillyWeather
     case warmWeather
     case hotWeather
     
-    var weatherTagString: String {
+    public var weatherTagString: String {
         switch self {
         case .coldWaveWeather:
             return "❄️ 한파"
@@ -29,7 +29,7 @@ enum WeatherTag {
         }
     }
     
-    var textColor: UIColor {
+    public var textColor: UIColor {
         switch self {
         case .coldWaveWeather:
             return UIColor(red: 0.19, green: 0.485, blue: 0.929, alpha: 1)
@@ -44,7 +44,7 @@ enum WeatherTag {
         }
     }
     
-    var backgroundColor: UIColor {
+    public var backgroundColor: UIColor {
         switch self {
         case .coldWaveWeather:
             return UIColor(red: 0.783, green: 0.896, blue: 1, alpha: 1)

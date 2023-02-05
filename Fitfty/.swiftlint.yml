@@ -33,6 +33,9 @@ type_body_length:
 file_length:
     - 1000 # warning
     - 2000 # error
+line_length:
+    - 300
+    - 400
 disabled_rules: # 제외하고 싶은 룰
     - colon
     - control_statement
