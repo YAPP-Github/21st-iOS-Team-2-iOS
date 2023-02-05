@@ -22,13 +22,14 @@ final class WeatherInfoHeaderViewModel {
     private var cancellables: Set<AnyCancellable> = .init()
     
     private let weatherRepository: WeatherRepository
+    private let userManager: UserManager
     
-    private var _location: CurrentValueSubject<(longitude: Double?, latitude: Double?), Never> = .init(
-        (nil, nil)
-    )
-    
-    init(weatherRepository: WeatherRepository = DefaultWeatherRepository()) {
+    init(
+        weatherRepository: WeatherRepository = DefaultWeatherRepository(),
+        userManager: UserManager = DefaultUserManager()
+    ) {
         self.weatherRepository = weatherRepository
+        self.userManager = userManager
     }
 }
 
@@ -38,15 +39,8 @@ extension WeatherInfoHeaderViewModel: WeatherInfoHeaderViewModelInput {
     
     func fetch() {
         currentState.send(.isLoading(true))
-        LocationManager.shared.currentLocation()
-            .sink(receiveValue: { [weak self] location in
-                let longitude = location?.coordinate.longitude ?? 127.016702905651
-                let latitude = location?.coordinate.latitude ?? 37.5893588153919
-                self?._location.send((longitude, latitude))
-            }).store(in: &cancellables)
-
-        _location
-            .map { ($0.longitude ?? 127.016702905651, $0.latitude ?? 37.5893588153919) }
+        userManager.location
+            .compactMap { $0 }
             .sink(receiveValue: { (longitude: Double, latitude: Double) in
                 Task { [weak self] in
                     guard let self = self else {

@@ -64,7 +64,9 @@ extension MainViewModel: ViewModelType, MainViewModelOutput {
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
     
-    var weatherInfoViewModel: WeatherInfoHeaderViewModel { .init(weatherRepository: weatherRepository) }
+    var weatherInfoViewModel: WeatherInfoHeaderViewModel {
+        .init(weatherRepository: weatherRepository, userManager: userManager)
+    }
     
 }
 
@@ -74,15 +76,10 @@ extension MainViewModel: MainViewModelInput {
     
     func viewDidLoad() {
         currentState.send(.isLoading(true))
-        LocationManager.shared.currentLocation()
-            .sink(receiveValue: { [weak self] location in
-                let longitude = location?.coordinate.longitude ?? 127.016702905651
-                let latitude = location?.coordinate.latitude ?? 37.5893588153919
-                self?._location.send((longitude, latitude))
-            }).store(in: &cancellables)
-        _location
-            .map { ($0.longitude ?? 127.016702905651, $0.latitude ?? 37.5893588153919) }
+        userManager.location
+            .compactMap { $0 }
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                print(longitude, latitude)
                 self?.update(longitude: longitude, latitude: latitude)
         }).store(in: &cancellables)
         
@@ -122,7 +119,6 @@ private extension MainViewModel {
                     latitude: latitude
                 )
                 self.currentState.send(.currentLocation(address))
-                self.userManager.updateCurrentLocation(address)
                 self.currentState.send(.sections([
                     self.configureWeathers(
                         try await self.getWeathers(longitude: longitude, latitude: latitude)
