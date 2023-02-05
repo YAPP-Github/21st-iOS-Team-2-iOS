@@ -101,8 +101,9 @@ public final class AddressViewController: UIViewController {
     }()
     
     private lazy var loadingIndicatorView: LoadingView = {
-        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.5), alpha: 1)
+        let loadingView: LoadingView = .init(backgroundColor: .white, alpha: 1)
         loadingView.startAnimating()
+        loadingView.alpha = 0
         return loadingView
     }()
 }
@@ -119,13 +120,17 @@ private extension AddressViewController {
                 self?.applySnapshot(sections)
                 
             case .isLoading(let isLoading):
-                isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                if isLoading {
+                    self?.loadingIndicatorView.startAnimating()
+                    self?.loadingIndicatorView.alpha = 1
+                }
+                self?.searchController.searchBar.isUserInteractionEnabled = isLoading == false
                 
             case .errorMessage(let message):
                 self?.showAlert(message: message)
                 
             case .weather(let weatherNow, let address):
-                self?.addressInfoView.setUp(address: address, temp: weatherNow.temp, icon: weatherNow.forecast.icon)
+                self?.updateAddressInfo(weather: weatherNow, address: address)
             }
         }).store(in: &cancellables)
     }
@@ -147,15 +152,21 @@ private extension AddressViewController {
     
     func setUpLayout() {
         view.backgroundColor = .white
-        view.addSubviews(cancelButton, collectionView, addressInfoView, buttonStackView, emptyLabel)
+        view.addSubviews(
+            cancelButton, collectionView, addressInfoView, buttonStackView, emptyLabel, loadingIndicatorView
+        )
         let cancelButtonBottom = cancelButton.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -26
         )
         let buttonsBottom = buttonStackView.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -26
         )
-        cancelButtonBottom.priority = .defaultLow
-        buttonsBottom.priority = .defaultLow
+        let loadingViewBottom = loadingIndicatorView.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -90
+        )
+        cancelButtonBottom.priority = .init(999)
+        buttonsBottom.priority = .init(999)
+        loadingViewBottom.priority = .init(999)
         NSLayoutConstraint.activate([
             cancelButtonBottom,
             cancelButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
@@ -174,7 +185,11 @@ private extension AddressViewController {
             buttonStackView.heightAnchor.constraint(equalToConstant: 64),
             buttonsBottom,
             emptyLabel.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
-            emptyLabel.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor)
+            emptyLabel.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            loadingIndicatorView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingViewBottom
         ])
     }
     
@@ -247,6 +262,26 @@ private extension AddressViewController {
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
             self?.addressInfoView.alpha = 0
             self?.buttonStackView.alpha = 0
+            self?.searchController.searchBar.alpha = 1
+            self?.loadingIndicatorView.alpha = 1
+            self?.loadingIndicatorView.stopAnimating()
+            self?.view.layoutIfNeeded()
+        }, completion: nil)
+    }
+    
+    func updateAddressInfo(weather: WeatherNow, address: String) {
+        self.addressInfoView.reset()
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
+            self?.addressInfoView.isHidden = false
+            self?.addressInfoView.alpha = 1
+            self?.addressInfoView.setUp(
+                address: address,
+                temp: weather.temp,
+                icon: weather.forecast.icon
+            )
+            self?.buttonStackView.alpha = 1
+            self?.loadingIndicatorView.alpha = 0
+            self?.searchController.searchBar.alpha = 0
             self?.view.layoutIfNeeded()
         }, completion: nil)
     }
@@ -255,17 +290,10 @@ private extension AddressViewController {
 extension AddressViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
-            self?.addressInfoView.isHidden = false
-            self?.addressInfoView.alpha = 1
-            self?.addressInfoView.setUp(
-                address: "서울시, 강남구, 역삼 1동",
-                temp: 12,
-                icon: CommonAsset.Images.lostOfCloudy.image
-            )
-            self?.buttonStackView.alpha = 1
-            self?.view.layoutIfNeeded()
-        }, completion: nil)
+        guard let address = dataSource?.itemIdentifier(for: indexPath) else {
+            return
+        }
+        viewModel.input.didTapAddress(address)
     }
     
 }
