@@ -7,16 +7,21 @@
 //
 
 import UIKit
+import Combine
 import Common
+import Core
 
 public final class AddressViewController: UIViewController {
 
+    private var cancellables: Set<AnyCancellable> = .init()
+    
     private weak var coordinator: AddressCoordinatorInterface?
     private var viewModel: AddressViewModel
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
+        bind()
     }
     
     public init(coordinator: AddressCoordinatorInterface, viewModel: AddressViewModel) {
@@ -34,7 +39,7 @@ public final class AddressViewController: UIViewController {
         coordinator?.dismiss()
     }
     
-    private var dataSource: UICollectionViewDiffableDataSource<AddressViewSection, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<AddressSectionKind, Address>?
     
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
@@ -42,6 +47,7 @@ public final class AddressViewController: UIViewController {
         searchController.searchBar.tintColor = .darkGray
         searchController.searchBar.placeholder = "지금 어디에 계세요?"
         searchController.searchBar.setValue("취소", forKey: "cancelButtonText")
+        searchController.searchBar.delegate = self
         return searchController
     }()
     
@@ -93,15 +99,41 @@ public final class AddressViewController: UIViewController {
         label.font = FitftyFont.appleSDBold(size: 18).font
         return label
     }()
+    
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.5), alpha: 1)
+        loadingView.startAnimating()
+        return loadingView
+    }()
 }
 
 private extension AddressViewController {
+    
+    func bind() {
+        viewModel.state.sinkOnMainThread(receiveValue: { [weak self] state in
+            switch state {
+            case .isEmpty(let isEmpty):
+                self?.emptyLabel.isHidden = isEmpty == false
+                
+            case .sections(let sections):
+                self?.applySnapshot(sections)
+                
+            case .isLoading(let isLoading):
+                isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                
+            case .errorMessage(let message):
+                self?.showAlert(message: message)
+                
+            case .weather(let weatherNow, let address):
+                self?.addressInfoView.setUp(address: address, temp: weatherNow.temp, icon: weatherNow.forecast.icon)
+            }
+        }).store(in: &cancellables)
+    }
     
     func setUp() {
         setUpNavigationBar()
         setUpLayout()
         setUpDataSource()
-        applySnapshot()
     }
     
     func setUpNavigationBar() {
@@ -147,13 +179,16 @@ private extension AddressViewController {
     }
     
     func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<AddressViewSection, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<AddressSectionKind, Address>(
             collectionView: collectionView,
-            cellProvider: { collectionView, indexPath, _ in
-                let section = AddressViewSection(index: indexPath.section)
+            cellProvider: { [weak self] collectionView, indexPath, address in
+                let section = AddressSectionKind(index: indexPath.section)
                 switch section {
                 case .address:
                     let cell = collectionView.dequeueReusableCell(AddressCell.self, for: indexPath)
+                    cell?.setUp(address.formatted())
+                    let text = self?.searchController.searchBar.text?.replacingOccurrences(of: " ", with: ", ")
+                    cell?.highlighted(text ?? "")
                     return cell
                     
                 default: return UICollectionViewCell()
@@ -162,16 +197,18 @@ private extension AddressViewController {
         collectionView.dataSource = dataSource
     }
     
-    func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<AddressViewSection, UUID>()
-        snapshot.appendSections([.address])
-        snapshot.appendItems(Array(0...20).map { _ in UUID() })
-        dataSource?.apply(snapshot)
+    func applySnapshot(_ sections: [AddressSection]) {
+        var snapshot = NSDiffableDataSourceSnapshot<AddressSectionKind, Address>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
+        }
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
     
     func createLayout() -> UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
-            let section = AddressViewSection(index: sectionNumber)
+            let section = AddressSectionKind(index: sectionNumber)
             switch section {
             case .address: return self?.addressSectionLayout()
             default: return nil
@@ -203,8 +240,7 @@ private extension AddressViewController {
     }
     
     @objc func didTapSelectButton(_ sender: UIButton) {
-        print(#function)
-        coordinator?.dismiss()
+        viewModel.input.didTapSelected()
     }
     
     @objc func didTapBackButton(_ sender: UIButton) {
@@ -232,4 +268,14 @@ extension AddressViewController: UICollectionViewDelegate {
         }, completion: nil)
     }
     
+}
+
+extension AddressViewController: UISearchBarDelegate {
+    
+    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard searchBar.text?.isEmpty == false else {
+            return
+        }
+        viewModel.input.search(text: searchText)
+    }
 }
