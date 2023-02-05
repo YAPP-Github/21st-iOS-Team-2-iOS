@@ -204,7 +204,7 @@ final public class AlbumViewController: UIViewController {
     }
     
     @objc private func didTapTitleView(_ sender: UITapGestureRecognizer) {
-        print(#function)
+        coordinator.showAlbumList()
     }
 }
 

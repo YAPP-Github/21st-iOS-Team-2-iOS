@@ -11,4 +11,6 @@ import Foundation
 public protocol AlbumCoordinatorInterface: AnyObject {
     
     func dismiss()
+    func showAlbumList()
+    
 }

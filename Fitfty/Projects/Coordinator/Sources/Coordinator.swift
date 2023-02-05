@@ -49,6 +49,7 @@ enum CoordinatorType {
     case weather
     case myFitfty
     case album
+    case albumList
     case setting
     case profileSetting
     case feedSetting
