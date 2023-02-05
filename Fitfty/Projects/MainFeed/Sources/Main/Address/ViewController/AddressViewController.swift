@@ -131,6 +131,12 @@ private extension AddressViewController {
                 
             case .weather(let weatherNow, let address):
                 self?.updateAddressInfo(weather: weatherNow, address: address)
+                
+            case .completed(let completed):
+                guard completed else {
+                    return
+                }
+                self?.coordinator?.dismiss()
             }
         }).store(in: &cancellables)
     }

@@ -44,7 +44,7 @@ public final class MainViewModel {
     public init(
         addressRepository: AddressRepository = DefaultAddressRepository(),
         weatherRepository: WeatherRepository = DefaultWeatherRepository(),
-        userManager: UserManager = DefaultUserManager()
+        userManager: UserManager = DefaultUserManager.shared
     ) {
         self.addressRepository = addressRepository
         self.weatherRepository = weatherRepository

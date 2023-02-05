@@ -28,13 +28,18 @@ public final class AddressViewModel {
     
     private let addressRespository: AddressRepository
     private let weatherRepository: WeatherRepository
+    private let userManager: UserManager
+    
+    private var selectedAddress: CurrentValueSubject<Address?, Never> = .init(nil)
 
     public init(
         addressRespository: AddressRepository = DefaultAddressRepository(),
-        weatherRepository: WeatherRepository = DefaultWeatherRepository()
+        weatherRepository: WeatherRepository = DefaultWeatherRepository(),
+        userManager: UserManager = DefaultUserManager.shared
     ) {
         self.addressRespository = addressRespository
         self.weatherRepository = weatherRepository
+        self.userManager = userManager
     }
 
 }
@@ -46,6 +51,7 @@ extension AddressViewModel: ViewModelType {
         case sections([AddressSection])
         case weather(weather: WeatherNow, address: String)
         case isEmpty(Bool)
+        case completed(Bool)
     }
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
@@ -81,10 +87,15 @@ extension AddressViewModel: AddressViewModelInput {
                 self.currentState.send(.errorMessage("주소에 해당하는 현재 날씨를 가져오다가 알 수 없는 에러가 발생했습니다."))
             }
             currentState.send(.isLoading(false))
+            selectedAddress.send(address)
         }
     }
     
     func didTapSelected() {
-        
+        guard let address = selectedAddress.value else {
+            return
+        }
+        userManager.updateCurrentLocation(address)
+        currentState.send(.completed(true))
     }
 }
