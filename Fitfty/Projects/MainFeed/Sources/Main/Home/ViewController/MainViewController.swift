@@ -30,7 +30,7 @@ public final class MainViewController: UIViewController {
         return collectionView
     }()
     
-    private lazy var locationView = {
+    private lazy var locationView: LocationView = {
         let loacationView = LocationView("성북구 정릉동")
         loacationView.isHidden = true
         return loacationView
