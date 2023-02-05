@@ -90,6 +90,11 @@ public final class AddressInfoView: UIView {
         temperatureLabel.text = "\(temp)"
         weatherIconView.image = icon
     }
+    
+    func reset() {
+        addressLabel.text = nil
+        temperatureLabel.text = nil
+    }
 }
 
 private extension AddressInfoView {

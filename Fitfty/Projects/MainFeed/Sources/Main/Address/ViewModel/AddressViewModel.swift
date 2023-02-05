@@ -27,9 +27,14 @@ public final class AddressViewModel {
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     
     private let addressRespository: AddressRepository
+    private let weatherRepository: WeatherRepository
 
-    public init(addressRespository: AddressRepository = DefaultAddressRepository()) {
+    public init(
+        addressRespository: AddressRepository = DefaultAddressRepository(),
+        weatherRepository: WeatherRepository = DefaultWeatherRepository()
+    ) {
         self.addressRespository = addressRespository
+        self.weatherRepository = weatherRepository
     }
 
 }
@@ -66,7 +71,17 @@ extension AddressViewModel: AddressViewModelInput {
     }
     
     func didTapAddress(_ address: Address) {
-        
+        currentState.send(.isLoading(true))
+        Task {
+            do {
+                let weather = try await weatherRepository.fetchWeatherNow(longitude: address.x, latitude: address.y)
+                currentState.send(.weather(weather: weather, address: address.formatted()))
+            } catch {
+                Logger.debug(error: error, message: "현재 날씨 가져오기 실패")
+                self.currentState.send(.errorMessage("주소에 해당하는 현재 날씨를 가져오다가 알 수 없는 에러가 발생했습니다."))
+            }
+            currentState.send(.isLoading(false))
+        }
     }
     
     func didTapSelected() {
