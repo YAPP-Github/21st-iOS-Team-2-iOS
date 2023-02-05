@@ -285,8 +285,8 @@ private extension MainViewController {
     
     func codySectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(256),
-            heightDimension: .absolute(256)
+            widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.height - 380),
+            heightDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.height - 380)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
