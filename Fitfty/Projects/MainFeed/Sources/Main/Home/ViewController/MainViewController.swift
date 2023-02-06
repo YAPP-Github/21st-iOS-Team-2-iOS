@@ -160,7 +160,7 @@ private extension MainViewController {
                     return cell ?? UICollectionViewCell()
                     
                 case .styleTag:
-                    let items = ["포멀", "캐주얼", "미니멀", "포멀", "캐주얼", "미니멀", "포멀"]
+                    let items = ["filter", "남", "여", "미니멀", "모던", "캐주얼", "힙", "포멀", "러블리"]
                     let cell = collectionView.dequeueReusableCell(StyleCell.self, for: indexPath)
                     cell?.setUp(text: items[indexPath.item])
                     return cell ?? UICollectionViewCell()
@@ -276,7 +276,7 @@ private extension MainViewController {
     func styleSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(100),
-            heightDimension: .absolute(35)
+            heightDimension: .absolute(34)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -362,6 +362,9 @@ extension MainViewController: UICollectionViewDelegate {
             didTapWeather()
         case .cody:
             coordinator.showPost(profileType: .userProfile)
+        case .style:
+            let cell = collectionView.cellForItem(at: indexPath) as? StyleCell
+            cell?.toggle()
         default: return
         }
     }
