@@ -25,11 +25,6 @@ public final class WeatherViewController: UIViewController {
         viewModel.input.viewDidLoad()
     }
     
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.input.viewWillAppear()
-    }
-    
     public init(coordinator: WeatherCoordinatorInterface, viewModel: WeatherViewModel) {
         self.coordinator = coordinator
         self.viewModel = viewModel
@@ -52,6 +47,13 @@ public final class WeatherViewController: UIViewController {
         return locationView
     }()
     
+    private lazy var refreshControl: UIRefreshControl = {
+        let control = UIRefreshControl()
+        control.tintColor = CommonAsset.Colors.primaryBlueLight.color
+        control.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        return control
+    }()
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(WeatherCell.self)
@@ -60,6 +62,7 @@ public final class WeatherViewController: UIViewController {
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: HeaderView.className)
         collectionView.register(WeatherInfoHeaderView.self, forSupplementaryViewOfKind: WeatherInfoHeaderView.className)
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.refreshControl = refreshControl
         return collectionView
     }()
     
@@ -101,6 +104,9 @@ private extension WeatherViewController {
                     
                 case .isLoading(let isLoading):
                     isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                    
+                case .isRefreshLoading(let isLoading):
+                    isLoading ? self?.refreshControl.beginRefreshing() : self?.refreshControl.endRefreshing()
                     
                 case .sections(let sections):
                     self?.hideErrorNotiView()
@@ -317,11 +323,14 @@ private extension WeatherViewController {
     }
     
     @objc func didTapPrevButton(_ sender: FitftyButton) {
-        viewModel.input.viewWillAppear()
+        viewModel.input.refresh()
     }
     
     @objc func didTapMainButton(_ sender: FitftyButton) {
-        viewModel.input.viewWillAppear()
+        viewModel.input.refresh()
     }
     
+    @objc func refresh(_ sender: UIRefreshControl) {
+        viewModel.input.didScrollRefreshControl()
+    }
 }
