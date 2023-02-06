@@ -35,7 +35,7 @@ final class AlbumListCoordinator: Coordinator {
 
 private extension AlbumListCoordinator {
     func makeAlbumListViewController() -> UIViewController {
-        let viewController = AlbumListViewController(coordinator: self)
+        let viewController = AlbumListViewController(coordinator: self, viewModel: AlbumListViewModel())
         return viewController
     }
 }
