@@ -17,9 +17,7 @@ protocol MainViewModelInput {
     
     func viewDidLoad()
     
-    func viewWillAppear()
-    
-    func viewDidAppear()
+    func refresh()
 }
 
 protocol MainViewModelOutput {
@@ -94,17 +92,14 @@ extension MainViewModel: MainViewModelInput {
         }).store(in: &cancellables)
     }
     
-    func viewWillAppear() {
+    func refresh() {
         guard case .isLoading(let isLoading) = currentState.value, isLoading == false,
               let longitude = _location.value.longitude, let latitude = _location.value.latitude
         else {
             return
         }
+        currentState.send(.isLoading(true))
         update(longitude: longitude, latitude: latitude)
-    }
-    
-    func viewDidAppear() {
-        print(#function)
     }
     
 }
