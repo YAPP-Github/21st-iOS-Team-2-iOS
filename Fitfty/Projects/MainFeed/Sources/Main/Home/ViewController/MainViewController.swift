@@ -51,10 +51,9 @@ public final class MainViewController: UIViewController {
                          잠시 후 다시 확인해주세요.
                          """
         )
-        errorNotiView.backgroundColor = .white
-        errorNotiView.isHidden = true
         errorNotiView.setBackButtonTarget(target: self, action: #selector(didTapPrevButton(_:)))
         errorNotiView.setMainButtonTarget(target: self, action: #selector(didTapMainButton(_:)))
+        errorNotiView.isHidden = true
         return errorNotiView
     }()
     
@@ -128,9 +127,10 @@ private extension MainViewController {
             loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
             loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            errorNotiView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
-            errorNotiView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            errorNotiView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+            errorNotiView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            errorNotiView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            errorNotiView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            errorNotiView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
@@ -334,13 +334,11 @@ private extension MainViewController {
     
     func showErrorNotiView() {
         errorNotiView.isHidden = false
-        collectionView.isHidden = true
         locationView.isHidden = true
     }
     
     func hideErrorNotiView() {
         errorNotiView.isHidden = true
-        collectionView.isHidden = false
         locationView.isHidden = false
     }
     
