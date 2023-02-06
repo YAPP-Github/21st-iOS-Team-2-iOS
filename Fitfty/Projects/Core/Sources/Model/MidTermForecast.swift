@@ -50,3 +50,27 @@ public enum Forecast: String, Codable {
         }
     }
 }
+
+extension MidTermForecast: Equatable, Hashable {
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.date == rhs.date &&
+        lhs.amforecast == rhs.amforecast &&
+        lhs.pmforecast == rhs.pmforecast &&
+        lhs.amPrecipitation == rhs.amPrecipitation &&
+        lhs.pmPrecipitation == rhs.pmPrecipitation &&
+        lhs.maxTemp == rhs.maxTemp &&
+        lhs.minTemp == rhs.minTemp
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(date)
+        hasher.combine(amforecast)
+        hasher.combine(pmforecast)
+        hasher.combine(amPrecipitation)
+        hasher.combine(pmPrecipitation)
+        hasher.combine(maxTemp)
+        hasher.combine(minTemp)
+    }
+    
+}

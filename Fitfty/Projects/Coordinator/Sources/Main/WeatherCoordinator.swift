@@ -9,6 +9,7 @@
 import UIKit
 import MainFeed
 import Common
+import Core
 
 final class WeatherCoordinator: Coordinator {
     
@@ -32,7 +33,14 @@ final class WeatherCoordinator: Coordinator {
 private extension WeatherCoordinator {
     
     func makeWeatherViewController() -> UIViewController {
-        let viewController = WeatherViewController(coordinator: self, viewModel: WeatherViewModel())
+        let viewController = WeatherViewController(
+            coordinator: self,
+            viewModel: WeatherViewModel(
+                addressRepository: DefaultAddressRepository(),
+                weatherRepository: DefaultWeatherRepository(),
+                userManager: DefaultUserManager.shared
+            )
+        )
         return viewController
     }
     
