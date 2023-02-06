@@ -13,7 +13,8 @@ class AlbumListCell: UITableViewCell {
     
     private lazy var thumbnailImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
     
