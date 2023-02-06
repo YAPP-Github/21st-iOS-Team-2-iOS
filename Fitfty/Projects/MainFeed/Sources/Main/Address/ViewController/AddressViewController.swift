@@ -57,6 +57,7 @@ public final class AddressViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(AddressCell.self)
         collectionView.delegate = self
+        collectionView.keyboardDismissMode = .onDrag
         return collectionView
     }()
     
