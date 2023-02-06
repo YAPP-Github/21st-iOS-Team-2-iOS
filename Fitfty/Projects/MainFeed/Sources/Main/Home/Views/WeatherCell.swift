@@ -31,7 +31,7 @@ final class WeatherCell: UICollectionViewCell {
     
     private lazy var separatorView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = CommonAsset.Colors.gray01.color
         view.widthAnchor.constraint(equalToConstant: 1).isActive = true
         view.heightAnchor.constraint(equalToConstant: 72).isActive = true
         return view
@@ -54,7 +54,7 @@ final class WeatherCell: UICollectionViewCell {
     
     private lazy var weatherIconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = CommonAsset.Images.lostOfCloudy.image
+        imageView.image = CommonAsset.Images.cloudAndSun.image
         imageView.widthAnchor.constraint(equalToConstant: 48).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         return imageView
@@ -115,7 +115,7 @@ extension WeatherCell {
     
     func setUp(hour: String, image: UIImage?, temp: Int, isCurrentTime: Bool) {
         setUpHourLabel(by: isCurrentTime)
-        hourLabel.text = "\(hour)시"
+        hourLabel.text = isCurrentTime ? "지금" : hour
         weatherIconImageView.image = image
         tempLabel.text = "\(temp)°"
     }

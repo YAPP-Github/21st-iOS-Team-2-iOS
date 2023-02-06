@@ -185,7 +185,7 @@ extension WeeklyWeatherCell {
         weekLabel.text = "월"
         monthDayLabel.text = "12.19"
         amInfoView.setUp(meridiem: "오전", precipitation: "0%", icon: CommonAsset.Images.sunny.image)
-        pmInfoView.setUp(meridiem: "오후", precipitation: "10%", icon: CommonAsset.Images.lostOfCloudy.image)
+        pmInfoView.setUp(meridiem: "오후", precipitation: "10%", icon: CommonAsset.Images.cloudAndSun.image)
         minTempLabel.text = "-12°"
         maxTempLabel.text = "3°"
 

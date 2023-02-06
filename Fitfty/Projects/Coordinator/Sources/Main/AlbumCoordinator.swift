@@ -13,7 +13,7 @@ import Common
 final class AlbumCoordinator: Coordinator {
     
     var type: CoordinatorType { .album }
-    var finishDelegate: CoordinatorFinishDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
     var parentCoordinator: Coordinator?
@@ -49,10 +49,7 @@ private extension AlbumCoordinator {
 extension AlbumCoordinator: AlbumCoordinatorInterface {
     
     func dismiss() {
-        bottomSheetDelegate?.dismissBottomSheet { [weak self] in
-            guard let self = self else {
-                return
-            }
+        bottomSheetDelegate?.dismissBottomSheet {
             self.navigationController.viewControllers.removeAll()
             self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         }

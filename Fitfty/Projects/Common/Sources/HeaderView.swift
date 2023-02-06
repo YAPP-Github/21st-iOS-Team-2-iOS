@@ -12,14 +12,14 @@ final public class HeaderView: UICollectionReusableView {
         
     private lazy var largeTitleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .label
+        label.textColor = .black
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return label
     }()
     
     private lazy var smallTitleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .label
+        label.textColor = .black
         label.numberOfLines = 0
         return label
     }()
