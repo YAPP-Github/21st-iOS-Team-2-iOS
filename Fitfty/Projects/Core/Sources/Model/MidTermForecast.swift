@@ -6,7 +6,8 @@
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import Common
 
 public struct MidTermForecast {
     
@@ -30,10 +31,22 @@ public extension MidTermForecast {
 
 public enum Forecast: String, Codable {
     case sunny = "맑음"
-    case lostOfCloudy = "구름많음"
+    case cloudAndSun = "구름많음"
     case cloudy = "흐림"
     case rain = "비"
     case rainOrSnow = "비 또는 눈"
     case snow = "눈"
     case scurry = "소나기"
+    
+    public var icon: UIImage {
+        switch self {
+        case .sunny: return CommonAsset.Images.sunny.image
+        case .cloudAndSun: return CommonAsset.Images.cloudAndSun.image
+        case .cloudy: return CommonAsset.Images.cloudy.image
+        case .rain: return CommonAsset.Images.rain.image
+        case .rainOrSnow: return CommonAsset.Images.rainOrSnow.image
+        case .snow: return CommonAsset.Images.snow.image
+        case .scurry: return CommonAsset.Images.scurry.image
+        }
+    }
 }

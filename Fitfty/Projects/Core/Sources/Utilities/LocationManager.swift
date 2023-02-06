@@ -30,13 +30,12 @@ public final class LocationManager: NSObject {
         self.manager.delegate = self
     }
     
-    public func currentLocation() -> AnyPublisher<CLLocation, Never> {
+    public func currentLocation() -> AnyPublisher<CLLocation?, Never> {
         guard _location.value == nil else {
             return Empty().eraseToAnyPublisher()
         }
         manager.startUpdatingLocation()
         return _location
-            .compactMap { $0 }
             .eraseToAnyPublisher()
     }
     
@@ -60,7 +59,7 @@ extension LocationManager: CLLocationManagerDelegate {
         case .notDetermined, .restricted:
             manager.requestWhenInUseAuthorization()
         default:
-            _location.send(nil)
+            _location.send(CLLocation(latitude: 37.5663174209601, longitude: 126.977829174031))
         }
         _authorizationStatus.send(status)
     }

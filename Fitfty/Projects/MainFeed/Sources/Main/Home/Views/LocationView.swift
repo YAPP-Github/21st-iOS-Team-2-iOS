@@ -17,7 +17,7 @@ final class LocationView: UIStackView {
     
     private lazy var locationLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .label
+        label.textColor = .black
         label.font = .preferredFont(for: .callout, weight: .semibold)
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -31,7 +31,7 @@ final class LocationView: UIStackView {
             scale: .large
         )
         button.setImage(UIImage(systemName: "chevron.down")?.withConfiguration(config), for: .normal)
-        button.tintColor = .label
+        button.tintColor = .black
         button.addTarget(self, action: #selector(didTapButton(_:)), for: .touchUpInside)
         return button
     }()
@@ -54,4 +54,7 @@ final class LocationView: UIStackView {
         print(#function)
     }
     
+    func update(location: String) {
+        locationLabel.text = location
+    }
 }

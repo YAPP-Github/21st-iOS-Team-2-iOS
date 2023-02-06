@@ -188,7 +188,7 @@ private extension BottomSheetViewController {
         let bottomPadding = view.safeAreaInsets.bottom + view.safeAreaInsets.top
         bottomSheetViewTopConstraint.constant = safeAreaHeight + bottomPadding
         
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveLinear) { [weak self] in
             self?.dimmedView.alpha = 0.0
             self?.view.layoutIfNeeded()
         } completion: { [weak self] _ in
