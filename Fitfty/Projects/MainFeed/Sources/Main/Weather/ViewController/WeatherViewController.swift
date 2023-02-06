@@ -7,17 +7,27 @@
 //
 
 import UIKit
+import Combine
 import Common
 
 public final class WeatherViewController: UIViewController {
     
-    private var coordinator: WeatherCoordinatorInterface
     private var viewModel: WeatherViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
+    
+    private var coordinator: WeatherCoordinatorInterface
     private var dataSource: UICollectionViewDiffableDataSource<WeatherSectionKind, WeatherCellModel>?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
+        bind()
+        viewModel.input.viewDidLoad()
+    }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.input.viewWillAppear()
     }
     
     public init(coordinator: WeatherCoordinatorInterface, viewModel: WeatherViewModel) {
@@ -38,6 +48,7 @@ public final class WeatherViewController: UIViewController {
         let locationView = LocationView("성북구 정릉동")
         let tappedLoacationView = UITapGestureRecognizer(target: self, action: #selector(didTapLoactionView(_:)))
         locationView.addGestureRecognizer(tappedLoacationView)
+        locationView.isHidden = true
         return locationView
     }()
     
@@ -51,10 +62,52 @@ public final class WeatherViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
+    
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        loadingView.startAnimating()
+        return loadingView
+    }()
+    
+    private lazy var errorNotiView: ErrorNotiView = {
+        let errorNotiView = ErrorNotiView(
+            title: "잠시 후 다시 확인해주세요.",
+            description: """
+                         지금 서비스와 연결이 어려워요.
+                         문제를 해결하기 위해 노력하고 있어요.
+                         잠시 후 다시 확인해주세요.
+                         """
+        )
+        errorNotiView.setBackButtonTarget(target: self, action: #selector(didTapPrevButton(_:)))
+        errorNotiView.setMainButtonTarget(target: self, action: #selector(didTapMainButton(_:)))
+        errorNotiView.isHidden = true
+        return errorNotiView
+    }()
 
 }
 
 private extension WeatherViewController {
+    
+    func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .currentLocation(let address):
+                    self?.locationView.update(location: "\(address.secondName) \(address.thirdName)")
+                    
+                case .errorMessage(let message):
+                    self?.showErrorNotiView()
+                    self?.showAlert(message: message)
+                    
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                    
+                case .sections(let sections):
+                    self?.hideErrorNotiView()
+                    self?.applySnapshot(sections)
+                }
+            }).store(in: &cancellables)
+    }
     
     func setUp() {
         setUpLayout()
@@ -81,7 +134,7 @@ private extension WeatherViewController {
     }
     
     func setUpLayout() {
-        view.addSubviews(locationView, collectionView)
+        view.addSubviews(locationView, collectionView, loadingIndicatorView, errorNotiView)
         view.backgroundColor = .white
         NSLayoutConstraint.activate([
             locationView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -90,7 +143,15 @@ private extension WeatherViewController {
             collectionView.topAnchor.constraint(equalTo: locationView.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            errorNotiView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            errorNotiView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            errorNotiView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            errorNotiView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
@@ -244,4 +305,23 @@ private extension WeatherViewController {
         ]
         return section
     }
+    
+    func showErrorNotiView() {
+        errorNotiView.isHidden = false
+        locationView.isHidden = true
+    }
+    
+    func hideErrorNotiView() {
+        errorNotiView.isHidden = true
+        locationView.isHidden = false
+    }
+    
+    @objc func didTapPrevButton(_ sender: FitftyButton) {
+        viewModel.input.viewWillAppear()
+    }
+    
+    @objc func didTapMainButton(_ sender: FitftyButton) {
+        viewModel.input.viewWillAppear()
+    }
+    
 }
