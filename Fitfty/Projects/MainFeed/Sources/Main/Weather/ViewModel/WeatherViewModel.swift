@@ -17,8 +17,9 @@ protocol WeatherViewModelInput {
     
     func viewDidLoad()
     
-    func viewWillAppear()
+    func refresh()
     
+    func didScrollRefreshControl()
 }
 
 protocol WeatherViewModelOutput {
@@ -60,6 +61,7 @@ extension WeatherViewModel: ViewModelType {
         case currentLocation(Address)
         case errorMessage(String)
         case isLoading(Bool)
+        case isRefreshLoading(Bool)
         case sections([WeatherSection])
     }
     
@@ -83,21 +85,30 @@ extension WeatherViewModel: WeatherViewModelInput {
         
         currentState.sink(receiveValue: { [weak self] state in
             switch state {
-            case .currentLocation, .errorMessage, .sections:
+            case .errorMessage, .sections:
                 self?.currentState.send(.isLoading(false))
+                self?.currentState.send(.isRefreshLoading(false))
                 
             default: return
             }
         }).store(in: &cancellables)
     }
     
-    func viewWillAppear() {
+    func refresh() {
         guard case .isLoading(let isLoading) = currentState.value, isLoading == false,
               let longitude = _location.value.longitude, let latitude = _location.value.latitude
         else {
             return
         }
         currentState.send(.isLoading(true))
+        update(longitude: longitude, latitude: latitude)
+    }
+    
+    func didScrollRefreshControl() {
+        guard let longitude = _location.value.longitude, let latitude = _location.value.latitude else {
+            return
+        }
+        currentState.send(.isRefreshLoading(true))
         update(longitude: longitude, latitude: latitude)
     }
 }
@@ -140,7 +151,6 @@ private extension WeatherViewModel {
     }
     
     func getAddress(longitude: Double, latitude: Double) async throws -> Address {
-        currentState.send(.isLoading(true))
         if let address = userManager.currentLocation {
             return address
         } else {
@@ -154,14 +164,12 @@ private extension WeatherViewModel {
     }
     
     func getTodayWeathers(longitude: Double, latitude: Double) async throws -> [ShortTermForecast] {
-        currentState.send(.isLoading(true))
         return try await weatherRepository.fetchShortTermForecast(
             longitude: longitude.description, latitude: latitude.description
         )
     }
     
     func getAnotherDayWeathers(longitude: Double, latitude: Double) async throws -> [MidTermForecast] {
-        currentState.send(.isLoading(true))
         return try await weatherRepository.fetchMidTermForecast(
             longitude: longitude.description, latitude: latitude.description
         )
