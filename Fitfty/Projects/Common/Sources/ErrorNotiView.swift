@@ -10,10 +10,6 @@ import UIKit
 
 public final class ErrorNotiView: UIView {
     
-    public override var intrinsicContentSize: CGSize {
-        return CGSize(width: -1.0, height: 438)
-    }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -45,9 +41,10 @@ public final class ErrorNotiView: UIView {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = FitftyFont.appleSDBold(size: 32).font
+        label.font = FitftyFont.appleSDBold(size: 30).font
         label.textAlignment = .center
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        label.numberOfLines = 2
         return label
     }()
     
@@ -95,18 +92,25 @@ public final class ErrorNotiView: UIView {
 private extension ErrorNotiView {
     
     func configure() {
-        addSubviews(weatherImageView, backgroundStackView, buttonStackView)
+        let backgroundView = UIView()
+        backgroundView.addSubviews(weatherImageView, backgroundStackView, buttonStackView)
         NSLayoutConstraint.activate([
-            weatherImageView.topAnchor.constraint(equalTo: topAnchor),
-            weatherImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            weatherImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            weatherImageView.topAnchor.constraint(equalTo: backgroundView.topAnchor),
+            weatherImageView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
+            weatherImageView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor),
             backgroundStackView.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: 78),
-            backgroundStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            backgroundStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            buttonStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            buttonStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            buttonStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            backgroundStackView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 20),
+            backgroundStackView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -20),
+            buttonStackView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor),
+            buttonStackView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 20),
+            buttonStackView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -20),
             backgroundStackView.bottomAnchor.constraint(equalTo: buttonStackView.topAnchor, constant: -20)
+        ])
+        addSubviews(backgroundView)
+        NSLayoutConstraint.activate([
+            backgroundView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            backgroundView.widthAnchor.constraint(equalTo: widthAnchor),
+            backgroundView.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
     }
 }
