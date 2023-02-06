@@ -10,12 +10,9 @@ import UIKit
 import Common
 
 final public class AlbumListViewController: UIViewController {
-    
-    enum Section: CaseIterable {
-        case main
-    }
-
+  
     private let coordinator: AlbumListCoordinatorInterface
+    private let viewModel: AlbumListViewModel
     
     private lazy var navigationBarView: BarView = {
         let barView = BarView(title: "최근 항목", isChevronButtonHidden: false)
@@ -32,15 +29,17 @@ final public class AlbumListViewController: UIViewController {
         return tableView
     }()
     
-    private var dataSource: UITableViewDiffableDataSource<Section, UUID>?
+    private var dataSource: UITableViewDiffableDataSource<AlbumListSection, AlbumInfo>?
+    private var albums: [AlbumInfo]?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
     }
     
-    public init(coordinator: AlbumListCoordinatorInterface) {
+    public init(coordinator: AlbumListCoordinatorInterface, viewModel: AlbumListViewModel) {
         self.coordinator = coordinator
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -68,6 +67,7 @@ final public class AlbumListViewController: UIViewController {
     }
     
     private func setUp() {
+        albums = viewModel.input.getAlbums()
         setcontstratinsLayout()
         setDataSource()
         applySnapshot()
@@ -77,18 +77,22 @@ final public class AlbumListViewController: UIViewController {
 private extension AlbumListViewController {
     
     func setDataSource() {
-        dataSource = UITableViewDiffableDataSource<Section, UUID>(
-            tableView: tableView, cellProvider: { tableView, indexPath, _ in
+        dataSource = UITableViewDiffableDataSource<AlbumListSection, AlbumInfo>(
+            tableView: tableView, cellProvider: { tableView, indexPath, albumInfo in
                 let cell = tableView.dequeueReusableCell(withIdentifier: AlbumListCell.className, for: indexPath) as? AlbumListCell
-                cell?.setUp(image: CommonAsset.Images.sample.image, title: "내 앨범", photoCount: "1236")
+                cell?.setUp(
+                    image: CommonAsset.Images.sample.image,
+                    title: albumInfo.name,
+                    photoCount: String(albumInfo.photoCount)
+                )
                 return cell
             })
     }
     
     func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(Array(0..<10).map { _ in UUID() })
+        var snapshot = NSDiffableDataSourceSnapshot<AlbumListSection, AlbumInfo>()
+        snapshot.appendSections([.album])
+        snapshot.appendItems(albums ?? [])
         dataSource?.apply(snapshot)
     }
 }
