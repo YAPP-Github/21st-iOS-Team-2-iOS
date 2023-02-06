@@ -10,9 +10,15 @@ import UIKit
 import Common
 
 final class AlbumCell: UICollectionViewCell {
-    private lazy var imageView = UIImageView()
     
-    private lazy var button: UIButton = {
+    private lazy var photoImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
+    private lazy var photoButton: UIButton = {
         let button = UIButton()
         button.setImage(CommonAsset.Images.btnAlbumUnSelcted.image, for: .normal)
         button.isUserInteractionEnabled = false
@@ -22,16 +28,16 @@ final class AlbumCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                button.setImage(CommonAsset.Images.btnAlbumSelected.image, for: .normal)
+                photoButton.setImage(CommonAsset.Images.btnAlbumSelected.image, for: .normal)
             } else {
-                button.setImage(CommonAsset.Images.btnAlbumUnSelcted.image, for: .normal)
+                photoButton.setImage(CommonAsset.Images.btnAlbumUnSelcted.image, for: .normal)
             }
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        imageView.image = CommonAsset.Images.sample.image
+        photoImageView.image = CommonAsset.Images.sample.image
         setConstraintsLayout()
     }
     
@@ -40,14 +46,14 @@ final class AlbumCell: UICollectionViewCell {
     }
     
     private func setConstraintsLayout() {
-        addSubviews(imageView, button)
+        addSubviews(photoImageView, photoButton)
         NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            button.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            button.topAnchor.constraint(equalTo: topAnchor, constant: 8)
+            photoImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            photoImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            photoImageView.topAnchor.constraint(equalTo: topAnchor),
+            photoImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            photoButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            photoButton.topAnchor.constraint(equalTo: topAnchor, constant: 8)
         ])
     }
 }
@@ -55,7 +61,7 @@ final class AlbumCell: UICollectionViewCell {
 extension AlbumCell {
     
     func setImage(image: UIImage) {
-        imageView.image = image
+        photoImageView.image = image
     }
 
 }
