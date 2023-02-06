@@ -13,7 +13,7 @@ public final class WeatherViewController: UIViewController {
     
     private var coordinator: WeatherCoordinatorInterface
     private var viewModel: WeatherViewModel
-    private var dataSource: UICollectionViewDiffableDataSource<WeatherViewSection, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<WeatherSectionKind, WeatherCellModel>?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,7 +60,6 @@ private extension WeatherViewController {
         setUpLayout()
         setUpNavigationBar()
         setUpDataSource()
-        applySnapshot()
     }
     
     func setUpNavigationBar() {
@@ -96,28 +95,29 @@ private extension WeatherViewController {
     }
     
     func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<WeatherViewSection, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<WeatherSectionKind, WeatherCellModel>(
             collectionView: collectionView,
-            cellProvider: { collectionView, indexPath, _ in
-                let section = WeatherViewSection(index: indexPath.section)
-                switch section {
-                case .today:
+            cellProvider: { collectionView, indexPath, item in
+                switch item {
+                case .short(let weather):
                     let cell = collectionView.dequeueReusableCell(WeatherCell.self, for: indexPath)
-                    return cell
-                    
-                case .anotherDay:
+                    cell?.setUp(
+                        hour: weather.date.toString(.meridiemHour),
+                        image: weather.forecast.icon,
+                        temp: weather.temp,
+                        isCurrentTime: weather.isCurrent
+                    )
+                    return cell ?? UICollectionViewCell()
+                case .mid(let weather):
                     let cell = collectionView.dequeueReusableCell(WeeklyWeatherCell.self, for: indexPath)
                     if indexPath.item == 0 {
                         cell?.highlighted()
                     }
-                    cell?.setUp()
-                    return cell
-                    
-                default:
-                    return UICollectionViewCell()
+                    cell?.setUp(weather: weather)
+                    return cell ?? UICollectionViewCell()
                 }
             })
-        dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+        dataSource?.supplementaryViewProvider = { [weak self] collectionView, elementKind, indexPath in
             switch elementKind {
             case HeaderView.className:
                 let headerView = collectionView.dequeueReusableSupplementaryView(
@@ -144,11 +144,15 @@ private extension WeatherViewController {
                 )
                 
             case WeatherInfoHeaderView.className:
+                guard let self = self else {
+                    return UICollectionReusableView()
+                }
                 let reusableView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: elementKind,
                     withReuseIdentifier: WeatherInfoHeaderView.className,
                     for: indexPath
                 ) as? WeatherInfoHeaderView
+                reusableView?.setUp(viewModel: self.viewModel.output.weatherInfoViewModel)
                 return reusableView
                 
             default: return UICollectionReusableView()
@@ -158,18 +162,19 @@ private extension WeatherViewController {
         collectionView.dataSource = dataSource
     }
     
-    func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<WeatherViewSection, UUID>()
-        snapshot.appendSections([.today])
-        snapshot.appendItems(Array(0...23).map { _ in UUID() })
-        snapshot.appendSections([.anotherDay])
-        snapshot.appendItems(Array(0...10).map { _ in UUID() })
-        dataSource?.apply(snapshot)
+    func applySnapshot(_ sections: [WeatherSection]) {
+        var snapshot = NSDiffableDataSourceSnapshot<WeatherSectionKind, WeatherCellModel>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
+        }
+        snapshot.reloadSections([.today])
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
     
     func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
-            let section = WeatherViewSection(index: sectionNumber)
+            let section = WeatherSectionKind(index: sectionNumber)
             switch section {
             case .today: return self?.weatherSectionLayout()
             case .anotherDay: return self?.anotherDaySectionLayout()
