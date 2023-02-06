@@ -18,7 +18,7 @@ final class PhotoService: NSObject {
     }
     
     private enum Const {
-        static let titleText = "이미지"
+        static let titleText = "최근 항목"
         static let predicate: NSPredicate = .init(
             format: "mediaType == %d",
             PHAssetMediaType.image.rawValue
@@ -51,7 +51,8 @@ final class PhotoService: NSObject {
                 identifier: nil,
                 name: Const.titleText,
                 photoCount: standardAlbum.count,
-                album: standardAlbum
+                album: standardAlbum,
+                thumbNailImage: assetToImage(asset: standardAlbum[0])
             )
         )
         
@@ -74,12 +75,16 @@ final class PhotoService: NSObject {
                 fetchOptions.predicate = Const.predicate
                 fetchOptions.sortDescriptors = Const.sortDescriptors
                 let smartAlbums = PHAsset.fetchAssets(in: smartAlbum, options: fetchOptions)
+                guard 0 < smartAlbums.count else {
+                    return
+                }
                 allAlbums.append(
                     .init(
                         identifier: smartAlbum.localIdentifier,
                         name: smartAlbum.localizedTitle ?? Const.titleText,
                         photoCount: smartAlbums.count,
-                        album: smartAlbums
+                        album: smartAlbums,
+                        thumbNailImage: self.assetToImage(asset: smartAlbums[0])
                     )
                 )
             }
@@ -127,6 +132,24 @@ final class PhotoService: NSObject {
             completion(image)
         }
     }
+    
+    func assetToImage(asset: PHAsset) -> UIImage {
+        var image = UIImage()
+        let manager = PHImageManager.default()
+        let options = PHImageRequestOptions()
+        options.deliveryMode = .opportunistic
+        
+        manager.requestImage(
+            for: asset,
+            targetSize: .zero,
+            contentMode: .aspectFill,
+            options: options
+        ) { (result, _) -> Void in
+            image = result ?? UIImage()
+        }
+        return image
+    }
+    
 }
 
 // 사진 접근 권한: 선택된 사진

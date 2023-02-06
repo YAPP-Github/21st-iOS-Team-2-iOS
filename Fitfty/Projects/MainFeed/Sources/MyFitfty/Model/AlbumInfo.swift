@@ -7,10 +7,12 @@
 //
 
 import Photos
+import UIKit
 
 struct AlbumInfo: Hashable {
     let identifier: String?
     let name: String
     let photoCount: Int
     let album: PHFetchResult<PHAsset>
+    let thumbNailImage: UIImage
 }
