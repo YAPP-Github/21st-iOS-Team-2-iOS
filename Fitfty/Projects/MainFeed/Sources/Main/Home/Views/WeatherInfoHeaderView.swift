@@ -7,10 +7,21 @@
 //
 
 import UIKit
+import Combine
+import Common
 
 final class WeatherInfoHeaderView: UICollectionReusableView {
 
+    private var viewModel: WeatherInfoHeaderViewModel?
+    private var cancellables: Set<AnyCancellable> = .init()
+    
     private lazy var weatherInfoView: WeatherInfoView = .init()
+    
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white, alpha: 1, style: .medium)
+        loadingView.startAnimating()
+        return loadingView
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -18,25 +29,48 @@ final class WeatherInfoHeaderView: UICollectionReusableView {
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func configure() {
-        addSubviews(weatherInfoView)
+        addSubviews(weatherInfoView, loadingIndicatorView)
         NSLayoutConstraint.activate([
             weatherInfoView.topAnchor.constraint(equalTo: topAnchor),
             weatherInfoView.leadingAnchor.constraint(equalTo: leadingAnchor),
             weatherInfoView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            weatherInfoView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            weatherInfoView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            loadingIndicatorView.widthAnchor.constraint(equalTo: widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: leadingAnchor)
         ])
+    }
+    
+    private func bind() {
+        viewModel?.state.sinkOnMainThread(receiveValue: { [weak self] state in
+            switch state {
+            case .currentWeather(let weather):
+                self?.weatherInfoView.setUp(
+                    temp: weather.temp,
+                    condition: weather.forecast.rawValue,
+                    minimum: weather.minTemp,
+                    maximum: weather.maxTemp
+                )
+                
+            case .isLoading(let isLoading):
+                isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+            }
+        }).store(in: &cancellables)
     }
     
 }
 
 extension WeatherInfoHeaderView {
     
-    func setUp(temp: Int, condition: String, minimum: Int, maximum: Int) {
-        weatherInfoView.setUp(temp: temp, condition: condition, minimum: minimum, maximum: maximum)
+    func setUp(viewModel: WeatherInfoHeaderViewModel) {
+        self.viewModel = viewModel
+        bind()
+        viewModel.input.fetch()
     }
     
 }
