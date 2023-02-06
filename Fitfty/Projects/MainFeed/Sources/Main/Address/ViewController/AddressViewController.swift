@@ -15,8 +15,8 @@ public final class AddressViewController: UIViewController {
 
     private var cancellables: Set<AnyCancellable> = .init()
     
-    private weak var coordinator: AddressCoordinatorInterface?
-    private var viewModel: AddressViewModel
+    private let coordinator: AddressCoordinatorInterface
+    private let viewModel: AddressViewModel
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +36,8 @@ public final class AddressViewController: UIViewController {
     
     override public func removeFromParent() {
         super.removeFromParent()
-        coordinator?.dismiss()
+        searchController.dismiss(animated: true)
+        coordinator.finished()
     }
     
     private var dataSource: UICollectionViewDiffableDataSource<AddressSectionKind, Address>?
@@ -136,7 +137,8 @@ private extension AddressViewController {
                 guard completed else {
                     return
                 }
-                self?.coordinator?.dismiss()
+                self?.searchController.dismiss(animated: true)
+                self?.coordinator.dismiss()
             }
         }).store(in: &cancellables)
     }
@@ -256,8 +258,8 @@ private extension AddressViewController {
     }
     
     @objc func didTapCancelButton(_ sender: UIButton) {
-        print(#function)
-        coordinator?.dismiss()
+        searchController.dismiss(animated: true)
+        coordinator.dismiss()
     }
     
     @objc func didTapSelectButton(_ sender: UIButton) {
@@ -276,7 +278,7 @@ private extension AddressViewController {
     }
     
     func updateAddressInfo(weather: WeatherNow, address: String) {
-        self.addressInfoView.reset()
+        addressInfoView.reset()
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
             self?.addressInfoView.isHidden = false
             self?.addressInfoView.alpha = 1
