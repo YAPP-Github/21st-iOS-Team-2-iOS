@@ -20,7 +20,7 @@ public protocol UserManager {
 
 public final class DefaultUserManager {
     
-    public static let shared = DefaultUserManager()
+    public static let shared = DefaultUserManager(localStorage: UserDefaults.standard)
     
     private let localStorage: LocalStorageService
     
@@ -28,15 +28,9 @@ public final class DefaultUserManager {
     
     private var cancellables: Set<AnyCancellable> = .init()
     
-    private init(localStorage: LocalStorageService = UserDefaults.standard) {
+    private init(localStorage: LocalStorageService) {
         self.localStorage = localStorage
-
-        LocationManager.shared.currentLocation()
-            .compactMap { $0 }
-            .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
-            .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
-                self?._location.send((longitude, latitude))
-            }).store(in: &cancellables)
+        fetchCurrentLocation()
     }
 }
 
@@ -63,8 +57,20 @@ extension DefaultUserManager: UserManager {
         }
         localStorage.write(key: .currentLocation, value: addressDictionary)
         _location.send(
-            (Double(address.x) ?? 127.016702905651, Double(address.y) ?? 37.5893588153919)
+            (Double(address.x) ?? 126.977829174031, Double(address.y) ?? 37.5663174209601)
         )
     }
     
+}
+
+private extension DefaultUserManager {
+    
+    func fetchCurrentLocation() {
+        LocationManager.shared.currentLocation()
+            .compactMap { $0 }
+            .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
+            .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                self?._location.send((longitude, latitude))
+            }).store(in: &cancellables)
+    }
 }

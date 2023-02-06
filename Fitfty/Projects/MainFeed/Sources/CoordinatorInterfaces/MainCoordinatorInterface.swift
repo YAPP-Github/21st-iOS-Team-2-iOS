@@ -7,14 +7,15 @@
 //
 
 import Foundation
+import Common
 
 public protocol MainCoordinatorInterface: AnyObject {
     
     func showSettingAddress()
     
-    func showUserProfile()
+    func showProfile(profileType: ProfileType)
     
-    func showUserPost()
+    func showPost(profileType: ProfileType)
 
     func showWeatherInfo()
     
