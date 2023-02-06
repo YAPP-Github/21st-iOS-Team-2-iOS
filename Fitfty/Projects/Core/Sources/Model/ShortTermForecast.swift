@@ -61,13 +61,13 @@ extension ShortTermForecast: Equatable, Hashable {
 
 public enum SkyState: String {
     case sunny = "1"
-    case lostOfCloudy = "3"
+    case cloudAndSun = "3"
     case cloudy = "4"
     
     public var localized: String {
         switch self {
         case .sunny: return "맑음"
-        case .lostOfCloudy: return "구름많음"
+        case .cloudAndSun: return "구름많음"
         case .cloudy: return "흐림"
         }
     }

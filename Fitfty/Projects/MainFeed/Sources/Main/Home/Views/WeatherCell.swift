@@ -54,7 +54,7 @@ final class WeatherCell: UICollectionViewCell {
     
     private lazy var weatherIconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = CommonAsset.Images.lostOfCloudy.image
+        imageView.image = CommonAsset.Images.cloudAndSun.image
         imageView.widthAnchor.constraint(equalToConstant: 48).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         return imageView

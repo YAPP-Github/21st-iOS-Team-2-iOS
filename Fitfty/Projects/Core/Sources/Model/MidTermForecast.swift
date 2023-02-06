@@ -31,7 +31,7 @@ public extension MidTermForecast {
 
 public enum Forecast: String, Codable {
     case sunny = "맑음"
-    case lostOfCloudy = "구름많음"
+    case cloudAndSun = "구름많음"
     case cloudy = "흐림"
     case rain = "비"
     case rainOrSnow = "비 또는 눈"
@@ -41,7 +41,7 @@ public enum Forecast: String, Codable {
     public var icon: UIImage {
         switch self {
         case .sunny: return CommonAsset.Images.sunny.image
-        case .lostOfCloudy: return CommonAsset.Images.lostOfCloudy.image
+        case .cloudAndSun: return CommonAsset.Images.cloudAndSun.image
         case .cloudy: return CommonAsset.Images.cloudy.image
         case .rain: return CommonAsset.Images.rain.image
         case .rainOrSnow: return CommonAsset.Images.rainOrSnow.image
