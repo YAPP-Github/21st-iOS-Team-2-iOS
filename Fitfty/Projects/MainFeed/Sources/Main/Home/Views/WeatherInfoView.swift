@@ -32,7 +32,7 @@ final class WeatherInfoView: UIStackView {
 
     private lazy var tempLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .label
+        label.textColor = .black
         label.font = FitftyFont.antonRegular(size: 64).font
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.heightAnchor.constraint(equalToConstant: 64).isActive = true
@@ -57,7 +57,7 @@ final class WeatherInfoView: UIStackView {
 
     private lazy var tempInfoLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .label
+        label.textColor = .black
         label.font = FitftyFont.appleSDBold(size: 13).font
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
