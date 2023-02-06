@@ -17,9 +17,7 @@ protocol MainViewModelInput {
     
     func viewDidLoad()
     
-    func viewWillAppear()
-    
-    func viewDidAppear()
+    func refresh()
 }
 
 protocol MainViewModelOutput {
@@ -42,9 +40,9 @@ public final class MainViewModel {
     )
 
     public init(
-        addressRepository: AddressRepository = DefaultAddressRepository(),
-        weatherRepository: WeatherRepository = DefaultWeatherRepository(),
-        userManager: UserManager = DefaultUserManager.shared
+        addressRepository: AddressRepository,
+        weatherRepository: WeatherRepository,
+        userManager: UserManager
     ) {
         self.addressRepository = addressRepository
         self.weatherRepository = weatherRepository
@@ -81,6 +79,7 @@ extension MainViewModel: MainViewModelInput {
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
                 print(longitude, latitude)
                 self?.update(longitude: longitude, latitude: latitude)
+                self?._location.send((longitude, latitude))
         }).store(in: &cancellables)
         
         currentState.sink(receiveValue: { [weak self] state in
@@ -93,15 +92,14 @@ extension MainViewModel: MainViewModelInput {
         }).store(in: &cancellables)
     }
     
-    func viewWillAppear() {
-        guard case .isLoading(let isLoading) = currentState.value, isLoading == false else {
+    func refresh() {
+        guard case .isLoading(let isLoading) = currentState.value, isLoading == false,
+              let longitude = _location.value.longitude, let latitude = _location.value.latitude
+        else {
             return
         }
-        _location.send(_location.value)
-    }
-    
-    func viewDidAppear() {
-        print(#function)
+        currentState.send(.isLoading(true))
+        update(longitude: longitude, latitude: latitude)
     }
     
 }

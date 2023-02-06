@@ -54,7 +54,7 @@ final class WeatherIconView: UIStackView {
         imageView.contentMode = .scaleAspectFit
         imageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
-        imageView.image = CommonAsset.Images.lostOfCloudy.image
+        imageView.image = CommonAsset.Images.cloudAndSun.image
         return imageView
     }()
 }

@@ -13,5 +13,6 @@ public final class AppAppearance {
         UIBarButtonItem.appearance().tintColor = .label
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.label]
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
+        UINavigationBar.appearance().barTintColor = .white
     }
 }

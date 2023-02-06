@@ -30,14 +30,31 @@ public final class MainViewController: UIViewController {
         return collectionView
     }()
     
-    private lazy var locationView = {
-        return LocationView("성북구 정릉동")
+    private lazy var locationView: LocationView = {
+        let loacationView = LocationView("성북구 정릉동")
+        loacationView.isHidden = true
+        return loacationView
     }()
     
     private lazy var loadingIndicatorView: LoadingView = {
-        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.5), alpha: 1)
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
         loadingView.startAnimating()
         return loadingView
+    }()
+    
+    private lazy var errorNotiView: ErrorNotiView = {
+        let errorNotiView = ErrorNotiView(
+            title: "잠시 후 다시 확인해주세요.",
+            description: """
+                         지금 서비스와 연결이 어려워요.
+                         문제를 해결하기 위해 노력하고 있어요.
+                         잠시 후 다시 확인해주세요.
+                         """
+        )
+        errorNotiView.setBackButtonTarget(target: self, action: #selector(didTapPrevButton(_:)))
+        errorNotiView.setMainButtonTarget(target: self, action: #selector(didTapMainButton(_:)))
+        errorNotiView.isHidden = true
+        return errorNotiView
     }()
     
     public override func viewDidLoad() {
@@ -49,13 +66,7 @@ public final class MainViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewModel.input.viewWillAppear()
-    }
-    
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        showWelcomeView()
-        viewModel.input.viewDidAppear()
+        viewModel.input.refresh()
     }
     
     public init(coordinator: MainCoordinatorInterface, viewModel: MainViewModel) {
@@ -80,13 +91,16 @@ private extension MainViewController {
                     self?.locationView.update(location: "\(address.secondName) \(address.thirdName)")
                     
                 case .errorMessage(let message):
+                    self?.showErrorNotiView()
                     self?.showAlert(message: message)
                     
                 case .isLoading(let isLoading):
                     isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
                     
                 case .sections(let sections):
+                    self?.hideErrorNotiView()
                     self?.applySnapshot(sections)
+                    self?.showWelcomeView()
                 }
             }).store(in: &cancellables)
     }
@@ -103,16 +117,20 @@ private extension MainViewController {
     
     func setUpLayout() {
         view.backgroundColor = .white
-        view.addSubviews(collectionView, loadingIndicatorView)
+        view.addSubviews(collectionView, loadingIndicatorView, errorNotiView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            loadingIndicatorView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            loadingIndicatorView.heightAnchor.constraint(equalTo: view.heightAnchor),
-            loadingIndicatorView.topAnchor.constraint(equalTo: view.topAnchor),
-            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            errorNotiView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            errorNotiView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            errorNotiView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            errorNotiView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
@@ -206,6 +224,7 @@ private extension MainViewController {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
+        snapshot.reloadSections([.weather])
         dataSource?.apply(snapshot, animatingDifferences: false)
     }
     
@@ -284,9 +303,10 @@ private extension MainViewController {
     }
     
     func codySectionLayout() -> NSCollectionLayoutSection? {
+        let imageSize: CGFloat = max(view.safeAreaLayoutGuide.layoutFrame.height - 380, 256)
         let layoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(256),
-            heightDimension: .absolute(256)
+            widthDimension: .absolute(imageSize),
+            heightDimension: .absolute(imageSize)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -309,7 +329,25 @@ private extension MainViewController {
     }
     
     @objc func didTapProfileStackView(_ sender: Any?) {
-        coordinator.showUserProfile()
+        coordinator.showProfile(profileType: .userProfile)
+    }
+    
+    func showErrorNotiView() {
+        errorNotiView.isHidden = false
+        locationView.isHidden = true
+    }
+    
+    func hideErrorNotiView() {
+        errorNotiView.isHidden = true
+        locationView.isHidden = false
+    }
+    
+    @objc func didTapPrevButton(_ sender: FitftyButton) {
+        viewModel.input.refresh()
+    }
+    
+    @objc func didTapMainButton(_ sender: FitftyButton) {
+        viewModel.input.refresh()
     }
     
 }
@@ -323,7 +361,7 @@ extension MainViewController: UICollectionViewDelegate {
         case .weather:
             didTapWeather()
         case .cody:
-            coordinator.showUserPost()
+            coordinator.showPost(profileType: .userProfile)
         default: return
         }
     }

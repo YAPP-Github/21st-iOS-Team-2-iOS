@@ -73,10 +73,10 @@ final class CodyCell: UICollectionViewCell {
         let dimmedView = UIView()
         dimmedView.backgroundColor = .black.withAlphaComponent(0.4)
         image.addSubviews(dimmedView)
-        dimmedView.widthAnchor.constraint(equalToConstant: 256).isActive = true
+        dimmedView.leadingAnchor.constraint(equalTo: image.leadingAnchor).isActive = true
+        dimmedView.trailingAnchor.constraint(equalTo: image.trailingAnchor).isActive = true
         dimmedView.heightAnchor.constraint(equalToConstant: 61).isActive = true
         dimmedView.bottomAnchor.constraint(equalTo: image.bottomAnchor).isActive = true
-        dimmedView.centerXAnchor.constraint(equalTo: image.centerXAnchor).isActive = true
         return image
     }()
     

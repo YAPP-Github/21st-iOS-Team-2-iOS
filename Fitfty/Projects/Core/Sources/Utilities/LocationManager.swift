@@ -59,7 +59,7 @@ extension LocationManager: CLLocationManagerDelegate {
         case .notDetermined, .restricted:
             manager.requestWhenInUseAuthorization()
         default:
-            _location.send(nil)
+            _location.send(CLLocation(latitude: 37.5663174209601, longitude: 126.977829174031))
         }
         _authorizationStatus.send(status)
     }
