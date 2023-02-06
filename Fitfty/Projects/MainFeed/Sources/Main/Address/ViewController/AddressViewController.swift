@@ -125,7 +125,6 @@ private extension AddressViewController {
                     self?.loadingIndicatorView.startAnimating()
                     self?.loadingIndicatorView.alpha = 1
                 }
-                self?.searchController.searchBar.isUserInteractionEnabled = isLoading == false
                 
             case .errorMessage(let message):
                 self?.showAlert(message: message)
@@ -275,6 +274,7 @@ private extension AddressViewController {
             self?.loadingIndicatorView.stopAnimating()
             self?.view.layoutIfNeeded()
         }, completion: nil)
+        searchController.searchBar.isUserInteractionEnabled = true
     }
     
     func updateAddressInfo(weather: WeatherNow, address: String) {
@@ -302,6 +302,7 @@ extension AddressViewController: UICollectionViewDelegate {
             return
         }
         viewModel.input.didTapAddress(address)
+        searchController.searchBar.isUserInteractionEnabled = false
     }
     
 }
