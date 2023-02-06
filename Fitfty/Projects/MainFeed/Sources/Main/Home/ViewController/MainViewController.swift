@@ -37,9 +37,25 @@ public final class MainViewController: UIViewController {
     }()
     
     private lazy var loadingIndicatorView: LoadingView = {
-        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.5), alpha: 1)
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
         loadingView.startAnimating()
         return loadingView
+    }()
+    
+    private lazy var errorNotiView: ErrorNotiView = {
+        let errorNotiView = ErrorNotiView(
+            title: "잠시 후 다시 확인해주세요.",
+            description: """
+                         지금 서비스와 연결이 어려워요.
+                         문제를 해결하기 위해 노력하고 있어요.
+                         잠시 후 다시 확인해주세요.
+                         """
+        )
+        errorNotiView.backgroundColor = .white
+        errorNotiView.isHidden = true
+        errorNotiView.setBackButtonTarget(target: self, action: #selector(didTapPrevButton(_:)))
+        errorNotiView.setMainButtonTarget(target: self, action: #selector(didTapMainButton(_:)))
+        return errorNotiView
     }()
     
     public override func viewDidLoad() {
@@ -51,12 +67,7 @@ public final class MainViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewModel.input.viewWillAppear()
-    }
-    
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        viewModel.input.viewDidAppear()
+        viewModel.input.refresh()
     }
     
     public init(coordinator: MainCoordinatorInterface, viewModel: MainViewModel) {
@@ -79,17 +90,18 @@ private extension MainViewController {
                 switch state {
                 case .currentLocation(let address):
                     self?.locationView.update(location: "\(address.secondName) \(address.thirdName)")
-                    self?.locationView.isHidden = false
-                    self?.showWelcomeView()
                     
                 case .errorMessage(let message):
+                    self?.showErrorNotiView()
                     self?.showAlert(message: message)
                     
                 case .isLoading(let isLoading):
                     isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
                     
                 case .sections(let sections):
+                    self?.hideErrorNotiView()
                     self?.applySnapshot(sections)
+                    self?.showWelcomeView()
                 }
             }).store(in: &cancellables)
     }
@@ -106,16 +118,19 @@ private extension MainViewController {
     
     func setUpLayout() {
         view.backgroundColor = .white
-        view.addSubviews(collectionView, loadingIndicatorView)
+        view.addSubviews(collectionView, loadingIndicatorView, errorNotiView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            loadingIndicatorView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            loadingIndicatorView.heightAnchor.constraint(equalTo: view.heightAnchor),
-            loadingIndicatorView.topAnchor.constraint(equalTo: view.topAnchor),
-            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            errorNotiView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            errorNotiView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            errorNotiView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
         ])
     }
     
@@ -315,6 +330,26 @@ private extension MainViewController {
     
     @objc func didTapProfileStackView(_ sender: Any?) {
         coordinator.showProfile(profileType: .userProfile)
+    }
+    
+    func showErrorNotiView() {
+        errorNotiView.isHidden = false
+        collectionView.isHidden = true
+        locationView.isHidden = true
+    }
+    
+    func hideErrorNotiView() {
+        errorNotiView.isHidden = true
+        collectionView.isHidden = false
+        locationView.isHidden = false
+    }
+    
+    @objc func didTapPrevButton(_ sender: FitftyButton) {
+        viewModel.input.refresh()
+    }
+    
+    @objc func didTapMainButton(_ sender: FitftyButton) {
+        viewModel.input.refresh()
     }
     
 }
