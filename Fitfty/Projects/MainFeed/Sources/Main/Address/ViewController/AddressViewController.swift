@@ -225,7 +225,7 @@ extension AddressViewController: UICollectionViewDelegate {
             self?.addressInfoView.setUp(
                 address: "서울시, 강남구, 역삼 1동",
                 temp: 12,
-                icon: CommonAsset.Images.lostOfCloudy.image
+                icon: CommonAsset.Images.cloudAndSun.image
             )
             self?.buttonStackView.alpha = 1
             self?.view.layoutIfNeeded()

@@ -209,6 +209,7 @@ private extension MainViewController {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
+        snapshot.reloadSections([.weather])
         dataSource?.apply(snapshot, animatingDifferences: false)
     }
     
