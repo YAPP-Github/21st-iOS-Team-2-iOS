@@ -287,9 +287,10 @@ private extension MainViewController {
     }
     
     func codySectionLayout() -> NSCollectionLayoutSection? {
+        let imageSize: CGFloat = max(view.safeAreaLayoutGuide.layoutFrame.height - 380, 256)
         let layoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.height - 380),
-            heightDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.height - 380)
+            widthDimension: .absolute(imageSize),
+            heightDimension: .absolute(imageSize)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
