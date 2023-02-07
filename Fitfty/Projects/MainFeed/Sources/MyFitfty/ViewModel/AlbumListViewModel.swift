@@ -7,31 +7,41 @@
 //
 
 import Foundation
-
-protocol AlbumListViewModelInput {
-    
-    var input: AlbumListViewModelInput { get }
-    func getAlbums() -> [AlbumInfo]
-    
-}
+import Common
+import Combine
 
 protocol AlbumListViewModelOutput {
     
-    var selectedAlbumIndex: Int { get }
+    var ouput: AlbumListViewModelOutput { get }
+    func viewDidLoad()
     
 }
 
-public final class AlbumListViewModel: AlbumListViewModelInput {
-    var input: AlbumListViewModelInput { self }
+public final class AlbumListViewModel: AlbumListViewModelOutput {
     
+    public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
+    private var cancellables: Set<AnyCancellable> = .init()
+    var ouput: AlbumListViewModelOutput { self }
+   
     public init() { }
     
-    func getAlbums() -> [AlbumInfo] {
-        var albums = [AlbumInfo]()
-        PhotoService.shared.getAlbums { allAlbums in
-            albums = allAlbums
-        }
-        return albums
+    func viewDidLoad() {
+        currentState.send(.sections([
+            AlbumListSection(
+                sectionKind: .album,
+                items: PhotoService.shared.getAlbums()
+            )
+        ]))
     }
+
+}
+
+extension AlbumListViewModel: ViewModelType {
     
+    public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
+    
+    public enum ViewModelState {
+        case sections([AlbumListSection])
+    }
+
 }

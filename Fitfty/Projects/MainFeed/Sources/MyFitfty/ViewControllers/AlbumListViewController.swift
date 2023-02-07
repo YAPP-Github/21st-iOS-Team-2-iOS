@@ -8,11 +8,13 @@
 
 import UIKit
 import Common
+import Combine
 
 final public class AlbumListViewController: UIViewController {
-  
+    
     private let coordinator: AlbumListCoordinatorInterface
     private let viewModel: AlbumListViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
     
     private lazy var navigationBarView: BarView = {
         let barView = BarView(title: "최근 항목", isChevronButtonHidden: false)
@@ -29,12 +31,14 @@ final public class AlbumListViewController: UIViewController {
         return tableView
     }()
     
-    private var dataSource: UITableViewDiffableDataSource<AlbumListSection, AlbumInfo>?
+    private var dataSource: UITableViewDiffableDataSource<AlbumListSectionKind, AlbumInfo>?
     private var albums: [AlbumInfo]?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
+        bind()
+        viewModel.ouput.viewDidLoad()
     }
     
     public init(coordinator: AlbumListCoordinatorInterface, viewModel: AlbumListViewModel) {
@@ -67,20 +71,28 @@ final public class AlbumListViewController: UIViewController {
     }
     
     private func setUp() {
-        albums = viewModel.input.getAlbums()
         setcontstratinsLayout()
         setDataSource()
-        applySnapshot()
     }
 }
 
 private extension AlbumListViewController {
     
+    func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .sections(let sections):
+                    self?.applySnapshot(sections)
+                }
+            }).store(in: &cancellables)
+    }
+    
     func setDataSource() {
-        dataSource = UITableViewDiffableDataSource<AlbumListSection, AlbumInfo>(
+        dataSource = UITableViewDiffableDataSource<AlbumListSectionKind, AlbumInfo>(
             tableView: tableView, cellProvider: { tableView, indexPath, albumInfo in
                 let cell = tableView.dequeueReusableCell(withIdentifier: AlbumListCell.className, for: indexPath) as? AlbumListCell
-               
+                
                 cell?.setUp(
                     image: albumInfo.thumbNailImage,
                     title: albumInfo.name,
@@ -90,10 +102,12 @@ private extension AlbumListViewController {
             })
     }
     
-    func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<AlbumListSection, AlbumInfo>()
-        snapshot.appendSections([.album])
-        snapshot.appendItems(albums ?? [])
+    func applySnapshot(_ sections: [AlbumListSection]) {
+        var snapshot = NSDiffableDataSourceSnapshot<AlbumListSectionKind, AlbumInfo>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
+        }
         dataSource?.apply(snapshot)
     }
 }
