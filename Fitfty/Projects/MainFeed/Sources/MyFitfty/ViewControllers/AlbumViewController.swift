@@ -91,7 +91,7 @@ final public class AlbumViewController: UIViewController {
             return
         }
         if let selectedIndex = selectedIndex {
-            viewModel.output.selectAlbum(index: selectedIndex)
+            viewModel.output.selectImage(index: selectedIndex)
         }
         coordinator.dismiss()
     }

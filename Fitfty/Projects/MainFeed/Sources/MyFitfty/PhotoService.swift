@@ -173,35 +173,17 @@ final class PhotoService: NSObject {
         }
     }
     
-    func assetsToImages(assets: [PHAsset]) -> [UIImage] {
-        var images = [UIImage]()
-        let manager = PHImageManager.default()
-        let options = PHImageRequestOptions()
-        options.deliveryMode = .opportunistic
-        
-        for asset in assets {
-            manager.requestImage(
-                for: asset,
-                targetSize: .zero,
-                contentMode: .aspectFill,
-                options: options
-            ) { (result, _) -> Void in
-                images.append(result ?? UIImage())
-            }
-        }
-        return images
-    }
-    
     func assetToImage(asset: PHAsset) -> UIImage {
         var image = UIImage()
         let manager = PHImageManager.default()
         let options = PHImageRequestOptions()
-        options.deliveryMode = .opportunistic
-        
+        options.isNetworkAccessAllowed = true
+        options.deliveryMode = .fastFormat
+      
         manager.requestImage(
             for: asset,
-            targetSize: .zero,
-            contentMode: .aspectFill,
+            targetSize: .init(width: 368, height: 356),
+            contentMode: .aspectFit,
             options: options
         ) { (result, _) -> Void in
             image = result ?? UIImage()

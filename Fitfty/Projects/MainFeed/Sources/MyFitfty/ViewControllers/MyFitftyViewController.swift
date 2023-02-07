@@ -9,11 +9,15 @@
 import UIKit
 import Common
 import Photos
+import Combine
 
 final public class MyFitftyViewController: UIViewController {
     
     private var coordinator: MyFitftyCoordinatorInterface
     private var myFitftyType: MyFitftyType
+    private let viewModel: MyFitftyViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
+    
     private var dataSource: UICollectionViewDiffableDataSource<MyFitftySectionKind, UUID>?
     
     private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
@@ -67,13 +71,13 @@ final public class MyFitftyViewController: UIViewController {
         return UIBarButtonItem(customView: button)
     }()
     
+    private var selectedImage: UIImage?
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setUpConstraintLayout()
-        setUpNavigationBar()
-        setUpDataSource()
-        applySnapshot()
-        setNotificationCenter()
+        setUp()
+        bind()
+        viewModel.input.viewDidLoad()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -88,9 +92,10 @@ final public class MyFitftyViewController: UIViewController {
         removeNotificationCenter()
     }
     
-    public init(coordinator: MyFitftyCoordinatorInterface, myFitftyType: MyFitftyType) {
+    public init(coordinator: MyFitftyCoordinatorInterface, myFitftyType: MyFitftyType, viewModel: MyFitftyViewModel) {
         self.coordinator = coordinator
         self.myFitftyType = myFitftyType
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -99,75 +104,11 @@ final public class MyFitftyViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setUpNavigationBar() {
-        navigationItem.title = myFitftyType.navigationBarTitle
-        
-        let leftButton: UIButton = {
-          let button = UIButton()
-            button.setImage(UIImage(systemName: "xmark"), for: .normal)
-            button.tintColor = .black
-            button.setPreferredSymbolConfiguration(.init(scale: .medium), forImageIn: .normal)
-            button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
-            return button
-        }()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
-        
-        switch myFitftyType {
-        case .uploadMyFitfty:
-            navigationItem.rightBarButtonItem = disableRightBarButton
-        case .modifyMyFitfty:
-            navigationItem.rightBarButtonItem = enableRightBarButton
-        }
-        
-    }
-    
-    private func setUpConstraintLayout() {
-        view.addSubviews(collectionView)
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        ])
-    }
-    
-    private func setNotificationCenter() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(scrollToBottom),
-            name: .scrollToBottom,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(scrollToTop),
-            name: .scrollToTop,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(getPHAssetInfo),
-            name: .selectPhAsset,
-            object: nil
-        )
-    }
-    
-    private func removeNotificationCenter() {
-        NotificationCenter.default.removeObserver(
-            self,
-            name: .scrollToTop,
-            object: nil
-        )
-        NotificationCenter.default.removeObserver(
-            self,
-            name: .scrollToBottom,
-            object: nil
-        )
-        NotificationCenter.default.removeObserver(
-            self,
-            name: .selectPhAsset,
-            object: nil
-        )
+    private func setUp() {
+        setUpConstraintLayout()
+        setUpNavigationBar()
+        setUpDataSource()
+        setNotificationCenter()
     }
     
     @objc func didTapCancelButton(_ sender: UIButton) {
@@ -196,9 +137,101 @@ final public class MyFitftyViewController: UIViewController {
         collectionView.setContentOffset(.zero, animated: true)
     }
     
-    @objc func getPHAssetInfo() {
+    @objc func getPHAssetInfo(_ notification: Notification) {
+        let phAssetInfo = notification.object as? PHAssetInfo
+        guard let phAssetInfo = phAssetInfo else {
+            return
+        }
+        viewModel.input.getPhAssetInfo(phAssetInfo)
+    }
+}
+
+private extension MyFitftyViewController {
+    
+    func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .sections(let sections):
+                    self?.applySnapshot(sections)
+                case .reload(let sections, let image):
+                    self?.selectedImage = image
+                    self?.applySnapshot(sections)
+                }
+            }).store(in: &cancellables)
+    }
+    
+    func setUpNavigationBar() {
+        navigationItem.title = myFitftyType.navigationBarTitle
+        
+        let leftButton: UIButton = {
+          let button = UIButton()
+            button.setImage(UIImage(systemName: "xmark"), for: .normal)
+            button.tintColor = .black
+            button.setPreferredSymbolConfiguration(.init(scale: .medium), forImageIn: .normal)
+            button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
+            return button
+        }()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
+        
+        switch myFitftyType {
+        case .uploadMyFitfty:
+            navigationItem.rightBarButtonItem = disableRightBarButton
+        case .modifyMyFitfty:
+            navigationItem.rightBarButtonItem = enableRightBarButton
+        }
         
     }
+    
+    func setUpConstraintLayout() {
+        view.addSubviews(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
+    }
+    
+    func setNotificationCenter() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(scrollToBottom),
+            name: .scrollToBottom,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(scrollToTop),
+            name: .scrollToTop,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(getPHAssetInfo),
+            name: .selectPhAsset,
+            object: nil
+        )
+    }
+    
+    func removeNotificationCenter() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .scrollToTop,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .scrollToBottom,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .selectPhAsset,
+            object: nil
+        )
+    }
+    
 }
 
 // MARK: - UICollectionViewDiffableDataSource
@@ -223,7 +256,10 @@ extension MyFitftyViewController {
                         cell?.setDisableEditting()
                         
                     case .uploadMyFitfty:
-                        break
+                        if let selectedImage = self.selectedImage {
+                            cell?.setUp(codyImage: selectedImage)
+                            cell?.setHiddenBackgroundButton()
+                        }
                     }
                     
                     return cell ?? UICollectionViewCell()
@@ -305,17 +341,6 @@ extension MyFitftyViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, UUID>()
-        snapshot.appendSections([.content])
-        snapshot.appendItems([UUID()])
-        snapshot.appendSections([.weatherTag])
-        snapshot.appendItems(Array(0..<weatherTagItems.count).map {_ in UUID() })
-        snapshot.appendSections([.styleTag])
-        snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
-        dataSource?.apply(snapshot, animatingDifferences: true)
-    }
-    
     private func applyTagSnapshot() {
         if var snapshot = dataSource?.snapshot() {
             snapshot.deleteSections([.weatherTag])
@@ -326,6 +351,15 @@ extension MyFitftyViewController {
             snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
             dataSource?.apply(snapshot, animatingDifferences: false)
         }
+    }
+    
+    private func applySnapshot(_ sections: [MyFitftySection]) {
+        var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, UUID>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
+        }
+        dataSource?.apply(snapshot)
     }
         
 }
