@@ -8,7 +8,12 @@
 
 import Foundation
 
-enum AlbumListSection {
+public struct AlbumListSection {
+    let sectionKind: AlbumListSectionKind
+    var items: [AlbumInfo]
+}
+
+public enum AlbumListSectionKind {
     case album
 
     init?(index: Int) {

@@ -36,6 +36,58 @@ final class PhotoService: NSObject {
     }
     
     // 앨범들 가져오기
+    func getAlbums() -> [AlbumInfo] {
+        // 일반 앨범 가져오기
+        var allAlbums = [AlbumInfo]()
+       
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = Const.predicate
+        let standardAlbum = PHAsset.fetchAssets(with: fetchOptions)
+        allAlbums.append(
+            .init(
+                identifier: nil,
+                name: Const.titleText,
+                photoCount: standardAlbum.count,
+                album: standardAlbum,
+                thumbNailImage: assetToImage(asset: standardAlbum[0])
+            )
+        )
+        
+        // 스마트 앨범 가져오기 (ex 즐겨찾는 항목)
+        let smartAlbums = PHAssetCollection.fetchAssetCollections(
+            with: .smartAlbum,
+            subtype: .any,
+            options: PHFetchOptions()
+        )
+        guard 0 < smartAlbums.count else {
+            return allAlbums
+        }
+        smartAlbums.enumerateObjects { smartAlbum, index, pointer in
+            guard index <= smartAlbums.count - 1 else {
+                pointer.pointee = true
+                return
+            }
+            if smartAlbum.estimatedAssetCount == NSNotFound {
+                let fetchOptions = PHFetchOptions()
+                fetchOptions.predicate = Const.predicate
+                fetchOptions.sortDescriptors = Const.sortDescriptors
+                let smartAlbums = PHAsset.fetchAssets(in: smartAlbum, options: fetchOptions)
+                if smartAlbums.count > 0 {
+                    allAlbums.append(
+                        .init(
+                            identifier: smartAlbum.localIdentifier,
+                            name: smartAlbum.localizedTitle ?? Const.titleText,
+                            photoCount: smartAlbums.count,
+                            album: smartAlbums,
+                            thumbNailImage: self.assetToImage(asset: smartAlbums[0])
+                        )
+                    )
+                }
+            }
+        }
+        return allAlbums
+    }
+    
     func getAlbums(completion: @escaping ([AlbumInfo]) -> Void) {
         // 일반 앨범 가져오기
         var allAlbums = [AlbumInfo]()
