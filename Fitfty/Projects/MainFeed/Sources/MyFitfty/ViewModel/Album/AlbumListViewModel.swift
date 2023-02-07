@@ -10,30 +10,36 @@ import Foundation
 import Common
 import Combine
 
-protocol AlbumListViewModelOutput {
+protocol AlbumListViewModelInput {
     
-    var ouput: AlbumListViewModelOutput { get }
+    var input: AlbumListViewModelInput { get }
     func viewDidLoad()
+    func selectAlbum(index: Int)
     
 }
 
-public final class AlbumListViewModel: AlbumListViewModelOutput {
+public final class AlbumListViewModel: AlbumListViewModelInput {
     
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
-    var ouput: AlbumListViewModelOutput { self }
-   
+    var input: AlbumListViewModelInput { self }
+    let albums = PhotoService.shared.getAlbums()
     public init() { }
     
     func viewDidLoad() {
         currentState.send(.sections([
             AlbumListSection(
                 sectionKind: .album,
-                items: PhotoService.shared.getAlbums()
+                items: albums
             )
         ]))
     }
-
+    
+    func selectAlbum(index: Int) {
+        let albumInfo = albums[index]
+        NotificationCenter.default.post(name: .selectAlbum, object: albumInfo)
+    }
+    
 }
 
 extension AlbumListViewModel: ViewModelType {

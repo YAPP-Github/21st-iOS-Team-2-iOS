@@ -38,7 +38,7 @@ final public class AlbumListViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
-        viewModel.ouput.viewDidLoad()
+        viewModel.input.viewDidLoad()
     }
     
     public init(coordinator: AlbumListCoordinatorInterface, viewModel: AlbumListViewModel) {
@@ -119,6 +119,7 @@ extension AlbumListViewController: UITableViewDelegate {
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.input.selectAlbum(index: indexPath.item)
         coordinator.dismiss()
     }
 }

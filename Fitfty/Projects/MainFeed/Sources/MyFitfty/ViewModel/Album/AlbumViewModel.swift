@@ -9,12 +9,21 @@
 import Foundation
 import Common
 import Combine
+import Photos
+import UIKit
 
 protocol AlbumViewModelInput {
     
     var input: AlbumViewModelInput { get }
     func viewDidLoad()
+    func getAlbum(_ albumInfo: AlbumInfo)
     
+}
+
+protocol AlbumViewModelOutput {
+    
+    var output: AlbumViewModelOutput { get }
+   
 }
 
 public final class AlbumViewModel: AlbumViewModelInput {
@@ -23,12 +32,13 @@ public final class AlbumViewModel: AlbumViewModelInput {
     
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
-   
+    
     public init() { }
     
     func viewDidLoad() {
         let recentAlbum = PhotoService.shared.getRecentAlbum()
         let phAssets = PhotoService.shared.getPHAssets(album: recentAlbum)
+    
         currentState.send(.sections([
             AlbumSection(
                 sectionKind: .album,
@@ -36,7 +46,23 @@ public final class AlbumViewModel: AlbumViewModelInput {
             )
         ]))
     }
-
+    
+    func getAlbum(_ albumInfo: AlbumInfo) {
+        let phAssets = PhotoService.shared.getPHAssets(album: albumInfo.album)
+        currentState.send(.reloadAlbum([
+            AlbumSection(
+                sectionKind: .album,
+                items: phAssets
+            )], albumInfo.name)
+        )
+        
+    }
+    
+    func getPhAsset(_ phAsset: PHAsset) -> UIImage {
+        let image = PhotoService.shared.assetToImage(asset: phAsset)
+        return image
+    }
+    
 }
 
 extension AlbumViewModel: ViewModelType {
@@ -45,6 +71,7 @@ extension AlbumViewModel: ViewModelType {
     
     public enum ViewModelState {
         case sections([AlbumSection])
+        case reloadAlbum([AlbumSection], String)
     }
-
+    
 }
