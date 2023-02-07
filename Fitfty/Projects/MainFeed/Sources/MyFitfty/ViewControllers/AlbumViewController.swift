@@ -33,7 +33,6 @@ final public class AlbumViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: albumLayout())
         collectionView.backgroundColor = .white
-        collectionView.showsVerticalScrollIndicator = false
         collectionView.delegate = self
         collectionView.register(AlbumCell.self)
         return collectionView
@@ -69,7 +68,26 @@ final public class AlbumViewController: UIViewController {
         setDataSource()
         setPhotoService()
         setUploadButton()
+        setNotificationCenter()
     }
+    
+    @objc private func didTapCancelButton(_ sender: UIButton) {
+        coordinator.dismiss()
+    }
+    
+    @objc private func didTapTitleView(_ sender: UITapGestureRecognizer) {
+        coordinator.showAlbumList()
+    }
+    
+    @objc private func getAlbum(_ notification: Notification) {
+        guard let albumInfo = notification.object as? AlbumInfo else {
+            return
+        }
+        viewModel.input.getAlbum(albumInfo)
+    }
+}
+
+private extension AlbumViewController {
     
     func bind() {
         viewModel.state.compactMap { $0 }
@@ -77,15 +95,22 @@ final public class AlbumViewController: UIViewController {
                 switch state {
                 case .sections(let sections):
                     self?.applySnapshot(sections)
+                case .reloadAlbum(let sections, let title):
+                    self?.applySnapshot(sections)
+                    self?.navigationBarView.setTitle(title: title)
                 }
             }).store(in: &cancellables)
     }
     
-    private func setPhotoService() {
+    func setNotificationCenter() {
+        NotificationCenter.default.addObserver(self, selector: #selector(getAlbum), name: .selectAlbum, object: nil)
+    }
+    
+    func setPhotoService() {
         PhotoService.shared.delegate = self
     }
     
-    private func setUploadButton() {
+    func setUploadButton() {
 //        if selectedIndex != nil {
 //            uploadButton.setTitleColor(.white, for: .normal)
 //            uploadButton.backgroundColor = .black
@@ -95,7 +120,7 @@ final public class AlbumViewController: UIViewController {
 //        }
     }
     
-    private func setConstraintsLayout() {
+    func setConstraintsLayout() {
         view.addSubviews(navigationBarView, collectionView, uploadButton)
         
         let collectionViewTopConstraint = collectionView.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor)
@@ -138,7 +163,7 @@ final public class AlbumViewController: UIViewController {
             })
     }
     
-    private func applySnapshot(_ sections: [AlbumSection]) {
+    func applySnapshot(_ sections: [AlbumSection]) {
         var snapshot = NSDiffableDataSourceSnapshot<AlbumSectionKind, PHAsset>()
         sections.forEach {
             snapshot.appendSections([$0.sectionKind])
@@ -167,14 +192,6 @@ final public class AlbumViewController: UIViewController {
         let section = NSCollectionLayoutSection(group: group)
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
-    }
-    
-    @objc private func didTapCancelButton(_ sender: UIButton) {
-        coordinator.dismiss()
-    }
-    
-    @objc private func didTapTitleView(_ sender: UITapGestureRecognizer) {
-        coordinator.showAlbumList()
     }
 }
 

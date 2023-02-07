@@ -84,5 +84,9 @@ public final class BarView: UIView {
     public func setTitleViewTarget(target: Any?, action: Selector) {
         backgroundStackView.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
     }
+    
+    public func setTitle(title: String) {
+        titleLabel.text = title
+    }
 
 }
