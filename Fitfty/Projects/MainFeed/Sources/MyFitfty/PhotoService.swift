@@ -88,6 +88,13 @@ final class PhotoService: NSObject {
         return allAlbums
     }
     
+    func getRecentAlbum() -> PHFetchResult<PHAsset> {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = Const.predicate
+        let recentAlbum = PHAsset.fetchAssets(with: fetchOptions)
+        return recentAlbum
+    }
+    
     func getAlbums(completion: @escaping ([AlbumInfo]) -> Void) {
         // 일반 앨범 가져오기
         var allAlbums = [AlbumInfo]()
@@ -159,6 +166,20 @@ final class PhotoService: NSObject {
         }
         
         completion(phAssets)
+    }
+    
+    func getPHAssets(album: PHFetchResult<PHAsset>) -> [PHAsset] {
+        var phAssets = [PHAsset]()
+        
+        album.enumerateObjects { asset, index, stopPointer in
+            guard index <= album.count - 1 else {
+                stopPointer.pointee = true
+                return
+            }
+            phAssets.append(asset)
+        }
+        
+        return phAssets
     }
     
     // PHAsset -> UIImage
