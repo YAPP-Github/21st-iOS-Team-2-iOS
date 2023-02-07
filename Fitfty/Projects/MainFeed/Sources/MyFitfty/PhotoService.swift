@@ -178,7 +178,7 @@ final class PhotoService: NSObject {
         let manager = PHImageManager.default()
         let options = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
-        options.deliveryMode = .fastFormat
+        options.deliveryMode = .opportunistic
       
         manager.requestImage(
             for: asset,

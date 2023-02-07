@@ -92,7 +92,6 @@ private extension AlbumListViewController {
         dataSource = UITableViewDiffableDataSource<AlbumListSectionKind, AlbumInfo>(
             tableView: tableView, cellProvider: { tableView, indexPath, albumInfo in
                 let cell = tableView.dequeueReusableCell(withIdentifier: AlbumListCell.className, for: indexPath) as? AlbumListCell
-                
                 cell?.setUp(
                     image: albumInfo.thumbNailImage,
                     title: albumInfo.name,
