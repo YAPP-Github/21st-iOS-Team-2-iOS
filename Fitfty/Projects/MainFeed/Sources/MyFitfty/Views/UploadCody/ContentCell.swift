@@ -33,6 +33,14 @@ final class ContentCell: UICollectionViewCell {
         return button
     }()
     
+    private lazy var modifyPhotoButton: UIButton = {
+        let button = UIButton()
+        button.setTitle(nil, for: .normal)
+        button.backgroundColor = .clear
+        button.isHidden = true
+        return button
+    }()
+    
     private lazy var codyImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -40,8 +48,8 @@ final class ContentCell: UICollectionViewCell {
         return imageView
     }()
     
-    private let maxTextCount = 500
-    private let textViewPlaceHolder = "500자 이내로 설명을 남길 수 있어요."
+    private let maxTextCount = 2200
+    private let textViewPlaceHolder = "2200자 이내로 설명을 남길 수 있어요."
    
     private lazy var contentTextView: UITextView = {
         let textView = UITextView()
@@ -66,7 +74,7 @@ final class ContentCell: UICollectionViewCell {
     }()
     
     override func prepareForReuse() {
-        contentTextView.text = "100자 이내로 설명을 남길 수 있어요."
+        contentTextView.text = textViewPlaceHolder
         contentTextView.textColor = CommonAsset.Colors.gray04.color
     }
     
@@ -80,12 +88,18 @@ final class ContentCell: UICollectionViewCell {
     }
     
     private func setUpConstraintsLayout() {
-        contentView.addSubviews(codyImageView, backgroundButton, uploadPhotoButton, contentTextView, guidanceLabel)
+        contentView.addSubviews(codyImageView, backgroundButton, uploadPhotoButton,
+                                modifyPhotoButton, contentTextView, guidanceLabel)
         NSLayoutConstraint.activate([
             backgroundButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             backgroundButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             backgroundButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             backgroundButton.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width*0.936),
+            
+            modifyPhotoButton.topAnchor.constraint(equalTo: backgroundButton.topAnchor),
+            modifyPhotoButton.leadingAnchor.constraint(equalTo: backgroundButton.leadingAnchor),
+            modifyPhotoButton.trailingAnchor.constraint(equalTo: backgroundButton.trailingAnchor),
+            modifyPhotoButton.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width*0.936*0.6),
             
             codyImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             codyImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -179,6 +193,7 @@ extension ContentCell {
     
     public func setActionUploadPhotoButton(_ target: Any?, action: Selector) {
         uploadPhotoButton.addTarget(target, action: action, for: .touchUpInside)
+        modifyPhotoButton.addTarget(target, action: action, for: .touchUpInside)
     }
     
     public func setDisableEditting() {
@@ -190,8 +205,7 @@ extension ContentCell {
     
     public func setHiddenBackgroundButton() {
         backgroundButton.backgroundColor = .clear
-        uploadPhotoButton.setTitleColor(.clear, for: .normal)
-        uploadPhotoButton.layer.borderColor = UIColor.clear.cgColor
-        uploadPhotoButton.setImage(nil, for: .normal)
+        uploadPhotoButton.isHidden = true
+        modifyPhotoButton.isHidden = false
     }
 }
