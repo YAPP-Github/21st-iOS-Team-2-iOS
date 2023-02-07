@@ -12,26 +12,9 @@ import Photos
 
 final public class MyFitftyViewController: UIViewController {
     
-    enum Section {
-        
-        case content
-        case weatherTag
-        case styleTag
-        
-        init?(index: Int) {
-            switch index {
-            case 0: self = .content
-            case 1: self = .weatherTag
-            case 2: self = .styleTag
-            default: return nil
-            }
-        }
-        
-    }
-    
     private var coordinator: MyFitftyCoordinatorInterface
     private var myFitftyType: MyFitftyType
-    private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<MyFitftySectionKind, UUID>?
     
     private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
         (.minimal, false),
@@ -222,13 +205,13 @@ final public class MyFitftyViewController: UIViewController {
 extension MyFitftyViewController {
     
     private func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<MyFitftySectionKind, UUID>(
             collectionView: collectionView,
             cellProvider: { [weak self] collectionView, indexPath, _ in
                 guard let self = self else {
                     return UICollectionViewCell()
                 }
-                let section = Section(index: indexPath.section)
+                let section = MyFitftySectionKind(index: indexPath.section)
                 switch section {
                 case .content:
                     let cell = collectionView.dequeueReusableCell(ContentCell.self, for: indexPath)
@@ -267,7 +250,7 @@ extension MyFitftyViewController {
             })
         
         dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
-            let section = Section(index: indexPath.section)
+            let section = MyFitftySectionKind(index: indexPath.section)
             switch elementKind {
             case Common.HeaderView.className:
                 if section == .weatherTag {
@@ -323,7 +306,7 @@ extension MyFitftyViewController {
     }
     
     private func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
+        var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, UUID>()
         snapshot.appendSections([.content])
         snapshot.appendItems([UUID()])
         snapshot.appendSections([.weatherTag])
@@ -352,7 +335,7 @@ extension MyFitftyViewController {
     
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
-            let section = Section(index: sectionNumber)
+            let section = MyFitftySectionKind(index: sectionNumber)
             switch section {
             case .content: return self?.contentSectionLayout()
             case .weatherTag: return self?.weatherTagSectionLayout()
@@ -466,7 +449,7 @@ extension MyFitftyViewController {
 extension MyFitftyViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = Section(index: indexPath.section)
+        let section = MyFitftySectionKind(index: indexPath.section)
         switch section {
         case .weatherTag:
             for index in weatherTagItems.indices {
