@@ -69,7 +69,7 @@ final class PhotoService: NSObject {
                             name: self.englishToKorean(title: smartAlbum.localizedTitle),
                             photoCount: smartAlbums.count,
                             album: smartAlbums,
-                            thumbNailImage: self.assetToImage(asset: smartAlbums[0])
+                            thumbnailImage: self.assetToImage(asset: smartAlbums[0])
                         )
                     )
 
@@ -105,7 +105,7 @@ final class PhotoService: NSObject {
                             name: self.englishToKorean(title: smartAlbum.localizedTitle),
                             photoCount: smartAlbums.count,
                             album: smartAlbums,
-                            thumbNailImage: self.assetToImage(asset: smartAlbums[0])
+                            thumbnailImage: self.assetToImage(asset: smartAlbums[0])
                         )
                     )
                 }

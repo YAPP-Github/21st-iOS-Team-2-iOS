@@ -14,5 +14,5 @@ struct AlbumInfo: Hashable {
     let name: String
     let photoCount: Int
     let album: PHFetchResult<PHAsset>
-    let thumbNailImage: UIImage
+    let thumbnailImage: UIImage
 }

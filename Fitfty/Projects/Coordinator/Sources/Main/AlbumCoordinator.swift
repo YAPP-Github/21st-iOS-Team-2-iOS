@@ -67,6 +67,11 @@ extension AlbumCoordinator: CoordinatorFinishDelegate {
     
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
+        switch childCoordinator.type {
+        case .albumList:
+            childCoordinator.navigationController.viewControllers.removeAll()
+        default: break
+        }
     }
     
 }
