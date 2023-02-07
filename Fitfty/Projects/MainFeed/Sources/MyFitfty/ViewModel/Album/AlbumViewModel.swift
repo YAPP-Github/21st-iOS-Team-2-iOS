@@ -24,6 +24,7 @@ protocol AlbumViewModelOutput {
     
     var output: AlbumViewModelOutput { get }
     func selectImage(index: Int)
+    
 }
 
 public final class AlbumViewModel: AlbumViewModelInput, AlbumViewModelOutput {
