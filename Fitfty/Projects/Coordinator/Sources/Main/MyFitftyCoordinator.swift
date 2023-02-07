@@ -33,7 +33,11 @@ final class MyFitftyCoordinator: Coordinator {
 
 private extension MyFitftyCoordinator {
     func makeMyFitftyViewController() -> UIViewController {
-        let viewController = MyFitftyViewController(coordinator: self, myFitftyType: myFitftyType)
+        let viewController = MyFitftyViewController(
+            coordinator: self,
+            myFitftyType: myFitftyType,
+            viewModel: MyFitftyViewModel()
+        )
         viewController.modalPresentationStyle = .fullScreen
         return viewController
     }

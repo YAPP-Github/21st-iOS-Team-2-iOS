@@ -35,7 +35,8 @@ final class ContentCell: UICollectionViewCell {
     
     private lazy var codyImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -80,7 +81,6 @@ final class ContentCell: UICollectionViewCell {
     
     private func setUpConstraintsLayout() {
         contentView.addSubviews(codyImageView, backgroundButton, uploadPhotoButton, contentTextView, guidanceLabel)
-        
         NSLayoutConstraint.activate([
             backgroundButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             backgroundButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -173,6 +173,10 @@ extension ContentCell {
         contentTextView.textColor = .black
     }
     
+    public func setUp(codyImage: UIImage) {
+        codyImageView.image = codyImage
+    }
+    
     public func setActionUploadPhotoButton(_ target: Any?, action: Selector) {
         uploadPhotoButton.addTarget(target, action: action, for: .touchUpInside)
     }
@@ -182,5 +186,12 @@ extension ContentCell {
         backgroundButton.alpha = 0.5
         uploadPhotoButton.isHidden = true
         guidanceLabel.isHidden = false
+    }
+    
+    public func setHiddenBackgroundButton() {
+        backgroundButton.backgroundColor = .clear
+        uploadPhotoButton.setTitleColor(.clear, for: .normal)
+        uploadPhotoButton.layer.borderColor = UIColor.clear.cgColor
+        uploadPhotoButton.setImage(nil, for: .normal)
     }
 }

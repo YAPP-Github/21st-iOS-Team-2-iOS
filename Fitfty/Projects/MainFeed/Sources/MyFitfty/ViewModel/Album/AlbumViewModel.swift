@@ -22,14 +22,14 @@ protocol AlbumViewModelInput {
 
 protocol AlbumViewModelOutput {
     
-    var output: AlbumListViewModelOutput { get }
+    var output: AlbumViewModelOutput { get }
     func selectImage(index: Int)
 }
 
-public final class AlbumViewModel: AlbumViewModelInput, AlbumListViewModelOutput {
+public final class AlbumViewModel: AlbumViewModelInput, AlbumViewModelOutput {
     
     var input: AlbumViewModelInput { self }
-    var output: AlbumListViewModelOutput { self }
+    var output: AlbumViewModelOutput { self }
     
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
@@ -59,29 +59,34 @@ public final class AlbumViewModel: AlbumViewModelInput, AlbumListViewModelOutput
         )
     }
     
-    func selectAlbum(index: Int) {
+    func selectImage(index: Int) {
         let phAsset = currentAlbum[index]
-        let image = PhotoService.shared.assetToImage(asset: phAsset)
-        
-        guard let date = phAsset.creationDate else {
-            return
+        PhotoService.shared.fetchImage(
+            asset: phAsset,
+            size: .init(width: 3200, height: 3200),
+            contentMode: .aspectFill
+        ) {  image in
+            var dateToString: String?
+            if let date = phAsset.creationDate {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = DateFormat.yyMMddDot.rawValue
+                dateToString = dateFormatter.string(from: date)
+            }
+            
+            var latitude: String?; var longitude: String?
+            if let location = phAsset.location {
+                latitude = String(location.coordinate.latitude)
+                longitude = String(location.coordinate.longitude)
+            }
+            
+            let phAssetInfo = PHAssetInfo(
+                image: image,
+                latitude: latitude,
+                longitude: longitude,
+                date: dateToString
+            )
+            NotificationCenter.default.post(name: .selectPhAsset, object: phAssetInfo)
         }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = DateFormat.yyMMddDot.rawValue
-        let dateToString = dateFormatter.string(from: date)
-        
-        guard let location = phAsset.location else {
-            return
-        }
-        let latitude = location.coordinate.latitude
-        let longitude = location.coordinate.longitude
-        let phAssetInfo = PHAssetInfo(
-            image: image,
-            latitude: String(latitude),
-            longitude: String(longitude),
-            date: dateToString
-        )
-        NotificationCenter.default.post(name: .selectPhAsset, object: phAssetInfo)
     }
     
 }

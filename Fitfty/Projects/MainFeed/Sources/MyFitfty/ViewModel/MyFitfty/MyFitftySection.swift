@@ -8,10 +8,11 @@
 
 import Foundation
 
-
 public struct MyFitftySection {
+    
     let sectionKind: MyFitftySectionKind
     var items: [UUID]
+    
 }
 
 enum MyFitftySectionKind {
