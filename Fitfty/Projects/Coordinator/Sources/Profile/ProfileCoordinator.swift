@@ -74,7 +74,7 @@ private extension ProfileCoordinator {
         return coordinator
     }
     
-    func myFitftyCoordinator() -> MyFitftyCoordinator {
+    func makeMyFitftyCoordinator() -> MyFitftyCoordinator {
         let coordinator = MyFitftyCoordinator(myFitftyType: .modifyMyFitfty)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
@@ -123,7 +123,7 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
     }
     
     func showModifyMyFitfty() {
-        let coordinator = myFitftyCoordinator()
+        let coordinator = makeMyFitftyCoordinator()
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
         navigationController.present(coordinator.navigationController, animated: true)

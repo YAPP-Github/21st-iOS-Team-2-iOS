@@ -93,7 +93,7 @@ private extension AlbumListViewController {
             tableView: tableView, cellProvider: { tableView, indexPath, albumInfo in
                 let cell = tableView.dequeueReusableCell(withIdentifier: AlbumListCell.className, for: indexPath) as? AlbumListCell
                 cell?.setUp(
-                    image: albumInfo.thumbNailImage,
+                    image: albumInfo.thumbnailImage,
                     title: albumInfo.name,
                     photoCount: String(albumInfo.photoCount)
                 )
