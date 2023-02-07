@@ -20,12 +20,6 @@ protocol AlbumViewModelInput {
     
 }
 
-protocol AlbumViewModelOutput {
-    
-    var output: AlbumViewModelOutput { get }
-   
-}
-
 public final class AlbumViewModel: AlbumViewModelInput {
     
     var input: AlbumViewModelInput { self }
@@ -55,12 +49,6 @@ public final class AlbumViewModel: AlbumViewModelInput {
                 items: phAssets
             )], albumInfo.name)
         )
-        
-    }
-    
-    func getPhAsset(_ phAsset: PHAsset) -> UIImage {
-        let image = PhotoService.shared.assetToImage(asset: phAsset)
-        return image
     }
     
 }

@@ -24,9 +24,8 @@ final public class AlbumViewController: UIViewController {
         return barView
     }()
     
-    private lazy var uploadButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("업로드", for: .normal)
+    private lazy var uploadButton: FitftyButton = {
+        let button = FitftyButton(style: .disabled, title: "업로드")
         return button
     }()
     
@@ -66,8 +65,6 @@ final public class AlbumViewController: UIViewController {
     private func setUp() {
         setConstraintsLayout()
         setDataSource()
-        setPhotoService()
-        setUploadButton()
         setNotificationCenter()
     }
     
@@ -98,6 +95,7 @@ private extension AlbumViewController {
                 case .reloadAlbum(let sections, let title):
                     self?.applySnapshot(sections)
                     self?.navigationBarView.setTitle(title: title)
+                    self?.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .top, animated: false)
                 }
             }).store(in: &cancellables)
     }
@@ -106,25 +104,11 @@ private extension AlbumViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(getAlbum), name: .selectAlbum, object: nil)
     }
     
-    func setPhotoService() {
-        PhotoService.shared.delegate = self
-    }
-    
-    func setUploadButton() {
-//        if selectedIndex != nil {
-//            uploadButton.setTitleColor(.white, for: .normal)
-//            uploadButton.backgroundColor = .black
-//        } else {
-//            uploadButton.setTitleColor(CommonAsset.Colors.gray06.color, for: .normal)
-//            uploadButton.backgroundColor = CommonAsset.Colors.gray03.color
-//        }
-    }
-    
     func setConstraintsLayout() {
         view.addSubviews(navigationBarView, collectionView, uploadButton)
         
         let collectionViewTopConstraint = collectionView.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor)
-        collectionViewTopConstraint.priority = .defaultLow
+        collectionViewTopConstraint.priority = .defaultHigh
         
         NSLayoutConstraint.activate([
             navigationBarView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -135,12 +119,12 @@ private extension AlbumViewController {
             collectionViewTopConstraint,
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -152),
+            collectionView.heightAnchor.constraint(equalToConstant: view.frame.height*0.613),
             
             uploadButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             uploadButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             uploadButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 32),
-            uploadButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -56)
+            uploadButton.heightAnchor.constraint(equalToConstant: 64)
         ])
     }
     
@@ -195,17 +179,8 @@ private extension AlbumViewController {
     }
 }
 
-// 사진 접근 권한: 선택된 사진
-extension AlbumViewController: PHPhotoLibraryChangeObserver {
-    public func photoLibraryDidChange(_ changeInstance: PHChange) {
-//        currentAlbum = PhotoService.shared.getRecentAlbum()
-//        phAssets = PhotoService.shared.getPHAssets(album: currentAlbum!)
-    }
-}
-
 extension AlbumViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //selectedIndex = indexPath.row
-        setUploadButton()
+       
     }
 }
