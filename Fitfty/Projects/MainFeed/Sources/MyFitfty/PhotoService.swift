@@ -35,7 +35,6 @@ final class PhotoService: NSObject {
     }
     
     // 앨범들 가져오기
-    
     func getAlbums(completion: @escaping ([AlbumInfo]) -> Void) {
         var allAlbums = [AlbumInfo]()
         defer {
