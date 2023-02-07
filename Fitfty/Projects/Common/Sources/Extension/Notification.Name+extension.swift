@@ -11,4 +11,5 @@ public extension Notification.Name {
     static let scrollToBottom = Notification.Name(rawValue: "scrollToBottom")
     static let scrollToTop = Notification.Name(rawValue: "scrollToTop")
     static let selectAlbum = Notification.Name(rawValue: "selectAlbum")
+    static let selectPhAsset = Notification.Name(rawValue: "selectPhAsset")
 }

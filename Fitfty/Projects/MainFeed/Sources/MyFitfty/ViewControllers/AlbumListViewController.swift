@@ -119,7 +119,7 @@ extension AlbumListViewController: UITableViewDelegate {
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.input.selectAlbum(index: indexPath.item)
+        viewModel.output.selectAlbum(index: indexPath.item)
         coordinator.dismiss()
     }
 }

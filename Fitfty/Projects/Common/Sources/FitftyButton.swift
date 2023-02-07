@@ -44,6 +44,10 @@ final public class FitftyButton: UIButton {
         self.style = style
     }
     
+    public func getStyle() -> FitftyButtonStyle {
+        return style
+    }
+    
     public func setButtonTitle(_ title: String) {
         setTitle(title, for: .normal)
     }

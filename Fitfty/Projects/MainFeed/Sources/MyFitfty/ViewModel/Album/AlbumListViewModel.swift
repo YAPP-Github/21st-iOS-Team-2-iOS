@@ -14,16 +14,24 @@ protocol AlbumListViewModelInput {
     
     var input: AlbumListViewModelInput { get }
     func viewDidLoad()
+    
+}
+
+protocol AlbumListViewModelOutput {
+    
+    var output: AlbumListViewModelOutput { get }
     func selectAlbum(index: Int)
     
 }
 
-public final class AlbumListViewModel: AlbumListViewModelInput {
-    
+public final class AlbumListViewModel: AlbumListViewModelInput, AlbumListViewModelOutput {
+   
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
     var input: AlbumListViewModelInput { self }
+    var output: AlbumListViewModelOutput { self }
     let albums = PhotoService.shared.getAlbums()
+    
     public init() { }
     
     func viewDidLoad() {

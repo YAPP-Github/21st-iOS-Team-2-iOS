@@ -161,6 +161,12 @@ final public class MyFitftyViewController: UIViewController {
             name: .scrollToTop,
             object: nil
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(getPHAssetInfo),
+            name: .selectPhAsset,
+            object: nil
+        )
     }
     
     private func removeNotificationCenter() {
@@ -172,6 +178,11 @@ final public class MyFitftyViewController: UIViewController {
         NotificationCenter.default.removeObserver(
             self,
             name: .scrollToBottom,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .selectPhAsset,
             object: nil
         )
     }
@@ -200,6 +211,10 @@ final public class MyFitftyViewController: UIViewController {
             return
         }
         collectionView.setContentOffset(.zero, animated: true)
+    }
+    
+    @objc func getPHAssetInfo() {
+        
     }
 }
 
