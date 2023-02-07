@@ -26,6 +26,7 @@ final public class AlbumViewController: UIViewController {
     
     private lazy var uploadButton: FitftyButton = {
         let button = FitftyButton(style: .disabled, title: "업로드")
+        button.addTarget(self, action: #selector(didTapUploadButton), for: .touchUpInside)
         return button
     }()
     
@@ -38,6 +39,8 @@ final public class AlbumViewController: UIViewController {
     }()
     
     private var dataSource: UICollectionViewDiffableDataSource<AlbumSectionKind, PHAsset>?
+    
+    private var selectedIndex: Int?
    
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,6 +85,16 @@ final public class AlbumViewController: UIViewController {
         }
         viewModel.input.getAlbum(albumInfo)
     }
+    
+    @objc private func didTapUploadButton(_ sender: Any?) {
+        guard uploadButton.getStyle() == .enabled else {
+            return
+        }
+        if let selectedIndex = selectedIndex {
+            viewModel.output.selectAlbum(index: selectedIndex)
+        }
+        coordinator.dismiss()
+    }
 }
 
 private extension AlbumViewController {
@@ -96,6 +109,7 @@ private extension AlbumViewController {
                     self?.applySnapshot(sections)
                     self?.navigationBarView.setTitle(title: title)
                     self?.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .top, animated: false)
+                    self?.uploadButton.setStyle(.disabled)
                 }
             }).store(in: &cancellables)
     }
@@ -181,6 +195,7 @@ private extension AlbumViewController {
 
 extension AlbumViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-       
+        uploadButton.setStyle(.enabled)
+        selectedIndex = indexPath.row
     }
 }
