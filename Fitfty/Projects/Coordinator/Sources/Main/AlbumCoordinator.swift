@@ -33,7 +33,7 @@ final class AlbumCoordinator: Coordinator {
 
 private extension AlbumCoordinator {
     func makeAlbumViewController() -> UIViewController {
-        let viewController = AlbumViewController(coordinator: self)
+        let viewController = AlbumViewController(coordinator: self, viewModel: AlbumViewModel())
         return viewController
     }
     

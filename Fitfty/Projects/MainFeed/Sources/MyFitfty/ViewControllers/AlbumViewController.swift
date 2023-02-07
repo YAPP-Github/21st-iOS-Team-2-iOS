@@ -8,15 +8,14 @@
 
 import UIKit
 import Common
+import Combine
 import Photos
 
 final public class AlbumViewController: UIViewController {
     
     private let coordinator: AlbumCoordinatorInterface
-    
-    enum Section: CaseIterable {
-        case main
-    }
+    private let viewModel: AlbumViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
     
     private lazy var navigationBarView: BarView = {
         let barView = BarView(title: "최근 항목", isChevronButtonHidden: false)
@@ -40,39 +39,13 @@ final public class AlbumViewController: UIViewController {
         return collectionView
     }()
     
-    private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
-    
-    private var albums: [AlbumInfo]?
-    
-    private var currentAlbumIndex = 0 {
-        didSet {
-            if let albums = albums {
-                PhotoService.shared.getPHAssets(album: albums[currentAlbumIndex].album) { [weak self] phAssets in
-                    self?.phAssets = phAssets
-                }
-            }
-        }
-    }
-    
-    private var currentAlbum: PHFetchResult<PHAsset>? {
-        if let albums = albums,
-           currentAlbumIndex <= albums.count-1 {
-            return albums[currentAlbumIndex].album
-        }
-        return nil
-    }
-    
-    private var phAssets = [PHAsset]() {
-        didSet {
-            applySnapshot()
-        }
-    }
-    
-    private var selectedIndex: Int?
-    
+    private var dataSource: UICollectionViewDiffableDataSource<AlbumSectionKind, PHAsset>?
+   
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
+        bind()
+        viewModel.input.viewDidLoad()
     }
     
     override public func removeFromParent() {
@@ -80,8 +53,9 @@ final public class AlbumViewController: UIViewController {
         coordinator.dismiss()
     }
     
-    public init(coordinator: AlbumCoordinatorInterface) {
+    public init(coordinator: AlbumCoordinatorInterface, viewModel: AlbumViewModel) {
         self.coordinator = coordinator
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -93,36 +67,32 @@ final public class AlbumViewController: UIViewController {
     private func setUp() {
         setConstraintsLayout()
         setDataSource()
-        applySnapshot()
         setPhotoService()
         setUploadButton()
     }
     
+    func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .sections(let sections):
+                    self?.applySnapshot(sections)
+                }
+            }).store(in: &cancellables)
+    }
+    
     private func setPhotoService() {
         PhotoService.shared.delegate = self
-        getAlbums()
     }
     
     private func setUploadButton() {
-        if selectedIndex != nil {
-            uploadButton.setTitleColor(.white, for: .normal)
-            uploadButton.backgroundColor = .black
-        } else {
-            uploadButton.setTitleColor(CommonAsset.Colors.gray06.color, for: .normal)
-            uploadButton.backgroundColor = CommonAsset.Colors.gray03.color
-        }
-    }
-    
-    private func getAlbums() {
-        PhotoService.shared.getAlbums(completion: { [weak self] albums in
-            self?.albums = albums
-        })
-        
-        if let albums = albums {
-            PhotoService.shared.getPHAssets(album: albums[currentAlbumIndex].album) { [weak self] phAssets in
-                self?.phAssets = phAssets
-            }
-        }
+//        if selectedIndex != nil {
+//            uploadButton.setTitleColor(.white, for: .normal)
+//            uploadButton.backgroundColor = .black
+//        } else {
+//            uploadButton.setTitleColor(CommonAsset.Colors.gray06.color, for: .normal)
+//            uploadButton.backgroundColor = CommonAsset.Colors.gray03.color
+//        }
     }
     
     private func setConstraintsLayout() {
@@ -150,16 +120,13 @@ final public class AlbumViewController: UIViewController {
     }
     
     private func setDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<AlbumSectionKind, PHAsset>(
             collectionView: collectionView,
-            cellProvider: { [weak self] collectionView, indexPath, _ in
-                guard let self = self else {
-                    return UICollectionViewCell()
-                }
+            cellProvider: { collectionView, indexPath, phAssets in
                 let cell = collectionView.dequeueReusableCell(AlbumCell.self, for: indexPath)
                 
                 PhotoService.shared.fetchImage(
-                    asset: self.phAssets[indexPath.item],
+                    asset: phAssets,
                     size: .init(width: 368, height: 356),
                     contentMode: .aspectFit
                 ) { [weak cell] image in
@@ -171,11 +138,14 @@ final public class AlbumViewController: UIViewController {
             })
     }
     
-    private func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(Array(0..<phAssets.count).map { _ in UUID() })
+    private func applySnapshot(_ sections: [AlbumSection]) {
+        var snapshot = NSDiffableDataSourceSnapshot<AlbumSectionKind, PHAsset>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
+        }
         dataSource?.apply(snapshot)
+        
     }
     
     func albumLayout() -> UICollectionViewLayout {
@@ -211,13 +181,14 @@ final public class AlbumViewController: UIViewController {
 // 사진 접근 권한: 선택된 사진
 extension AlbumViewController: PHPhotoLibraryChangeObserver {
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
-        getAlbums()
+//        currentAlbum = PhotoService.shared.getRecentAlbum()
+//        phAssets = PhotoService.shared.getPHAssets(album: currentAlbum!)
     }
 }
 
 extension AlbumViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selectedIndex = indexPath.row
+        //selectedIndex = indexPath.row
         setUploadButton()
     }
 }
