@@ -37,25 +37,10 @@ final class PhotoService: NSObject {
     // 앨범들 가져오기
     
     func getAlbums(completion: @escaping ([AlbumInfo]) -> Void) {
-        // 일반 앨범 가져오기
         var allAlbums = [AlbumInfo]()
         defer {
             completion(allAlbums)
         }
-        
-        let fetchOptions = PHFetchOptions()
-        fetchOptions.predicate = Const.predicate
-        let standardAlbum = PHAsset.fetchAssets(with: fetchOptions)
-        allAlbums.append(
-            .init(
-                identifier: nil,
-                name: "Const.titleText",
-                photoCount: standardAlbum.count,
-                album: standardAlbum,
-                thumbNailImage: assetToImage(asset: standardAlbum[0])
-            )
-        )
-        
         // 스마트 앨범 가져오기 (ex 즐겨찾는 항목)
         let smartAlbums = PHAssetCollection.fetchAssetCollections(
             with: .smartAlbum,
@@ -82,7 +67,7 @@ final class PhotoService: NSObject {
                     allAlbums.append(
                         .init(
                             identifier: smartAlbum.localIdentifier,
-                            name: smartAlbum.localizedTitle ?? "Const.titleText",
+                            name: self.englishToKorean(title: smartAlbum.localizedTitle),
                             photoCount: smartAlbums.count,
                             album: smartAlbums,
                             thumbNailImage: self.assetToImage(asset: smartAlbums[0])
@@ -118,7 +103,7 @@ final class PhotoService: NSObject {
                     allAlbums.append(
                         .init(
                             identifier: smartAlbum.localIdentifier,
-                            name: smartAlbum.localizedTitle ?? "이름 없음",
+                            name: self.englishToKorean(title: smartAlbum.localizedTitle),
                             photoCount: smartAlbums.count,
                             album: smartAlbums,
                             thumbNailImage: self.assetToImage(asset: smartAlbums[0])
@@ -197,5 +182,24 @@ final class PhotoService: NSObject {
 extension PhotoService: PHPhotoLibraryChangeObserver {
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         self.delegate?.photoLibraryDidChange(changeInstance)
+    }
+}
+
+extension PhotoService {
+    func englishToKorean(title: String?) -> String {
+        guard let title = title else {
+            return "폴더명 없음"
+        }
+        switch title {
+        case "Recents": return "최근 항목"
+        case "Favorites": return "즐겨찾는 항목"
+        case "Selfies": return "셀피"
+        case "Panoramas": return "파노라마"
+        case "Screenshots": return "스크린샷"
+        case "Hidden": return "가려진 항목"
+        case "Portrait": return "인물 사진"
+        case "Bursts": return "고속 연사 촬영"
+        default: return title
+        }
     }
 }
