@@ -19,12 +19,6 @@ protocol MyFitftyViewModelInput {
     
 }
 
-protocol MyFitftyViewModelOutput {
-    
-    var output: MyFitftyViewModelOutput { get }
-    
-}
-
 public final class MyFitftyViewModel {
     
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
@@ -50,12 +44,6 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
             MyFitftySection(sectionKind: .styleTag, items: Array(0..<7).map { _ in UUID() })
         ], phAssetInfo.image))
     }
-    
-}
-
-extension MyFitftyViewModel: MyFitftyViewModelOutput {
-    
-    var output: MyFitftyViewModelOutput { self }
     
 }
 
