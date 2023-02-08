@@ -13,6 +13,7 @@ enum SocialLoginError: Error {
     case loginFail
     case expiredToken
     case noToken
+    case others(String)
 }
 
 extension SocialLoginError: LocalizedError {
@@ -26,6 +27,8 @@ extension SocialLoginError: LocalizedError {
             return NSLocalizedString("다시 로그인해주세요", comment: "Expired Token")
         case .noToken:
             return NSLocalizedString("토큰이 없습니다", comment: "No Token")
+        case .others(let message):
+            return NSLocalizedString(message, comment: "Others Message")
         }
     }
 }
