@@ -18,25 +18,7 @@ final public class MyFitftyViewController: UIViewController {
     private let viewModel: MyFitftyViewModel
     private var cancellables: Set<AnyCancellable> = .init()
     
-    private var dataSource: UICollectionViewDiffableDataSource<MyFitftySectionKind, UUID>?
-    
-    private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
-        (.minimal, false),
-        (.modern, false),
-        (.casual, false),
-        (.street, false),
-        (.lovely, false),
-        (.hip, false),
-        (.luxury, false)
-    ]
-    
-    private var weatherTagItems: [(weatherTag: WeatherTag, isSelected: Bool)] = [
-        (.coldWaveWeather, false),
-        (.coldWeather, false),
-        (.chillyWeather, false),
-        (.warmWeather, false),
-        (.hotWeather, false)
-    ]
+    private var dataSource: UICollectionViewDiffableDataSource<MyFitftySectionKind, MyFitftyCellModel>?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
@@ -237,18 +219,16 @@ private extension MyFitftyViewController {
 extension MyFitftyViewController {
     
     private func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<MyFitftySectionKind, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<MyFitftySectionKind, MyFitftyCellModel>(
             collectionView: collectionView,
-            cellProvider: { [weak self] collectionView, indexPath, _ in
+            cellProvider: { [weak self] collectionView, indexPath, item in
                 guard let self = self else {
                     return UICollectionViewCell()
                 }
-                let section = MyFitftySectionKind(index: indexPath.section)
-                switch section {
+                switch item {
                 case .content:
                     let cell = collectionView.dequeueReusableCell(ContentCell.self, for: indexPath)
                     cell?.setActionUploadPhotoButton(self, action: #selector(self.didTapUploadPhotoButton))
-                    
                     switch self.myFitftyType {
                     case .modifyMyFitfty:
                         cell?.setUp(codyImage: CommonAsset.Images.profileSample.image, content: "오늘의 핏프티~")
@@ -263,24 +243,21 @@ extension MyFitftyViewController {
                     
                     return cell ?? UICollectionViewCell()
                     
-                case .weatherTag:
+                case .weatherTag(let weatherTag, let isSelected):
                     let cell = collectionView.dequeueReusableCell(WeatherTagCell.self, for: indexPath)
                     cell?.setUp(
-                        weahterTag: self.weatherTagItems[indexPath.item].weatherTag,
-                        isSelected: self.weatherTagItems[indexPath.item].isSelected
+                        weahterTag: weatherTag,
+                        isSelected: isSelected
                     )
                     return cell ?? UICollectionViewCell()
                     
-                case .styleTag:
+                case .styleTag(let styleTag, let isSelected):
                     let cell = collectionView.dequeueReusableCell(StyleTagCell.self, for: indexPath)
                     cell?.setUp(
-                        styleTag: self.styleTagItems[indexPath.item].styleTag,
-                        isSelected: self.styleTagItems[indexPath.item].isSelected
+                        styleTag: styleTag,
+                        isSelected: isSelected
                     )
                     return cell
-                    
-                default:
-                    return UICollectionViewCell()
                 }
             })
         
@@ -340,20 +317,19 @@ extension MyFitftyViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applyTagSnapshot() {
+    private func applyTagSnapshot(_ tagSections: [MyFitftySection]) {
         if var snapshot = dataSource?.snapshot() {
-            snapshot.deleteSections([.weatherTag])
-            snapshot.appendSections([.weatherTag])
-            snapshot.appendItems(Array(0..<weatherTagItems.count).map { _ in UUID() })
-            snapshot.deleteSections([.styleTag])
-            snapshot.appendSections([.styleTag])
-            snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
+            tagSections.forEach {
+                snapshot.deleteSections([$0.sectionKind])
+                snapshot.appendSections([$0.sectionKind])
+                snapshot.appendItems($0.items)
+            }
             dataSource?.apply(snapshot, animatingDifferences: false)
         }
     }
     
     private func applySnapshot(_ sections: [MyFitftySection]) {
-        var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, UUID>()
+        var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, MyFitftyCellModel>()
         sections.forEach {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
@@ -482,31 +458,10 @@ extension MyFitftyViewController {
 extension MyFitftyViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = MyFitftySectionKind(index: indexPath.section)
-        switch section {
-        case .weatherTag:
-            for index in weatherTagItems.indices {
-                if indexPath.item == index {
-                    weatherTagItems[index].isSelected = true
-                } else {
-                    weatherTagItems[index].isSelected = false
-                }
-            }
-            applyTagSnapshot()
-            
-        case .styleTag:
-            for index in styleTagItems.indices {
-                if indexPath.item == index {
-                    styleTagItems[index].isSelected = true
-                } else {
-                    styleTagItems[index].isSelected = false
-                }
-            }
-            applyTagSnapshot()
-            
-        default:
-            break
+        if let section = MyFitftySectionKind(index: indexPath.section) {
+            viewModel.input.didTapTag(section, index: indexPath.item)
         }
+        
     }
 }
 
