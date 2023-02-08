@@ -33,6 +33,7 @@ public final class MainViewModel {
     
     private let addressRepository: AddressRepository
     private let weatherRepository: WeatherRepository
+    private let fitftyRepository: FitftyRepository
     private let userManager: UserManager
     
     private var _location: CurrentValueSubject<(longitude: Double?, latitude: Double?), Never> = .init(
@@ -42,10 +43,12 @@ public final class MainViewModel {
     public init(
         addressRepository: AddressRepository,
         weatherRepository: WeatherRepository,
+        fitftyRepository: FitftyRepository,
         userManager: UserManager
     ) {
         self.addressRepository = addressRepository
         self.weatherRepository = weatherRepository
+        self.fitftyRepository = fitftyRepository
         self.userManager = userManager
     }
 
