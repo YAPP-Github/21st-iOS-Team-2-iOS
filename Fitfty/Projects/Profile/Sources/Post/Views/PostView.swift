@@ -108,6 +108,6 @@ extension PostView {
     func setUp(content: String, hits: String, bookmark: String, date: String) {
         contentLabel.text = content
         dateLabel.text = date
-        postInfoView.setUp(hits: hits, bookmark: bookmark, weatherTag: .coldWaveWeather)
+        postInfoView.setUp(hits: hits, bookmark: bookmark, weatherTag: .freezing)
     }
 }
