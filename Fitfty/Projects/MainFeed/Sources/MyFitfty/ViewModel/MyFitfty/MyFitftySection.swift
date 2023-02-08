@@ -7,11 +7,12 @@
 //
 
 import Foundation
+import Common
 
 public struct MyFitftySection {
     
     let sectionKind: MyFitftySectionKind
-    var items: [UUID]
+    var items: [MyFitftyCellModel]
     
 }
 
@@ -28,6 +29,29 @@ enum MyFitftySectionKind {
         case 2: self = .styleTag
         default: return nil
         }
+    }
+}
+
+enum MyFitftyCellModel: Hashable {
+    
+    case content(UUID)
+    case styleTag(StyleTag, Bool)
+    case weatherTag(WeatherTag, Bool)
+    
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case .content(let uuid):
+            hasher.combine(uuid)
+            
+        case .styleTag(let styleTag, let isSelected):
+            hasher.combine(styleTag)
+            hasher.combine(isSelected)
+            
+        case .weatherTag(let weatherTag, let isSelected):
+            hasher.combine(weatherTag)
+            hasher.combine(isSelected)
+        }
+
     }
     
 }

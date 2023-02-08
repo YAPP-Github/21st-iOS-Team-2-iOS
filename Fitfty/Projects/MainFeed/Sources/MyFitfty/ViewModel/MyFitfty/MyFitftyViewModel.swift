@@ -16,6 +16,7 @@ protocol MyFitftyViewModelInput {
     var input: MyFitftyViewModelInput { get }
     func viewDidLoad()
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo)
+    func didTapTag(_ sectionKind: MyFitftySectionKind, index: Int)
     
 }
 
@@ -23,6 +24,64 @@ public final class MyFitftyViewModel {
     
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     public init() { }
+    
+    private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
+        (.minimal, false),
+        (.modern, false),
+        (.casual, false),
+        (.street, false),
+        (.lovely, false),
+        (.hip, false),
+        (.luxury, false)
+    ]
+    
+    private var weatherTagItems: [(weatherTag: WeatherTag, isSelected: Bool)] = [
+        (.coldWaveWeather, false),
+        (.coldWeather, false),
+        (.chillyWeather, false),
+        (.warmWeather, false),
+        (.hotWeather, false)
+    ]
+    
+    private func getStyleTagCellModels() -> [MyFitftyCellModel] {
+        var cellModels: [MyFitftyCellModel] = []
+        for index in 0..<styleTagItems.count {
+            cellModels.append(MyFitftyCellModel.styleTag(styleTagItems[index].styleTag, styleTagItems[index].isSelected))
+        }
+        return cellModels
+    }
+    
+    private func getWeatherTagCellModels() -> [MyFitftyCellModel] {
+        var cellModels: [MyFitftyCellModel] = []
+        for index in 0..<weatherTagItems.count {
+            cellModels.append(MyFitftyCellModel.weatherTag(weatherTagItems[index].weatherTag, weatherTagItems[index].isSelected))
+        }
+        return cellModels
+    }
+    
+    private func changeTag(_ sectionKind: MyFitftySectionKind, selectedIndex: Int?) {
+        switch sectionKind {
+        case .styleTag:
+            for index in 0..<styleTagItems.count {
+                styleTagItems[index].isSelected = false
+            }
+            if let selectedIndex = selectedIndex {
+                styleTagItems[selectedIndex].isSelected = true
+            }
+            
+        case .weatherTag:
+            for index in 0..<weatherTagItems.count {
+                weatherTagItems[index].isSelected = false
+            }
+            if let selectedIndex = selectedIndex {
+                weatherTagItems[selectedIndex].isSelected = true
+            }
+            
+        default:
+            break
+        }
+    }
+    
 }
 
 extension MyFitftyViewModel: MyFitftyViewModelInput {
@@ -31,18 +90,27 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     
     func viewDidLoad() {
         currentState.send(.sections([
-            MyFitftySection(sectionKind: .content, items: [UUID()]),
-            MyFitftySection(sectionKind: .weatherTag, items: Array(0..<5).map { _ in UUID() }),
-            MyFitftySection(sectionKind: .styleTag, items: Array(0..<7).map { _ in UUID() })
+            MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
+            MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+            MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
         ]))
     }
     
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo) {
         currentState.send(.codyImage(phAssetInfo.image))
         currentState.send(.sections([
-                MyFitftySection(sectionKind: .content, items: [UUID()]),
-                MyFitftySection(sectionKind: .weatherTag, items: Array(0..<5).map { _ in UUID() }),
-                MyFitftySection(sectionKind: .styleTag, items: Array(0..<7).map { _ in UUID() })
+            MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
+            MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+            MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
+        ]))
+    }
+    
+    func didTapTag(_ sectionKind: MyFitftySectionKind, index: Int) {
+        changeTag(sectionKind, selectedIndex: index)
+        currentState.send(.sections([
+            MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
+            MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+            MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
         ]))
     }
     
@@ -56,5 +124,5 @@ extension MyFitftyViewModel: ViewModelType {
         case sections([MyFitftySection])
         case codyImage(UIImage)
     }
-
+    
 }
