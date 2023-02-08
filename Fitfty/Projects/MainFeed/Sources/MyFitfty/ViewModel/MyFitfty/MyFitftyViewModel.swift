@@ -38,7 +38,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     }
     
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo) {
-        currentState.send(.reload(phAssetInfo.image))
+        currentState.send(.codyImage(phAssetInfo.image))
         currentState.send(.sections([
                 MyFitftySection(sectionKind: .content, items: [UUID()]),
                 MyFitftySection(sectionKind: .weatherTag, items: Array(0..<5).map { _ in UUID() }),
@@ -54,7 +54,7 @@ extension MyFitftyViewModel: ViewModelType {
     
     public enum ViewModelState {
         case sections([MyFitftySection])
-        case reload(UIImage)
+        case codyImage(UIImage)
     }
 
 }
