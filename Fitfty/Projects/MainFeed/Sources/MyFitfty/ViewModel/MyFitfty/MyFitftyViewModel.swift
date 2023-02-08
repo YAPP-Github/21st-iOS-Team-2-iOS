@@ -38,11 +38,12 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     }
     
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo) {
-        currentState.send(.reload([
-            MyFitftySection(sectionKind: .content, items: [UUID()]),
-            MyFitftySection(sectionKind: .weatherTag, items: Array(0..<5).map { _ in UUID() }),
-            MyFitftySection(sectionKind: .styleTag, items: Array(0..<7).map { _ in UUID() })
-        ], phAssetInfo.image))
+        currentState.send(.reload(phAssetInfo.image))
+        currentState.send(.sections([
+                MyFitftySection(sectionKind: .content, items: [UUID()]),
+                MyFitftySection(sectionKind: .weatherTag, items: Array(0..<5).map { _ in UUID() }),
+                MyFitftySection(sectionKind: .styleTag, items: Array(0..<7).map { _ in UUID() })
+        ]))
     }
     
 }
@@ -53,7 +54,7 @@ extension MyFitftyViewModel: ViewModelType {
     
     public enum ViewModelState {
         case sections([MyFitftySection])
-        case reload([MyFitftySection], UIImage)
+        case reload(UIImage)
     }
 
 }
