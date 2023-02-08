@@ -38,6 +38,7 @@ private extension MainCoordinator {
             viewModel: MainViewModel(
                 addressRepository: DefaultAddressRepository(),
                 weatherRepository: DefaultWeatherRepository(),
+                fitftyRepository: DefaultFitftyRepository(),
                 userManager: DefaultUserManager.shared
             )
         )
