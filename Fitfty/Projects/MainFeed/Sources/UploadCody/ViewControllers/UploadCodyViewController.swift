@@ -37,7 +37,7 @@ final public class UploadCodyViewController: UIViewController {
         (.casual, false)
     ]
     private var weatherTagItems: [(weatherTag: WeatherTag, isSelected: Bool)] = [
-        (.coldWaveWeather, true),
+        (.freezing, true),
         (.coldWeather, false),
         (.chillyWeather, false),
         (.warmWeather, false),
