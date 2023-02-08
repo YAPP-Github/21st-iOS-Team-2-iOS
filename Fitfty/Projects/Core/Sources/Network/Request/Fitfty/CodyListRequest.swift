@@ -7,15 +7,8 @@
 //
 
 import Foundation
+import Common
 
 struct CodyListRequest: Codable {
     let weather: WeatherTag
-}
-
-public enum WeatherTag: String, Codable {
-    case freezing = "FREEZING"
-    case cold = "COLD"
-    case chilly = "CHILLY"
-    case warm = "WARM"
-    case hot = "HOT"
 }

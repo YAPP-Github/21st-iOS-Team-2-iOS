@@ -25,7 +25,14 @@ public struct FitftyTag {
     public let gender: Gender
 }
 
-public enum Gender: String {
+public enum Gender: String, Codable {
     case male = "MALE"
     case female = "FEMALE"
+    
+    var localized: String {
+        switch self {
+        case .male: return "남"
+        case .female: return "여"
+        }
+    }
 }

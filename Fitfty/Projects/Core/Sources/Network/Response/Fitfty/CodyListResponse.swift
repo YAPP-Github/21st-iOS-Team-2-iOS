@@ -9,28 +9,47 @@
 import Foundation
 
 // MARK: - Fitfty Main Cody List Response
-struct FitftyMainCodyListResponse: Codable {
-    let result: FitftyResult
-    let data: CodyListResponse
-    let message: String?
-    let errorCode: String?
+public struct FitftyMainCodyListResponse: Codable {
+    public let result: FitftyResult
+    public let data: CodyListResponse
+    public let message: String?
+    public let errorCode: String?
 }
 
 // MARK: - Fitfty Result
-enum FitftyResult: String, Codable {
+public enum FitftyResult: String, Codable {
     case success = "SUCCESS"
     case fail = "FAIL"
 }
 
 // MARK: - Cody List Response
-struct CodyListResponse: Codable {
-    let pictureDetailInfoList: [CodyResponse]
+public struct CodyListResponse: Codable {
+    public let pictureDetailInfoList: [CodyResponse]
 }
 
 // MARK: - Cody Response
-struct CodyResponse: Codable {
-    let filePath: String
-    let boardToken, nickname: String
-    let views: Int
-    let bookmarked: Bool
+public struct CodyResponse: Codable {
+    public let filePath: String
+    public let boardToken: String
+    public let nickname: String
+    public let views: Int
+    public let bookmarked: Bool
+}
+
+extension CodyResponse: Equatable, Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.filePath == rhs.filePath &&
+        lhs.boardToken == rhs.boardToken &&
+        lhs.nickname == rhs.nickname &&
+        lhs.views == rhs.views &&
+        lhs.bookmarked == rhs.bookmarked
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(filePath)
+        hasher.combine(boardToken)
+        hasher.combine(nickname)
+        hasher.combine(views)
+        hasher.combine(bookmarked)
+    }
 }
