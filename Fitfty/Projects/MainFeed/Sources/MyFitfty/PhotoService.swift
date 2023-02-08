@@ -157,7 +157,6 @@ final class PhotoService: NSObject {
     
 }
 
-// 사진 접근 권한: 선택된 사진
 extension PhotoService: PHPhotoLibraryChangeObserver {
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         self.delegate?.photoLibraryDidChange(changeInstance)
