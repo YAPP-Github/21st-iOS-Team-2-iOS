@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import KakaoSDKCommon
+import KakaoSDKAuth
 import KakaoSDKUser
 import AuthenticationServices
 
@@ -33,7 +35,7 @@ final public class SocialLoginManager: NSObject {
         }
     }
     
-    public func tryAppleLogin(completionHandler: @escaping (_ request: AppleLoginRequest) -> Void,
+    public func tryAppleLogin(completionHandler: @escaping () -> Void,
                                failedHandler: @escaping (Error?) -> Void) {
         
         let appleIDProvider = ASAuthorizationAppleIDProvider()
@@ -42,6 +44,10 @@ final public class SocialLoginManager: NSObject {
         let authorizationController = ASAuthorizationController(requests: [request],
                                                                 completionHandler: completionHandler,
                                                                 failedHandler: failedHandler)
+    }
+    
+    public func initailizeKakaoLoginSDK() {
+        KakaoSDK.initSDK(appKey: APIKey.kakaoAppKeyForLogin)
     }
     
     private func getUserInfo(completionHandler: @escaping () -> Void,
@@ -77,7 +83,7 @@ final public class SocialLoginManager: NSObject {
 }
 
 extension ASAuthorizationController {
-    fileprivate typealias AppleLoginCompletionHandler = (_ request: AppleLoginRequest) -> Void
+    fileprivate typealias AppleLoginCompletionHandler = () -> Void
     fileprivate typealias AppleLoginFailedHandler = (Error?) -> Void
     
     private struct AssociatedKeys {
@@ -115,10 +121,10 @@ extension ASAuthorizationController {
 extension ASAuthorizationController: ASAuthorizationControllerDelegate {
     public func authorizationController(controller: ASAuthorizationController,
                                         didCompleteWithAuthorization authorization: ASAuthorization) {
-        var userIdentifier: String?
-        var fullName: String?
-        var email: String?
-        var identityToken: String?
+        var userIdentifier: String = ""
+        var fullName: String = ""
+        var email: String = ""
+        var identityToken: String = ""
         
         switch authorization.credential {
         case let appleIDCredential as ASAuthorizationAppleIDCredential:
@@ -127,23 +133,22 @@ extension ASAuthorizationController: ASAuthorizationControllerDelegate {
             
             userIdentifier = appleIDCredential.user
             fullName = "\(personName?.familyName ?? "")" + "\(personName?.givenName ?? "")"
-            email = appleIDCredential.email
-            identityToken = String(data: idToken, encoding: .utf8)
+            email = appleIDCredential.email ?? ""
+            identityToken = String(data: idToken, encoding: .utf8) ?? ""
         default:
             break
         }
         
         guard hasEmail(email: email) else {
-            // noEmailError
+            failedHandler?(SocialLoginError.noEmail)
             return
         }
         
         let request = AppleLoginRequest(userIdentifier: userIdentifier,
-                                        fullName: fullName,
-                                        email: email,
+                                        userName: fullName,
+                                        userEmail: email,
                                         identityToken: identityToken)
-        
-        completionHandler?(request)
+        requestAppleLogin(request)
     }
     
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
@@ -153,17 +158,23 @@ extension ASAuthorizationController: ASAuthorizationControllerDelegate {
     private func hasEmail(email: String?) -> Bool {
         return email?.isEmpty == false
     }
+    
+    private func requestAppleLogin(_ request: AppleLoginRequest) {
+        Task {
+            do {
+                let response = try await FitftyAPI.request(target: .signInApple(parameters: request.asDictionary()),
+                                                           dataType: SocialLoginResponse.self)
+                print("애플 로그인: \(response)")
+                completionHandler?()
+            } catch {
+                failedHandler?(SocialLoginError.loginFail)
+            }
+        }
+    }
 }
 
 extension ASAuthorizationController: ASAuthorizationControllerPresentationContextProviding {
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return (UIApplication.shared.keyWindow?.rootViewController?.view.window)!
     }
-}
-
-public struct AppleLoginRequest {
-    let userIdentifier: String?
-    let fullName: String?
-    let email: String?
-    let identityToken: String?
 }

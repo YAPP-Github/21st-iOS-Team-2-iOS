@@ -21,9 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         
         AppAppearance.setUpAppearance()
-        
-        // MARK: - Social Login 초기화
-        KakaoSDK.initSDK(appKey: APIKey.kakaoAppKey)
+        SocialLoginManager.shared.initailizeKakaoLoginSDK()
         
         return true
     }
