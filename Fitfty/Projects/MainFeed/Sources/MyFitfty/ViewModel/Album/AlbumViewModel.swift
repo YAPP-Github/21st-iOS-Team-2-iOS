@@ -17,14 +17,15 @@ protocol AlbumViewModelInput {
     var input: AlbumViewModelInput { get }
     func viewDidLoad()
     func getAlbum(_ albumInfo: AlbumInfo)
-    func didTapUpload(isSelected: Bool)
+    func didTapUpload()
+    func didTapImage(index: Int)
     
 }
 
 protocol AlbumViewModelOutput {
     
     var output: AlbumViewModelOutput { get }
-    func selectImage(index: Int)
+    func selectImage()
     
 }
 
@@ -33,7 +34,7 @@ public final class AlbumViewModel {
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
     private var currentAlbum: [PHAsset] = []
-    
+    private var selectedIndex: Int?
     public init() { }
     
 }
@@ -56,6 +57,7 @@ extension AlbumViewModel: AlbumViewModelInput {
     
     func getAlbum(_ albumInfo: AlbumInfo) {
         currentAlbum = PhotoService.shared.getPHAssets(album: albumInfo.album)
+        selectedIndex = nil
         currentState.send(.reloadAlbum(albumInfo.name))
         currentState.send(.sections([
             AlbumSection(
@@ -65,11 +67,15 @@ extension AlbumViewModel: AlbumViewModelInput {
         ]))
     }
     
-    func didTapUpload(isSelected: Bool) {
-        guard isSelected else {
+    func didTapUpload() {
+        guard selectedIndex != nil else {
             return
         }
         currentState.send(.completed(true))
+    }
+    
+    func didTapImage(index: Int) {
+        self.selectedIndex = index
     }
     
 }
@@ -78,8 +84,11 @@ extension AlbumViewModel: AlbumViewModelOutput {
     
     var output: AlbumViewModelOutput { self }
     
-    func selectImage(index: Int) {
-        let phAsset = currentAlbum[index]
+    func selectImage() {
+        guard let selectedIndex = selectedIndex else {
+            return
+        }
+        let phAsset = currentAlbum[selectedIndex]
         PhotoService.shared.fetchImage(
             asset: phAsset,
             size: .init(width: 3200, height: 3200),

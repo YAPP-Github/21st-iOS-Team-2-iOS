@@ -39,8 +39,6 @@ final public class AlbumViewController: UIViewController {
     }()
     
     private var dataSource: UICollectionViewDiffableDataSource<AlbumSectionKind, PHAsset>?
-    
-    private var selectedIndex: Int?
    
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,7 +85,7 @@ final public class AlbumViewController: UIViewController {
     }
     
     @objc private func didTapUploadButton(_ sender: Any?) {
-        viewModel.input.didTapUpload(isSelected: selectedIndex != nil)
+        viewModel.input.didTapUpload()
     }
     
 }
@@ -104,14 +102,11 @@ private extension AlbumViewController {
                     self?.navigationBarView.setTitle(title: title)
                     self?.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .top, animated: false)
                     self?.uploadButton.setStyle(.disabled)
-                    self?.selectedIndex = nil
                 case .completed(let completed):
                     guard completed else {
                         return
                     }
-                    if let selectedIndex = self?.selectedIndex {
-                        self?.viewModel.output.selectImage(index: selectedIndex)
-                    }
+                    self?.viewModel.output.selectImage()
                     self?.coordinator.dismiss()
                 }
             }).store(in: &cancellables)
@@ -199,6 +194,6 @@ private extension AlbumViewController {
 extension AlbumViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         uploadButton.setStyle(.enabled)
-        selectedIndex = indexPath.row
+        viewModel.input.didTapImage(index: indexPath.row)
     }
 }
