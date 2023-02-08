@@ -15,22 +15,19 @@ import AuthenticationServices
 final public class SocialLoginManager: NSObject {
     static public let shared = SocialLoginManager()
     
-    var accessToken: String?
-    var refreshToken: String?
-    
     public func tryKakaoLogin(completionHandler: @escaping () -> Void,
-                               failedHandler: @escaping (Error) -> Void) {
+                              failedHandler: @escaping (Error) -> Void) {
         guard isKakaoLoginAvailable() else {
             failedHandler(SocialLoginError.loginFail)
             return
         }
         
-        UserApi.shared.loginWithKakaoTalk {[weak self] (oauthToken, error) in
+        UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
             if let error = error {
                 failedHandler(error)
             } else {
-                self?.accessToken = oauthToken?.accessToken
-                completionHandler()
+                self?.saveKakaoUserInfo()
+                self?.requestKakaoLogin(oauthToken?.accessToken, completionHandler: completionHandler, failedHandler: failedHandler)
             }
         }
     }
@@ -50,29 +47,35 @@ final public class SocialLoginManager: NSObject {
         KakaoSDK.initSDK(appKey: APIKey.kakaoAppKeyForLogin)
     }
     
-    private func getUserInfo(completionHandler: @escaping () -> Void,
-                             failedHandler: @escaping (Error) -> Void) {
-       
-        UserApi.shared.me() { (user, error) in
-            if let error = error {
-                print(error)
-            } else {
-                if let user = user {
-                    var scopes = [String]()
-                    if (user.kakaoAccount?.profileNeedsAgreement == true) { scopes.append("profile") }
-                    if (user.kakaoAccount?.emailNeedsAgreement == true) { scopes.append("account_email") }
-
-                    // 이메일 nil이면 에러 처리
-                    
-                    UserApi.shared.loginWithKakaoAccount(scopes: scopes) {[weak self] (oauthToken, error) in
-                        if let error = error {
-                            failedHandler(error)
-                        } else {
-                            self?.accessToken = oauthToken?.accessToken
-                            completionHandler()
-                        }
-                    }
+    private func requestKakaoLogin(_ accessToken: String?,
+                                   completionHandler: @escaping () -> Void,
+                                   failedHandler: @escaping (Error) -> Void) {
+        Task {
+            do {
+                let response = try await FitftyAPI.request(target: .signInKakao(parameters: ["accessToken": accessToken!]),
+                                                           dataType: SocialLoginResponse.self)
+                guard let jwt = response.data else {
+                    return failedHandler(SocialLoginError.others(response.message ?? ""))
                 }
+                
+                if let userIdentifier = UserDefaults.standard.read(key: .userIdentifier) as? String,
+                   let userAccount = UserDefaults.standard.read(key: .userAccount) as? String {
+                    Keychain.saveData(serviceIdentifier: userIdentifier, forKey: userAccount, data: jwt)
+                    completionHandler()
+                }
+            } catch {
+                failedHandler(SocialLoginError.loginFail)
+            }
+        }
+    }
+    
+    private func saveKakaoUserInfo() {
+        UserApi.shared.me() { (user, error) in
+            if let user = user,
+               let identifier = user.id,
+               let account = user.kakaoAccount?.email {
+                UserDefaults.standard.write(key: .userIdentifier, value: String(identifier))
+                UserDefaults.standard.write(key: .userAccount, value: account)
             }
         }
     }
@@ -81,6 +84,8 @@ final public class SocialLoginManager: NSObject {
         return UserApi.isKakaoTalkLoginAvailable()
     }
 }
+
+// MARK: - Apple Login
 
 extension ASAuthorizationController {
     fileprivate typealias AppleLoginCompletionHandler = () -> Void
@@ -127,7 +132,7 @@ extension ASAuthorizationController {
                 let response = try await FitftyAPI.request(target: .signInApple(parameters: request.asDictionary()),
                                                            dataType: SocialLoginResponse.self)
                 guard let jwt = response.data else {
-                    return failedHandler?(SocialLoginError.loginFail)
+                    return failedHandler?(SocialLoginError.others(response.message ?? ""))
                 }
                 
                 UserDefaults.standard.write(key: .userIdentifier, value: request.userIdentifier)
