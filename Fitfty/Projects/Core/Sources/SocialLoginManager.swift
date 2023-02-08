@@ -10,29 +10,13 @@ import Foundation
 import KakaoSDKUser
 import AuthenticationServices
 
-public enum SocialLoginType {
-    case apple
-    case kakao
-}
-
 final public class SocialLoginManager: NSObject {
     static public let shared = SocialLoginManager()
     
     var accessToken: String?
     var refreshToken: String?
     
-    public func trySnsLogin(snsType: SocialLoginType,
-                            completionHandler: @escaping () -> Void,
-                            failedHandler: @escaping (Error) -> Void) {
-        switch snsType {
-        case .apple:
-            tryAppleLogin(completionHandler: completionHandler, failedHandler: failedHandler)
-        case .kakao:
-            tryKakaoLogin(completionHandler: completionHandler, failedHandler: failedHandler)
-        }
-    }
-    
-    private func tryKakaoLogin(completionHandler: @escaping () -> Void,
+    public func tryKakaoLogin(completionHandler: @escaping () -> Void,
                                failedHandler: @escaping (Error) -> Void) {
         guard isKakaoLoginAvailable() else {
             // TODO: - Error 처리해주자 - ethan
@@ -44,12 +28,20 @@ final public class SocialLoginManager: NSObject {
                 failedHandler(error)
             } else {
                 self?.accessToken = oauthToken?.accessToken
-                self?.refreshToken = oauthToken?.refreshToken
-                
-                
                 completionHandler()
             }
         }
+    }
+    
+    public func tryAppleLogin(completionHandler: @escaping (_ request: AppleLoginRequest) -> Void,
+                               failedHandler: @escaping (Error?) -> Void) {
+        
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        let authorizationController = ASAuthorizationController(requests: [request],
+                                                                completionHandler: completionHandler,
+                                                                failedHandler: failedHandler)
     }
     
     private func getUserInfo(completionHandler: @escaping () -> Void,
@@ -63,14 +55,14 @@ final public class SocialLoginManager: NSObject {
                     var scopes = [String]()
                     if (user.kakaoAccount?.profileNeedsAgreement == true) { scopes.append("profile") }
                     if (user.kakaoAccount?.emailNeedsAgreement == true) { scopes.append("account_email") }
-                            
+
+                    // 이메일 nil이면 에러 처리
+                    
                     UserApi.shared.loginWithKakaoAccount(scopes: scopes) {[weak self] (oauthToken, error) in
                         if let error = error {
                             failedHandler(error)
                         } else {
                             self?.accessToken = oauthToken?.accessToken
-                            self?.refreshToken = oauthToken?.refreshToken
-                            
                             completionHandler()
                         }
                     }
@@ -78,58 +70,100 @@ final public class SocialLoginManager: NSObject {
             }
         }
     }
-    
-    private func tryAppleLogin(completionHandler: @escaping () -> Void,
-                               failedHandler: @escaping (Error) -> Void) {
-        
-        let appleIDProvider = ASAuthorizationAppleIDProvider()
-        let request = appleIDProvider.createRequest()
-        request.requestedScopes = [.fullName, .email]
-        
-        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-        authorizationController.delegate = self
-        authorizationController.presentationContextProvider = self
-        authorizationController.performRequests()
-        
-        
-    }
-    
+
     private func isKakaoLoginAvailable() -> Bool {
         return UserApi.isKakaoTalkLoginAvailable()
     }
 }
 
-extension SocialLoginManager: ASAuthorizationControllerDelegate {
-    public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        
-        switch authorization.credential {
-            // Apple ID
-        case let appleIDCredential as ASAuthorizationAppleIDCredential:
-            
-            // 계정 정보 가져오기
-            let userIdentifier = appleIDCredential.user
-            let fullName = appleIDCredential.fullName
-            let email = appleIDCredential.email
-            let idToken = appleIDCredential.identityToken!
-            let tokeStr = String(data: idToken, encoding: .utf8)
-         
-            print("userIdentifier: \(userIdentifier)")
-            print("userEmail: \(email ?? "")")
-            print("userName: \((fullName?.givenName ?? "") + (fullName?.familyName ?? ""))")
-            print("identityToken: \(String(describing: tokeStr))")
-            
-        default:
-            break
+extension ASAuthorizationController {
+    fileprivate typealias AppleLoginCompletionHandler = (_ request: AppleLoginRequest) -> Void
+    fileprivate typealias AppleLoginFailedHandler = (Error?) -> Void
+    
+    private struct AssociatedKeys {
+        static var completionHandler = "CompletionHandler"
+        static var failedHandler = "FailedHandler"
+    }
+    
+    private var completionHandler: AppleLoginCompletionHandler? {
+        get {
+            objc_getAssociatedObject(self, &AssociatedKeys.completionHandler) as? AppleLoginCompletionHandler
+        } set {
+            objc_setAssociatedObject(self, &AssociatedKeys.completionHandler, newValue, .OBJC_ASSOCIATION_COPY)
+        }
+    }
+    private var failedHandler: AppleLoginFailedHandler? {
+        get {
+            objc_getAssociatedObject(self, &AssociatedKeys.failedHandler) as? AppleLoginFailedHandler
+        } set {
+            objc_setAssociatedObject(self, &AssociatedKeys.failedHandler, newValue, .OBJC_ASSOCIATION_COPY)
         }
     }
     
-    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        
+    convenience fileprivate init(requests: [ASAuthorizationRequest],
+                                 completionHandler: AppleLoginCompletionHandler?,
+                                 failedHandler: AppleLoginFailedHandler?) {
+        self.init(authorizationRequests: requests)
+        self.completionHandler = completionHandler
+        self.failedHandler = failedHandler
+        self.delegate = self
+        self.presentationContextProvider = self
+        self.performRequests()
     }
 }
 
-extension SocialLoginManager: ASAuthorizationControllerPresentationContextProviding {
+extension ASAuthorizationController: ASAuthorizationControllerDelegate {
+    public func authorizationController(controller: ASAuthorizationController,
+                                        didCompleteWithAuthorization authorization: ASAuthorization) {
+        var userIdentifier: String?
+        var fullName: String?
+        var email: String?
+        var identityToken: String?
+        
+        switch authorization.credential {
+        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            let idToken = appleIDCredential.identityToken!
+            let personName = appleIDCredential.fullName
+            
+            userIdentifier = appleIDCredential.user
+            fullName = "\(personName?.familyName ?? "")" + "\(personName?.givenName ?? "")"
+            email = appleIDCredential.email
+            identityToken = String(data: idToken, encoding: .utf8)
+        default:
+            break
+        }
+        
+        guard hasEmail(email: email) else {
+            // noEmailError
+            return
+        }
+        
+        let request = AppleLoginRequest(userIdentifier: userIdentifier,
+                                        fullName: fullName,
+                                        email: email,
+                                        identityToken: identityToken)
+        
+        completionHandler?(request)
+    }
+    
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        failedHandler?(error)
+    }
+    
+    private func hasEmail(email: String?) -> Bool {
+        return email?.isEmpty == false
+    }
+}
+
+extension ASAuthorizationController: ASAuthorizationControllerPresentationContextProviding {
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return (UIApplication.shared.keyWindow?.rootViewController?.view.window)!
     }
+}
+
+public struct AppleLoginRequest {
+    let userIdentifier: String?
+    let fullName: String?
+    let email: String?
+    let identityToken: String?
 }
