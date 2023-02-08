@@ -183,12 +183,12 @@ private extension BottomSheetViewController {
         return fullDimAlpha * (1 - ((value - fullDimPosition) / (noDimPosition - fullDimPosition)))
     }
     
-    func dismiss() {
+    func dismiss(_ completion: (() -> Void)? = nil) {
         let safeAreaHeight = view.safeAreaLayoutGuide.layoutFrame.height
         let bottomPadding = view.safeAreaInsets.bottom + view.safeAreaInsets.top
         bottomSheetViewTopConstraint.constant = safeAreaHeight + bottomPadding
         
-        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) { [weak self] in
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveLinear) { [weak self] in
             self?.dimmedView.alpha = 0.0
             self?.view.layoutIfNeeded()
         } completion: { [weak self] _ in
@@ -200,15 +200,19 @@ private extension BottomSheetViewController {
                 navigationController?.popToRootViewController(animated: false)
                 navigationController?.topViewController?.removeFromParent()
                 self?.contentViewController = nil
-                self?.dismiss(animated: false, completion: nil)
+                self?.dismiss(animated: false, completion: completion)
             }
         }
     }
     
     func showBottomSheet() {
         bottomSheetViewTopConstraint.constant = style.topConstant
-        
-        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
+        UIView.animate(
+            withDuration: 0.55,
+            delay: 0,
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 1,
+            animations: { [weak self] in
             self?.dimmedView.alpha = 0.7
             self?.view.layoutIfNeeded()
         }, completion: nil)
@@ -218,13 +222,11 @@ private extension BottomSheetViewController {
 
 public protocol BottomSheetViewControllerDelegate: AnyObject {
     
-    func dismissBottomSheet()
+    func dismissBottomSheet(_ completion: (() -> Void)?)
 }
 
 extension BottomSheetViewController: BottomSheetViewControllerDelegate {
-    
-    public func dismissBottomSheet() {
-        dismiss()
+    public func dismissBottomSheet(_ completion: (() -> Void)?) {
+        dismiss(completion)
     }
-    
 }

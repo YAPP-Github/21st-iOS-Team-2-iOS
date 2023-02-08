@@ -165,7 +165,7 @@ final public class UploadCodyViewController: UIViewController {
     }
     
     @objc func didTapCancelButton(_ sender: UIButton) {
-        coordinator.dismissUploadCody(self)
+        coordinator.dismiss()
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
@@ -197,7 +197,10 @@ extension UploadCodyViewController {
     private func setUpDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
             collectionView: collectionView,
-            cellProvider: { collectionView, indexPath, _ in
+            cellProvider: { [weak self] collectionView, indexPath, _ in
+                guard let self = self else {
+                    return UICollectionViewCell()
+                }
                 let section = Section(index: indexPath.section)
                 switch section {
                 case .content:
@@ -342,7 +345,7 @@ extension UploadCodyViewController {
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
-                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width) ,
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width),
                     heightDimension: .absolute(8)
                 ),
                 elementKind: FooterView.className,
@@ -457,7 +460,7 @@ extension UploadCodyViewController: UICollectionViewDelegate {
 // MARK: - AlbumAuthorization
 extension UploadCodyViewController {
     @objc private func didTapUploadPhotoButton(_ sender: UIButton) {
-        self.requestAlbumAuthorization { isAuthorized in
+        requestAlbumAuthorization { [weak self] isAuthorized in
             if isAuthorized {
                 PhotoService.shared.getAlbums(completion: { [weak self] _ in
                     DispatchQueue.main.async {
@@ -465,7 +468,7 @@ extension UploadCodyViewController {
                     }
                 })
             } else {
-                self.showAlertGoToSetting(
+                self?.showAlertGoToSetting(
                     title: "현재 앨범 사용에 대한 접근 권한이 없습니다.",
                     message: "설정 > 핏프티 탭에서 접근을 활성화 할 수 있습니다."
                 )
@@ -508,8 +511,8 @@ extension UploadCodyViewController {
             }
         [cancelAlert, goToSettingAlert]
             .forEach(alertController.addAction(_:))
-        DispatchQueue.main.async {
-            self.present(alertController, animated: true)
+        DispatchQueue.main.async { [weak self] in
+            self?.present(alertController, animated: true)
         }
     }
 }

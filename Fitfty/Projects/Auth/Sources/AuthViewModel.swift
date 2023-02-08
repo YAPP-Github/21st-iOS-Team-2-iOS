@@ -21,6 +21,7 @@ final public class AuthViewModel: ViewModelType {
     }
     
     public var state: PassthroughSubject<ViewModelState, Never> = .init()
+    public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     
     public init() {}
     

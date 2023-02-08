@@ -14,5 +14,6 @@ let project = Project.makeModule(
     dependencies: [
         .SPM.Moya,
         .SPM.KakaoSDK,
+        .Project.Common
     ]
 )

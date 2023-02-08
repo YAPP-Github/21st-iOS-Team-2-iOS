@@ -9,6 +9,8 @@
 import UIKit
 import MainFeed
 import Common
+import Core
+import Profile
 
 final class MainCoordinator: Coordinator {
     
@@ -19,8 +21,8 @@ final class MainCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
-        self.navigationController = navigationConrtoller
+    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+        self.navigationController = navigationController
     }
     
     func start() {
@@ -31,7 +33,14 @@ final class MainCoordinator: Coordinator {
 
 private extension MainCoordinator {
     func makeMainViewController() -> UIViewController {
-        let viewController = MainViewController(coordinator: self)
+        let viewController = MainViewController(
+            coordinator: self,
+            viewModel: MainViewModel(
+                addressRepository: DefaultAddressRepository(),
+                weatherRepository: DefaultWeatherRepository(),
+                userManager: DefaultUserManager.shared
+            )
+        )
         return viewController
     }
     
@@ -50,8 +59,24 @@ private extension MainCoordinator {
         return bottomSheetViewController
     }
     
-    func makeUserCoordinator() -> UserCoordinator {
-        let coordinator = UserCoordinator(navigationConrtoller: navigationController)
+    func makePostCoordinator(profileType: ProfileType) -> PostCoordinator {
+        let coordinator = PostCoordinator(
+            navigationController: navigationController,
+            profileType: profileType,
+            presentType: .mainProfile
+        )
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
+    
+    func makeProfileCoordinator(profileType: ProfileType) -> ProfileCoordinator {
+        let coordinator = ProfileCoordinator(
+            navigationController: navigationController,
+            profileType: profileType,
+            presentType: .mainProfile
+        )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -66,29 +91,50 @@ private extension MainCoordinator {
         return coordinator
     }
     
+    func makeWelcomeViewController() -> UIViewController {
+        let coordinator = WelcomeCoordinator()
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .custom(420),
+            contentViewController: coordinator.navigationController
+        )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
+    }
+    
 }
 
 extension MainCoordinator: MainCoordinatorInterface {
-    
+   
     public func showSettingAddress() {
         let viewController = makeAddressViewController()
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
     }
     
-    public func showUserProfile() {
-        let coordinator = makeUserCoordinator()
+    public func showPost(profileType: ProfileType) {
+        let coordinator = makePostCoordinator(profileType: profileType)
         coordinator.start()
     }
     
-    public func showUserPost() {
-        let coordinator = makeUserCoordinator()
-        coordinator.showPost()
+    public func showProfile(profileType: ProfileType) {
+        let coordinator = makeProfileCoordinator(profileType: profileType)
+        coordinator.start()
     }
     
     public func showWeatherInfo() {
         let coordinator = makeWeatherCoordinator()
         coordinator.start()
+    }
+    
+    public func showWelcomeSheet() {
+        let viewController = makeWelcomeViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
 }
