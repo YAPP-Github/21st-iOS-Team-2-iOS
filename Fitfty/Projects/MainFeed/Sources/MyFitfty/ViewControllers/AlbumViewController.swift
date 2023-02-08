@@ -87,14 +87,9 @@ final public class AlbumViewController: UIViewController {
     }
     
     @objc private func didTapUploadButton(_ sender: Any?) {
-        guard uploadButton.getStyle() == .enabled else {
-            return
-        }
-        if let selectedIndex = selectedIndex {
-            viewModel.output.selectImage(index: selectedIndex)
-        }
-        coordinator.dismiss()
+        viewModel.input.didTapUpload(isSelected: selectedIndex != nil)
     }
+    
 }
 
 private extension AlbumViewController {
@@ -105,11 +100,19 @@ private extension AlbumViewController {
                 switch state {
                 case .sections(let sections):
                     self?.applySnapshot(sections)
-                case .reloadAlbum(let sections, let title):
-                    self?.applySnapshot(sections)
+                case .reloadAlbum(let title):
                     self?.navigationBarView.setTitle(title: title)
                     self?.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .top, animated: false)
                     self?.uploadButton.setStyle(.disabled)
+                    self?.selectedIndex = nil
+                case .completed(let completed):
+                    guard completed else {
+                        return
+                    }
+                    if let selectedIndex = self?.selectedIndex {
+                        self?.viewModel.output.selectImage(index: selectedIndex)
+                    }
+                    self?.coordinator.dismiss()
                 }
             }).store(in: &cancellables)
     }

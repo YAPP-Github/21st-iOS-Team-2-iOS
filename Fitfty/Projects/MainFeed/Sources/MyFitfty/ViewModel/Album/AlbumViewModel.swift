@@ -17,6 +17,7 @@ protocol AlbumViewModelInput {
     var input: AlbumViewModelInput { get }
     func viewDidLoad()
     func getAlbum(_ albumInfo: AlbumInfo)
+    func didTapUpload(isSelected: Bool)
     
 }
 
@@ -27,10 +28,7 @@ protocol AlbumViewModelOutput {
     
 }
 
-public final class AlbumViewModel: AlbumViewModelInput, AlbumViewModelOutput {
-    
-    var input: AlbumViewModelInput { self }
-    var output: AlbumViewModelOutput { self }
+public final class AlbumViewModel {
     
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
@@ -38,6 +36,12 @@ public final class AlbumViewModel: AlbumViewModelInput, AlbumViewModelOutput {
     
     public init() { }
     
+}
+
+extension AlbumViewModel: AlbumViewModelInput {
+    
+    var input: AlbumViewModelInput { self }
+
     func viewDidLoad() {
         let recentAlbum = PhotoService.shared.getRecentAlbum()
         currentAlbum = PhotoService.shared.getPHAssets(album: recentAlbum)
@@ -52,13 +56,27 @@ public final class AlbumViewModel: AlbumViewModelInput, AlbumViewModelOutput {
     
     func getAlbum(_ albumInfo: AlbumInfo) {
         currentAlbum = PhotoService.shared.getPHAssets(album: albumInfo.album)
-        currentState.send(.reloadAlbum([
+        currentState.send(.reloadAlbum(albumInfo.name))
+        currentState.send(.sections([
             AlbumSection(
                 sectionKind: .album,
                 items: currentAlbum
-            )], albumInfo.name)
-        )
+            )
+        ]))
     }
+    
+    func didTapUpload(isSelected: Bool) {
+        guard isSelected else {
+            return
+        }
+        currentState.send(.completed(true))
+    }
+    
+}
+
+extension AlbumViewModel: AlbumViewModelOutput {
+    
+    var output: AlbumViewModelOutput { self }
     
     func selectImage(index: Int) {
         let phAsset = currentAlbum[index]
@@ -98,7 +116,8 @@ extension AlbumViewModel: ViewModelType {
     
     public enum ViewModelState {
         case sections([AlbumSection])
-        case reloadAlbum([AlbumSection], String)
+        case reloadAlbum(String)
+        case completed(Bool)
     }
     
 }
