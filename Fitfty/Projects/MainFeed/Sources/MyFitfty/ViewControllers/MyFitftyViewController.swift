@@ -154,9 +154,8 @@ private extension MyFitftyViewController {
                 switch state {
                 case .sections(let sections):
                     self?.applySnapshot(sections)
-                case .reload(let sections, let image):
+                case .reload(let image):
                     self?.selectedImage = image
-                    self?.applySnapshot(sections)
                 }
             }).store(in: &cancellables)
     }
