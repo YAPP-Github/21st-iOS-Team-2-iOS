@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import AuthenticationServices
 
 import Core
 import Common
@@ -24,8 +25,7 @@ final public class AuthViewModel: ViewModelType {
     public init() {}
     
     func didTapKakaoLogin() {
-        SocialLoginManager.shared.trySnsLogin(
-            snsType: .kakao,
+        SocialLoginManager.shared.tryKakaoLogin(
             completionHandler: { [weak self] in
                 // TODO: - 서버 연동되면 계정 유무 체크해서 바로 메인피드로 보낼지 회원가입 루트 탈지 분기 처리하자 - ethan
                 self?.state.send(.pushIntroView)
@@ -37,7 +37,11 @@ final public class AuthViewModel: ViewModelType {
     }
     
     func didTapAppleLogin() {
-        
+        SocialLoginManager.shared.tryAppleLogin(completionHandler: { [weak self] request in
+            
+        }, failedHandler: { [weak self] error in
+            self?.state.send(.showErrorAlert(error!))
+        })
     }
     
     func didTapEnterWithoutLoginButton() {
