@@ -23,6 +23,8 @@ public enum FitftyFont {
     case SFProDisplayMedium(size: CGFloat)
     case SFProDisplaySemibold(size: CGFloat)
     case SFProDisplayThin(size: CGFloat)
+    
+    case antonRegular(size: CGFloat)
 }
 
 extension FitftyFont {
@@ -55,6 +57,9 @@ extension FitftyFont {
             return CommonFontFamily.SFProDisplay.semibold.font(size: size)
         case .SFProDisplayThin(let size):
             return CommonFontFamily.SFProDisplay.thin.font(size: size)
+            
+        case .antonRegular(let size):
+            return CommonFontFamily.Anton.regular.font(size: size)
       }
     }
 }

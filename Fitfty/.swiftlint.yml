@@ -5,11 +5,25 @@ excluded: # 린트 과정에서 무시할 파일 경로. `included`보다 우선
 identifier_name:
     min_length:
         - 2 # warning
-        - 4 # error
+        - 3 # error
     excluded: # 제외할 문자열 목록
         - a
         - b
         - app
+        - nx
+        - ny
+        - pi
+        - re
+        - sn
+        - sf
+        - ro
+        - ra
+        - x
+        - y
+        - am
+        - pm
+        - tm
+        - etc
 function_body_length:
     - 150 # warning
     - 300 # error
@@ -19,6 +33,9 @@ type_body_length:
 file_length:
     - 1000 # warning
     - 2000 # error
+line_length:
+    - 300
+    - 400
 disabled_rules: # 제외하고 싶은 룰
     - nesting
     - colon

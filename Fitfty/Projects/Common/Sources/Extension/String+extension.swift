@@ -9,6 +9,7 @@
 import Foundation
 
 public extension String {
+    
     var insertComma: String {
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
@@ -16,5 +17,21 @@ public extension String {
             return numberFormatter.string(from: NSNumber(value: doubleValue)) ?? self
         }
         return self
+    }
+    
+    func toDate(_ format: DateFormat) -> Date? {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "KST")
+        formatter.dateFormat = format.rawValue
+        formatter.locale = Locale(identifier: "ko-kr")
+        return formatter.date(from: self)
+    }
+    
+    var decimalClean: String {
+        if let doubleValue = Double(self) {
+            return Int(doubleValue).description
+        } else {
+            return self
+        }
     }
 }

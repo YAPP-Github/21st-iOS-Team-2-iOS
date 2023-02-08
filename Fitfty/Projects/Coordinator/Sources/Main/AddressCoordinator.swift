@@ -20,8 +20,8 @@ final class AddressCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationConrtoller: BaseNavigationController = BaseNavigationController()) {
-        self.navigationController = navigationConrtoller
+    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+        self.navigationController = navigationController
     }
     
     func start() {
@@ -43,8 +43,9 @@ private extension AddressCoordinator {
 extension AddressCoordinator: AddressCoordinatorInterface {
     
     func dismiss() {
-        navigationController.viewControllers.removeAll()
-        bottomSheetDelegate?.dismissBottomSheet()
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+        bottomSheetDelegate?.dismissBottomSheet {
+            self.navigationController.viewControllers.removeAll()
+            self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+        }
     }
 }
