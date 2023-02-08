@@ -43,8 +43,9 @@ private extension AlbumListCoordinator {
 extension AlbumListCoordinator: AlbumListCoordinatorInterface {
     
     func dismiss() {
-        navigationController.dismiss(animated: true)
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+        navigationController.dismiss(animated: true) {
+            self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+        }
     }
     
 }
