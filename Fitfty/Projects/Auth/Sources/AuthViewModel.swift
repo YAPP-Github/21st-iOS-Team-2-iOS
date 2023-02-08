@@ -20,8 +20,8 @@ final public class AuthViewModel: ViewModelType {
         case showErrorAlert(_ error: Error)
     }
     
-    public var state: PassthroughSubject<ViewModelState, Never> = .init()
-    public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
+    public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
+    private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     
     public init() {}
     
@@ -29,23 +29,23 @@ final public class AuthViewModel: ViewModelType {
         SocialLoginManager.shared.tryKakaoLogin(
             completionHandler: { [weak self] in
                 // TODO: - 서버 연동되면 계정 유무 체크해서 바로 메인피드로 보낼지 회원가입 루트 탈지 분기 처리하자 - ethan
-                self?.state.send(.pushIntroView)
+                self?.currentState.send(.pushIntroView)
             },
             failedHandler: { [weak self] error in
-                self?.state.send(.showErrorAlert(error))
+                self?.currentState.send(.showErrorAlert(error))
             }
         )
     }
     
     func didTapAppleLogin() {
-        SocialLoginManager.shared.tryAppleLogin(completionHandler: { [weak self] request in
+        SocialLoginManager.shared.tryAppleLogin(completionHandler: { [weak self] in
             
         }, failedHandler: { [weak self] error in
-            self?.state.send(.showErrorAlert(error!))
+            self?.currentState.send(.showErrorAlert(error!))
         })
     }
     
     func didTapEnterWithoutLoginButton() {
-        state.send(.pushIntroView)
+        currentState.send(.pushIntroView)
     }
 }
