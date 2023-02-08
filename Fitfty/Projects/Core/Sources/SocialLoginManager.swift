@@ -21,7 +21,7 @@ final public class SocialLoginManager: NSObject {
     public func tryKakaoLogin(completionHandler: @escaping () -> Void,
                                failedHandler: @escaping (Error) -> Void) {
         guard isKakaoLoginAvailable() else {
-            // TODO: - Error 처리해주자 - ethan
+            failedHandler(SocialLoginError.loginFail)
             return
         }
         
@@ -41,9 +41,9 @@ final public class SocialLoginManager: NSObject {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
-        let authorizationController = ASAuthorizationController(requests: [request],
-                                                                completionHandler: completionHandler,
-                                                                failedHandler: failedHandler)
+        let _ = ASAuthorizationController(requests: [request],
+                                          completionHandler: completionHandler,
+                                          failedHandler: failedHandler)
     }
     
     public func initailizeKakaoLoginSDK() {
@@ -116,6 +116,30 @@ extension ASAuthorizationController {
         self.presentationContextProvider = self
         self.performRequests()
     }
+    
+    private func hasEmail(email: String?) -> Bool {
+        return email?.isEmpty == false
+    }
+    
+    private func requestAppleLogin(_ request: AppleLoginRequest) {
+        Task {
+            do {
+                let response = try await FitftyAPI.request(target: .signInApple(parameters: request.asDictionary()),
+                                                           dataType: SocialLoginResponse.self)
+                guard let jwt = response.data else {
+                    return failedHandler?(SocialLoginError.loginFail)
+                }
+                
+                UserDefaults.standard.write(key: .userIdentifier, value: request.userIdentifier)
+                UserDefaults.standard.write(key: .userAccount, value: request.userEmail)
+                Keychain.saveData(serviceIdentifier: request.userIdentifier, forKey: request.userEmail, data: jwt)
+
+                completionHandler?()
+            } catch {
+                failedHandler?(SocialLoginError.loginFail)
+            }
+        }
+    }
 }
 
 extension ASAuthorizationController: ASAuthorizationControllerDelegate {
@@ -153,23 +177,6 @@ extension ASAuthorizationController: ASAuthorizationControllerDelegate {
     
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         failedHandler?(error)
-    }
-    
-    private func hasEmail(email: String?) -> Bool {
-        return email?.isEmpty == false
-    }
-    
-    private func requestAppleLogin(_ request: AppleLoginRequest) {
-        Task {
-            do {
-                let response = try await FitftyAPI.request(target: .signInApple(parameters: request.asDictionary()),
-                                                           dataType: SocialLoginResponse.self)
-                print("애플 로그인: \(response)")
-                completionHandler?()
-            } catch {
-                failedHandler?(SocialLoginError.loginFail)
-            }
-        }
     }
 }
 
