@@ -359,7 +359,7 @@ extension MyFitftyViewController {
     private func contentSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+290)
+            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+235)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
