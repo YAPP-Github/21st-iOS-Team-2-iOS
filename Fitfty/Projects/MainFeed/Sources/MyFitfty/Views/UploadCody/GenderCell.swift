@@ -1,19 +1,20 @@
 //
-//  StyleTagCell.swift
+//  GenderCell.swift
 //  MainFeed
 //
-//  Created by 임영선 on 2023/01/08.
+//  Created by 임영선 on 2023/02/09.
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import Common
 
-final class StyleTagCell: UICollectionViewCell {
+final class GenderCell: UICollectionViewCell {
     
     override var intrinsicContentSize: CGSize {
         return CGSize(
-            width: titleLabel.intrinsicContentSize.width + 40,
+            width: titleLabel.intrinsicContentSize.width + 64,
             height: 43
         )
     }
@@ -58,9 +59,9 @@ final class StyleTagCell: UICollectionViewCell {
     }
 }
 
-extension StyleTagCell {
-    func setUp(styleTag: Common.StyleTag, isSelected: Bool) {
-        titleLabel.text = styleTag.styleTagKoreanString
+extension GenderCell {
+    func setUp(gender: String, isSelected: Bool) {
+        titleLabel.text = gender
         titleLabel.textColor = isSelected ? .white : CommonAsset.Colors.gray06.color
         titleLabel.backgroundColor = isSelected ? .black : CommonAsset.Colors.gray01.color
     }
