@@ -9,40 +9,16 @@
 import UIKit
 import Common
 import Photos
+import Combine
 
-final public class UploadCodyViewController: UIViewController {
+final public class MyFitftyViewController: UIViewController {
     
-    enum Section {
-        
-        case content
-        case weatherTag
-        case styleTag
-        
-        init?(index: Int) {
-            switch index {
-            case 0: self = .content
-            case 1: self = .weatherTag
-            case 2: self = .styleTag
-            default: return nil
-            }
-        }
-        
-    }
+    private var coordinator: MyFitftyCoordinatorInterface
+    private var myFitftyType: MyFitftyType
+    private let viewModel: MyFitftyViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
     
-    private var coordinator: UploadCodyCoordinatorInterface
-    private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
-    
-    private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
-        (.formal, true),
-        (.casual, false)
-    ]
-    private var weatherTagItems: [(weatherTag: WeatherTag, isSelected: Bool)] = [
-        (.coldWaveWeather, true),
-        (.coldWeather, false),
-        (.chillyWeather, false),
-        (.warmWeather, false),
-        (.hotWeather, false)
-    ]
+    private var dataSource: UICollectionViewDiffableDataSource<MyFitftySectionKind, MyFitftyCellModel>?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
@@ -57,13 +33,34 @@ final public class UploadCodyViewController: UIViewController {
         return collectionView
     }()
     
+    private lazy var disableRightBarButton: UIBarButtonItem = {
+        let button = UIButton()
+        button.setTitle(myFitftyType.buttonTitle, for: .normal)
+        button.setTitleColor(CommonAsset.Colors.gray03.color, for: .normal)
+        button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 16).font
+        return UIBarButtonItem(customView: button)
+    }()
+    
+    private lazy var enableRightBarButton: UIBarButtonItem = {
+        let button = UIButton()
+        button.setTitle(myFitftyType.buttonTitle, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = FitftyFont.appleSDMedium(size: 15).font
+        button.frame = CGRect(x: 0, y: 0, width: 65, height: 37)
+        button.backgroundColor = .black
+        button.layer.cornerRadius = 18
+        button.addTarget(self, action: #selector(didTapUploadButton), for: .touchUpInside)
+        return UIBarButtonItem(customView: button)
+    }()
+    
+    private var selectedImage: UIImage?
+    private var contentText = "2200자 이내로 설명을 남길 수 있어요."
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setUpConstraintLayout()
-        setUpNavigationBar()
-        setUpDataSource()
-        applySnapshot()
-        setNotificationCenter()
+        setUp()
+        bind()
+        viewModel.input.viewDidLoad()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -78,8 +75,10 @@ final public class UploadCodyViewController: UIViewController {
         removeNotificationCenter()
     }
     
-    public init(coordinator: UploadCodyCoordinatorInterface) {
+    public init(coordinator: MyFitftyCoordinatorInterface, myFitftyType: MyFitftyType, viewModel: MyFitftyViewModel) {
         self.coordinator = coordinator
+        self.myFitftyType = myFitftyType
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -88,80 +87,11 @@ final public class UploadCodyViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setUpNavigationBar() {
-        navigationItem.title = "새 핏프티 등록"
-        
-        let leftButton: UIButton = {
-          let button = UIButton()
-            button.setImage(UIImage(systemName: "xmark"), for: .normal)
-            button.tintColor = .black
-            button.setPreferredSymbolConfiguration(.init(scale: .medium), forImageIn: .normal)
-            button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
-            return button
-        }()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
-        
-        let rightBarButton: UIBarButtonItem = {
-            let button = UIButton()
-            button.setTitle("등록", for: .normal)
-            button.setTitleColor(CommonAsset.Colors.gray03.color, for: .normal)
-            button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 16).font
-            button.addTarget(self, action: #selector(didTapUploadButton), for: .touchUpInside)
-            return UIBarButtonItem(customView: button)
-        }()
-        navigationItem.rightBarButtonItem = rightBarButton
-    }
-    
-    private func setUpEnableUploadButton() {
-        let rightBarButton: UIBarButtonItem = {
-            let button = UIButton()
-            button.setTitle("등록", for: .normal)
-            button.setTitleColor(.white, for: .normal)
-            button.titleLabel?.font = FitftyFont.appleSDMedium(size: 15).font
-            button.frame = CGRect(x: 0, y: 0, width: 65, height: 37)
-            button.backgroundColor = .black
-            button.layer.cornerRadius = 18
-            return UIBarButtonItem(customView: button)
-        }()
-        navigationItem.rightBarButtonItem = rightBarButton
-    }
-    
-    private func setUpConstraintLayout() {
-        view.addSubviews(collectionView)
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        ])
-    }
-    
-    private func setNotificationCenter() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(scrollToBottom),
-            name: .scrollToBottom,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(scrollToTop),
-            name: .scrollToTop,
-            object: nil
-        )
-    }
-    
-    private func removeNotificationCenter() {
-        NotificationCenter.default.removeObserver(
-            self,
-            name: .scrollToTop,
-            object: nil
-        )
-        NotificationCenter.default.removeObserver(
-            self,
-            name: .scrollToBottom,
-            object: nil
-        )
+    private func setUp() {
+        setUpConstraintLayout()
+        setUpNavigationBar()
+        setUpDataSource()
+        setNotificationCenter()
     }
     
     @objc func didTapCancelButton(_ sender: UIButton) {
@@ -169,7 +99,7 @@ final public class UploadCodyViewController: UIViewController {
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
-        setUpEnableUploadButton()
+        coordinator.dismiss()
     }
     
     @objc func scrollToBottom() {
@@ -189,48 +119,163 @@ final public class UploadCodyViewController: UIViewController {
         }
         collectionView.setContentOffset(.zero, animated: true)
     }
+    
+    @objc func getPHAssetInfo(_ notification: Notification) {
+        let phAssetInfo = notification.object as? PHAssetInfo
+        guard let phAssetInfo = phAssetInfo else {
+            return
+        }
+        viewModel.input.getPhAssetInfo(phAssetInfo)
+    }
+}
+
+private extension MyFitftyViewController {
+    
+    func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .sections(let sections, let animated):
+                    self?.applySnapshot(sections, animated)
+                case .codyImage(let image):
+                    self?.selectedImage = image
+                case .content(let text):
+                    self?.contentText = text
+                }
+            }).store(in: &cancellables)
+    }
+    
+    func setUpNavigationBar() {
+        navigationItem.title = myFitftyType.navigationBarTitle
+        
+        let leftButton: UIButton = {
+          let button = UIButton()
+            button.setImage(UIImage(systemName: "xmark"), for: .normal)
+            button.tintColor = .black
+            button.setPreferredSymbolConfiguration(.init(scale: .medium), forImageIn: .normal)
+            button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
+            return button
+        }()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
+        
+        switch myFitftyType {
+        case .uploadMyFitfty:
+            navigationItem.rightBarButtonItem = disableRightBarButton
+        case .modifyMyFitfty:
+            navigationItem.rightBarButtonItem = enableRightBarButton
+        }
+        
+    }
+    
+    func setUpConstraintLayout() {
+        view.addSubviews(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
+    }
+    
+    func setNotificationCenter() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(scrollToBottom),
+            name: .scrollToBottom,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(scrollToTop),
+            name: .scrollToTop,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(getPHAssetInfo),
+            name: .selectPhAsset,
+            object: nil
+        )
+    }
+    
+    func removeNotificationCenter() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .scrollToTop,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .scrollToBottom,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .selectPhAsset,
+            object: nil
+        )
+    }
+    
+}
+
+// MARK: ContentDelegate
+extension MyFitftyViewController: ContentDelegate {
+    func sendContent(text: String) {
+        viewModel.input.editContent(text: text)
+    }
 }
 
 // MARK: - UICollectionViewDiffableDataSource
-extension UploadCodyViewController {
+extension MyFitftyViewController {
     
     private func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<MyFitftySectionKind, MyFitftyCellModel>(
             collectionView: collectionView,
-            cellProvider: { [weak self] collectionView, indexPath, _ in
+            cellProvider: { [weak self] collectionView, indexPath, item in
                 guard let self = self else {
                     return UICollectionViewCell()
                 }
-                let section = Section(index: indexPath.section)
-                switch section {
+                switch item {
                 case .content:
                     let cell = collectionView.dequeueReusableCell(ContentCell.self, for: indexPath)
+                    cell?.delegate = self
                     cell?.setActionUploadPhotoButton(self, action: #selector(self.didTapUploadPhotoButton))
+                    switch self.myFitftyType {
+                    case .modifyMyFitfty:
+                        cell?.setUp(codyImage: CommonAsset.Images.profileSample.image)
+                        cell?.setUp(content: "오늘의 핏프티~~")
+                        cell?.setDisableEditting()
+                        
+                    case .uploadMyFitfty:
+                        cell?.setUp(content: self.contentText)
+                        if let selectedImage = self.selectedImage {
+                            cell?.setUp(codyImage: selectedImage)
+                            cell?.setHiddenBackgroundButton()
+                        }
+                    }
+                    
                     return cell ?? UICollectionViewCell()
                     
-                case .weatherTag:
+                case .weatherTag(let weatherTag, let isSelected):
                     let cell = collectionView.dequeueReusableCell(WeatherTagCell.self, for: indexPath)
                     cell?.setUp(
-                        weahterTag: self.weatherTagItems[indexPath.item].weatherTag,
-                        isSelected: self.weatherTagItems[indexPath.item].isSelected
+                        weahterTag: weatherTag,
+                        isSelected: isSelected
                     )
                     return cell ?? UICollectionViewCell()
                     
-                case .styleTag:
+                case .styleTag(let styleTag, let isSelected):
                     let cell = collectionView.dequeueReusableCell(StyleTagCell.self, for: indexPath)
                     cell?.setUp(
-                        styleTag: self.styleTagItems[indexPath.item].styleTag,
-                        isSelected: self.styleTagItems[indexPath.item].isSelected
+                        styleTag: styleTag,
+                        isSelected: isSelected
                     )
                     return cell
-                    
-                default:
-                    return UICollectionViewCell()
                 }
             })
         
         dataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
-            let section = Section(index: indexPath.section)
+            let section = MyFitftySectionKind(index: indexPath.section)
             switch elementKind {
             case Common.HeaderView.className:
                 if section == .weatherTag {
@@ -285,37 +330,23 @@ extension UploadCodyViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
-        snapshot.appendSections([.content])
-        snapshot.appendItems([UUID()])
-        snapshot.appendSections([.weatherTag])
-        snapshot.appendItems(Array(0..<weatherTagItems.count).map {_ in UUID() })
-        snapshot.appendSections([.styleTag])
-        snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
-        dataSource?.apply(snapshot, animatingDifferences: true)
-    }
-    
-    private func applyTagSnapshot() {
-        if var snapshot = dataSource?.snapshot() {
-            snapshot.deleteSections([.weatherTag])
-            snapshot.appendSections([.weatherTag])
-            snapshot.appendItems(Array(0..<weatherTagItems.count).map { _ in UUID() })
-            snapshot.deleteSections([.styleTag])
-            snapshot.appendSections([.styleTag])
-            snapshot.appendItems(Array(0..<styleTagItems.count).map { _ in UUID() })
-            dataSource?.apply(snapshot, animatingDifferences: false)
+    private func applySnapshot(_ sections: [MyFitftySection], _ animated: Bool) {
+        var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, MyFitftyCellModel>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
         }
+        dataSource?.apply(snapshot, animatingDifferences: animated)
     }
         
 }
 
 // MARK: - UICollectionViewCompositionalLayout
-extension UploadCodyViewController {
+extension MyFitftyViewController {
     
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
-            let section = Section(index: sectionNumber)
+            let section = MyFitftySectionKind(index: sectionNumber)
             switch section {
             case .content: return self?.contentSectionLayout()
             case .weatherTag: return self?.weatherTagSectionLayout()
@@ -328,7 +359,7 @@ extension UploadCodyViewController {
     private func contentSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(500)
+            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+290)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -426,39 +457,18 @@ extension UploadCodyViewController {
 }
 
 // MARK: - UICollectionViewDelegate
-extension UploadCodyViewController: UICollectionViewDelegate {
+extension MyFitftyViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = Section(index: indexPath.section)
-        switch section {
-        case .weatherTag:
-            for index in weatherTagItems.indices {
-                if indexPath.item == index {
-                    weatherTagItems[index].isSelected = true
-                } else {
-                    weatherTagItems[index].isSelected = false
-                }
-            }
-            applyTagSnapshot()
-            
-        case .styleTag:
-            for index in styleTagItems.indices {
-                if indexPath.item == index {
-                    styleTagItems[index].isSelected = true
-                } else {
-                    styleTagItems[index].isSelected = false
-                }
-            }
-            applyTagSnapshot()
-            
-        default:
-            break
+        if let section = MyFitftySectionKind(index: indexPath.section) {
+            viewModel.input.didTapTag(section, index: indexPath.item)
         }
+        
     }
 }
 
 // MARK: - AlbumAuthorization
-extension UploadCodyViewController {
+extension MyFitftyViewController {
     @objc private func didTapUploadPhotoButton(_ sender: UIButton) {
         requestAlbumAuthorization { [weak self] isAuthorized in
             if isAuthorized {
