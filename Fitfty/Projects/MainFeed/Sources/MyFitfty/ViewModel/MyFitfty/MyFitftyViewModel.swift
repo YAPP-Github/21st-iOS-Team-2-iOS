@@ -17,6 +17,7 @@ protocol MyFitftyViewModelInput {
     func viewDidLoad()
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo)
     func didTapTag(_ sectionKind: MyFitftySectionKind, index: Int)
+    func editContent(text: String)
     
 }
 
@@ -114,6 +115,15 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
         ]))
     }
     
+    func editContent(text: String) {
+        currentState.send(.content(text))
+        currentState.send(.sections([
+            MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
+            MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+            MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
+        ]))
+    }
+    
 }
 
 extension MyFitftyViewModel: ViewModelType {
@@ -123,6 +133,7 @@ extension MyFitftyViewModel: ViewModelType {
     public enum ViewModelState {
         case sections([MyFitftySection])
         case codyImage(UIImage)
+        case content(String)
     }
     
 }
