@@ -94,7 +94,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
             MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
-        ]))
+        ], true))
     }
     
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo) {
@@ -103,7 +103,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
             MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
-        ]))
+        ], true))
     }
     
     func didTapTag(_ sectionKind: MyFitftySectionKind, index: Int) {
@@ -112,7 +112,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
             MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
-        ]))
+        ], false))
     }
     
     func editContent(text: String) {
@@ -121,7 +121,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
             MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
-        ]))
+        ], false))
     }
     
 }
@@ -131,7 +131,7 @@ extension MyFitftyViewModel: ViewModelType {
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
     
     public enum ViewModelState {
-        case sections([MyFitftySection])
+        case sections([MyFitftySection], Bool)
         case codyImage(UIImage)
         case content(String)
     }
