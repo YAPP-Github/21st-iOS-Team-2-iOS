@@ -135,8 +135,8 @@ private extension MyFitftyViewController {
         viewModel.state.compactMap { $0 }
             .sinkOnMainThread(receiveValue: { [weak self] state in
                 switch state {
-                case .sections(let sections):
-                    self?.applySnapshot(sections)
+                case .sections(let sections, let animated):
+                    self?.applySnapshot(sections, animated)
                 case .codyImage(let image):
                     self?.selectedImage = image
                 case .content(let text):
@@ -330,13 +330,13 @@ extension MyFitftyViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applySnapshot(_ sections: [MyFitftySection]) {
+    private func applySnapshot(_ sections: [MyFitftySection], _ animated: Bool) {
         var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, MyFitftyCellModel>()
         sections.forEach {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
-        dataSource?.apply(snapshot, animatingDifferences: false)
+        dataSource?.apply(snapshot, animatingDifferences: animated)
     }
         
 }
