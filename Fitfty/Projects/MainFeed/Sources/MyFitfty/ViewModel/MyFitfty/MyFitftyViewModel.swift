@@ -24,6 +24,7 @@ protocol MyFitftyViewModelInput {
 public final class MyFitftyViewModel {
     
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
+    
     public init() { }
     
     private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
@@ -48,6 +49,10 @@ public final class MyFitftyViewModel {
         ("여성", true),
         ("남성", false)
     ]
+    
+    private let textViewPlaceHolder = "2200자 이내로 설명을 남길 수 있어요."
+    private var contentText: String?
+    private var selectedPhAssetInfo: PHAssetInfo?
     
     private func getStyleTagCellModels() -> [MyFitftyCellModel] {
         var cellModels: [MyFitftyCellModel] = []
@@ -98,6 +103,18 @@ public final class MyFitftyViewModel {
         }
     }
     
+    private func checkIsEnabledUpload() -> Bool {
+        if contentText != nil
+            && contentText != textViewPlaceHolder
+            && selectedPhAssetInfo != nil
+            && styleTagItems.filter({ $0.isSelected == true }).count > 0
+            && weatherTagItems.filter({ $0.isSelected == true }).count > 0 {
+            return true
+        } else {
+            return false
+        }
+    }
+    
 }
 
 extension MyFitftyViewModel: MyFitftyViewModelInput {
@@ -114,6 +131,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     }
     
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo) {
+        selectedPhAssetInfo = phAssetInfo
         currentState.send(.codyImage(phAssetInfo.image))
         currentState.send(.sections([
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
@@ -121,6 +139,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
             MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
         ], true))
+        currentState.send(.isEnabledUpload(checkIsEnabledUpload()))
     }
     
     func didTapTag(_ sectionKind: MyFitftySectionKind, index: Int) {
@@ -131,9 +150,11 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
             MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
         ], false))
+        currentState.send(.isEnabledUpload(checkIsEnabledUpload()))
     }
     
     func editContent(text: String) {
+        contentText = text
         currentState.send(.content(text))
         currentState.send(.sections([
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
@@ -141,6 +162,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
             MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
         ], false))
+        currentState.send(.isEnabledUpload(checkIsEnabledUpload()))
     }
     
 }
@@ -153,6 +175,7 @@ extension MyFitftyViewModel: ViewModelType {
         case sections([MyFitftySection], Bool)
         case codyImage(UIImage)
         case content(String)
+        case isEnabledUpload(Bool)
     }
     
 }
