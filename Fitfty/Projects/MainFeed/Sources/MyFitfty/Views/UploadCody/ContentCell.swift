@@ -116,7 +116,7 @@ final class ContentCell: UICollectionViewCell {
             contentTextView.topAnchor.constraint(equalTo: backgroundButton.bottomAnchor, constant: 20),
             contentTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             contentTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
+            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -40),
             
             guidanceLabel.centerXAnchor.constraint(equalTo: backgroundButton.centerXAnchor),
             guidanceLabel.centerYAnchor.constraint(equalTo: backgroundButton.centerYAnchor)
