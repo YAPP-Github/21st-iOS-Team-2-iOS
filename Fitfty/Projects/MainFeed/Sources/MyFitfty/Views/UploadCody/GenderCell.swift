@@ -28,6 +28,7 @@ final class GenderCell: UICollectionViewCell {
         label.layer.cornerRadius = 20
         label.clipsToBounds = true
         label.textAlignment = .center
+        label.layer.borderWidth = 2
         return label
     }()
     
@@ -57,12 +58,24 @@ final class GenderCell: UICollectionViewCell {
             titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
+    
+    private func highlight(_ isSelected: Bool) {
+        titleLabel.backgroundColor = isSelected ?
+                                              CommonAsset.Colors.primaryBlueDark.color :
+                                              CommonAsset.Colors.gray01.color
+        titleLabel.layer.borderColor = isSelected ?
+                                                CommonAsset.Colors.primaryBlueLight.color.cgColor :
+                                                UIColor.clear.cgColor
+        titleLabel.textColor = isSelected ?
+                               CommonAsset.Colors.primaryBlueNormal.color :
+                               CommonAsset.Colors.gray06.color
+    }
+    
 }
 
 extension GenderCell {
     func setUp(gender: String, isSelected: Bool) {
         titleLabel.text = gender
-        titleLabel.textColor = isSelected ? .white : CommonAsset.Colors.gray06.color
-        titleLabel.backgroundColor = isSelected ? .black : CommonAsset.Colors.gray01.color
+        highlight(isSelected)
     }
 }
