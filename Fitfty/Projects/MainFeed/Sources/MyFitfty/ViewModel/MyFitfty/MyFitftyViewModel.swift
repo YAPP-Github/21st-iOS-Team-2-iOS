@@ -76,11 +76,8 @@ public final class MyFitftyViewModel {
     private func changeTag(_ sectionKind: MyFitftySectionKind, selectedIndex: Int?) {
         switch sectionKind {
         case .styleTag:
-            for index in 0..<styleTagItems.count {
-                styleTagItems[index].isSelected = false
-            }
             if let selectedIndex = selectedIndex {
-                styleTagItems[selectedIndex].isSelected = true
+                styleTagItems[selectedIndex].isSelected = styleTagItems[selectedIndex].isSelected ? false : true
             }
             
         case .weatherTag:
