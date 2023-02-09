@@ -142,6 +142,9 @@ private extension MyFitftyViewController {
                     self?.selectedImage = image
                 case .content(let text):
                     self?.contentText = text
+                case .isEnabledUpload(let isEnabled):
+                    self?.navigationItem.rightBarButtonItem =
+                    isEnabled ? self?.enableRightBarButton : self?.disableRightBarButton
                 }
             }).store(in: &cancellables)
     }
