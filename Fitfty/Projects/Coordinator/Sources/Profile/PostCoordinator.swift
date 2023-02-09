@@ -44,7 +44,8 @@ private extension PostCoordinator {
         let viewController = PostViewController(
             coordinator: self,
             profileType: profileType,
-            presentType: presentType
+            presentType: presentType,
+            viewModel: PostViewModel()
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController

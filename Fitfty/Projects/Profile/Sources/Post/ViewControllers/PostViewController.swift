@@ -12,6 +12,7 @@ import Common
 final public class PostViewController: UIViewController {
 
     private var coordinator: PostCoordinatorInterface
+    private var viewModel: PostViewModel
     private let postView = PostView()
     
     private lazy var miniProfileView: MiniProfileView = {
@@ -76,6 +77,7 @@ final public class PostViewController: UIViewController {
                        bookmark: "312",
                        date: "22.08.15"
         )
+        viewModel.input.viewDidLoad()
         miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
     }
     
@@ -89,10 +91,16 @@ final public class PostViewController: UIViewController {
         hideNavigationBar()
     }
     
-    public init(coordinator: PostCoordinatorInterface, profileType: ProfileType, presentType: ProfilePresentType) {
+    public init(
+        coordinator: PostCoordinatorInterface,
+        profileType: ProfileType,
+        presentType: ProfilePresentType,
+        viewModel: PostViewModel
+    ) {
         self.coordinator = coordinator
         self.profileType = profileType
         self.presentType = presentType
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }

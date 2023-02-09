@@ -8,24 +8,27 @@
 
 import Foundation
 
-struct PostResponse: Codable {
+public struct PostResponse: Codable {
     
-    let result: String
-    let data: PostData
-    let message: String?
-    let errorCode: String?
+    public let result: String
+    public let data: PostData
+    public let message: String?
+    public let errorCode: String?
     
 }
 
 // MARK: - DataClass
-struct PostData: Codable {
+public struct PostData: Codable {
     
-    let boardToken, nickname: String
-    let profilePictureUrl: String?
-    let filePath: String
-    let content, location: String
-    let temperature: Int
-    let cloudType, photoTakenTime: String
-    let views, bookmarkCnt: Int
+    public let boardToken, nickname: String
+    public let profilePictureUrl: String?
+    public let filePath: String
+    public let content: String
+    public let location: String
+    public let temperature: Int
+    public let cloudType: String
+    public let photoTakenTime: String
+    public let views: Int
+    public let bookmarkCnt: Int
     
 }
