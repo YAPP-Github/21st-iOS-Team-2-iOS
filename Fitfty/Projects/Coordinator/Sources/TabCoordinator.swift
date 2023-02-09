@@ -170,7 +170,7 @@ extension TabCoordinator: UITabBarControllerDelegate {
             return true
         }
         if tabBar == .createCody {
-            let coordinator = UploadCodyCoordinator()
+            let coordinator = MyFitftyCoordinator(myFitftyType: .uploadMyFitfty)
             childCoordinators.append(coordinator)
             coordinator.finishDelegate = self
             coordinator.parentCoordinator = self
@@ -207,7 +207,7 @@ extension TabCoordinator: CoordinatorFinishDelegate {
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
         switch childCoordinator.type {
-        case .uploadCody:
+        case .myFitfty:
             tabBarController.dismiss(animated: true) {
                 childCoordinator.navigationController.viewControllers.removeAll()
             }
