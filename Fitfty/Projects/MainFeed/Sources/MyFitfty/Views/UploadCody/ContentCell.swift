@@ -11,6 +11,8 @@ import Common
 
 final class ContentCell: UICollectionViewCell {
     
+    weak var delegate: ContentDelegate?
+    
     private lazy var backgroundButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = CommonAsset.Colors.gray01.color
@@ -141,6 +143,7 @@ extension ContentCell: UITextViewDelegate {
             textView.text = textViewPlaceHolder
             textView.textColor = CommonAsset.Colors.gray04.color
         }
+        delegate?.sendContent(text: textView.text)
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -181,10 +184,14 @@ extension ContentCell: UITextViewDelegate {
 
 extension ContentCell {
     
-    public func setUp(codyImage: UIImage, content: String) {
-        codyImageView.image = codyImage
+    public func setUp(content: String) {
         contentTextView.text = content
-        contentTextView.textColor = .black
+        if content == textViewPlaceHolder {
+            contentTextView.textColor = CommonAsset.Colors.gray04.color
+        } else {
+            contentTextView.textColor = .black
+        }
+        
     }
     
     public func setUp(codyImage: UIImage) {

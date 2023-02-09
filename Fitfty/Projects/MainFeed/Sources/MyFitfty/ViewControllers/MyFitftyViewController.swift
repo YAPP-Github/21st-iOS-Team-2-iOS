@@ -54,6 +54,7 @@ final public class MyFitftyViewController: UIViewController {
     }()
     
     private var selectedImage: UIImage?
+    private var contentText = "2200자 이내로 설명을 남길 수 있어요."
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -138,6 +139,8 @@ private extension MyFitftyViewController {
                     self?.applySnapshot(sections)
                 case .codyImage(let image):
                     self?.selectedImage = image
+                case .content(let text):
+                    self?.contentText = text
                 }
             }).store(in: &cancellables)
     }
@@ -215,6 +218,13 @@ private extension MyFitftyViewController {
     
 }
 
+// MARK: ContentDelegate
+extension MyFitftyViewController: ContentDelegate {
+    func sendContent(text: String) {
+        viewModel.input.editContent(text: text)
+    }
+}
+
 // MARK: - UICollectionViewDiffableDataSource
 extension MyFitftyViewController {
     
@@ -228,13 +238,16 @@ extension MyFitftyViewController {
                 switch item {
                 case .content:
                     let cell = collectionView.dequeueReusableCell(ContentCell.self, for: indexPath)
+                    cell?.delegate = self
                     cell?.setActionUploadPhotoButton(self, action: #selector(self.didTapUploadPhotoButton))
                     switch self.myFitftyType {
                     case .modifyMyFitfty:
-                        cell?.setUp(codyImage: CommonAsset.Images.profileSample.image, content: "오늘의 핏프티~")
+                        cell?.setUp(codyImage: CommonAsset.Images.profileSample.image)
+                        cell?.setUp(content: "오늘의 핏프티~~")
                         cell?.setDisableEditting()
                         
                     case .uploadMyFitfty:
+                        cell?.setUp(content: self.contentText)
                         if let selectedImage = self.selectedImage {
                             cell?.setUp(codyImage: selectedImage)
                             cell?.setHiddenBackgroundButton()
@@ -317,24 +330,13 @@ extension MyFitftyViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applyTagSnapshot(_ tagSections: [MyFitftySection]) {
-        if var snapshot = dataSource?.snapshot() {
-            tagSections.forEach {
-                snapshot.deleteSections([$0.sectionKind])
-                snapshot.appendSections([$0.sectionKind])
-                snapshot.appendItems($0.items)
-            }
-            dataSource?.apply(snapshot, animatingDifferences: false)
-        }
-    }
-    
     private func applySnapshot(_ sections: [MyFitftySection]) {
         var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, MyFitftyCellModel>()
         sections.forEach {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
-        dataSource?.apply(snapshot)
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
         
 }
