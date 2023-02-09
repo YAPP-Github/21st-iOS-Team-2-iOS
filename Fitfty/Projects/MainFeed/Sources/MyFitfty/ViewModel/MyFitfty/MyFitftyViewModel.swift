@@ -44,6 +44,11 @@ public final class MyFitftyViewModel {
         (.hotWeather, false)
     ]
     
+    private var genderTagItems: [(gender: String, isSelected: Bool)] = [
+        ("여성", true),
+        ("남성", false)
+    ]
+    
     private func getStyleTagCellModels() -> [MyFitftyCellModel] {
         var cellModels: [MyFitftyCellModel] = []
         for index in 0..<styleTagItems.count {
@@ -56,6 +61,14 @@ public final class MyFitftyViewModel {
         var cellModels: [MyFitftyCellModel] = []
         for index in 0..<weatherTagItems.count {
             cellModels.append(MyFitftyCellModel.weatherTag(weatherTagItems[index].weatherTag, weatherTagItems[index].isSelected))
+        }
+        return cellModels
+    }
+    
+    private func getGenderTagCellModels() -> [MyFitftyCellModel] {
+        var cellModels: [MyFitftyCellModel] = []
+        for index in 0..<genderTagItems.count {
+            cellModels.append(MyFitftyCellModel.genderTag(genderTagItems[index].gender, genderTagItems[index].isSelected))
         }
         return cellModels
     }
@@ -78,6 +91,11 @@ public final class MyFitftyViewModel {
                 weatherTagItems[selectedIndex].isSelected = true
             }
             
+        case .genderTag:
+            for index in 0..<genderTagItems.count {
+                genderTagItems[index].isSelected = genderTagItems[index].isSelected ? false : true
+            }
+            
         default:
             break
         }
@@ -93,6 +111,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
         currentState.send(.sections([
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
             MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+            MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
         ], true))
     }
@@ -102,6 +121,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
         currentState.send(.sections([
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
             MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+            MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
         ], true))
     }
@@ -111,6 +131,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
         currentState.send(.sections([
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
             MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+            MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
         ], false))
     }
@@ -120,6 +141,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
         currentState.send(.sections([
             MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
             MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+            MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
             MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
         ], false))
     }
