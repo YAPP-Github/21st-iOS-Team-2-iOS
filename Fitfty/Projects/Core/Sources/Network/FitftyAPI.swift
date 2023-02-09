@@ -13,6 +13,7 @@ public enum FitftyAPI {
     case signInKakao(parameters: [String: Any])
     case signInApple(parameters: [String: Any])
     case getMyProfile
+    case getPost(boardToken: String)
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -38,6 +39,9 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/auth/sign-in/apple/"
         case .getMyProfile:
             return "/users/profile"
+        case .getPost(let boardToken):
+            return "/boards/\(boardToken)"
+            
         }
     }
     
@@ -47,6 +51,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .signInApple:
             return .post
         case .getMyProfile:
+            return .get
+        case .getPost:
             return .get
         }
     }
