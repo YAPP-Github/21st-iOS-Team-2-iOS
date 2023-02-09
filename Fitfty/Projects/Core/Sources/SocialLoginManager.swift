@@ -15,23 +15,6 @@ import AuthenticationServices
 final public class SocialLoginManager: NSObject {
     static public let shared = SocialLoginManager()
     
-    public func tryKakaoLogin(completionHandler: @escaping () -> Void,
-                              failedHandler: @escaping (Error) -> Void) {
-        guard isKakaoLoginAvailable() else {
-            failedHandler(SocialLoginError.loginFail)
-            return
-        }
-        
-        UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
-            if let error = error {
-                failedHandler(error)
-            } else {
-                self?.saveKakaoUserInfo()
-                self?.requestKakaoLogin(oauthToken?.accessToken, completionHandler: completionHandler, failedHandler: failedHandler)
-            }
-        }
-    }
-    
     public func tryAppleLogin(completionHandler: @escaping () -> Void,
                                failedHandler: @escaping (Error?) -> Void) {
         
@@ -43,18 +26,36 @@ final public class SocialLoginManager: NSObject {
                                           failedHandler: failedHandler)
     }
     
+    public func tryKakaoLogin(completionHandler: @escaping () -> Void,
+                              failedHandler: @escaping (Error) -> Void) {
+        guard isKakaoLoginAvailable() else {
+            failedHandler(SocialLoginError.loginFail)
+            return
+        }
+        
+        UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
+            if let accessToken = oauthToken?.accessToken {
+                self?.saveKakaoUserInfo()
+                self?.requestKakaoLogin(accessToken, completionHandler: completionHandler, failedHandler: failedHandler)
+            } else {
+                failedHandler(SocialLoginError.loginFail)
+            }
+        }
+    }
+    
     public func initailizeKakaoLoginSDK() {
         KakaoSDK.initSDK(appKey: APIKey.kakaoAppKeyForLogin)
     }
     
-    private func requestKakaoLogin(_ accessToken: String?,
+    private func requestKakaoLogin(_ accessToken: String,
                                    completionHandler: @escaping () -> Void,
                                    failedHandler: @escaping (Error) -> Void) {
         Task {
             do {
-                let response = try await FitftyAPI.request(target: .signInKakao(parameters: ["accessToken": accessToken!]),
+                let response = try await FitftyAPI.request(target: .signInKakao(parameters: ["accessToken": accessToken]),
                                                            dataType: SocialLoginResponse.self)
                 guard let jwt = response.data else {
+                    checkNoEmailErrorFromKakao(errorCode: response.errorCode, failedHandler: failedHandler)
                     return failedHandler(SocialLoginError.others(response.message ?? ""))
                 }
                 
@@ -82,6 +83,16 @@ final public class SocialLoginManager: NSObject {
 
     private func isKakaoLoginAvailable() -> Bool {
         return UserApi.isKakaoTalkLoginAvailable()
+    }
+    
+    private func checkNoEmailErrorFromKakao(errorCode: String?, failedHandler: @escaping (Error) -> Void) {
+        if errorCode == "KAKAO_OAUTH_NO_RESPONSE" {
+            UserApi.shared.unlink { error in
+                if let error = error {
+                    failedHandler(error)
+                }
+            }
+        }
     }
 }
 
