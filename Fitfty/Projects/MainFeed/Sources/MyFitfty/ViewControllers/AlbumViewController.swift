@@ -106,8 +106,9 @@ private extension AlbumViewController {
                     guard completed else {
                         return
                     }
-                    self?.viewModel.output.selectImage()
                     self?.coordinator.dismiss()
+                case .sendImage:
+                    self?.viewModel.output.selectImage()
                 }
             }).store(in: &cancellables)
     }
