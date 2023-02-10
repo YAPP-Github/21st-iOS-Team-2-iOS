@@ -12,6 +12,7 @@ import Moya
 public enum FitftyAPI {
     case signInKakao(parameters: [String: Any])
     case signInApple(parameters: [String: Any])
+    case getUserPrivacy
     case getMyProfile
 }
 
@@ -36,6 +37,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/auth/sign-in/kakao/"
         case .signInApple:
             return "/auth/sign-in/apple/"
+        case .getUserPrivacy:
+            return "/users/privacy"
         case .getMyProfile:
             return "/users/profile"
         }
@@ -46,7 +49,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .signInKakao,
              .signInApple:
             return .post
-        case .getMyProfile:
+        case .getUserPrivacy,
+             .getMyProfile:
             return .get
         }
     }
