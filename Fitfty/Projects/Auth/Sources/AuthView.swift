@@ -28,6 +28,7 @@ final class AuthView: UIView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     func setEnterWithoutLoginButtonTarget(target: Any?, action: Selector) {
@@ -166,8 +167,8 @@ private extension AuthView {
     enum Style {
         enum LogoImageView {
             static let size = CGSize(width: 135, height: 46)
-            static let image = CommonAsset.Images.fitftyLogoImage.image
             static let margin: CGFloat = 80
+            static let image = CommonAsset.Images.fitftyLogoImage.image
         }
         
         enum LoginProblemLabel {
