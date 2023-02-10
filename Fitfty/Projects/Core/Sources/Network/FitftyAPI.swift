@@ -153,3 +153,13 @@ private extension FitftyAPI {
         return parameter
     }
 }
+
+public enum FitftyAPIError: LocalizedError {
+    case notFound(String?)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .notFound(let message): return message
+        }
+    }
+}
