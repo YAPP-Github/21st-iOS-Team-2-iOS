@@ -35,7 +35,7 @@ enum MainCellModel: Hashable {
     
     case weather(ShortTermForecast)
     case styleTag(UUID)
-    case cody(UUID)
+    case cody(CodyResponse)
     
     func hash(into hasher: inout Hasher) {
         switch self {
@@ -45,8 +45,8 @@ enum MainCellModel: Hashable {
         case .styleTag(let uuid):
             hasher.combine(uuid)
             
-        case .cody(let uuid):
-            hasher.combine(uuid)
+        case .cody(let cody):
+            hasher.combine(cody)
         }
 
     }
@@ -57,8 +57,11 @@ extension MainCellModel: Equatable {
     
     static func == (lhs: MainCellModel, rhs: MainCellModel) -> Bool {
         switch (lhs, rhs) {
-        case (.weather(let weatherLhs), .weather(let weatherRhs)):
-            return weatherLhs == weatherRhs
+        case (.weather(let lhs), .weather(let rhs)):
+            return lhs == rhs
+            
+        case (.cody(let lhs), .cody(let rhs)):
+            return lhs == rhs
             
         default: return false
         }
