@@ -81,6 +81,6 @@ final public class FitftyTextField: UITextField {
 
     private func configureFocusedStyle() {
         layer.borderWidth = 2
-        layer.borderColor = CommonAsset.Colors.primaryBlueNormal.color.cgColor
+        layer.borderColor = CommonAsset.Colors.primaryBlueLight.color.cgColor
     }
 }
