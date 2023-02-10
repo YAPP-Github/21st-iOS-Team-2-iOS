@@ -11,6 +11,8 @@ import Foundation
 public enum LocalKey: String {
     case isNewUser
     case currentLocation
+    case nickname
+    case gender
 }
 
 public protocol LocalStorageService: AnyObject {
