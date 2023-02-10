@@ -114,8 +114,12 @@ extension MyFitftyViewModel {
             
         case .genderTag:
             for index in 0..<genderTagItems.count {
-                genderTagItems[index].isSelected = genderTagItems[index].isSelected ? false : true
+                genderTagItems[index].isSelected = false
             }
+            if let selectedIndex = selectedIndex {
+                genderTagItems[selectedIndex].isSelected = true
+            }
+            
         default:
             break
         }
