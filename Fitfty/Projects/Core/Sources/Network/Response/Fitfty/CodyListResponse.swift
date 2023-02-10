@@ -11,7 +11,7 @@ import Foundation
 // MARK: - Fitfty Main Cody List Response
 public struct FitftyMainCodyListResponse: Codable {
     public let result: FitftyResult
-    public let data: CodyListResponse
+    public let data: CodyListResponse?
     public let message: String?
     public let errorCode: String?
 }
@@ -32,6 +32,7 @@ public struct CodyResponse: Codable {
     public let filePath: String
     public let boardToken: String
     public let nickname: String
+    public let profilePictureUrl: String?
     public let views: Int
     public let bookmarked: Bool
 }
@@ -41,6 +42,7 @@ extension CodyResponse: Equatable, Hashable {
         return lhs.filePath == rhs.filePath &&
         lhs.boardToken == rhs.boardToken &&
         lhs.nickname == rhs.nickname &&
+        lhs.profilePictureUrl == rhs.profilePictureUrl &&
         lhs.views == rhs.views &&
         lhs.bookmarked == rhs.bookmarked
     }
@@ -49,6 +51,7 @@ extension CodyResponse: Equatable, Hashable {
         hasher.combine(filePath)
         hasher.combine(boardToken)
         hasher.combine(nickname)
+        hasher.combine(profilePictureUrl)
         hasher.combine(views)
         hasher.combine(bookmarked)
     }
