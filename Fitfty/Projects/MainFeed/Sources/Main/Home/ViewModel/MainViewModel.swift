@@ -39,6 +39,7 @@ public final class MainViewModel {
     private var _location: CurrentValueSubject<(longitude: Double?, latitude: Double?), Never> = .init(
         (nil, nil)
     )
+    private var _currentAverageTemp: CurrentValueSubject<Int, Never> = .init(0)
 
     public init(
         addressRepository: AddressRepository,
@@ -126,8 +127,8 @@ private extension MainViewModel {
                     MainFeedSection(
                         sectionKind: .style, items: Array(0...8).map { _ in MainCellModel.styleTag(UUID()) }
                     ),
-                    MainFeedSection(
-                        sectionKind: .cody, items: Array(0...10).map { _ in MainCellModel.cody(UUID()) }
+                    self.configureCodyList(
+                        try await self.getCodyList()
                     )
                 ]))
             } catch {
@@ -153,15 +154,38 @@ private extension MainViewModel {
     
     func getWeathers(longitude: Double, latitude: Double) async throws -> [ShortTermForecast] {
         currentState.send(.isLoading(true))
-        return try await weatherRepository.fetchShortTermForecast(
+        let shortTermForecast = try await weatherRepository.fetchShortTermForecast(
             longitude: longitude.description, latitude: latitude.description
         )
+        let averageTemp =  try await weatherRepository.getTodayAverageTemp(
+            longitude: longitude.description, latitude: latitude.description
+        )
+        _currentAverageTemp.send(averageTemp)
+        return shortTermForecast
+    }
+    
+    func getCodyList() async throws -> [CodyResponse] {
+        currentState.send(.isLoading(true))
+        let tag = WeatherTag(temp: _currentAverageTemp.value)
+        let response = try await fitftyRepository.fetchCodyList(weather: tag)
+        guard let codyList = response.data?.pictureDetailInfoList else {
+            Logger.debug(error: FitftyAPIError.notFound(response.message), message: "코디 목록 조회 실패")
+            return []
+        }
+        return codyList
     }
     
     func configureWeathers(_ weathers: [ShortTermForecast]) -> MainFeedSection {
         return MainFeedSection(
             sectionKind: .weather,
             items: weathers.map { MainCellModel.weather($0)}
+        )
+    }
+    
+    func configureCodyList(_ list: [CodyResponse]) -> MainFeedSection {
+        return MainFeedSection(
+            sectionKind: .cody,
+            items: list.map { MainCellModel.cody($0)}
         )
     }
 }

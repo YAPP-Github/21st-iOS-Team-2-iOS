@@ -165,7 +165,7 @@ private extension MainViewController {
                     cell?.setUp(text: items[indexPath.item])
                     return cell ?? UICollectionViewCell()
                     
-                case .cody:
+                case .cody(let cody):
                     let cell = collectionView.dequeueReusableCell(CodyCell.self, for: indexPath)
                     cell?.addProfileViewGestureRecognizer(self, action: #selector(self.didTapProfileStackView))
                     return cell
@@ -328,8 +328,15 @@ private extension MainViewController {
         coordinator.showWeatherInfo()
     }
     
-    @objc func didTapProfileStackView(_ sender: Any?) {
-        coordinator.showProfile(profileType: .userProfile)
+    @objc func didTapProfileStackView(_ sender: UITapGestureRecognizer) {
+        guard let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)),
+              let cellModel = dataSource?.itemIdentifier(for: indexPath),
+              case let MainCellModel.cody(cody) = cellModel
+        else {
+            return
+        }
+        // TODO:  아직 수정본 반영 안되서 nickname으로 대체, 반영되면 추후 수정 예정
+        coordinator.showProfile(profileType: .userProfile, userToken: cody.nickname)
     }
     
     func showErrorNotiView() {
@@ -360,11 +367,20 @@ extension MainViewController: UICollectionViewDelegate {
         switch section {
         case .weather:
             didTapWeather()
-        case .cody:
-            coordinator.showPost(profileType: .userProfile)
+            
         case .style:
             let cell = collectionView.cellForItem(at: indexPath) as? StyleCell
             cell?.toggle()
+            
+        case .cody:
+            guard let cellModel = dataSource?.itemIdentifier(for: indexPath),
+                  case let MainCellModel.cody(cody) = cellModel
+            else {
+                return
+            }
+            // TODO:  아직 수정본 반영 안되서 nickname으로 대체, 반영되면 추후 수정 예정
+            coordinator.showPost(profileType: .userProfile, userToken: cody.nickname, boardToken: cody.boardToken)
+            
         default: return
         }
     }
