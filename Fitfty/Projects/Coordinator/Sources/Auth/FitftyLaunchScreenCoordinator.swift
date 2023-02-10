@@ -11,9 +11,15 @@ import UIKit
 import Auth
 import Common
 
+protocol FitftyLaunchScreenCoordinatorDelegate: AnyObject {
+    func pushAuthView()
+    func pushMainFeedView()
+}
+
 final class FitftyLaunchScreenCoordinator: Coordinator {
     var type: CoordinatorType { .launchScreen }
     var finishDelegate: CoordinatorFinishDelegate?
+    var launchScreenDelegate: FitftyLaunchScreenCoordinatorDelegate?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -31,18 +37,11 @@ final class FitftyLaunchScreenCoordinator: Coordinator {
 
 extension FitftyLaunchScreenCoordinator: FitftyLaunchScreenCoordinatorInterface {
     func pushAuthView() {
-        let coordinator = makeAuthCoordinator()
-        coordinator.start()
+        launchScreenDelegate?.pushAuthView()
     }
     
     func pushMainFeedView() {
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
-    }
-}
-
-extension FitftyLaunchScreenCoordinator: CoordinatorFinishDelegate {
-    func coordinatorDidFinish(childCoordinator: Coordinator) {
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+        launchScreenDelegate?.pushMainFeedView()
     }
 }
 
@@ -53,15 +52,5 @@ private extension FitftyLaunchScreenCoordinator {
             coordinator: self
         )
         return viewController
-    }
-    
-    func makeAuthCoordinator() -> Coordinator {
-        navigationController.viewControllers.removeAll()
-        let coordinator = AuthCoordinator(navigationController: navigationController)
-        coordinator.finishDelegate = self
-        coordinator.parentCoordinator = self
-        childCoordinators.append(coordinator)
-        
-        return coordinator
     }
 }

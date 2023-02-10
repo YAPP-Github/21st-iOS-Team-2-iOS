@@ -45,12 +45,6 @@ extension AuthCoordinator: AuthCoordinatorInterface {
     }
 }
 
-extension AuthCoordinator: CoordinatorFinishDelegate {
-    func coordinatorDidFinish(childCoordinator: Coordinator) {
-        childDidFinish(childCoordinator, parent: self)
-    }
-}
-
 private extension AuthCoordinator {
     func makeAuthViewController() -> UIViewController {
         let viewController = AuthViewController(
