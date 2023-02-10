@@ -33,15 +33,15 @@ final public class UploadCodyViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>?
     
     private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
-        (.formal, true),
+        (.modern, true),
         (.casual, false)
     ]
     private var weatherTagItems: [(weatherTag: WeatherTag, isSelected: Bool)] = [
         (.freezing, true),
-        (.coldWeather, false),
-        (.chillyWeather, false),
-        (.warmWeather, false),
-        (.hotWeather, false)
+        (.cold, false),
+        (.chilly, false),
+        (.warm, false),
+        (.hot, false)
     ]
     
     private lazy var collectionView: UICollectionView = {
