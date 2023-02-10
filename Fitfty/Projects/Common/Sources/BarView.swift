@@ -39,11 +39,13 @@ public final class BarView: UIView {
         return button
     }()
     
+    private var isChevronButtonHidden: Bool
+    
     public init(title: String, isChevronButtonHidden: Bool) {
+        self.isChevronButtonHidden = isChevronButtonHidden
         super.init(frame: .zero)
-        setConstraintsLayout()
-        self.chevronButton.isHidden = isChevronButtonHidden
         self.titleLabel.text = title
+        setConstraintsLayout()
     }
     
     public required init?(coder: NSCoder) {
@@ -52,16 +54,27 @@ public final class BarView: UIView {
     
     private func setConstraintsLayout() {
         addSubviews(backgroundStackView, cancelButton)
-        backgroundStackView.addArrangedSubviews(titleLabel, chevronButton)
-        NSLayoutConstraint.activate([
-            backgroundStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            backgroundStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-        
-            cancelButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-            cancelButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            cancelButton.widthAnchor.constraint(equalToConstant: 32),
-            cancelButton.heightAnchor.constraint(equalToConstant: 32)
-        ])
+        if isChevronButtonHidden {
+            backgroundStackView.addArrangedSubviews(titleLabel)
+            NSLayoutConstraint.activate([
+                backgroundStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+                backgroundStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+                cancelButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+                cancelButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+                cancelButton.widthAnchor.constraint(equalToConstant: 32),
+                cancelButton.heightAnchor.constraint(equalToConstant: 32)
+            ])
+        } else {
+            backgroundStackView.addArrangedSubviews(titleLabel, chevronButton)
+            NSLayoutConstraint.activate([
+                backgroundStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+                backgroundStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+                cancelButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+                cancelButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+                cancelButton.widthAnchor.constraint(equalToConstant: 32),
+                cancelButton.heightAnchor.constraint(equalToConstant: 32)
+            ])
+        }
     }
     
     public func setCancelButtonTarget(target: Any?, action: Selector) {
@@ -70,6 +83,10 @@ public final class BarView: UIView {
     
     public func setTitleViewTarget(target: Any?, action: Selector) {
         backgroundStackView.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
+    }
+    
+    public func setTitle(title: String) {
+        titleLabel.text = title
     }
 
 }

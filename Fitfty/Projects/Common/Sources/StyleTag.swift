@@ -15,7 +15,7 @@ public enum StyleTag: String, Codable {
     case hip = "HIP"
     case luxury = "LUXURY"
     
-    public var localized: String {
+    public var styleTagKoreanString: String {
         switch self {
         case .minimal: return "미니멀"
         case .modern: return "모던"
@@ -24,6 +24,25 @@ public enum StyleTag: String, Codable {
         case .lovely: return "러블리"
         case .hip: return "힙"
         case .luxury: return "럭셔리"
+        }
+    }
+    
+    public var styleTagEnglishString: String {
+        switch self {
+        case .minimal:
+            return "minimal"
+        case .modern:
+            return "modern"
+        case .casual:
+            return "casual"
+        case .street:
+            return "street"
+        case .lovely:
+            return "lovely"
+        case .hip:
+            return "hip"
+        case .luxury:
+            return "luxury"
         }
     }
 }

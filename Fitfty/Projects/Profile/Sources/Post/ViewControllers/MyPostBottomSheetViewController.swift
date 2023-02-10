@@ -49,7 +49,7 @@ final public class MyPostBottomSheetViewController: UIViewController {
     }
     
     @objc func didTapModifyButton(_ sender: Any?) {
-        coordinator.showUploadCody()
+        coordinator.showModifyMyFitfty()
     }
     
     @objc func didTapDeleteButton(_ sender: Any?) {

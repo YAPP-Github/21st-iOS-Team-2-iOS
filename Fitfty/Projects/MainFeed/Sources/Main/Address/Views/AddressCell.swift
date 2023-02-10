@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Core
 
 final class AddressCell: UICollectionViewCell {
     
@@ -70,6 +71,20 @@ private extension AddressCell {
     
     func reset() {
         addressLabel.text = nil
+        addressLabel.textColor = .systemGray
     }
     
+}
+
+extension AddressCell {
+    func setUp(_ address: String) {
+        addressLabel.text = address
+    }
+    
+    func highlighted(_ text: String) {
+        guard text.isEmpty == false else {
+            return
+        }
+        addressLabel.editTextColor(of: text, in: .black)
+    }
 }
