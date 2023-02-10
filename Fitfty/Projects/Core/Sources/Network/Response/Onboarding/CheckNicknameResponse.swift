@@ -7,3 +7,10 @@
 //
 
 import Foundation
+
+struct CheckNicknameResponse: Codable {
+    let result: String
+    let data: Bool
+    let message: String?
+    let errorCode: String?
+}

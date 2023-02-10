@@ -13,6 +13,7 @@ public enum FitftyAPI {
     case signInKakao(parameters: [String: Any])
     case signInApple(parameters: [String: Any])
     case getMyProfile
+    case checkNickname(query: String)
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -38,6 +39,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/auth/sign-in/apple/"
         case .getMyProfile:
             return "/users/profile"
+        case .checkNickname(let query):
+            return "/users/nickname/\(query)"
         }
     }
     
@@ -46,7 +49,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .signInKakao,
              .signInApple:
             return .post
-        case .getMyProfile:
+        case .getMyProfile,
+             .checkNickname(_):
             return .get
         }
     }
