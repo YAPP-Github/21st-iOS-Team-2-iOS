@@ -25,7 +25,7 @@ final class AuthCoordinator: Coordinator {
     
     func start() {
         let viewController = makeAuthViewController()
-        navigationController.pushViewController(viewController, animated: true)
+        navigationController.pushViewController(viewController, animated: false)
     }
 }
 
@@ -41,7 +41,13 @@ extension AuthCoordinator: AuthCoordinatorInterface {
     }
     
     func pushMainFeedView() {
-        
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+    }
+}
+
+extension AuthCoordinator: CoordinatorFinishDelegate {
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
     }
 }
 
