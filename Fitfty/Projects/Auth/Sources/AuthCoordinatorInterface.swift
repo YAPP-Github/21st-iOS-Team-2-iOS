@@ -11,4 +11,5 @@ import Foundation
 public protocol AuthCoordinatorInterface: AnyObject {
     func pushMainFeedView()
     func pushIntroView()
+    func pushPermissionView()
 }

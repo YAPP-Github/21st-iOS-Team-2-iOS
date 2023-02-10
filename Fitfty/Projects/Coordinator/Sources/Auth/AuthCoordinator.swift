@@ -36,14 +36,26 @@ private extension AuthCoordinator {
         )
         return viewController
     }
+    
+    func makeIntroViewController() -> UIViewController {
+        let viewController = AuthIntroViewController(
+            coordinator: self
+        )
+        return viewController
+    }
 }
 
 extension AuthCoordinator: AuthCoordinatorInterface {
     func pushIntroView() {
-        
+        let viewController = makeIntroViewController()
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     func pushMainFeedView() {
+        
+    }
+    
+    func pushPermissionView() {
         
     }
 }
