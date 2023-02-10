@@ -57,7 +57,7 @@ final public class AuthViewController: UIViewController {
                 case .pushIntroView:
                     self?.coordinator.pushIntroView()
                 case .pushMainFeedView:
-                    break
+                    self?.coordinator.pushMainFeedView()
                 case .showErrorAlert(let error):
                     self?.showErrorAlert(error)
                 }
