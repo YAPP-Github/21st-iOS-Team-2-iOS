@@ -24,15 +24,14 @@ final public class AuthViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
     }
     
     public init(viewModel: AuthViewModel, coordinator: AuthCoordinatorInterface) {
         self.viewModel = viewModel
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
-        
         configure()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -90,6 +89,14 @@ final public class AuthViewController: UIViewController {
             self.showSendMailErrorAlert()
         }
     }
+}
+
+extension AuthViewController: MFMailComposeViewControllerDelegate {
+    public func mailComposeController(_ controller: MFMailComposeViewController,
+                                      didFinishWith result: MFMailComposeResult,
+                                      error: Error?) {
+        controller.dismiss(animated: true)
+    }
     
     private func makeMailViewController() -> MFMailComposeViewController {
         let mailViewController = MFMailComposeViewController()
@@ -117,13 +124,5 @@ final public class AuthViewController: UIViewController {
         alertController.addAction(action)
         
         present(alertController, animated: true, completion: nil)
-    }
-}
-
-extension AuthViewController: MFMailComposeViewControllerDelegate {
-    public func mailComposeController(_ controller: MFMailComposeViewController,
-                                      didFinishWith result: MFMailComposeResult,
-                                      error: Error?) {
-        controller.dismiss(animated: true)
     }
 }

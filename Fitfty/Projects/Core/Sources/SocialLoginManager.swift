@@ -15,13 +15,15 @@ import AuthenticationServices
 final public class SocialLoginManager: NSObject {
     static public let shared = SocialLoginManager()
     
+    private override init() {}
+    
     public func tryAppleLogin(completionHandler: @escaping () -> Void,
-                               failedHandler: @escaping (Error?) -> Void) {
+                              failedHandler: @escaping (Error?) -> Void) {
         
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
-        let _ = ASAuthorizationController(requests: [request],
+        _ = ASAuthorizationController(requests: [request],
                                           completionHandler: completionHandler,
                                           failedHandler: failedHandler)
     }
@@ -33,7 +35,7 @@ final public class SocialLoginManager: NSObject {
             return
         }
         
-        UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
+        UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, _) in
             if let accessToken = oauthToken?.accessToken {
                 self?.saveKakaoUserInfo()
                 self?.requestKakaoLogin(accessToken, completionHandler: completionHandler, failedHandler: failedHandler)

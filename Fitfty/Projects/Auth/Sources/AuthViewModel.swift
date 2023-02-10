@@ -28,7 +28,6 @@ final public class AuthViewModel: ViewModelType {
     func didTapKakaoLogin() {
         SocialLoginManager.shared.tryKakaoLogin(
             completionHandler: { [weak self] in
-                // TODO: - 서버 연동되면 계정 유무 체크해서 바로 메인피드로 보낼지 회원가입 루트 탈지 분기 처리하자 - ethan
                 self?.currentState.send(.pushIntroView)
             },
             failedHandler: { [weak self] error in
@@ -39,7 +38,7 @@ final public class AuthViewModel: ViewModelType {
     
     func didTapAppleLogin() {
         SocialLoginManager.shared.tryAppleLogin(completionHandler: { [weak self] in
-            
+            self?.currentState.send(.pushIntroView)
         }, failedHandler: { [weak self] error in
             self?.currentState.send(.showErrorAlert(error!))
         })
