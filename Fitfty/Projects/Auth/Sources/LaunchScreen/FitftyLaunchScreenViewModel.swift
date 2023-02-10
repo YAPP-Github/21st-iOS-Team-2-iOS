@@ -28,7 +28,8 @@ final public class FitftyLaunchScreenViewModel: ViewModelType {
             try await Task.sleep(nanoseconds: 1 * 1000000000)
             let hasSession = await SessionManager.shared.checkUserSession()
             if hasSession {
-                currentState.send(.pushMainFeedView)
+                currentState.send(.pushAuthView)
+//                currentState.send(.pushMainFeedView)
             } else {
                 currentState.send(.pushAuthView)
             }

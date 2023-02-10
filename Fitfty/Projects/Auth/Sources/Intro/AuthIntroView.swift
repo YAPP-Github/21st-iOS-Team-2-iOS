@@ -31,6 +31,10 @@ final class AuthIntroView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func setNextButtonTarget(target: Any?, action: Selector) {
+        nextButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
     private func configure() {
         configureTitleLabel()
         configureIntroBackgroundImageView()

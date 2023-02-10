@@ -1,23 +1,27 @@
 //
-//  PermissionViewController.swift
+//  IntroViewController.swift
 //  Auth
 //
-//  Created by Watcha-Ethan on 2023/01/25.
+//  Created by Watcha-Ethan on 2023/01/24.
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
 import UIKit
 
-final public class AuthPermissionViewController: UIViewController {
+import Common
+import Core
+
+final public class AuthIntroViewController: UIViewController {
     private let coordinator: AuthCoordinatorInterface
-    private let contentView = AuthPermissionView()
-    
+    private let contentView = AuthIntroView()
+
     public override func loadView() {
         self.view = contentView
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = true
     }
     
     required init?(coder: NSCoder) {
@@ -27,5 +31,15 @@ final public class AuthPermissionViewController: UIViewController {
     public init(coordinator: AuthCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
+        configureButtonTarget()
+    }
+    
+    private func configureButtonTarget() {
+        contentView.setNextButtonTarget(target: self, action: #selector(didTouchNextButton))
+    }
+    
+    @objc
+    private func didTouchNextButton() {
+        coordinator.pushPermissionView()
     }
 }
