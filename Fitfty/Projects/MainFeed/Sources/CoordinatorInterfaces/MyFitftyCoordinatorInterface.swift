@@ -7,7 +7,7 @@
 //
 import Foundation
 
-public protocol UploadCodyCoordinatorInterface: AnyObject {
+public protocol MyFitftyCoordinatorInterface: AnyObject {
     
     func showAlbum()
     

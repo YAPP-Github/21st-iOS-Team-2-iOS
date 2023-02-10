@@ -7,15 +7,49 @@
 //
 
 public enum StyleTag {
-    case formal
+    case minimal
+    case modern
     case casual
+    case street
+    case lovely
+    case hip
+    case luxury
     
-    public var styleTagString: String {
+    public var styleTagKoreanString: String {
         switch self {
-        case .formal:
+        case .minimal:
+            return "미니멀"
+        case .modern:
             return "포멀"
         case .casual:
             return "캐주얼"
+        case .street:
+            return "스트릿"
+        case .lovely:
+            return "러블리"
+        case .hip:
+            return "힙"
+        case .luxury:
+            return "럭셔리"
+        }
+    }
+    
+    public var styleTagEnglishString: String {
+        switch self {
+        case .minimal:
+            return "minimal"
+        case .modern:
+            return "modern"
+        case .casual:
+            return "casual"
+        case .street:
+            return "street"
+        case .lovely:
+            return "lovely"
+        case .hip:
+            return "hip"
+        case .luxury:
+            return "luxury"
         }
     }
 }

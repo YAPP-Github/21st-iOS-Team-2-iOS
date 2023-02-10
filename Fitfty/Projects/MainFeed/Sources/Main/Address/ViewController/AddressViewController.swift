@@ -7,16 +7,21 @@
 //
 
 import UIKit
+import Combine
 import Common
+import Core
 
 public final class AddressViewController: UIViewController {
 
-    private weak var coordinator: AddressCoordinatorInterface?
-    private var viewModel: AddressViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
+    
+    private let coordinator: AddressCoordinatorInterface
+    private let viewModel: AddressViewModel
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
+        bind()
     }
     
     public init(coordinator: AddressCoordinatorInterface, viewModel: AddressViewModel) {
@@ -31,10 +36,11 @@ public final class AddressViewController: UIViewController {
     
     override public func removeFromParent() {
         super.removeFromParent()
-        coordinator?.dismiss()
+        searchController.dismiss(animated: true)
+        coordinator.finished()
     }
     
-    private var dataSource: UICollectionViewDiffableDataSource<AddressViewSection, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<AddressSectionKind, Address>?
     
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
@@ -42,6 +48,7 @@ public final class AddressViewController: UIViewController {
         searchController.searchBar.tintColor = .darkGray
         searchController.searchBar.placeholder = "지금 어디에 계세요?"
         searchController.searchBar.setValue("취소", forKey: "cancelButtonText")
+        searchController.searchBar.delegate = self
         return searchController
     }()
     
@@ -93,15 +100,52 @@ public final class AddressViewController: UIViewController {
         label.font = FitftyFont.appleSDBold(size: 18).font
         return label
     }()
+    
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white, alpha: 1)
+        loadingView.startAnimating()
+        loadingView.alpha = 0
+        return loadingView
+    }()
 }
 
 private extension AddressViewController {
+    
+    func bind() {
+        viewModel.state.sinkOnMainThread(receiveValue: { [weak self] state in
+            switch state {
+            case .isEmpty(let isEmpty):
+                self?.emptyLabel.isHidden = isEmpty == false
+                
+            case .sections(let sections):
+                self?.applySnapshot(sections)
+                
+            case .isLoading(let isLoading):
+                if isLoading {
+                    self?.loadingIndicatorView.startAnimating()
+                    self?.loadingIndicatorView.alpha = 1
+                }
+                
+            case .errorMessage(let message):
+                self?.showAlert(message: message)
+                
+            case .weather(let weatherNow, let address):
+                self?.updateAddressInfo(weather: weatherNow, address: address)
+                
+            case .completed(let completed):
+                guard completed else {
+                    return
+                }
+                self?.searchController.dismiss(animated: true)
+                self?.coordinator.dismiss()
+            }
+        }).store(in: &cancellables)
+    }
     
     func setUp() {
         setUpNavigationBar()
         setUpLayout()
         setUpDataSource()
-        applySnapshot()
     }
     
     func setUpNavigationBar() {
@@ -115,15 +159,21 @@ private extension AddressViewController {
     
     func setUpLayout() {
         view.backgroundColor = .white
-        view.addSubviews(cancelButton, collectionView, addressInfoView, buttonStackView, emptyLabel)
+        view.addSubviews(
+            cancelButton, collectionView, addressInfoView, buttonStackView, emptyLabel, loadingIndicatorView
+        )
         let cancelButtonBottom = cancelButton.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -26
         )
         let buttonsBottom = buttonStackView.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -26
         )
-        cancelButtonBottom.priority = .defaultLow
-        buttonsBottom.priority = .defaultLow
+        let loadingViewBottom = loadingIndicatorView.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -90
+        )
+        cancelButtonBottom.priority = .init(999)
+        buttonsBottom.priority = .init(999)
+        loadingViewBottom.priority = .init(999)
         NSLayoutConstraint.activate([
             cancelButtonBottom,
             cancelButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
@@ -142,18 +192,25 @@ private extension AddressViewController {
             buttonStackView.heightAnchor.constraint(equalToConstant: 64),
             buttonsBottom,
             emptyLabel.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
-            emptyLabel.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor)
+            emptyLabel.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            loadingIndicatorView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingViewBottom
         ])
     }
     
     func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<AddressViewSection, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<AddressSectionKind, Address>(
             collectionView: collectionView,
-            cellProvider: { collectionView, indexPath, _ in
-                let section = AddressViewSection(index: indexPath.section)
+            cellProvider: { [weak self] collectionView, indexPath, address in
+                let section = AddressSectionKind(index: indexPath.section)
                 switch section {
                 case .address:
                     let cell = collectionView.dequeueReusableCell(AddressCell.self, for: indexPath)
+                    cell?.setUp(address.formatted())
+                    let text = self?.searchController.searchBar.text?.replacingOccurrences(of: " ", with: ", ")
+                    cell?.highlighted(text ?? "")
                     return cell
                     
                 default: return UICollectionViewCell()
@@ -162,16 +219,18 @@ private extension AddressViewController {
         collectionView.dataSource = dataSource
     }
     
-    func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<AddressViewSection, UUID>()
-        snapshot.appendSections([.address])
-        snapshot.appendItems(Array(0...20).map { _ in UUID() })
-        dataSource?.apply(snapshot)
+    func applySnapshot(_ sections: [AddressSection]) {
+        var snapshot = NSDiffableDataSourceSnapshot<AddressSectionKind, Address>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
+        }
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
     
     func createLayout() -> UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout { [weak self] (sectionNumber, _) -> NSCollectionLayoutSection? in
-            let section = AddressViewSection(index: sectionNumber)
+            let section = AddressSectionKind(index: sectionNumber)
             switch section {
             case .address: return self?.addressSectionLayout()
             default: return nil
@@ -198,19 +257,39 @@ private extension AddressViewController {
     }
     
     @objc func didTapCancelButton(_ sender: UIButton) {
-        print(#function)
-        coordinator?.dismiss()
+        searchController.dismiss(animated: true)
+        coordinator.dismiss()
     }
     
     @objc func didTapSelectButton(_ sender: UIButton) {
-        print(#function)
-        coordinator?.dismiss()
+        viewModel.input.didTapSelected()
     }
     
     @objc func didTapBackButton(_ sender: UIButton) {
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
             self?.addressInfoView.alpha = 0
             self?.buttonStackView.alpha = 0
+            self?.searchController.searchBar.alpha = 1
+            self?.loadingIndicatorView.alpha = 1
+            self?.loadingIndicatorView.stopAnimating()
+            self?.view.layoutIfNeeded()
+        }, completion: nil)
+        searchController.searchBar.isUserInteractionEnabled = true
+    }
+    
+    func updateAddressInfo(weather: WeatherNow, address: String) {
+        addressInfoView.reset()
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
+            self?.addressInfoView.isHidden = false
+            self?.addressInfoView.alpha = 1
+            self?.addressInfoView.setUp(
+                address: address,
+                temp: weather.temp,
+                icon: weather.forecast.icon
+            )
+            self?.buttonStackView.alpha = 1
+            self?.loadingIndicatorView.alpha = 0
+            self?.searchController.searchBar.alpha = 0
             self?.view.layoutIfNeeded()
         }, completion: nil)
     }
@@ -219,17 +298,21 @@ private extension AddressViewController {
 extension AddressViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
-            self?.addressInfoView.isHidden = false
-            self?.addressInfoView.alpha = 1
-            self?.addressInfoView.setUp(
-                address: "서울시, 강남구, 역삼 1동",
-                temp: 12,
-                icon: CommonAsset.Images.cloudAndSun.image
-            )
-            self?.buttonStackView.alpha = 1
-            self?.view.layoutIfNeeded()
-        }, completion: nil)
+        guard let address = dataSource?.itemIdentifier(for: indexPath) else {
+            return
+        }
+        viewModel.input.didTapAddress(address)
+        searchController.searchBar.isUserInteractionEnabled = false
     }
     
+}
+
+extension AddressViewController: UISearchBarDelegate {
+    
+    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard searchBar.text?.isEmpty == false else {
+            return
+        }
+        viewModel.input.search(text: searchText)
+    }
 }

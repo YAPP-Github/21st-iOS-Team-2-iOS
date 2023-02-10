@@ -60,8 +60,8 @@ private extension PostCoordinator {
         return bottomSheetViewController
     }
     
-    func makeUploadCodyCoordinator() -> UploadCodyCoordinator {
-        let coordinator = UploadCodyCoordinator()
+    func makeMyFitftyCoordinator() -> MyFitftyCoordinator {
+        let coordinator = MyFitftyCoordinator(myFitftyType: .modifyMyFitfty)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -94,9 +94,9 @@ extension PostCoordinator: PostCoordinatorInterface {
         navigationController.present(bottomSheetViewController, animated: false)
     }
     
-    func showUploadCody() {
+    func showModifyMyFitfty() {
         navigationController.dismiss(animated: false)
-        let coordinator = makeUploadCodyCoordinator()
+        let coordinator = makeMyFitftyCoordinator()
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
         navigationController.present(coordinator.navigationController, animated: true)
@@ -134,7 +134,7 @@ extension PostCoordinator: CoordinatorFinishDelegate {
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
         switch childCoordinator.type {
-        case .uploadCody:
+        case .myFitfty:
             navigationController.dismiss(animated: true) {
                 childCoordinator.navigationController.viewControllers.removeAll()
             }

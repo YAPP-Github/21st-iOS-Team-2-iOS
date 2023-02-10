@@ -13,7 +13,7 @@ final class StyleTagCell: UICollectionViewCell {
     
     override var intrinsicContentSize: CGSize {
         return CGSize(
-            width: titleLabel.intrinsicContentSize.width + 25,
+            width: titleLabel.intrinsicContentSize.width + 32,
             height: 43
         )
     }
@@ -60,7 +60,7 @@ final class StyleTagCell: UICollectionViewCell {
 
 extension StyleTagCell {
     func setUp(styleTag: Common.StyleTag, isSelected: Bool) {
-        titleLabel.text = styleTag.styleTagString
+        titleLabel.text = styleTag.styleTagKoreanString
         titleLabel.textColor = isSelected ? .white : CommonAsset.Colors.gray06.color
         titleLabel.backgroundColor = isSelected ? .black : CommonAsset.Colors.gray01.color
     }

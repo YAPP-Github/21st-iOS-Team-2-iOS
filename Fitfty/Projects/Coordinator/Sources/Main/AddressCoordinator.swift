@@ -44,8 +44,12 @@ extension AddressCoordinator: AddressCoordinatorInterface {
     
     func dismiss() {
         bottomSheetDelegate?.dismissBottomSheet {
-            self.navigationController.viewControllers.removeAll()
-            self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+            self.finished()
         }
+    }
+    
+    func finished() {
+        navigationController.viewControllers.removeAll()
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }

@@ -37,4 +37,23 @@ extension Address {
         self.secondName = secondName
         self.thirdName = thirdName
     }
+    
+    public func formatted() -> String {
+        return [firstName, secondName, thirdName]
+            .filter { $0.isEmpty == false }
+            .joined(separator: ", ")
+    }
+}
+
+extension Address: Equatable, Hashable {
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.x == rhs.x && lhs.y == rhs.y
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(x)
+        hasher.combine(y)
+    }
+    
 }
