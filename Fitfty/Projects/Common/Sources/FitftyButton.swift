@@ -24,6 +24,7 @@ final public class FitftyButton: UIButton {
             }
         }
     }
+    private lazy var buttonHeightAnchor: NSLayoutConstraint = self.heightAnchor.constraint(equalToConstant: 64)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,6 +39,7 @@ final public class FitftyButton: UIButton {
         super.init(frame: .zero)
         setButtonTitle(title)
         configureSelf()
+        setHeight(64)
     }
     
     public func setStyle(_ style: FitftyButtonStyle) {
@@ -46,6 +48,10 @@ final public class FitftyButton: UIButton {
     
     public func setButtonTitle(_ title: String) {
         setTitle(title, for: .normal)
+    }
+    
+    public func setHeight(_ height: CGFloat) {
+        buttonHeightAnchor.constant = height
     }
     
     public func setButtonTarget(target: Any?, action: Selector) {
@@ -57,8 +63,10 @@ final public class FitftyButton: UIButton {
     private func configureSelf() {
         clipsToBounds = true
         layer.cornerRadius = 12
-        heightAnchor.constraint(equalToConstant: 64).isActive = true
         titleLabel?.font = FitftyFont.SFProDisplayBold(size: 18).font
+        NSLayoutConstraint.activate([
+            buttonHeightAnchor
+        ])
         
         switch style {
         case .disabled:
@@ -71,10 +79,12 @@ final public class FitftyButton: UIButton {
     private func configureDisabledStyle() {
         setTitleColor(CommonAsset.Colors.gray06.color, for: .normal)
         backgroundColor = CommonAsset.Colors.gray03.color
+        isEnabled = false
     }
 
     private func configureEnabledStyle() {
         setTitleColor(.white, for: .normal)
         backgroundColor = .black
+        isEnabled = true
     }
 }
