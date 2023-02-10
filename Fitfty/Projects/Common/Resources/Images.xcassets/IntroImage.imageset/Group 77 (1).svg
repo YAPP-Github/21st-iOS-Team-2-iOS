@@ -12,13 +12,13 @@
 <rect x="40" y="119" width="295" height="218" rx="12" fill="url(#paint0_linear_475_5160)"/>
 <defs>
 <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlink:href="#image0_475_5160" transform="translate(0 -0.158482) scale(0.003125 0.00274368)"/>
+<use xlink:href="#image0_475_5160" transform="matrix(0.003125 0 0 0.00274368 0 -0.158482)"/>
 </pattern>
 <pattern id="pattern1" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlink:href="#image1_475_5160" transform="translate(0 -0.0906609) scale(0.00280899 0.00246623)"/>
+<use xlink:href="#image1_475_5160" transform="matrix(0.00280899 0 0 0.00246623 0 -0.0906609)"/>
 </pattern>
 <pattern id="pattern2" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlink:href="#image2_475_5160" transform="translate(0 -0.158482) scale(0.00223214 0.00195977)"/>
+<use xlink:href="#image2_475_5160" transform="matrix(0.00223214 0 0 0.00195977 0 -0.158482)"/>
 </pattern>
 <linearGradient id="paint0_linear_475_5160" x1="187.5" y1="119" x2="187.5" y2="337" gradientUnits="userSpaceOnUse">
 <stop stop-color="#D9D9D9" stop-opacity="0"/>
