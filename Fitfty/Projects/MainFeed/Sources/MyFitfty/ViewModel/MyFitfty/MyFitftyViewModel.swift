@@ -10,6 +10,7 @@ import Foundation
 import Common
 import Combine
 import UIKit
+import Core
 
 protocol MyFitftyViewModelInput {
     
@@ -25,7 +26,10 @@ public final class MyFitftyViewModel {
     
     public var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     
-    public init() { }
+    private let weatherRepository: WeatherRepository
+    private let addressRepository: AddressRepository
+    private let userManager: UserManager
+    private var cancellables: Set<AnyCancellable> = .init()
     
     private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
         (.minimal, false),
@@ -53,6 +57,17 @@ public final class MyFitftyViewModel {
     private let textViewPlaceHolder = "2200자 이내로 설명을 남길 수 있어요."
     private var contentText: String?
     private var selectedPhAssetInfo: PHAssetInfo?
+    private var location: String?
+    
+    public init(
+        weatherRepository: WeatherRepository,
+        addressRepository: AddressRepository,
+        userManager: UserManager
+    ) {
+        self.weatherRepository = weatherRepository
+        self.addressRepository = addressRepository
+        self.userManager = userManager
+    }
     
     private func getStyleTagCellModels() -> [MyFitftyCellModel] {
         var cellModels: [MyFitftyCellModel] = []
@@ -115,6 +130,12 @@ public final class MyFitftyViewModel {
         }
     }
     
+    private func dateFormatYYMMDD(_ date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = DateFormat.yyMMddDot.rawValue
+        return dateFormatter.string(from: date)
+    }
+    
 }
 
 extension MyFitftyViewModel: MyFitftyViewModelInput {
@@ -131,15 +152,16 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     }
     
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo) {
-        selectedPhAssetInfo = phAssetInfo
-        currentState.send(.codyImage(phAssetInfo.image))
-        currentState.send(.sections([
-            MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
-            MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
-            MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
-            MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
-        ], true))
-        currentState.send(.isEnabledUpload(checkIsEnabledUpload()))
+        update(phAssetInfo: phAssetInfo)
+        currentState.sink(receiveValue: { [weak self] state in
+            switch state {
+            case .errorMessage, .sections, .imageInfoMessage:
+                self?.currentState.send(.isLoading(false))
+                
+            default: return
+            }
+        }).store(in: &cancellables)
+        
     }
     
     func didTapTag(_ sectionKind: MyFitftySectionKind, index: Int) {
@@ -176,6 +198,85 @@ extension MyFitftyViewModel: ViewModelType {
         case codyImage(UIImage)
         case content(String)
         case isEnabledUpload(Bool)
+        case imageInfoMessage(String)
+        case isLoading(Bool)
+        case errorMessage(String)
+    }
+    
+}
+
+private extension MyFitftyViewModel {
+    
+    func update(phAssetInfo: PHAssetInfo) {
+        selectedPhAssetInfo = phAssetInfo
+        let date = phAssetInfo.date
+        let longitude = phAssetInfo.longitude
+        let latitude = phAssetInfo.latitude
+        currentState.send(.codyImage(phAssetInfo.image))
+        currentState.send(.isEnabledUpload(checkIsEnabledUpload()))
+        currentState.send(.sections([
+            MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
+            MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+            MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
+            MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
+        ], true))
+        Task { [weak self] in
+            guard let self = self else {
+                return
+            }
+            do {
+                // 위치, 날짜 모두 있는 경우
+                if let longitude = longitude,
+                   let latitude = latitude,
+                   let date = date {
+                    let dailyWeather = try await self.getDailyWeather(date: date, longitude: longitude, latitude: latitude)
+                    let address = try await self.getAddress(longitude: longitude, latitude: latitude)
+                    self.location = address.fullName
+                    print(address.fullName)
+                    let imageInfoMessage = """
+                    사진 찍은 날의 날씨 정보를 불러왔어요. \(dateFormatYYMMDD(date)) / 평균 \(dailyWeather.averageTemp)도
+                    \(dailyWeather.forecast.rawValue)에 입는 옷이 아니라면 고쳐주세요.
+                    """
+                    print(imageInfoMessage)
+                    currentState.send(.imageInfoMessage(imageInfoMessage))
+                } else {
+                    let imageInfoMessage = """
+                    사진에 등록된 날짜 · 위치 정보가 없어요.
+                    직접 어떤 날씨에 입는 옷인지 선택해주세요.
+                    """
+                    currentState.send(.imageInfoMessage(imageInfoMessage))
+                }
+                currentState.send(.sections([
+                    MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
+                    MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+                    MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
+                    MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
+                ], true))
+            } catch {
+                Logger.debug(error: error, message: "사진 날씨정보 가져오기 실패")
+                self.currentState.send(.errorMessage("사진의 날씨 정보를 가져오는데 알 수 없는 에러가 발생했습니다."))
+            }
+        }
+    }
+    
+    func getDailyWeather(date: Date, longitude: Double, latitude: Double) async throws -> DailyWeather {
+        currentState.send(.isLoading(true))
+        print(longitude.description, latitude.description)
+        let dailyWeather = try await self.weatherRepository.fetchDailyWeather(
+            for: date,
+            longitude: longitude.description,
+            latitude: latitude.description
+        )
+        return dailyWeather
+    }
+    
+    func getAddress(longitude: Double, latitude: Double) async throws -> Address {
+        currentState.send(.isLoading(true))
+        let address = try await self.addressRepository.fetchAddress(
+            longitude: longitude,
+            latitude: latitude
+        )
+        return address
     }
     
 }
