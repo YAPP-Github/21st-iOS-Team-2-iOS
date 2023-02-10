@@ -57,8 +57,7 @@ final class AuthPermissionView: UIView {
             permissionImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             permissionImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Style.PermissionImageView.margin.left),
             permissionImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Style.PermissionImageView.margin.right),
-            permissionImageView.heightAnchor.constraint(equalToConstant: Style.PermissionImageView.size.height),
-            permissionImageView.widthAnchor.constraint(equalToConstant: Style.PermissionImageView.size.width)
+            permissionImageView.heightAnchor.constraint(equalToConstant: Style.PermissionImageView.size.height)
         ])
         
         permissionImageView.image = Style.PermissionImageView.image
