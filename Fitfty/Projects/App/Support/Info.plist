@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>사진 사용을 위해 앨범에 접근합니다.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>허용을 누르면 제공해주시는 활동 정보를 통해 더 잘 맞는 코디를 추천해드려요 👚👕</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -44,11 +44,13 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>현재 위치의 날씨정보 표시를 위해 사용됩니다.</string>
+	<string>사용자 위치의 날씨와 알맞은 코디를 추천하기 위해 위치 정보 접근 허용이 필요해요</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>현재 위치의 날씨정보 표시를 위해 사용됩니다.</string>
+	<string>사용자 위치의 날씨와 알맞은 코디를 추천하기 위해 위치 정보 접근 허용이 필요해요</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>현재 위치의 날씨정보 표시를 위해 사용됩니다.</string>
+	<string>사용자 위치의 날씨와 알맞은 코디를 추천하기 위해 위치 정보 접근 허용이 필요해요</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>내 핏프티 코디 사진 등록을 위해 사진 접근 허용이 필요해요</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -69,7 +71,7 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<string>LaunchScreen.storyboard</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
