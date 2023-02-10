@@ -8,7 +8,7 @@
 
 import UIKit
 
-final public class PermissionViewController: UIViewController {
+final public class AuthPermissionViewController: UIViewController {
     private let coordinator: IntroCoordinatorInterface
     
     public override func viewDidLoad() {
