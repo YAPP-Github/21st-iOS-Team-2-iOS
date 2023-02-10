@@ -60,23 +60,11 @@ public final class DefaultWeatherRepository: WeatherRepository {
     }
     
     public func fetchDailyWeather(for date: Date, longitude: String, latitude: String) async throws -> DailyWeather {
-        let address: String = try await transferService.address(latitude: latitude, longitude: longitude)
-        let request = try DailyWeatherListRequest(
-            stnIds: transferService.dailyWeatherListBranchCode(address),
-            startDt: date.toString(.baseDate),
-            endDt: date.toString(.baseDate)
-        ).asDictionary()
-        let response = try await WeatherAPI.request(
-            target: WeatherAPI.fetchDailyWeatherList(parameter: request),
-            dataType: DailyWeatherListResponse.self
-        )
-        if response.response.header.resultCode != .normalService {
-            throw response.response.header.resultCode
+        if date.toString(.baseDate) == Date().toString(.baseDate) {
+            return try await todayDailyWeather(for: date, longitude: longitude, latitude: latitude)
+        } else {
+            return try await pastDailyWeather(for: date, longitude: longitude, latitude: latitude)
         }
-        guard let item = response.response.body?.items.item.first else {
-            throw ResultCode.nodataError
-        }
-        return DailyWeather(item)
     }
     
     public func fetchCurrentWeather(longitude: String, latitude: String) async throws -> CurrentWeather {
@@ -190,4 +178,35 @@ private extension DefaultWeatherRepository {
         _pastShortTermForecast = pastShortTermForecastList
     }
     
+    func pastDailyWeather(for date: Date, longitude: String, latitude: String) async throws -> DailyWeather {
+        let address: String = try await transferService.address(latitude: latitude, longitude: longitude)
+        let request = try DailyWeatherListRequest(
+            stnIds: transferService.dailyWeatherListBranchCode(address),
+            startDt: date.toString(.baseDate),
+            endDt: date.toString(.baseDate)
+        ).asDictionary()
+        let response = try await WeatherAPI.request(
+            target: WeatherAPI.fetchDailyWeatherList(parameter: request),
+            dataType: DailyWeatherListResponse.self
+        )
+        if response.response.header.resultCode != .normalService {
+            throw response.response.header.resultCode
+        }
+        guard let item = response.response.body?.items.item.first else {
+            throw ResultCode.nodataError
+        }
+        return DailyWeather(item)
+    }
+    
+    func todayDailyWeather(for date: Date, longitude: String, latitude: String) async throws -> DailyWeather {
+        try await pastShortTermForecast(longitude: longitude, latitude: latitude)
+        guard let shortTermForecast = _pastShortTermForecast.filter({ $0.date.toString(.hour) == date.toString(.hour) }).first else {
+            throw ResultCode.nodataError
+        }
+        return DailyWeather(
+            date: date,
+            averageTemp: shortTermForecast.temp.description,
+            forecast: shortTermForecast.forecast
+        )
+    }
 }

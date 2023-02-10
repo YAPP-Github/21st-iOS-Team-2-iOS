@@ -33,8 +33,16 @@ final class AlbumCoordinator: Coordinator {
 
 private extension AlbumCoordinator {
     func makeAlbumViewController() -> UIViewController {
-        let viewController = AlbumViewController(coordinator: self)
+        let viewController = AlbumViewController(coordinator: self, viewModel: AlbumViewModel())
         return viewController
+    }
+    
+    func makeAlbumListCoordinator() -> AlbumListCoordinator {
+        let coordinator = AlbumListCoordinator()
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
     }
 }
 
@@ -46,4 +54,24 @@ extension AlbumCoordinator: AlbumCoordinatorInterface {
             self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         }
     }
+    
+    func showAlbumList() {
+        let coordinator = makeAlbumListCoordinator()
+        coordinator.start()
+        coordinator.navigationController.modalPresentationStyle = .fullScreen
+        navigationController.present(coordinator.navigationController, animated: true)
+    }
+}
+
+extension AlbumCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        childDidFinish(childCoordinator, parent: self)
+        switch childCoordinator.type {
+        case .albumList:
+            childCoordinator.navigationController.viewControllers.removeAll()
+        default: break
+        }
+    }
+    
 }

@@ -10,8 +10,9 @@ import UIKit
 import MainFeed
 import Common
 
-final class UploadCodyCoordinator: Coordinator {
-    var type: CoordinatorType { .uploadCody }
+final class MyFitftyCoordinator: Coordinator {
+    var type: CoordinatorType { .myFitfty }
+    var myFitftyType: MyFitftyType
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -19,19 +20,24 @@ final class UploadCodyCoordinator: Coordinator {
     
     var finishDelegate: CoordinatorFinishDelegate?
     
-    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+    init(navigationController: BaseNavigationController = BaseNavigationController(), myFitftyType: MyFitftyType) {
         self.navigationController = navigationController
+        self.myFitftyType = myFitftyType
     }
     
     func start() {
-        let viewController = makeUploadCodyViewController()
+        let viewController = makeMyFitftyViewController()
         navigationController.pushViewController(viewController, animated: true)
     }
 }
 
-private extension UploadCodyCoordinator {
-    func makeUploadCodyViewController() -> UIViewController {
-        let viewController = UploadCodyViewController(coordinator: self)
+private extension MyFitftyCoordinator {
+    func makeMyFitftyViewController() -> UIViewController {
+        let viewController = MyFitftyViewController(
+            coordinator: self,
+            myFitftyType: myFitftyType,
+            viewModel: MyFitftyViewModel()
+        )
         viewController.modalPresentationStyle = .fullScreen
         return viewController
     }
@@ -51,7 +57,7 @@ private extension UploadCodyCoordinator {
     }
 }
 
-extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
+extension MyFitftyCoordinator: MyFitftyCoordinatorInterface {
     
     func dismiss() {
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
@@ -65,7 +71,7 @@ extension UploadCodyCoordinator: UploadCodyCoordinatorInterface {
     
 }
 
-extension UploadCodyCoordinator: CoordinatorFinishDelegate {
+extension MyFitftyCoordinator: CoordinatorFinishDelegate {
     
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
