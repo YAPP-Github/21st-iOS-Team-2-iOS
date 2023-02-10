@@ -72,7 +72,7 @@ extension AlbumViewModel: AlbumViewModelInput {
             return
         }
         currentState.send(.completed(true))
-        currentState.send(.sendImage)
+        selectImage()
     }
     
     func didTapImage(index: Int) {
@@ -128,7 +128,6 @@ extension AlbumViewModel: ViewModelType {
         case sections([AlbumSection])
         case reloadAlbum(String)
         case completed(Bool)
-        case sendImage
     }
     
 }
