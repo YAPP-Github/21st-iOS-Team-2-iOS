@@ -14,6 +14,7 @@ final class AuthView: UIView {
     private let logoImageView = UIImageView()
     private let snsLabel = UILabel()
     private let snsImageStackView = UIStackView()
+    private let acceptPrivacyLabel = UILabel()
     private let kakaoButton = UIButton()
     private let appleButton = UIButton()
     private let enterWithoutLoginButton = UIButton()
@@ -49,6 +50,7 @@ final class AuthView: UIView {
         configureLogoImageView()
         configureLoginProblemButton()
         configureEnterButtonWithoutLogin()
+        configureAcceptPrivacyLabel()
         configureSnsImageStackView()
         configureSnsLabel()
     }
@@ -63,6 +65,7 @@ final class AuthView: UIView {
         ])
         
         logoImageView.image = Style.LogoImageView.image
+        logoImageView.contentMode = .scaleAspectFit
     }
     
     private func configureLoginProblemButton() {
@@ -96,11 +99,24 @@ final class AuthView: UIView {
         enterWithoutLoginButton.layer.borderWidth = Style.EnterWithoutLoginButton.borderWidth
     }
     
+    private func configureAcceptPrivacyLabel() {
+        addSubviews(acceptPrivacyLabel)
+        NSLayoutConstraint.activate([
+            acceptPrivacyLabel.bottomAnchor.constraint(equalTo: enterWithoutLoginButton.topAnchor,
+                                                      constant: -Style.AcceptPrivacyLabel.margin),
+            acceptPrivacyLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+        ])
+        
+        acceptPrivacyLabel.text = Style.AcceptPrivacyLabel.text
+        acceptPrivacyLabel.font = Style.AcceptPrivacyLabel.font
+        acceptPrivacyLabel.textColor = Style.AcceptPrivacyLabel.textColor.color
+    }
+    
     private func configureSnsImageStackView() {
         addSubviews(snsImageStackView)
         NSLayoutConstraint.activate([
-            snsImageStackView.bottomAnchor.constraint(equalTo: enterWithoutLoginButton.topAnchor,
-                                                      constant: -Style.EnterWithoutLoginButton.margin),
+            snsImageStackView.bottomAnchor.constraint(equalTo: acceptPrivacyLabel.topAnchor,
+                                                      constant: -Style.SnsImageStackView.margin),
             snsImageStackView.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
         
@@ -149,7 +165,7 @@ final class AuthView: UIView {
 private extension AuthView {
     enum Style {
         enum LogoImageView {
-            static let size = CGSize(width: 103, height: 78)
+            static let size = CGSize(width: 135, height: 46)
             static let image = CommonAsset.Images.fitftyLogoImage.image
             static let margin: CGFloat = 80
         }
@@ -163,13 +179,20 @@ private extension AuthView {
         
         enum EnterWithoutLoginButton {
             static let size = CGSize(width: 166, height: 38)
-            static let margin: CGFloat = 20
+            static let margin: CGFloat = 42
             static let borderColor = CommonAsset.Colors.gray02
             static let borderWidth: CGFloat = 1
             static let textColor = CommonAsset.Colors.gray05
             static let radius: CGFloat = 16
             static let font = FitftyFont.appleSDMedium(size: 13).font
             static let title = "둘러보기"
+        }
+        
+        enum AcceptPrivacyLabel {
+            static let margin: CGFloat = 20
+            static let text = "서비스 가입 시 이용약관 및 개인정보취급방침에 동의하게 돼요."
+            static let textColor = CommonAsset.Colors.gray04
+            static let font = FitftyFont.appleSDBold(size: 12).font
         }
         
         enum SnsImageStackView {
@@ -193,7 +216,7 @@ private extension AuthView {
             static let margin: CGFloat = 16
             static let text = "SNS 계정으로 간편 가입하기"
             static let textColor = CommonAsset.Colors.gray05
-            static let font = FitftyFont.appleSDMedium(size: 13).font
+            static let font = FitftyFont.appleSDBold(size: 13).font
         }
     }
 }
