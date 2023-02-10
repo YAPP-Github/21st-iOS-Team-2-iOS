@@ -9,7 +9,12 @@
 import UIKit
 
 final public class AuthPermissionViewController: UIViewController {
-    private let coordinator: IntroCoordinatorInterface
+    private let coordinator: AuthCoordinatorInterface
+    private let contentView = AuthPermissionView()
+    
+    public override func loadView() {
+        self.view = contentView
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,7 +24,7 @@ final public class AuthPermissionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public init(coordinator: IntroCoordinatorInterface) {
+    public init(coordinator: AuthCoordinatorInterface) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
