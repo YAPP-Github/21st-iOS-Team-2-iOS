@@ -80,7 +80,6 @@ extension MainViewModel: MainViewModelInput {
         userManager.location
             .compactMap { $0 }
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
-                print(longitude, latitude)
                 self?.update(longitude: longitude, latitude: latitude)
                 self?._location.send((longitude, latitude))
         }).store(in: &cancellables)
