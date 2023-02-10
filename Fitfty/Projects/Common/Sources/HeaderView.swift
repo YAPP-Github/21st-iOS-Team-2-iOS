@@ -21,6 +21,7 @@ final public class HeaderView: UICollectionReusableView {
         let label = UILabel()
         label.textColor = .black
         label.numberOfLines = 0
+        label.lineBreakMode = .byCharWrapping
         return label
     }()
     
@@ -55,6 +56,7 @@ extension HeaderView {
         largeTitleLabel.font = largeTitleFont
         smallTitleLabel.font = smallTitleFont
         smallTitleLabel.textColor = smallTitleColor
+        smallTitleLabel.setTextWithLineHeight(lineHeight: 19.6)
         
         addSubviews(stackView)
         stackView.addArrangedSubviews(largeTitleLabel, smallTitleLabel)

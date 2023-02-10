@@ -54,8 +54,15 @@ final public class MyFitftyViewController: UIViewController {
         return UIBarButtonItem(customView: button)
     }()
     
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        loadingView.stopAnimating()
+        return loadingView
+    }()
+    
     private var selectedImage: UIImage?
     private var contentText = "2200자 이내로 설명을 남길 수 있어요."
+    private var imageInfoMessage: String?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -145,6 +152,12 @@ private extension MyFitftyViewController {
                 case .isEnabledUpload(let isEnabled):
                     self?.navigationItem.rightBarButtonItem =
                     isEnabled ? self?.enableRightBarButton : self?.disableRightBarButton
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                case .imageInfoMessage(let message):
+                    self?.imageInfoMessage = message
                 }
             }).store(in: &cancellables)
     }
@@ -172,12 +185,16 @@ private extension MyFitftyViewController {
     }
     
     func setUpConstraintLayout() {
-        view.addSubviews(collectionView)
+        view.addSubviews(collectionView, loadingIndicatorView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         ])
     }
     
@@ -299,7 +316,7 @@ extension MyFitftyViewController {
                     
                     reusableView?.setUp(
                         largeTitle: "어떤 날씨에 입는 옷인가요?",
-                        smallTitle: "사진을 업로드하면 촬영한 날의 날씨 정보를 자동으로 불러와요.",
+                        smallTitle: self.imageInfoMessage ?? "사진을 업로드하면 촬영한 날의 날씨 정보를 자동으로 불러와요.",
                         largeTitleFont: FitftyFont.appleSDSemiBold(size: 16).font ?? .systemFont(ofSize: 16),
                         smallTitleFont: FitftyFont.appleSDMedium(size: 14).font ?? .systemFont(ofSize: 14),
                         smallTitleColor: CommonAsset.Colors.gray05.color,
@@ -342,13 +359,16 @@ extension MyFitftyViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applySnapshot(_ sections: [MyFitftySection], _ animated: Bool) {
+    private func applySnapshot(_ sections: [MyFitftySection], _ isCodyImage: Bool) {
         var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, MyFitftyCellModel>()
         sections.forEach {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
-        dataSource?.apply(snapshot, animatingDifferences: animated)
+        if isCodyImage {
+            snapshot.reloadSections([.weatherTag])
+        }
+        dataSource?.apply(snapshot, animatingDifferences: isCodyImage)
     }
         
 }
