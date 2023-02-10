@@ -27,12 +27,23 @@ final public class AppCoordinator: Coordinator {
         let coordinator = makeFitftyLaunchScreenCoordinator()
         coordinator.start()
     }
+    
+    func showAuthFlow() {
+        let coordinator = makeAuthCoordinator()
+        coordinator.start()
+    }
+    
+    func showMainFlow() {
+        let coordinator = makeTabBarCoordinator()
+        coordinator.start()
+    }
 }
 
 private extension AppCoordinator {
     func makeFitftyLaunchScreenCoordinator() -> Coordinator {
         let coordinator = FitftyLaunchScreenCoordinator(navigationController: navigationController)
         coordinator.finishDelegate = self
+        coordinator.launchScreenDelegate = self
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         
@@ -48,22 +59,22 @@ private extension AppCoordinator {
         return coordinator
     }
     
-    func showMainFlow() {
-        navigationController.viewControllers.removeAll()
+    func makeTabBarCoordinator() -> Coordinator {
         let tabCoordinator = TabCoordinator.init(navigationController)
         tabCoordinator.finishDelegate = self
         tabCoordinator.parentCoordinator = self
-        tabCoordinator.start()
         childCoordinators.append(tabCoordinator)
+        
+        return tabCoordinator
     }
 }
 
 extension AppCoordinator: CoordinatorFinishDelegate {
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childCoordinators = childCoordinators.filter({ $0.type != childCoordinator.type })
-
+        
         switch childCoordinator.type {
-        case .login, .launchScreen:
+        case .login:
             childCoordinators.removeAll()
             navigationController.viewControllers.removeAll()
 
@@ -71,5 +82,21 @@ extension AppCoordinator: CoordinatorFinishDelegate {
         default:
             break
         }
+    }
+}
+
+extension AppCoordinator: FitftyLaunchScreenCoordinatorDelegate {
+    func pushAuthView() {
+        childCoordinators.removeAll()
+        navigationController.viewControllers.removeAll()
+        
+        showAuthFlow()
+    }
+    
+    func pushMainFeedView() {
+        childCoordinators.removeAll()
+        navigationController.viewControllers.removeAll()
+
+        showMainFlow()
     }
 }
