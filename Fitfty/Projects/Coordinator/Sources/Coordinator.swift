@@ -39,6 +39,7 @@ protocol CoordinatorFinishDelegate: AnyObject {
 
 enum CoordinatorType {
     case app
+    case launchScreen
     case login
     case tabBar
     case main
