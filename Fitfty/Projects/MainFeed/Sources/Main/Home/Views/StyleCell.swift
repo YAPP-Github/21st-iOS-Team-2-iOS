@@ -92,6 +92,9 @@ extension StyleCell {
     }
     
     func toggle() {
+        guard titleLabel.text != "X" else {
+            return
+        }
         selected(in: !selectedState)
     }
     
