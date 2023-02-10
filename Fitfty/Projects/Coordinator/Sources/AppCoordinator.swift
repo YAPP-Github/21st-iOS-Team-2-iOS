@@ -22,7 +22,9 @@ final public class AppCoordinator: Coordinator {
     }
     
     public func start() {
-        let coordinator = makeAuthCoordinator()
+//        let coordinator = makeAuthCoordinator()
+//        coordinator.start()
+        let coordinator = makeOnboardingCoordinator()
         coordinator.start()
     }
 }
@@ -30,6 +32,15 @@ final public class AppCoordinator: Coordinator {
 private extension AppCoordinator {
     func makeAuthCoordinator() -> Coordinator {
         let coordinator = AuthCoordinator(navigationController: navigationController)
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        
+        return coordinator
+    }
+    
+    func makeOnboardingCoordinator() -> Coordinator {
+        let coordinator = OnboardingCoordinator(navigationController: navigationController)
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
