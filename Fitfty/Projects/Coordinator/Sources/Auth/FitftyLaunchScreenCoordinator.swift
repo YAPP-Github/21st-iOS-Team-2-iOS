@@ -36,14 +36,13 @@ extension FitftyLaunchScreenCoordinator: FitftyLaunchScreenCoordinatorInterface 
     }
     
     func pushMainFeedView() {
-        let coordinator = makeTabCoordinator()
-        coordinator.start()
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
 
 extension FitftyLaunchScreenCoordinator: CoordinatorFinishDelegate {
     func coordinatorDidFinish(childCoordinator: Coordinator) {
-        childDidFinish(childCoordinator, parent: self)
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
 
@@ -57,21 +56,12 @@ private extension FitftyLaunchScreenCoordinator {
     }
     
     func makeAuthCoordinator() -> Coordinator {
+        navigationController.viewControllers.removeAll()
         let coordinator = AuthCoordinator(navigationController: navigationController)
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         
         return coordinator
-    }
-    
-    func makeTabCoordinator() -> Coordinator {
-        navigationController.viewControllers.removeAll()
-        let tabCoordinator = TabCoordinator.init(navigationController)
-        tabCoordinator.finishDelegate = self
-        tabCoordinator.parentCoordinator = self
-        childCoordinators.append(tabCoordinator)
-        
-        return tabCoordinator
     }
 }

@@ -63,7 +63,8 @@ extension AppCoordinator: CoordinatorFinishDelegate {
         childCoordinators = childCoordinators.filter({ $0.type != childCoordinator.type })
 
         switch childCoordinator.type {
-        case .login:
+        case .login, .launchScreen:
+            childCoordinators.removeAll()
             navigationController.viewControllers.removeAll()
 
             showMainFlow()
