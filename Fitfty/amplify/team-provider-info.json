@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-fitfty-dev-170143-authRole",
+      "UnauthRoleArn": "arn:aws:iam::772734169005:role/amplify-fitfty-dev-170143-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::772734169005:role/amplify-fitfty-dev-170143-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-fitfty-dev-170143-deployment",
+      "UnauthRoleName": "amplify-fitfty-dev-170143-unauthRole",
+      "StackName": "amplify-fitfty-dev-170143",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:772734169005:stack/amplify-fitfty-dev-170143/28a34a60-a919-11ed-a834-06c28eed6098",
+      "AmplifyAppId": "dcbmpl5ggdzys"
+    },
+    "categories": {
+      "auth": {
+        "fitfty3dfdde29": {}
+      },
+      "api": {
+        "amplifyDatasource": {}
+      },
+      "storage": {
+        "s303c63dc5": {}
+      }
+    }
+  }
+}
