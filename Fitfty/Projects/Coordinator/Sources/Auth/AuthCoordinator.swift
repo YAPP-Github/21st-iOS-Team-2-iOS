@@ -7,6 +7,7 @@
 //
 
 import UIKit
+
 import Auth
 import Common
 
@@ -28,6 +29,22 @@ final class AuthCoordinator: Coordinator {
     }
 }
 
+extension AuthCoordinator: AuthCoordinatorInterface {
+    func pushIntroView() {
+        let viewController = makeIntroViewController()
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func pushPermissionView() {
+        let viewController = makePermissionViewController()
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func pushMainFeedView() {
+        
+    }
+}
+
 private extension AuthCoordinator {
     func makeAuthViewController() -> UIViewController {
         let viewController = AuthViewController(
@@ -43,19 +60,11 @@ private extension AuthCoordinator {
         )
         return viewController
     }
-}
-
-extension AuthCoordinator: AuthCoordinatorInterface {
-    func pushIntroView() {
-        let viewController = makeIntroViewController()
-        navigationController.pushViewController(viewController, animated: true)
-    }
     
-    func pushMainFeedView() {
-        
-    }
-    
-    func pushPermissionView() {
-        
+    func makePermissionViewController() -> UIViewController {
+        let viewController = AuthPermissionViewController(
+            coordinator: self
+        )
+        return viewController
     }
 }

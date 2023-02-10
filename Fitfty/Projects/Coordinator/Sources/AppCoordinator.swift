@@ -7,7 +7,9 @@
 //
 
 import UIKit
+
 import Common
+import Core
 
 final public class AppCoordinator: Coordinator {
     var type: CoordinatorType { .app }
@@ -22,12 +24,21 @@ final public class AppCoordinator: Coordinator {
     }
     
     public func start() {
-        let coordinator = makeAuthCoordinator()
+        let coordinator = makeFitftyLaunchScreenCoordinator()
         coordinator.start()
     }
 }
 
 private extension AppCoordinator {
+    func makeFitftyLaunchScreenCoordinator() -> Coordinator {
+        let coordinator = FitftyLaunchScreenCoordinator(navigationController: navigationController)
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        
+        return coordinator
+    }
+    
     func makeAuthCoordinator() -> Coordinator {
         let coordinator = AuthCoordinator(navigationController: navigationController)
         coordinator.finishDelegate = self
