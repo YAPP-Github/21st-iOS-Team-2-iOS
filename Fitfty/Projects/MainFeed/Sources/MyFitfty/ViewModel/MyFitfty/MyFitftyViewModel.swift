@@ -69,6 +69,10 @@ public final class MyFitftyViewModel {
         self.userManager = userManager
     }
     
+}
+
+extension MyFitftyViewModel {
+    
     private func getStyleTagCellModels() -> [MyFitftyCellModel] {
         var cellModels: [MyFitftyCellModel] = []
         for index in 0..<styleTagItems.count {
@@ -112,7 +116,6 @@ public final class MyFitftyViewModel {
             for index in 0..<genderTagItems.count {
                 genderTagItems[index].isSelected = genderTagItems[index].isSelected ? false : true
             }
-            
         default:
             break
         }
@@ -136,6 +139,21 @@ public final class MyFitftyViewModel {
         return dateFormatter.string(from: date)
     }
     
+    private func getWeatherTagIndex(_ string: String) -> Int? {
+        if string == WeatherTag.coldWaveWeather.koreanWeatherTag {
+            return 0
+        } else if string == WeatherTag.coldWeather.koreanWeatherTag {
+            return 1
+        } else if string == WeatherTag.chillyWeather.koreanWeatherTag {
+            return 2
+        } else if string == WeatherTag.warmWeather.koreanWeatherTag {
+            return 3
+        } else if string == WeatherTag.hotWeather.koreanWeatherTag {
+            return 4
+        } else {
+            return nil
+        }
+    }
 }
 
 extension MyFitftyViewModel: MyFitftyViewModelInput {
@@ -235,10 +253,10 @@ private extension MyFitftyViewModel {
                     print(address.fullName)
                     let imageInfoMessage = """
                     사진 찍은 날의 날씨 정보를 불러왔어요. \(dateFormatYYMMDD(date)) / 평균 \(dailyWeather.averageTemp)도
-                    \(dailyWeather.forecast.rawValue)에 입는 옷이 아니라면 고쳐주세요.
+                    \(dailyWeather.averageTemp.koreanWeatherTag)에 입는 옷이 아니라면 고쳐주세요.
                     """
-                    print(imageInfoMessage)
                     currentState.send(.imageInfoMessage(imageInfoMessage))
+                    changeTag(.weatherTag, selectedIndex: getWeatherTagIndex(dailyWeather.averageTemp.koreanWeatherTag))
                 } else {
                     let imageInfoMessage = """
                     사진에 등록된 날짜 · 위치 정보가 없어요.

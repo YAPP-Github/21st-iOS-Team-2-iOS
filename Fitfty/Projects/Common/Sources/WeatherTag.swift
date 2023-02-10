@@ -14,18 +14,48 @@ public enum WeatherTag {
     case warmWeather
     case hotWeather
     
-    public var weatherTagString: String {
+    public var emojiWeatherTag: String {
         switch self {
         case .coldWaveWeather:
             return "❄️ 한파"
         case .coldWeather:
-            return "🌨 추운날"
+            return "🌨 추운 날"
         case .chillyWeather:
             return "🍂 쌀쌀한 날"
         case .warmWeather:
-            return "☀️ 따듯한 날"
+            return "☀️ 따뜻한 날"
         case .hotWeather:
-            return "🔥 더운날"
+            return "🔥 더운 날"
+        }
+    }
+    
+    public var koreanWeatherTag: String {
+        switch self {
+        case .coldWaveWeather:
+            return "한파"
+        case .coldWeather:
+            return "추운 날"
+        case .chillyWeather:
+            return "쌀쌀한 날"
+        case .warmWeather:
+            return "따뜻한 날"
+        case .hotWeather:
+            return "더운 날"
+        }
+    }
+    
+    public var englishWeatherTag: String {
+        switch self {
+        case .coldWaveWeather:
+            return "FREEZING"
+        case .coldWeather:
+            return "COLD"
+        case .chillyWeather:
+            return "CHILLY"
+        case .warmWeather:
+            return "WARM"
+        case .hotWeather:
+            return "HOT"
         }
     }
     
