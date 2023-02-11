@@ -17,7 +17,7 @@ final public class SocialLoginManager: NSObject {
     
     private override init() {}
     
-    public func tryAppleLogin(completionHandler: @escaping () -> Void,
+    public func tryAppleLogin(completionHandler: @escaping (Bool) -> Void,
                               failedHandler: @escaping (Error?) -> Void) {
         
         let appleIDProvider = ASAuthorizationAppleIDProvider()
@@ -28,7 +28,7 @@ final public class SocialLoginManager: NSObject {
                                           failedHandler: failedHandler)
     }
     
-    public func tryKakaoLogin(completionHandler: @escaping () -> Void,
+    public func tryKakaoLogin(completionHandler: @escaping (Bool) -> Void,
                               failedHandler: @escaping (Error) -> Void) {
         guard isKakaoLoginAvailable() else {
             failedHandler(SocialLoginError.loginFail)
@@ -50,13 +50,13 @@ final public class SocialLoginManager: NSObject {
     }
     
     private func requestKakaoLogin(_ accessToken: String,
-                                   completionHandler: @escaping () -> Void,
+                                   completionHandler: @escaping (Bool) -> Void,
                                    failedHandler: @escaping (Error) -> Void) {
         Task {
             do {
                 let response = try await FitftyAPI.request(target: .signInKakao(parameters: ["accessToken": accessToken]),
                                                            dataType: SocialLoginResponse.self)
-                guard let jwt = response.data else {
+                guard let jwt = response.data?.authToken else {
                     checkNoEmailErrorFromKakao(errorCode: response.errorCode, failedHandler: failedHandler)
                     return failedHandler(SocialLoginError.others(response.message ?? ""))
                 }
@@ -64,7 +64,12 @@ final public class SocialLoginManager: NSObject {
                 if let userIdentifier = UserDefaults.standard.read(key: .userIdentifier) as? String,
                    let userAccount = UserDefaults.standard.read(key: .userAccount) as? String {
                     Keychain.saveData(serviceIdentifier: userIdentifier, forKey: userAccount, data: jwt)
-                    completionHandler()
+                }
+                
+                if response.data?.isNew == true {
+                    completionHandler(true)
+                } else {
+                    completionHandler(false)
                 }
             } catch {
                 failedHandler(SocialLoginError.loginFail)
@@ -101,7 +106,7 @@ final public class SocialLoginManager: NSObject {
 // MARK: - Apple Login
 
 extension ASAuthorizationController {
-    fileprivate typealias AppleLoginCompletionHandler = () -> Void
+    fileprivate typealias AppleLoginCompletionHandler = (Bool) -> Void
     fileprivate typealias AppleLoginFailedHandler = (Error?) -> Void
     
     private struct AssociatedKeys {
@@ -144,7 +149,7 @@ extension ASAuthorizationController {
             do {
                 let response = try await FitftyAPI.request(target: .signInApple(parameters: request.asDictionary()),
                                                            dataType: SocialLoginResponse.self)
-                guard let jwt = response.data else {
+                guard let jwt = response.data?.authToken else {
                     return failedHandler?(SocialLoginError.others(response.message ?? ""))
                 }
                 
@@ -152,7 +157,11 @@ extension ASAuthorizationController {
                 UserDefaults.standard.write(key: .userAccount, value: request.userEmail)
                 Keychain.saveData(serviceIdentifier: request.userIdentifier, forKey: request.userEmail, data: jwt)
 
-                completionHandler?()
+                if response.data?.isNew == true {
+                    completionHandler?(true)
+                } else {
+                    completionHandler?(false)
+                }
             } catch {
                 failedHandler?(SocialLoginError.loginFail)
             }
