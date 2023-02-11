@@ -22,7 +22,8 @@ final public class AppCoordinator: Coordinator {
     }
     
     public func start() {
-        let coordinator = makeAuthCoordinator()
+        /// - NOTE: Test를 위해 임시로 온보딩뷰를 바로 띄우게끔 해줬어요. 리뷰 승인 후 지울 코드
+        let coordinator = makeOnboardingCoordinator()
         coordinator.start()
     }
 }
