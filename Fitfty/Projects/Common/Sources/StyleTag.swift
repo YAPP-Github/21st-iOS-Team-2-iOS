@@ -6,7 +6,7 @@
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
-public enum StyleTag: String, Codable {
+public enum StyleTag: String, Codable, CaseIterable {
     case minimal = "MINIMAL"
     case modern = "MODERN"
     case casual = "CASUAL"
