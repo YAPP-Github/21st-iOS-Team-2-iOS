@@ -27,7 +27,22 @@ final public class GenderViewModel: ViewModelType {
     public init() {}
     
     func didTapNextButton() {
-        UserDefaults.standard.write(key: .gender, value: "")
+        let gender = maleButtonIsPressed ? "MALE" : "FEMALE"
+        UserDefaults.standard.write(key: .gender, value: gender)
         currentState.send(.pushStyleView)
+    }
+    
+    func didTapMaleButton() {
+        maleButtonIsPressed = true
+        femaleButtonIsPressed = false
+        
+        currentState.send(.changeNextButtonState(isEnabled: true))
+    }
+    
+    func didTapFemaleButton() {
+        femaleButtonIsPressed = true
+        maleButtonIsPressed = false
+        
+        currentState.send(.changeNextButtonState(isEnabled: true))
     }
 }

@@ -36,7 +36,21 @@ final class GenderView: UIView {
         nextButton.setStyle(style)
     }
     
-    func 
+    func setMaleButtonStyle(style: SelectableButtonStyle) {
+        maleButton.setStyle(style)
+    }
+    
+    func setMaleButtonTarget(target: Any?, action: Selector) {
+        maleButton.setButtonTarget(target: target, action: action)
+    }
+    
+    func setFemaleButtonStyle(style: SelectableButtonStyle) {
+        femaleButton.setStyle(style)
+    }
+    
+    func setFemaleButtonTarget(target: Any?, action: Selector) {
+        femaleButton.setButtonTarget(target: target, action: action)
+    }
     
     private func configure() {
         configureStatusView()
