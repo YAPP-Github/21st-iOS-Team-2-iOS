@@ -19,6 +19,7 @@ protocol MyFitftyViewModelInput {
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo)
     func didTapTag(_ sectionKind: MyFitftySectionKind, index: Int)
     func editContent(text: String)
+    func didTapUpload()
     
 }
 
@@ -58,6 +59,9 @@ public final class MyFitftyViewModel {
     private var contentText: String?
     private var selectedPhAssetInfo: PHAssetInfo?
     private var location: String?
+    private var temperature: String?
+    private var cloudType: String?
+    private var photoTakenTime: String?
     
     public init(
         weatherRepository: WeatherRepository,
@@ -158,6 +162,7 @@ extension MyFitftyViewModel {
             return nil
         }
     }
+    
 }
 
 extension MyFitftyViewModel: MyFitftyViewModelInput {
@@ -209,6 +214,46 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
         currentState.send(.isEnabledUpload(checkIsEnabledUpload()))
     }
     
+    func didTapUpload() {
+        if let selectedPhAssetInfo = selectedPhAssetInfo,
+           let content = contentText {
+            let weatherTag = weatherTagItems.filter { $0.isSelected==true }.first!.weatherTag.englishWeatherTag
+            let genderTag = genderTagItems[0].isSelected ? "FEMALE" : "MALE"
+            let styleTag = styleTagItems.filter { $0.isSelected==true }.map { $0.styleTag.styleTagEnglishString }
+            
+            let request = MyFitftyRequest(
+                filePath: "https://fitfty.s3.ap-northeast-2.amazonaws.com/cody.png", // selectedPhAssetInfo.image
+                content: content,
+                temperature: temperature,
+                location: location,
+                cloudType: cloudType,
+                photoTakenTime: photoTakenTime, //2023-06-20T14:47:47.805Z
+                tagGroup: TagGroup(weather: weatherTag, style: styleTag, gender: genderTag)
+            )
+            
+            Task { [weak self] in
+                guard let self = self else {
+                    return
+                }
+                do {
+                    let response = try await postMyFitfty(request)
+                    print(try request.asDictionary())
+                    print(response)
+                    if response.result == "SUCCESS" {
+                        self.currentState.send(.completed(true))
+                    } else {
+                        self.currentState.send(.completed(false))
+                        self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
+                    }
+                    
+                } catch {
+                    Logger.debug(error: error, message: "핏프티 등록 실패")
+                    self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
+                }
+            }
+        }
+    }
+    
 }
 
 extension MyFitftyViewModel: ViewModelType {
@@ -223,6 +268,7 @@ extension MyFitftyViewModel: ViewModelType {
         case imageInfoMessage(String)
         case isLoading(Bool)
         case errorMessage(String)
+        case completed(Bool)
     }
     
 }
@@ -253,20 +299,36 @@ private extension MyFitftyViewModel {
                    let date = date {
                     let dailyWeather = try await self.getDailyWeather(date: date, longitude: longitude, latitude: latitude)
                     let address = try await self.getAddress(longitude: longitude, latitude: latitude)
-                    self.location = address.fullName
-                    print(address.fullName)
+                    
                     let imageInfoMessage = """
                     사진 찍은 날의 날씨 정보를 불러왔어요. \(dateFormatYYMMDD(date)) / 평균 \(dailyWeather.averageTemp)도
                     \(dailyWeather.averageTemp.koreanWeatherTag)에 입는 옷이 아니라면 고쳐주세요.
                     """
                     currentState.send(.imageInfoMessage(imageInfoMessage))
                     changeTag(.weatherTag, selectedIndex: getWeatherTagIndex(dailyWeather.averageTemp.koreanWeatherTag))
+                    self.location = address.fullName
+                    self.photoTakenTime = date.ISOStringFromDate(date: date)
+                    self.temperature = dailyWeather.averageTemp
+                    self.cloudType = dailyWeather.forecast.englishForecast
                 } else {
                     let imageInfoMessage = """
                     사진에 등록된 날짜 · 위치 정보가 없어요.
                     직접 어떤 날씨에 입는 옷인지 선택해주세요.
                     """
                     currentState.send(.imageInfoMessage(imageInfoMessage))
+                    changeTag(.weatherTag, selectedIndex: nil)
+                    
+                    // 위치만 있는 경우
+                    if let latitude = latitude,
+                       let longitude = longitude {
+                        let address = try await self.getAddress(longitude: longitude, latitude: latitude)
+                        self.location = address.fullName
+                    }
+                    
+                    // 날짜만 있는 경우
+                    if let date = date {
+                        self.photoTakenTime = date.ISOStringFromDate(date: date)
+                    }
                 }
                 currentState.send(.sections([
                     MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
@@ -299,6 +361,14 @@ private extension MyFitftyViewModel {
             latitude: latitude
         )
         return address
+    }
+    
+    func postMyFitfty(_ request: MyFitftyRequest) async throws -> MyFitftyResponse {
+        let response = try await FitftyAPI.request(
+            target: .postMyFitfty(parameters: request.asDictionary()),
+            dataType: MyFitftyResponse.self
+        )
+        return response
     }
     
 }
