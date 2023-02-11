@@ -27,9 +27,6 @@ final class OnboardingCoordinator: Coordinator {
     func start() {
         let viewController = makeNicknameViewController()
         navigationController.pushViewController(viewController, animated: true)
-        
-        let viewController2 = makeGenderViewController()
-        navigationController.pushViewController(viewController2, animated: true)
     }
 }
 
@@ -40,11 +37,12 @@ extension OnboardingCoordinator: OnboardingCoordinatorInterface {
     }
     
     func pushStyleView() {
-        
+        let viewController = makeStyleViewController()
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     func pushMainFeedView() {
-        
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
     
     func pop() {
@@ -56,7 +54,8 @@ private extension OnboardingCoordinator {
     func makeNicknameViewController() -> UIViewController {
         let viewController = NicknameViewController(
             viewModel: NicknameViewModel(
-                repository: DefaultOnboardingRepository()),
+                repository: DefaultOnboardingRepository()
+            ),
             coordinator: self
         )
         return viewController
@@ -64,12 +63,19 @@ private extension OnboardingCoordinator {
     
     func makeGenderViewController() -> UIViewController {
         let viewController = GenderViewController(
+            viewModel: GenderViewModel(),
             coordinator: self
         )
         return viewController
     }
     
-    func makeStyleViewController() {
-        
+    func makeStyleViewController() -> UIViewController {
+        let viewController = StyleViewController(
+            viewModel: StyleViewModel(
+                repository: DefaultOnboardingRepository()
+            ),
+            coordinator: self
+        )
+        return viewController
     }
 }
