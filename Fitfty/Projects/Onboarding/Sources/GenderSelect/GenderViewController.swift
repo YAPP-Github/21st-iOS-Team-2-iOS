@@ -40,7 +40,7 @@ final public class GenderViewController: UIViewController {
     
     private func configure() {
         configureNavigationBar()
-        configureNextButtonTarget()
+        configureButtonTarget()
     }
     
     private func configureNavigationBar() {
@@ -53,13 +53,25 @@ final public class GenderViewController: UIViewController {
         navigationItem.leftBarButtonItem = cancelButton
     }
     
-    private func configureNextButtonTarget() {
+    private func configureButtonTarget() {
         contentView.setNextButtonTarget(target: self, action: #selector(didTapNextButton))
+        contentView.setMaleButtonTarget(target: self, action: #selector(didTapMaleButton))
+        contentView.setFemaleButtonTarget(target: self, action: #selector(didTapFemaleButton))
     }
     
     @objc
     private func didTapNextButton() {
         viewModel.didTapNextButton()
+    }
+    
+    @objc
+    private func didTapMaleButton() {
+        viewModel.didTapMaleButton()
+    }
+    
+    @objc
+    private func didTapFemaleButton() {
+        viewModel.didTapFemaleButton()
     }
     
     @objc
@@ -83,14 +95,14 @@ final public class GenderViewController: UIViewController {
         viewModel.$maleButtonIsPressed
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isPressed in
-                
+                self?.contentView.setMaleButtonStyle(style: isPressed ? .isPressed : .normal)
             }
             .store(in: &cancellables)
         
         viewModel.$femaleButtonIsPressed
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isPressed in
-                
+                self?.contentView.setFemaleButtonStyle(style: isPressed ? .isPressed : .normal)
             }
             .store(in: &cancellables)
     }
