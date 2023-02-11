@@ -26,19 +26,24 @@ final public class AuthViewModel: ViewModelType {
     public init() {}
     
     func didTapKakaoLogin() {
-        SocialLoginManager.shared.tryKakaoLogin( completionHandler: { [weak self] in
-            /// - TODO: 카카오/애플 소셜로그인 후에 온보딩을 정상적으로 마치고 회원가입한 유저인지 판단할 수 있는 값이 생기면
-            /// > 인트로로 보내줄지
-            /// > 바로 메인피드로 보내줄지 대응
-            self?.currentState.send(.pushIntroView)
+        SocialLoginManager.shared.tryKakaoLogin(completionHandler: { [weak self] isNewUser in
+            if isNewUser {
+                self?.currentState.send(.pushIntroView)
+            } else {
+                self?.currentState.send(.pushMainFeedView)
+            }
         }, failedHandler: { [weak self] error in
             self?.currentState.send(.showErrorAlert(error))
         })
     }
     
     func didTapAppleLogin() {
-        SocialLoginManager.shared.tryAppleLogin(completionHandler: { [weak self] in
-            self?.currentState.send(.pushIntroView)
+        SocialLoginManager.shared.tryAppleLogin(completionHandler: { [weak self] isNewUser in
+            if isNewUser {
+                self?.currentState.send(.pushIntroView)
+            } else {
+                self?.currentState.send(.pushMainFeedView)
+            }
         }, failedHandler: { [weak self] error in
             self?.currentState.send(.showErrorAlert(error!))
         })

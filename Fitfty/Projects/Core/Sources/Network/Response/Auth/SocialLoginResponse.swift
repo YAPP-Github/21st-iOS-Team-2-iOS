@@ -10,7 +10,12 @@ import Foundation
 
 struct SocialLoginResponse: Codable {
     let result: String
-    let data: String?
+    let data: SocialLoginData?
     let message: String?
     let errorCode: String?
+}
+
+struct SocialLoginData: Codable {
+    let authToken: String?
+    let isNew: Bool
 }
