@@ -135,6 +135,10 @@ final public class MyFitftyViewController: UIViewController {
         }
         viewModel.input.getPhAssetInfo(phAssetInfo)
     }
+    
+    @objc func resignKeyboard(_ sender: Any?) {
+        NotificationCenter.default.post(name: .resignKeyboard, object: nil)
+    }
 }
 
 private extension MyFitftyViewController {
@@ -328,6 +332,7 @@ extension MyFitftyViewController {
                         largeTitleTopAnchorConstant: 32,
                         smallTitleTopAchorConstant: 8
                     )
+                    reusableView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.resignKeyboard)))
                     return reusableView
                 } else if section == .genderTag {
                     let reusableView = collectionView.dequeueReusableSupplementaryView(
