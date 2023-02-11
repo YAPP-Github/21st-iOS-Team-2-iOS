@@ -7,3 +7,9 @@
 //
 
 import Foundation
+
+struct UserDetailsRequest: Codable {
+    let nickname: String
+    let gender: String
+    let style: [String]
+}
