@@ -24,6 +24,16 @@ final public class OnboardingStatusView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public func setStep(isFirst: Bool) {
+        if isFirst {
+            firstStepView.layer.backgroundColor = Style.StepView.currentStepColor.cgColor
+            secondStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
+        } else {
+            firstStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
+            secondStepView.layer.backgroundColor = Style.StepView.currentStepColor.cgColor
+        }
+    }
+    
     private func configure() {
         configureStackView()
         configureFirstStepView()
