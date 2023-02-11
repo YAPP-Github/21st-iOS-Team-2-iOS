@@ -58,7 +58,8 @@ final public class SocialLoginManager: NSObject {
                                                            dataType: SocialLoginResponse.self)
                 guard let jwt = response.data?.authToken else {
                     checkNoEmailErrorFromKakao(errorCode: response.errorCode, failedHandler: failedHandler)
-                    return failedHandler(SocialLoginError.others(response.message ?? ""))
+                    failedHandler(SocialLoginError.others(response.message ?? ""))
+                    return
                 }
                 
                 if let userIdentifier = UserDefaults.standard.read(key: .userIdentifier) as? String,
@@ -150,7 +151,8 @@ extension ASAuthorizationController {
                 let response = try await FitftyAPI.request(target: .signInApple(parameters: request.asDictionary()),
                                                            dataType: SocialLoginResponse.self)
                 guard let jwt = response.data?.authToken else {
-                    return failedHandler?(SocialLoginError.others(response.message ?? ""))
+                    failedHandler?(SocialLoginError.others(response.message ?? ""))
+                    return
                 }
                 
                 UserDefaults.standard.write(key: .userIdentifier, value: request.userIdentifier)
