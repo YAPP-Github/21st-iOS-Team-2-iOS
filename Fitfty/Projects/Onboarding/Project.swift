@@ -15,6 +15,7 @@ let project = Project.makeModule(
         .Project.Common,
         .Project.Core,
         .SPM.Moya,
+        .SPM.Kingfisher,
         .package(product: "Amplify"),
         .package(product: "AWSCognitoAuthPlugin"),
         .package(product: "AWSS3StoragePlugin"),
