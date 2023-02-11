@@ -98,7 +98,6 @@ public extension FitftyAPI {
         }
     }
     
-    
     static func request(target: FitftyAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
             // TODO: 임시로 구현해둔 어드민 토큰 사용 코드. 로그인 기능 구현 완료 후 삭제할 코드입니다.

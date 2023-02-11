@@ -55,7 +55,7 @@ public final class MyFitftyViewModel {
         ("남성", false)
     ]
     
-    private let textViewPlaceHolder = "2200자 이내로 설명을 남길 수 있어요."
+    private let textViewPlaceHolder = "내 코디에 대한 설명을 남겨보세요."
     private var contentText: String?
     private var selectedPhAssetInfo: PHAssetInfo?
     private var location: String?

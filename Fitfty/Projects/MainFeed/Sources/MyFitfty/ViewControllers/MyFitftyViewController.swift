@@ -61,7 +61,7 @@ final public class MyFitftyViewController: UIViewController {
     }()
     
     private var selectedImage: UIImage?
-    private var contentText = "2200자 이내로 설명을 남길 수 있어요."
+    private var contentText = "내 코디에 대한 설명을 남겨보세요."
     private var imageInfoMessage: String?
     
     public override func viewDidLoad() {
@@ -397,7 +397,7 @@ extension MyFitftyViewController {
     private func contentSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+235)
+            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+55+64)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(

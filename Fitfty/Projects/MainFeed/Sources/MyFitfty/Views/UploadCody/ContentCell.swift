@@ -51,7 +51,7 @@ final class ContentCell: UICollectionViewCell {
     }()
     
     private let maxTextCount = 2200
-    private let textViewPlaceHolder = "2200자 이내로 설명을 남길 수 있어요."
+    private let textViewPlaceHolder = "내 코디에 대한 설명을 남겨보세요."
    
     private lazy var contentTextView: UITextView = {
         let textView = UITextView()
@@ -116,7 +116,7 @@ final class ContentCell: UICollectionViewCell {
             contentTextView.topAnchor.constraint(equalTo: backgroundButton.bottomAnchor, constant: 20),
             contentTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             contentTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -40),
+            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
             
             guidanceLabel.centerXAnchor.constraint(equalTo: backgroundButton.centerXAnchor),
             guidanceLabel.centerYAnchor.constraint(equalTo: backgroundButton.centerYAnchor)
