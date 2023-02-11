@@ -58,7 +58,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     public var task: Moya.Task {
         switch self {
         case .signInKakao(let parameters),
-             .signInApple(let parameters):
+             .signInApple(let parameters),
+             .postMyFitfty(let parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         default:
             return .requestPlain
@@ -96,6 +97,7 @@ public extension FitftyAPI {
             }
         }
     }
+    
     
     static func request(target: FitftyAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in

@@ -20,7 +20,7 @@ public enum StyleTag {
         case .minimal:
             return "미니멀"
         case .modern:
-            return "포멀"
+            return "모던"
         case .casual:
             return "캐주얼"
         case .street:

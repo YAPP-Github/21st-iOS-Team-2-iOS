@@ -217,7 +217,10 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     func didTapUpload() {
         if let selectedPhAssetInfo = selectedPhAssetInfo,
            let content = contentText {
-            let weatherTag = weatherTagItems.filter { $0.isSelected==true }.first!.weatherTag.englishWeatherTag
+            let weatherTag = weatherTagItems.filter { $0.isSelected==true }.first?.weatherTag.englishWeatherTag
+            guard let weatherTag = weatherTag else {
+                return
+            }
             let genderTag = genderTagItems[0].isSelected ? "FEMALE" : "MALE"
             let styleTag = styleTagItems.filter { $0.isSelected==true }.map { $0.styleTag.styleTagEnglishString }
             
@@ -227,30 +230,10 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
                 temperature: temperature,
                 location: location,
                 cloudType: cloudType,
-                photoTakenTime: photoTakenTime, //2023-06-20T14:47:47.805Z
+                photoTakenTime: photoTakenTime,
                 tagGroup: TagGroup(weather: weatherTag, style: styleTag, gender: genderTag)
             )
-            
-            Task { [weak self] in
-                guard let self = self else {
-                    return
-                }
-                do {
-                    let response = try await postMyFitfty(request)
-                    print(try request.asDictionary())
-                    print(response)
-                    if response.result == "SUCCESS" {
-                        self.currentState.send(.completed(true))
-                    } else {
-                        self.currentState.send(.completed(false))
-                        self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
-                    }
-                    
-                } catch {
-                    Logger.debug(error: error, message: "핏프티 등록 실패")
-                    self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
-                }
-            }
+            upload(request: request)
         }
     }
     
@@ -343,6 +326,29 @@ private extension MyFitftyViewModel {
         }
     }
     
+    func upload(request: MyFitftyRequest) {
+        Task { [weak self] in
+            guard let self = self else {
+                return
+            }
+            do {
+                let response = try await postMyFitfty(request)
+                print(try request.asDictionary())
+                print(response)
+                if response.result == "SUCCESS" {
+                    self.currentState.send(.completed(true))
+                } else {
+                    self.currentState.send(.completed(false))
+                    self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
+                }
+                
+            } catch {
+                Logger.debug(error: error, message: "핏프티 등록 실패")
+                self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
+            }
+        }
+    }
+    
     func getDailyWeather(date: Date, longitude: Double, latitude: Double) async throws -> DailyWeather {
         currentState.send(.isLoading(true))
         print(longitude.description, latitude.description)
@@ -364,6 +370,8 @@ private extension MyFitftyViewModel {
     }
     
     func postMyFitfty(_ request: MyFitftyRequest) async throws -> MyFitftyResponse {
+        print(request)
+        print(try request.asDictionary())
         let response = try await FitftyAPI.request(
             target: .postMyFitfty(parameters: request.asDictionary()),
             dataType: MyFitftyResponse.self

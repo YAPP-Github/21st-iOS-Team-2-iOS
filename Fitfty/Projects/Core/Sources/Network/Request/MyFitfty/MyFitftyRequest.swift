@@ -9,13 +9,13 @@
 import Foundation
 
 public struct MyFitftyRequest: Codable {
-    let filePath: String
-    let content: String
-    let temperature: String?
-    let location: String?
-    let cloudType: String?
-    let photoTakenTime: String?
-    let tagGroup: TagGroup
+    public let filePath: String
+    public let content: String
+    public let temperature: String?
+    public let location: String?
+    public let cloudType: String?
+    public let photoTakenTime: String?
+    public let tagGroup: TagGroup
     
     public init(filePath: String, content: String, temperature: String?, location: String?, cloudType: String?, photoTakenTime: String?, tagGroup: TagGroup) {
         self.filePath = filePath
