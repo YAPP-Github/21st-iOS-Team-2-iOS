@@ -5,9 +5,9 @@
 //  Created by 임영선 on 2023/01/11.
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
+import Foundation
 
-
-public enum StyleTag: String, Codable {
+public enum StyleTag: String, Codable, CaseIterable {
     case minimal = "MINIMAL"
     case modern = "MODERN"
     case casual = "CASUAL"

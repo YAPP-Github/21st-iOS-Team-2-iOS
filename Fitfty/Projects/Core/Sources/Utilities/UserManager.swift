@@ -14,7 +14,7 @@ public protocol UserManager {
     var currentLocation: Address? { get }
     
     var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { get }
-    var gender: AnyPublisher<Gender?, Never> { get }
+    var gender: Gender? { get }
     var isGuest: AnyPublisher<Bool, Never> { get }
     
     func updateUserState(_ state: Bool)
@@ -30,7 +30,7 @@ public final class DefaultUserManager {
     private let localStorage: LocalStorageService
     
     private var _location: CurrentValueSubject<(longitude: Double, latitude: Double)?, Never> = .init(nil)
-    private var _gender: CurrentValueSubject<Gender?, Never> = .init(nil)
+    private var _gender: Gender? = nil
     private var _guestState: CurrentValueSubject<Bool, Never> = .init(true)
     
     private var cancellables: Set<AnyCancellable> = .init()
@@ -53,7 +53,7 @@ extension DefaultUserManager: UserManager {
     }
     
     public var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { _location.eraseToAnyPublisher() }
-    public var gender: AnyPublisher<Gender?, Never> { _gender.eraseToAnyPublisher() }
+    public var gender: Gender? { _gender }
     public var isGuest: AnyPublisher<Bool, Never> { _guestState.eraseToAnyPublisher() }
     
     public func updateUserState(_ state: Bool) {
@@ -71,7 +71,7 @@ extension DefaultUserManager: UserManager {
     }
     
     public func updateGender(_ gender: Gender) {
-        _gender.send(gender)
+        _gender = gender
     }
     
     public func updateGuestState(_ isGuest: Bool) {
