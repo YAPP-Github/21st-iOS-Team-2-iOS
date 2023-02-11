@@ -21,5 +21,5 @@ public struct MyFitftyData: Codable {
     public let temperature: Int?
     public let location: String?
     public let cloudType: String?
-    public let photoTakenTime: String
+    public let photoTakenTime: String?
 }
