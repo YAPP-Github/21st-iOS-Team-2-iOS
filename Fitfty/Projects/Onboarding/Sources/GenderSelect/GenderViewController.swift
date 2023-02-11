@@ -43,6 +43,35 @@ final public class GenderViewController: UIViewController {
         configureButtonTarget()
     }
     
+    private func bind() {
+        viewModel.state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                switch state {
+                case .changeNextButtonState(let isEnabled):
+                    self?.contentView.setNextButtonStyle(isEnabled ? .enabled : .disabled)
+                
+                case .pushStyleView:
+                    self?.coordinator.pushStyleView()
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$maleButtonIsPressed
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isPressed in
+                self?.contentView.setMaleButtonStyle(style: isPressed ? .isPressed : .normal)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$femaleButtonIsPressed
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isPressed in
+                self?.contentView.setFemaleButtonStyle(style: isPressed ? .isPressed : .normal)
+            }
+            .store(in: &cancellables)
+    }
+    
     private func configureNavigationBar() {
         let cancelButton = UIBarButtonItem(
             image: CommonAsset.Images.btnArrowleft.image,
@@ -77,33 +106,5 @@ final public class GenderViewController: UIViewController {
     @objc
     private func didTapBackButton(_ sender: UITapGestureRecognizer) {
         coordinator.pop()
-    }
-    
-    private func bind() {
-        viewModel.state
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                switch state {
-                case .changeNextButtonState(let isEnabled):
-                    self?.contentView.setNextButtonStyle(isEnabled ? .enabled : .disabled)
-                case .pushStyleView:
-                    self?.coordinator.pushStyleView()
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$maleButtonIsPressed
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isPressed in
-                self?.contentView.setMaleButtonStyle(style: isPressed ? .isPressed : .normal)
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$femaleButtonIsPressed
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isPressed in
-                self?.contentView.setFemaleButtonStyle(style: isPressed ? .isPressed : .normal)
-            }
-            .store(in: &cancellables)
     }
 }
