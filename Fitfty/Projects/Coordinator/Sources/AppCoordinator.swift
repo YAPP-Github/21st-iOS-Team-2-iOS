@@ -22,9 +22,7 @@ final public class AppCoordinator: Coordinator {
     }
     
     public func start() {
-//        let coordinator = makeAuthCoordinator()
-//        coordinator.start()
-        let coordinator = makeOnboardingCoordinator()
+        let coordinator = makeAuthCoordinator()
         coordinator.start()
     }
 }
@@ -63,7 +61,8 @@ extension AppCoordinator: CoordinatorFinishDelegate {
         childCoordinators = childCoordinators.filter({ $0.type != childCoordinator.type })
 
         switch childCoordinator.type {
-        case .login:
+        case .login, .onboarding:
+            childCoordinators.removeAll()
             navigationController.viewControllers.removeAll()
 
             showMainFlow()
