@@ -48,6 +48,10 @@ final public class SelectableButton: UIButton {
         setTitle(title, for: .normal)
     }
     
+    public func setButtonTarget(target: Any?, action: Selector) {
+        addTarget(target, action: action, for: .touchUpInside)
+    }
+    
     @objc
     private func didTapButton() {
         style = style == .normal ? .isPressed : .normal
