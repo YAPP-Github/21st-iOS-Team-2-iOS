@@ -7,3 +7,16 @@
 //
 
 import Foundation
+
+struct UserDetailsResponse: Codable {
+    let result: String
+    let data: UserDetailsData?
+    let message, errorCode: String?
+}
+
+// MARK: - DataClass
+struct UserDetailsData: Codable {
+    let email, userToken, nickname, gender: String
+    let style: [String]
+    let isOnBoardingComplete: Bool
+}

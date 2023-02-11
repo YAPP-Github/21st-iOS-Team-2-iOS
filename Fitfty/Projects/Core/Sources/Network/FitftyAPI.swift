@@ -14,6 +14,7 @@ public enum FitftyAPI {
     case signInApple(parameters: [String: Any])
     case getMyProfile
     case checkNickname(query: String)
+    case setUserDetails(parameters: [String: Any])
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -41,6 +42,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/users/profile"
         case .checkNickname(let query):
             return "/users/nickname/\(query)"
+        case .setUserDetails:
+            return "/users/details"
         }
     }
     
@@ -50,15 +53,18 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .signInApple:
             return .post
         case .getMyProfile,
-             .checkNickname(_):
+             .checkNickname:
             return .get
+        case .setUserDetails:
+            return .put
         }
     }
     
     public var task: Moya.Task {
         switch self {
         case .signInKakao(let parameters),
-             .signInApple(let parameters):
+             .signInApple(let parameters),
+             .setUserDetails(let parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         default:
             return .requestPlain
