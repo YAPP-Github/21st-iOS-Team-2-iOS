@@ -48,19 +48,6 @@ final public class NicknameViewController: UIViewController {
         configureNextButtonTarget()
     }
     
-    private func configureNicknameTextField() {
-        contentView.setNicknameTextFieldDelegate(self)
-    }
-    
-    private func configureNextButtonTarget() {
-        contentView.setNextButtonTarget(target: self, action: #selector(didTapNextButton))
-    }
-    
-    @objc
-    private func didTapNextButton() {
-        viewModel.didTapNextButton()
-    }
-    
     private func bind() {
         viewModel.state
             .receive(on: DispatchQueue.main)
@@ -110,6 +97,19 @@ final public class NicknameViewController: UIViewController {
                 self?.contentView.setNextButtonMoveDown(notification as NSNotification)
             }
             .store(in: &cancellables)
+    }
+    
+    private func configureNicknameTextField() {
+        contentView.setNicknameTextFieldDelegate(self)
+    }
+    
+    private func configureNextButtonTarget() {
+        contentView.setNextButtonTarget(target: self, action: #selector(didTapNextButton))
+    }
+    
+    @objc
+    private func didTapNextButton() {
+        viewModel.didTapNextButton()
     }
 }
 

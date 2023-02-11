@@ -68,6 +68,8 @@ final class GenderView: UIView {
             statusView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Style.StatusView.margin.right),
             statusView.heightAnchor.constraint(equalToConstant: Style.StatusView.height)
         ])
+        
+        statusView.setStep(isFirst: true)
     }
     
     private func configureTitleLabel() {
