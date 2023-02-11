@@ -52,6 +52,7 @@ final class StyleView: UIView {
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Style.TitleLabel.margin.right)
         ])
         
+        titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.text = Style.TitleLabel.text
         titleLabel.textColor = Style.TitleLabel.textColor
         titleLabel.font = Style.TitleLabel.font
