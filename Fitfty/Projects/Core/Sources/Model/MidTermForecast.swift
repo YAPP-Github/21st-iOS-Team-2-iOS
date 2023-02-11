@@ -49,4 +49,23 @@ public enum Forecast: String, Codable {
         case .scurry: return CommonAsset.Images.scurry.image
         }
     }
+    
+    public var englishForecast: String {
+        switch self {
+        case .sunny:
+            return "SUNNY"
+        case .cloudAndSun:
+            return "LOTSOFCLOUDY"
+        case .cloudy:
+            return "CLOUDY"
+        case .rain:
+            return "RAIN"
+        case .rainOrSnow:
+            return "RAINORSNOW"
+        case .snow:
+            return "SNOW"
+        case .scurry:
+            return "SCURRY"
+        }
+    }
 }

@@ -107,7 +107,7 @@ final public class MyFitftyViewController: UIViewController {
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
-        coordinator.dismiss()
+        viewModel.input.didTapUpload()
     }
     
     @objc func scrollToBottom() {
@@ -158,6 +158,11 @@ private extension MyFitftyViewController {
                     isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
                 case .imageInfoMessage(let message):
                     self?.imageInfoMessage = message
+                case .completed(let isCompleted):
+                    guard isCompleted else {
+                        return
+                    }
+                    self?.coordinator.dismiss()
                 }
             }).store(in: &cancellables)
     }
