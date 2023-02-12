@@ -79,6 +79,10 @@ final class ContentCell: UICollectionViewCell {
         contentTextView.textColor = CommonAsset.Colors.gray04.color
     }
     
+    deinit {
+        removeNotificationCenter()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpConstraintsLayout()
@@ -93,6 +97,14 @@ final class ContentCell: UICollectionViewCell {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(didTapView),
+            name: .resignKeyboard,
+            object: nil
+        )
+    }
+    
+    private func removeNotificationCenter() {
+        NotificationCenter.default.removeObserver(
+            self,
             name: .resignKeyboard,
             object: nil
         )
