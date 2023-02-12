@@ -15,6 +15,7 @@ final class PostCoordinator: Coordinator {
     var type: CoordinatorType { .post }
     var profileType: ProfileType
     var presentType: ProfilePresentType
+    var boardToken: String
     
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
@@ -25,11 +26,13 @@ final class PostCoordinator: Coordinator {
     init(
         navigationController: BaseNavigationController = BaseNavigationController(),
         profileType: ProfileType,
-        presentType: ProfilePresentType
+        presentType: ProfilePresentType,
+        boardToken: String
     ) {
         self.navigationController = navigationController
         self.profileType = profileType
         self.presentType = presentType
+        self.boardToken = boardToken
     }
     
     func start() {
@@ -45,7 +48,8 @@ private extension PostCoordinator {
             coordinator: self,
             profileType: profileType,
             presentType: presentType,
-            viewModel: PostViewModel()
+            viewModel: PostViewModel(),
+            boardToken: boardToken
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController

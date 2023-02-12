@@ -17,6 +17,8 @@ final public class PostViewController: UIViewController {
     private var coordinator: PostCoordinatorInterface
     private var cancellables: Set<AnyCancellable> = .init()
     private var viewModel: PostViewModel
+    private var boardToken: String
+    
     private let postView = PostView()
     
     private lazy var miniProfileView: MiniProfileView = {
@@ -57,7 +59,7 @@ final public class PostViewController: UIViewController {
         super.viewDidLoad()
         setUpConstraintLayout()
         bind()
-        viewModel.input.viewDidLoad()
+        viewModel.input.viewDidLoad(boardToken: boardToken)
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -74,12 +76,14 @@ final public class PostViewController: UIViewController {
         coordinator: PostCoordinatorInterface,
         profileType: ProfileType,
         presentType: ProfilePresentType,
-        viewModel: PostViewModel
+        viewModel: PostViewModel,
+        boardToken: String
     ) {
         self.coordinator = coordinator
         self.profileType = profileType
         self.presentType = presentType
         self.viewModel = viewModel
+        self.boardToken = boardToken
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }

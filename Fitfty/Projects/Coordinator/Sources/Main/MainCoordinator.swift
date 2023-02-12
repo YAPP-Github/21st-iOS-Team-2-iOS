@@ -63,7 +63,8 @@ private extension MainCoordinator {
         let coordinator = PostCoordinator(
             navigationController: navigationController,
             profileType: profileType,
-            presentType: .mainProfile
+            presentType: .mainProfile,
+            boardToken: "brd_OLDLsnYssAoYVXAD"
         )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
