@@ -9,10 +9,18 @@
 import Foundation
 import Core
 
-public struct MainFeedSection: Hashable {
+public struct MainFeedSection: Hashable, Equatable {
     
     let sectionKind: MainSectionKind
     var items: [MainCellModel]
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(sectionKind)
+    }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.sectionKind == rhs.sectionKind
+    }
     
 }
 
