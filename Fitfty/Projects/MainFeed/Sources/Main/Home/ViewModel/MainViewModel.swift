@@ -239,7 +239,6 @@ private extension MainViewModel {
     }
     
     func configureCodyList(_ list: [CodyResponse]) -> MainFeedSection {
-        let items = list.map { MainCellModel.cody($0)}
         return MainFeedSection(
             sectionKind: .cody,
             items: list.map { MainCellModel.cody($0) }
