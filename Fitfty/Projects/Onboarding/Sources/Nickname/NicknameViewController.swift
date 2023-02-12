@@ -78,7 +78,7 @@ final public class NicknameViewController: UIViewController {
             .store(in: &cancellables)
         
         contentView.nicknameTextPublisher()
-            .receive(on: DispatchQueue.main)
+            .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] nickname in
                 self?.viewModel.checkNicknameAvailable(nickname)
             }
