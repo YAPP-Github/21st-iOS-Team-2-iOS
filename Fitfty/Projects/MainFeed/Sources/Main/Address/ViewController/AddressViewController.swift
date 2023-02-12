@@ -57,6 +57,7 @@ public final class AddressViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(AddressCell.self)
         collectionView.delegate = self
+        collectionView.keyboardDismissMode = .onDrag
         return collectionView
     }()
     
@@ -160,7 +161,7 @@ private extension AddressViewController {
     func setUpLayout() {
         view.backgroundColor = .white
         view.addSubviews(
-            cancelButton, collectionView, addressInfoView, buttonStackView, emptyLabel, loadingIndicatorView
+            cancelButton, buttonStackView, collectionView, addressInfoView, emptyLabel, loadingIndicatorView
         )
         let cancelButtonBottom = cancelButton.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -26
@@ -187,9 +188,9 @@ private extension AddressViewController {
             addressInfoView.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor),
             addressInfoView.trailingAnchor.constraint(equalTo: collectionView.trailingAnchor),
             addressInfoView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor),
+            buttonStackView.topAnchor.constraint(equalTo: addressInfoView.bottomAnchor, constant: 15),
             buttonStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             buttonStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            buttonStackView.heightAnchor.constraint(equalToConstant: 64),
             buttonsBottom,
             emptyLabel.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
             emptyLabel.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor),

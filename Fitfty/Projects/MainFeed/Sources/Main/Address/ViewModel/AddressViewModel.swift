@@ -31,6 +31,8 @@ public final class AddressViewModel {
     private let userManager: UserManager
     
     private var selectedAddress: CurrentValueSubject<Address?, Never> = .init(nil)
+    private var text: CurrentValueSubject<String, Never> = .init("")
+    private var cancellables: Set<AnyCancellable> = .init()
 
     public init(
         addressRespository: AddressRepository = DefaultAddressRepository(),
@@ -40,6 +42,31 @@ public final class AddressViewModel {
         self.addressRespository = addressRespository
         self.weatherRepository = weatherRepository
         self.userManager = userManager
+        bind()
+    }
+    
+    private func bind() {
+        text
+          .filter { $0.isEmpty == false }
+          .debounce(for: 0.5, scheduler: RunLoop.main)
+          .compactMap { $0 }
+          .sink { self.search($0) }
+          .store(in: &cancellables)
+    }
+    
+    private func search(_ text: String) {
+        Task { [weak self] in
+            do {
+                let addressList = try await addressRespository.fetchAddressList(search: text)
+                currentState.send(.isEmpty(addressList.isEmpty))
+                currentState.send(.sections([
+                    AddressSection(sectionKind: .address, items: addressList)
+                ]))
+            } catch {
+                Logger.debug(error: error, message: "주소 검색 결과 가져오기 실패")
+                self?.currentState.send(.errorMessage("주소 검색 결과를 가져오다가 알 수 없는 에러가 발생했습니다."))
+            }
+        }
     }
 
 }
@@ -62,18 +89,7 @@ extension AddressViewModel: AddressViewModelInput {
     var input: AddressViewModelInput { self }
     
     func search(text: String) {
-        Task { [weak self] in
-            do {
-                let addressList = try await addressRespository.fetchAddressList(search: text)
-                currentState.send(.isEmpty(addressList.isEmpty))
-                currentState.send(.sections([
-                    AddressSection(sectionKind: .address, items: addressList)
-                ]))
-            } catch {
-                Logger.debug(error: error, message: "주소 검색 결과 가져오기 실패")
-                self?.currentState.send(.errorMessage("주소 검색 결과를 가져오다가 알 수 없는 에러가 발생했습니다."))
-            }
-        }
+        self.text.send(text)
     }
     
     func didTapAddress(_ address: Address) {

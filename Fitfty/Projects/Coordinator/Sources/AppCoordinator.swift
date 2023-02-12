@@ -7,7 +7,9 @@
 //
 
 import UIKit
+
 import Common
+import Core
 
 final public class AppCoordinator: Coordinator {
     var type: CoordinatorType { .app }
@@ -22,13 +24,32 @@ final public class AppCoordinator: Coordinator {
     }
     
     public func start() {
-        /// - NOTE: Test를 위해 임시로 온보딩뷰를 바로 띄우게끔 해줬어요. 리뷰 승인 후 지울 코드
-        let coordinator = makeOnboardingCoordinator()
+        let coordinator = makeFitftyLaunchScreenCoordinator()
+        coordinator.start()
+    }
+    
+    func showAuthFlow() {
+        let coordinator = makeAuthCoordinator()
+        coordinator.start()
+    }
+    
+    func showMainFlow() {
+        let coordinator = makeTabBarCoordinator()
         coordinator.start()
     }
 }
 
 private extension AppCoordinator {
+    func makeFitftyLaunchScreenCoordinator() -> Coordinator {
+        let coordinator = FitftyLaunchScreenCoordinator(navigationController: navigationController)
+        coordinator.finishDelegate = self
+        coordinator.launchScreenDelegate = self
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        
+        return coordinator
+    }
+    
     func makeAuthCoordinator() -> Coordinator {
         let coordinator = AuthCoordinator(navigationController: navigationController)
         coordinator.finishDelegate = self
@@ -47,22 +68,22 @@ private extension AppCoordinator {
         return coordinator
     }
     
-    func showMainFlow() {
-        navigationController.viewControllers.removeAll()
+    func makeTabBarCoordinator() -> Coordinator {
         let tabCoordinator = TabCoordinator.init(navigationController)
         tabCoordinator.finishDelegate = self
         tabCoordinator.parentCoordinator = self
-        tabCoordinator.start()
         childCoordinators.append(tabCoordinator)
+        
+        return tabCoordinator
     }
 }
 
 extension AppCoordinator: CoordinatorFinishDelegate {
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childCoordinators = childCoordinators.filter({ $0.type != childCoordinator.type })
-
+        
         switch childCoordinator.type {
-        case .login, .onboarding:
+        case .login:
             childCoordinators.removeAll()
             navigationController.viewControllers.removeAll()
 
@@ -70,5 +91,21 @@ extension AppCoordinator: CoordinatorFinishDelegate {
         default:
             break
         }
+    }
+}
+
+extension AppCoordinator: FitftyLaunchScreenCoordinatorDelegate {
+    func pushAuthView() {
+        childCoordinators.removeAll()
+        navigationController.viewControllers.removeAll()
+        
+        showAuthFlow()
+    }
+    
+    func pushMainFeedView() {
+        childCoordinators.removeAll()
+        navigationController.viewControllers.removeAll()
+
+        showMainFlow()
     }
 }
