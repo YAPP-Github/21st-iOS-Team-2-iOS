@@ -59,15 +59,6 @@ private extension AppCoordinator {
         return coordinator
     }
     
-    func makeOnboardingCoordinator() -> Coordinator {
-        let coordinator = OnboardingCoordinator(navigationController: navigationController)
-        coordinator.finishDelegate = self
-        coordinator.parentCoordinator = self
-        childCoordinators.append(coordinator)
-        
-        return coordinator
-    }
-    
     func makeTabBarCoordinator() -> Coordinator {
         let tabCoordinator = TabCoordinator.init(navigationController)
         tabCoordinator.finishDelegate = self
@@ -87,6 +78,11 @@ extension AppCoordinator: CoordinatorFinishDelegate {
             childCoordinators.removeAll()
             navigationController.viewControllers.removeAll()
 
+            showMainFlow()
+        case .onboarding:
+            childCoordinators.removeAll()
+            navigationController.viewControllers.removeAll()
+            
             showMainFlow()
         default:
             break

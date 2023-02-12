@@ -40,7 +40,12 @@ extension AuthCoordinator: AuthCoordinatorInterface {
         navigationController.pushViewController(viewController, animated: true)
     }
     
-    func pushMainFeedView() {
+    func pushOnboardingFlow() {
+        let coordinator = makeOnboardingCoordinator()
+        coordinator.start()
+    }
+    
+    func pushMainFeedFlow() {
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
@@ -66,5 +71,14 @@ private extension AuthCoordinator {
             coordinator: self
         )
         return viewController
+    }
+    
+    func makeOnboardingCoordinator() -> Coordinator {
+        let coordinator = OnboardingCoordinator(navigationController: navigationController)
+        coordinator.finishDelegate = finishDelegate
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        
+        return coordinator
     }
 }

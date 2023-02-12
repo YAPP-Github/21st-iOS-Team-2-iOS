@@ -56,8 +56,10 @@ final public class AuthViewController: UIViewController {
                 switch state {
                 case .pushIntroView:
                     self?.coordinator.pushIntroView()
+                    
                 case .pushMainFeedView:
-                    self?.coordinator.pushMainFeedView()
+                    self?.coordinator.pushMainFeedFlow()
+                    
                 case .showErrorAlert(let error):
                     self?.showErrorAlert(error)
                 }
