@@ -8,10 +8,11 @@
 
 import UIKit
 import Common
+import Kingfisher
 
 final class FeedImageCell: UICollectionViewCell {
     
-    private lazy var feedImageView: UIView = {
+    private lazy var feedImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 12
@@ -37,5 +38,14 @@ final class FeedImageCell: UICollectionViewCell {
             feedImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             feedImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
         ])
+    }
+}
+
+extension FeedImageCell {
+    
+    func setUp(filepath: String) {
+        if let url = URL(string: filepath) {
+            feedImageView.kf.setImage(with: url)
+        }
     }
 }

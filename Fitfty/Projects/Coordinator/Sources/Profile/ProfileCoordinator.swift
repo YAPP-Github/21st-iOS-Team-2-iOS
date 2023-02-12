@@ -49,7 +49,8 @@ private extension ProfileCoordinator {
         let viewController = ProfileViewController(
             coordinator: self,
             profileType: profileType,
-            presentType: presentType
+            presentType: presentType,
+            viewModel: ProfileViewModel()
         )
         return viewController
     }
