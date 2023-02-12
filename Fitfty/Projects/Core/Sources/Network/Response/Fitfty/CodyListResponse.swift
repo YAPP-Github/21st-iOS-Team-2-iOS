@@ -31,6 +31,7 @@ public struct CodyListResponse: Codable {
 public struct CodyResponse: Codable {
     public let filePath: String
     public let boardToken: String
+    public let userToken: String
     public let nickname: String
     public let profilePictureUrl: String?
     public let views: Int
@@ -41,6 +42,7 @@ extension CodyResponse: Equatable, Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.filePath == rhs.filePath &&
         lhs.boardToken == rhs.boardToken &&
+        lhs.userToken == rhs.userToken &&
         lhs.nickname == rhs.nickname &&
         lhs.profilePictureUrl == rhs.profilePictureUrl &&
         lhs.views == rhs.views &&
@@ -48,11 +50,7 @@ extension CodyResponse: Equatable, Hashable {
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(filePath)
         hasher.combine(boardToken)
-        hasher.combine(nickname)
-        hasher.combine(profilePictureUrl)
-        hasher.combine(views)
-        hasher.combine(bookmarked)
+        hasher.combine(userToken)
     }
 }

@@ -159,14 +159,14 @@ private extension MainViewController {
                     )
                     return cell ?? UICollectionViewCell()
                     
-                case .styleTag:
-                    let items = ["filter", "남", "여", "미니멀", "모던", "캐주얼", "힙", "포멀", "러블리"]
+                case .styleTag(let tag):
                     let cell = collectionView.dequeueReusableCell(StyleCell.self, for: indexPath)
-                    cell?.setUp(text: items[indexPath.item])
+                    cell?.setUp(tag: tag)
                     return cell ?? UICollectionViewCell()
                     
                 case .cody(let cody):
                     let cell = collectionView.dequeueReusableCell(CodyCell.self, for: indexPath)
+                    cell?.setUp(cody: cody)
                     cell?.addProfileViewGestureRecognizer(self, action: #selector(self.didTapProfileStackView))
                     return cell
                 }
@@ -335,8 +335,7 @@ private extension MainViewController {
         else {
             return
         }
-        // TODO:  아직 수정본 반영 안되서 nickname으로 대체, 반영되면 추후 수정 예정
-        coordinator.showProfile(profileType: .userProfile, userToken: cody.nickname)
+        coordinator.showProfile(profileType: .userProfile, userToken: cody.userToken)
     }
     
     func showErrorNotiView() {
@@ -378,8 +377,7 @@ extension MainViewController: UICollectionViewDelegate {
             else {
                 return
             }
-            // TODO:  아직 수정본 반영 안되서 nickname으로 대체, 반영되면 추후 수정 예정
-            coordinator.showPost(profileType: .userProfile, userToken: cody.nickname, boardToken: cody.boardToken)
+            coordinator.showPost(profileType: .userProfile, userToken: cody.userToken, boardToken: cody.boardToken)
             
         default: return
         }
