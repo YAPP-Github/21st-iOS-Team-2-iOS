@@ -369,7 +369,14 @@ extension MainViewController: UICollectionViewDelegate {
             
         case .style:
             let cell = collectionView.cellForItem(at: indexPath) as? StyleCell
+            guard let cellModel = dataSource?.itemIdentifier(for: indexPath),
+                  case let MainCellModel.styleTag(tag) = cellModel,
+                  tag.isGender || tag.isStyle
+            else {
+                return
+            }
             cell?.toggle()
+            viewModel.input.didTapTag(tag)
             
         case .cody:
             guard let cellModel = dataSource?.itemIdentifier(for: indexPath),
