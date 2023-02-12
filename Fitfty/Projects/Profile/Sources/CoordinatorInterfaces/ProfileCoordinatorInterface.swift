@@ -11,7 +11,8 @@ public protocol ProfileCoordinatorInterface: AnyObject {
     
     func showPost(profileType: ProfileType)
     func showReport()
-    func showModifyMyFitfty()
+    func showMyFitfty(_ myFitftyType: MyFitftyType)
+    func switchMainTab()
     func showDetailReport()
     func showSetting()
     func dismiss()

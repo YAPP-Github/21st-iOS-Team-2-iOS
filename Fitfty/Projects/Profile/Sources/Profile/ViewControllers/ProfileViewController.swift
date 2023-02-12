@@ -46,6 +46,7 @@ final public class ProfileViewController: UIViewController {
     private lazy var emptyView: EmptyView = {
         let view = EmptyView()
         view.isHidden = true
+        view.setButtonAction(self, action: #selector(didTapEmptyViewButton))
         return view
     }()
     
@@ -162,6 +163,14 @@ final public class ProfileViewController: UIViewController {
         viewModel.input.didTapMenu(.bookmark)
     }
     
+    @objc func didTapEmptyViewButton(_ sender: Any?) {
+        switch menuType {
+        case .myFitfty:
+            coordinator.showMyFitfty(.uploadMyFitfty)
+        case .bookmark:
+            coordinator.switchMainTab()
+        }
+    }
 }
 
 private extension ProfileViewController {
