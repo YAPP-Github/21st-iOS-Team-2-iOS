@@ -100,7 +100,7 @@ final public class PostViewController: UIViewController {
         viewModel.state.compactMap { $0 }
             .sinkOnMainThread(receiveValue: { [weak self] state in
                 switch state {
-                case .update(let response, let profileType):
+                case .update(let response):
                     self?.update(response)
                 case .errorMessage(let message):
                     self?.showAlert(message: message)
@@ -121,7 +121,8 @@ final public class PostViewController: UIViewController {
             bookmark: String(data.bookmarkCnt).insertComma,
             date: data.photoTakenTime ?? "",
             weather: data.tagGroupInfo.weather.stringToWeatherTag ?? .coldWaveWeather,
-            filepath: data.filePath
+            filepath: data.filePath,
+            isBookmarked: data.bookmarked
         )
         miniProfileView.setUp(
             filepath: data.profilePictureUrl,
