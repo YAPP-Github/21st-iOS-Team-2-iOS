@@ -71,6 +71,7 @@ final class CodyCell: UICollectionViewCell {
     
     private lazy var codyImageView: UIImageView = {
         let image = UIImageView()
+        image.contentMode = .scaleAspectFill
         image.layer.cornerRadius = 15
         image.clipsToBounds = true
         image.image = CommonAsset.Images.sample.image
