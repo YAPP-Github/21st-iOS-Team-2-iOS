@@ -149,8 +149,9 @@ private extension MainViewModel {
             }
             do {
                 let address = try await self.getAddress(longitude: longitude, latitude: latitude)
-                let styles = self._currentStyles.value
-                let gender = self._currentGender.value ?? .female
+                let tags = await self.getTags()
+                let gender = tags.0
+                let styles = tags.1
                 let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
                 let codyList = try await self.getCodyList(gender: gender, styles: styles)
                 self.currentState.send(.currentLocation(address))
@@ -204,9 +205,6 @@ private extension MainViewModel {
         guard _currentGender.value == nil else {
             return (_currentGender.value ?? .female, _currentStyles.value)
         }
-    }
-    
-    func getStyleTags() async -> [StyleTag] {
         return await withCheckedContinuation { continuation in
             Task {
                 do {
@@ -224,7 +222,7 @@ private extension MainViewModel {
                     }
                 } catch {
                     Logger.debug(error: error, message: "태그 설정 조회 실패")
-                    continuation.resume(returning: [])
+                    continuation.resume(returning: (.female, []))
                 }
             }
         }
