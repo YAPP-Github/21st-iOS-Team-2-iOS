@@ -13,7 +13,7 @@ public extension Project {
             product: Product,
             organizationName: String = "Fitfty",
             packages: [Package] = [],
-            deploymentTarget: DeploymentTarget? = .iOS(targetVersion: "14.0", devices: [.iphone, .ipad]),
+            deploymentTarget: DeploymentTarget? = .iOS(targetVersion: "14.0", devices: [.iphone]),
             dependencies: [TargetDependency] = [],
             sources: SourceFilesList = ["Sources/**"],
             resources: ResourceFileElements? = nil,

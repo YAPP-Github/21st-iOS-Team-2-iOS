@@ -16,6 +16,11 @@ let project = Project.makeModule(
         .SPM.KakaoSDKAuth,
         .SPM.KakaoSDKUser,
         .SPM.KakaoSDKCommon,
-        .Project.Common
+        .Project.Common,
+        .package(product: "Amplify"),
+        .package(product: "AWSCognitoAuthPlugin"),
+        .package(product: "AWSS3StoragePlugin"),
+        .package(product: "AWSAPIPlugin"),
+        .package(product: "AWSDataStorePlugin")
     ]
 )

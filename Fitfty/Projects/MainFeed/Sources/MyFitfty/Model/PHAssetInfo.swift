@@ -12,7 +12,7 @@ import CoreLocation
 
 struct PHAssetInfo {
     let image: UIImage
-    let latitude: String?
-    let longitude: String?
-    let date: String?
+    let latitude: Double?
+    let longitude: Double?
+    let date: Date?
 }
