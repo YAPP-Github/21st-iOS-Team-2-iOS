@@ -16,8 +16,7 @@ final class PostView: UIView {
     
     private lazy var postImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = CommonAsset.Images.profileSample.image
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
         

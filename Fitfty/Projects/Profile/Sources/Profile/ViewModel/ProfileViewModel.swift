@@ -72,39 +72,43 @@ extension ProfileViewModel {
                 switch profileType {
                 case .myProfile:
                     let response = try await getMyProfile()
-                    guard response.result == "SUCCESS" else {
-                        return
-                    }
-                    self.currentState.send(.update(response))
-                    self.currentState.send(.isLoading(false))
-                    
-                    guard let data = response.data else {
-                        return
-                    }
-                    var profileCellModels: [ProfileCellModel] = []
-                    
-                    switch menuType {
-                    case .myFitfty:
-                        for cody in data.codiList {
-                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
+                    if response.result == "SUCCESS" {
+                        self.currentState.send(.update(response))
+                        self.currentState.send(.isLoading(false))
+                        
+                        guard let data = response.data else {
+                            return
                         }
-                        self.currentState.send(.sections([
-                            ProfileSection(sectionKind: .feed, items: profileCellModels)
-                        ]))
-                    case .bookmark:
-                        for cody in data.bookmarkList {
-                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
+                        var profileCellModels: [ProfileCellModel] = []
+                        
+                        switch menuType {
+                        case .myFitfty:
+                            for cody in data.codiList {
+                                profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
+                            }
+                            self.currentState.send(.sections([
+                                ProfileSection(sectionKind: .feed, items: profileCellModels)
+                            ]))
+                        case .bookmark:
+                            for cody in data.bookmarkList {
+                                profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
+                            }
+                            self.currentState.send(.sections([
+                                ProfileSection(sectionKind: .feed, items: profileCellModels)
+                            ]))
                         }
-                        self.currentState.send(.sections([
-                            ProfileSection(sectionKind: .feed, items: profileCellModels)
-                        ]))
+                    } else {
+                        currentState.send(.isLoading(false))
+                        currentState.send(.errorMessage("프로필 조회에 알 수 없는 에러가 발생했습니다."))
                     }
                     
                 case .userProfile:
                     self.currentState.send(.isLoading(false))
+                    
                 }
             } catch {
                 Logger.debug(error: error, message: "프로필 조회를 실패")
+                currentState.send(.isLoading(false))
                 currentState.send(.errorMessage("프로필 조회에 알 수 없는 에러가 발생했습니다."))
             }
             

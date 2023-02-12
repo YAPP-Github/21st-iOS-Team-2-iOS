@@ -16,7 +16,7 @@ final class FeedImageCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 12
-        imageView.image = CommonAsset.Images.profileSample.image
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
