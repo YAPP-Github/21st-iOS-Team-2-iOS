@@ -84,10 +84,10 @@ extension MainViewModel: MainViewModelInput {
     var input: MainViewModelInput { self }
     
     func viewDidLoad() {
-        currentState.send(.isLoading(true))
         userManager.location
             .compactMap { $0 }
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                self?.currentState.send(.isLoading(true))
                 self?.update(longitude: longitude, latitude: latitude)
                 self?._location.send((longitude, latitude))
         }).store(in: &cancellables)
