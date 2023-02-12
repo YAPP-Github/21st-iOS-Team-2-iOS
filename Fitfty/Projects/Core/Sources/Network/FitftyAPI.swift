@@ -68,7 +68,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         switch self {
         case .signInKakao(let parameters),
              .signInApple(let parameters),
-             .setUserDetails(let parameters):
+             .setUserDetails(let parameters),
              .postMyFitfty(let parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         default:
