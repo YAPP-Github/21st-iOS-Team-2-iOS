@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Core
 
 final class StyleCell: UICollectionViewCell {
     
@@ -86,9 +87,10 @@ final class StyleCell: UICollectionViewCell {
 
 extension StyleCell {
     
-    func setUp(text: String) {
-        titleLabel.text = text
-        showFilterIcon(text: text)
+    func setUp(tag: Tag) {
+        titleLabel.text = tag.title
+        showFilterIcon(text: tag.title)
+        selected(in: tag.isSelected)
     }
     
     func toggle() {
@@ -114,6 +116,9 @@ private extension StyleCell {
     }
     
     func selected(in isSelected: Bool) {
+        guard titleLabel.text != "X" else {
+            return
+        }
         selectedState = isSelected
         titleLabel.textColor = isSelected ? CommonAsset.Colors.primaryBlueNormal.color : CommonAsset.Colors.gray06.color
         titleLabel.backgroundColor = isSelected ? CommonAsset.Colors.primaryBlueDark.color : CommonAsset.Colors.gray01.color

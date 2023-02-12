@@ -115,21 +115,16 @@ private extension MainViewModel {
                 return
             }
             do {
-                let address = try await self.getAddress(
-                    longitude: longitude,
-                    latitude: latitude
-                )
+                let address = try await self.getAddress(longitude: longitude, latitude: latitude)
+                let styles = await getStyleTags()
+                let gender = await getGender()
+                let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
+                let codyList = try await self.getCodyList(gender: gender, styles: styles)
                 self.currentState.send(.currentLocation(address))
                 self.currentState.send(.sections([
-                    self.configureWeathers(
-                        try await self.getWeathers(longitude: longitude, latitude: latitude)
-                    ),
-                    MainFeedSection(
-                        sectionKind: .style, items: Array(0...8).map { _ in MainCellModel.styleTag(UUID()) }
-                    ),
-                    self.configureCodyList(
-                        try await self.getCodyList()
-                    )
+                    self.configureWeathers(weathers),
+                    self.configureTags(styles: styles, gender: gender),
+                    self.configureCodyList(codyList)
                 ]))
             } catch {
                 Logger.debug(error: error, message: "사용자 위치 및 날씨 가져오기 실패")
@@ -164,15 +159,44 @@ private extension MainViewModel {
         return shortTermForecast
     }
     
-    func getCodyList() async throws -> [CodyResponse] {
+    func getCodyList(gender: Gender?, styles: [StyleTag]?) async throws -> [CodyResponse] {
         currentState.send(.isLoading(true))
         let tag = WeatherTag(temp: _currentAverageTemp.value)
-        let response = try await fitftyRepository.fetchCodyList(weather: tag)
+        let response = try await fitftyRepository.fetchCodyList(weather: tag, gender: gender, styles: styles)
         guard let codyList = response.data?.pictureDetailInfoList else {
             Logger.debug(error: FitftyAPIError.notFound(response.message), message: "코디 목록 조회 실패")
             return []
         }
         return codyList
+    }
+    
+    func getGender() async -> Gender {
+        return await withCheckedContinuation { continuation in
+            userManager.isGuest
+                .map { [weak self] isGuest -> Gender in
+                    if isGuest {
+                        return .female
+                    } else {
+                        return self?.userManager.gender ?? .female
+                    }
+                }.sink(receiveValue: { gender in
+                    continuation.resume(returning: gender)
+                }).store(in: &cancellables)
+        }
+    }
+    
+    func getStyleTags() async -> [StyleTag] {
+        return await withCheckedContinuation { continuation in
+            Task {
+                do {
+                    let response = try await fitftyRepository.fetchMyInfo()
+                    continuation.resume(returning: response.data.style)
+                } catch {
+                    Logger.debug(error: error, message: "태그 설정 조회 실패")
+                    continuation.resume(returning: [])
+                }
+            }
+        }
     }
     
     func configureWeathers(_ weathers: [ShortTermForecast]) -> MainFeedSection {
@@ -186,6 +210,16 @@ private extension MainViewModel {
         return MainFeedSection(
             sectionKind: .cody,
             items: list.map { MainCellModel.cody($0)}
+        )
+    }
+    
+    func configureTags(styles: [StyleTag], gender: Gender) -> MainFeedSection {
+        let defaultData: [String] = ["filter"] + Gender.allCases.map { $0.localized} + StyleTag.allCases.map { $0.styleTagKoreanString }
+        let userData: [String] = [gender.localized] + styles.map { $0.styleTagKoreanString }
+        let tags: [Tag] = defaultData.map { Tag(title: $0, isSelected: userData.contains($0)) }
+        return MainFeedSection(
+            sectionKind: .style,
+            items: tags.map { MainCellModel.styleTag($0) }
         )
     }
 }
