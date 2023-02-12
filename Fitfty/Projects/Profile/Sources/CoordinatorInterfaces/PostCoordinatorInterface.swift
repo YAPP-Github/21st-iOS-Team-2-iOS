@@ -11,7 +11,7 @@ import Common
 
 public protocol PostCoordinatorInterface: AnyObject {
     
-    func showProfile(profileType: ProfileType)
+    func showProfile(profileType: ProfileType, nickname: String)
     func showBottomSheet()
     func showModifyMyFitfty()
     func dismiss()

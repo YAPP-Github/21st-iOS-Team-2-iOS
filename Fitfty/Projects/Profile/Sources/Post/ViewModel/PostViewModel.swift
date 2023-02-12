@@ -60,7 +60,6 @@ extension PostViewModel {
                 self.currentState.send(.isLoading(true))
                 let response = try await getPost(boardToken: boardToken)
                 // TODO: usertoken과 내 토큰 비교 로직 추가
-                print(response)
                 guard response.result == "SUCCESS" else {
                     return
                 }

@@ -18,7 +18,7 @@ final public class ProfileViewController: UIViewController {
     private var coordinator: ProfileCoordinatorInterface
     private var profileType: ProfileType
     private var presentType: ProfilePresentType
-    
+    private var nickname: String?
     private var dataSource: UICollectionViewDiffableDataSource<ProfileSectionKind, ProfileCellModel>?
     
     private lazy var collectionView: UICollectionView = {
@@ -53,7 +53,6 @@ final public class ProfileViewController: UIViewController {
     private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
     
     private var profileFilePath: String?
-    private var nickname: String?
     private var myMessage: String?
     private var menuType: MenuType = .myFitfty
     
@@ -70,7 +69,16 @@ final public class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
-        viewModel.input.viewDidLoad(profileType, menuType)
+        switch presentType {
+        case .mainProfile:
+            guard let nickname = nickname else {
+                return
+            }
+            viewModel.input.viewDidLoadWithoutMenu(nickname: nickname)
+        case .tabProfile:
+            viewModel.input.viewDidLoadWithMenu(menuType: menuType)
+        }
+       
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -82,12 +90,14 @@ final public class ProfileViewController: UIViewController {
         coordinator: ProfileCoordinatorInterface,
         profileType: ProfileType,
         presentType: ProfilePresentType,
-        viewModel: ProfileViewModel
+        viewModel: ProfileViewModel,
+        nickname: String?
     ) {
         self.coordinator = coordinator
         self.profileType = profileType
         self.presentType = presentType
         self.viewModel = viewModel
+        self.nickname = nickname
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }

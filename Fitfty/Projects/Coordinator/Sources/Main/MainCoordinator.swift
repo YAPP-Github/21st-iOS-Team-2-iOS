@@ -71,11 +71,12 @@ private extension MainCoordinator {
         return coordinator
     }
     
-    func makeProfileCoordinator(profileType: ProfileType) -> ProfileCoordinator {
+    func makeProfileCoordinator(profileType: ProfileType, nickname: String) -> ProfileCoordinator {
         let coordinator = ProfileCoordinator(
             navigationController: navigationController,
             profileType: profileType,
-            presentType: .mainProfile
+            presentType: .mainProfile,
+            nickname: nickname
         )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
@@ -121,8 +122,8 @@ extension MainCoordinator: MainCoordinatorInterface {
         coordinator.start()
     }
     
-    public func showProfile(profileType: ProfileType) {
-        let coordinator = makeProfileCoordinator(profileType: profileType)
+    public func showProfile(profileType: ProfileType, nickname: String) {
+        let coordinator = makeProfileCoordinator(profileType: profileType, nickname: nickname)
         coordinator.start()
     }
     
