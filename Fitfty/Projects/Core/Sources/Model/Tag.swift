@@ -19,13 +19,20 @@ public struct Tag {
         self.isSelected = isSelected
     }
     
+    public var isGender: Bool {
+        return Gender.allCases.map { $0.localized }.contains(title)
+    }
+    
+    public var isStyle: Bool {
+        return StyleTag.allCases.map { $0.styleTagKoreanString }.contains(title)
+    }
+    
 }
 
 extension Tag: Hashable, Equatable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(title)
-        hasher.combine(isSelected)
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {

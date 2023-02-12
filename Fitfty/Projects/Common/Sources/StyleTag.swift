@@ -46,3 +46,36 @@ public enum StyleTag: String, Codable, CaseIterable {
         }
     }
 }
+
+public extension StyleTag {
+    
+    init?(_ styleTagKoreanString: String) {
+        switch styleTagKoreanString {
+        case "미니멀":
+            self = .minimal
+            
+        case "모던":
+            self = .modern
+            
+        case "캐주얼":
+            self = .casual
+            
+        case "스트릿":
+            self = .street
+            
+        case "러블리":
+            self = .lovely
+            
+        case "힙":
+            self = .hip
+            
+        case "럭셔리":
+            self = .luxury
+            
+        default:
+            return nil
+        }
+    
+        
+    }
+}
