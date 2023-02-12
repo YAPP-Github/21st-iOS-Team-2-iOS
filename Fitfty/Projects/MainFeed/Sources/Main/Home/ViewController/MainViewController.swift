@@ -335,7 +335,7 @@ private extension MainViewController {
         else {
             return
         }
-        coordinator.showProfile(profileType: .userProfile, userToken: cody.userToken)
+        coordinator.showProfile(profileType: .userProfile, nickName: cody.nickname)
     }
     
     func showErrorNotiView() {
