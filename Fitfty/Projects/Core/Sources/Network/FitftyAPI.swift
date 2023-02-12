@@ -20,6 +20,8 @@ public enum FitftyAPI {
     case codyList(parameters: [String: Any])
     case filteredCodyList(parameters: [String: Any])
     case mySettings
+    case addBookmark(boardToken: String)
+    case deleteBookmark(boardToken: String)
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -59,6 +61,9 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/styles/filter"
         case .mySettings:
             return "/users/details"
+        case .addBookmark(let boardToken),
+             .deleteBookmark(let boardToken):
+            return "/boards/bookmark/\(boardToken.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
         }
     }
     
@@ -66,7 +71,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         switch self {
         case .signInKakao,
              .signInApple,
-             .postMyFitfty:
+             .postMyFitfty,
+             .addBookmark:
             return .post
             
         case .getMyProfile,
@@ -80,6 +86,9 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             
         case .setUserDetails:
             return .put
+            
+        case .deleteBookmark:
+            return .delete
         }
     }
     
