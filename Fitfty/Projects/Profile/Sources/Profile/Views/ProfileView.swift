@@ -63,7 +63,10 @@ final class ProfileView: UIView {
 }
 
 extension ProfileView {
-    func setUp(nickname: String, content: String) {
+    func setUp(nickname: String, content: String, filepath: String?) {
+        if let url = URL(string: filepath ?? "https://fitfty.s3.ap-northeast-2.amazonaws.com/fitfty_profile_dummy.png") {
+            imageView.kf.setImage(with: url)
+        }
         nicknameLabel.text = nickname
         contentLabel.text = content
     }

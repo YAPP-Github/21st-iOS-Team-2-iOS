@@ -8,14 +8,18 @@
 
 import UIKit
 import Common
+import Combine
+import Core
 
 final public class ProfileViewController: UIViewController {
     
+    private var cancellables: Set<AnyCancellable> = .init()
+    private var viewModel: ProfileViewModel
     private var coordinator: ProfileCoordinatorInterface
     private var profileType: ProfileType
     private var presentType: ProfilePresentType
     
-    private var dataSource: UICollectionViewDiffableDataSource<ProfileSection, UUID>?
+    private var dataSource: UICollectionViewDiffableDataSource<ProfileSectionKind, ProfileCellModel>?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: postLayout())
@@ -33,7 +37,17 @@ final public class ProfileViewController: UIViewController {
         return view
     }()
     
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        loadingView.stopAnimating()
+        return loadingView
+    }()
+    
     private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
+    
+    private var profileFilePath: String?
+    private var nickname: String?
+    private var myMessage: String?
     
     private var headerViewElementKind: String {
         switch presentType {
@@ -47,6 +61,8 @@ final public class ProfileViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
+        bind()
+        viewModel.input.viewDidLoad(profileType)
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -54,10 +70,16 @@ final public class ProfileViewController: UIViewController {
         setNavigationBar()
     }
     
-    public init(coordinator: ProfileCoordinatorInterface, profileType: ProfileType, presentType: ProfilePresentType) {
+    public init(
+        coordinator: ProfileCoordinatorInterface,
+        profileType: ProfileType,
+        presentType: ProfilePresentType,
+        viewModel: ProfileViewModel
+    ) {
         self.coordinator = coordinator
         self.profileType = profileType
         self.presentType = presentType
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -70,13 +92,41 @@ final public class ProfileViewController: UIViewController {
         coordinator.finishedTapGesture()
     }
     
+    private func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .update(let response):
+                    self?.update(response)
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                case .sections(let sections):
+                    self?.applySnapshot(sections)
+                }
+            }).store(in: &cancellables)
+    }
+    
     private func setUp() {
         setUpConstraintLayout()
         setUpDataSource()
         registerHeaderView()
-        applySnapshot()
         setMiniProfileView(isHidden: true)
-    //    miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
+    }
+    
+    private func update(_ response: ProfileResponse) {
+        guard let data = response.data else {
+            return
+        }
+        self.profileFilePath = data.profilePictureUrl
+        self.myMessage = data.message ?? "\(data.nickname)의 프로필이에요."
+        self.nickname = data.nickname
+        
+        miniProfileView.setUp(
+            filepath: data.message,
+            nickname: data.nickname
+        )
     }
     
     @objc func didTapMoreVerticalButton(_ sender: Any?) {
@@ -96,7 +146,7 @@ final public class ProfileViewController: UIViewController {
 private extension ProfileViewController {
     
     func setUpConstraintLayout() {
-        view.addSubviews(collectionView, miniProfileView, seperatorView)
+        view.addSubviews(collectionView, miniProfileView, seperatorView, loadingIndicatorView)
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -111,7 +161,12 @@ private extension ProfileViewController {
             seperatorView.heightAnchor.constraint(equalToConstant: 1),
             seperatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             seperatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            seperatorView.bottomAnchor.constraint(equalTo: miniProfileView.bottomAnchor)
+            seperatorView.bottomAnchor.constraint(equalTo: miniProfileView.bottomAnchor),
+            
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         ])
     }
     
@@ -165,15 +220,19 @@ private extension ProfileViewController {
     }
     
     func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<ProfileSection, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<ProfileSectionKind, ProfileCellModel>(
             collectionView: collectionView,
-            cellProvider: { (collectionView, indexPath, _) -> UICollectionViewCell? in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: FeedImageCell.className,
-                    for: indexPath) as? FeedImageCell else {
-                    return UICollectionViewCell()
+            cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
+                switch item {
+                case .feed(let filepath, _, _):
+                    guard let cell = collectionView.dequeueReusableCell(
+                        withReuseIdentifier: FeedImageCell.className,
+                        for: indexPath) as? FeedImageCell else {
+                        return UICollectionViewCell()
+                    }
+                    cell.setUp(filepath: filepath)
+                    return cell
                 }
-                return cell
             })
         
         dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
@@ -185,7 +244,14 @@ private extension ProfileViewController {
                     for: indexPath) as? UserProfileHeaderView else {
                     return UICollectionReusableView()
                 }
-                supplementaryView.profileView.setUp(nickname: "useriosLover", content: "안녕하세용!")
+                if let nickname = self?.nickname,
+                   let content = self?.myMessage {
+                    supplementaryView.profileView.setUp(
+                        nickname: nickname,
+                        content: content,
+                        filepath: self?.profileFilePath
+                    )
+                }
                 return supplementaryView
                 
             case .tabProfile:
@@ -195,7 +261,15 @@ private extension ProfileViewController {
                     for: indexPath) as? MyProfileHeaderView else {
                     return UICollectionReusableView()
                 }
-                supplementaryView.profileView.setUp(nickname: "myiosLover", content: "안녕하세용!")
+                if let nickname = self?.nickname,
+                   let content = self?.myMessage {
+                    supplementaryView.profileView.setUp(
+                        nickname: nickname,
+                        content: content,
+                        filepath: self?.profileFilePath
+                    )
+                }
+                
                 supplementaryView.setButtonTarget(target: self, action: #selector(self?.didTapSettingButton(_:)))
                 return supplementaryView
                 
@@ -205,10 +279,13 @@ private extension ProfileViewController {
         }
     }
     
-    func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<ProfileSection, UUID>()
-        snapshot.appendSections([.feed])
-        snapshot.appendItems(Array(0..<10).map {_ in UUID() })
+    func applySnapshot(_ sections: [ProfileSection]) {
+        var snapshot = NSDiffableDataSourceSnapshot<ProfileSectionKind, ProfileCellModel>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
+        }
+        snapshot.reloadSections([.feed])
         dataSource?.apply(snapshot, animatingDifferences: true)
     }
     
