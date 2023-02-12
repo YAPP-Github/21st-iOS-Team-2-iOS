@@ -144,8 +144,9 @@ private extension MainViewModel {
             }
             do {
                 let address = try await self.getAddress(longitude: longitude, latitude: latitude)
-                let styles = await getStyleTags()
-                let gender = await getGender()
+                await self.setUpTags()
+                let styles = self._currentStyles.value
+                let gender = self._currentGender.value ?? .female
                 let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
                 let codyList = try await self.getCodyList(gender: gender, styles: styles)
                 self.currentState.send(.currentLocation(address))
@@ -253,6 +254,15 @@ private extension MainViewModel {
             sectionKind: .style,
             items: tags
         )
+    }
+    
+    func setUpTags() async {
+        if _currentGender.value == nil {
+            _currentGender.send(await getGender())
+        }
+        if _currentStyles.value.isEmpty {
+            _currentStyles.send(await getStyleTags())
+        }
     }
     
     func updateTags(_ tag: Tag) {
