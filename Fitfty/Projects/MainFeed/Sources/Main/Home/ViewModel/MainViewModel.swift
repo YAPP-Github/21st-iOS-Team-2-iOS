@@ -163,7 +163,6 @@ private extension MainViewModel {
     }
     
     func getAddress(longitude: Double, latitude: Double) async throws -> Address {
-        currentState.send(.isLoading(true))
         if let address = userManager.currentLocation {
             return address
         } else {
@@ -177,7 +176,6 @@ private extension MainViewModel {
     }
     
     func getWeathers(longitude: Double, latitude: Double) async throws -> [ShortTermForecast] {
-        currentState.send(.isLoading(true))
         let shortTermForecast = try await weatherRepository.fetchShortTermForecast(
             longitude: longitude.description, latitude: latitude.description
         )
@@ -189,7 +187,6 @@ private extension MainViewModel {
     }
     
     func getCodyList(gender: Gender?, styles: [StyleTag]?) async throws -> [CodyResponse] {
-        currentState.send(.isLoading(true))
         let tag = WeatherTag(temp: _currentAverageTemp.value)
         let response = try await fitftyRepository.fetchCodyList(weather: tag, gender: gender, styles: styles)
         guard let codyList = response.data?.pictureDetailInfoList else {
