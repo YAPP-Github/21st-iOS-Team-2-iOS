@@ -51,6 +51,7 @@ final public class PostViewController: UIViewController {
     
     private var profileType: ProfileType
     private var presentType: ProfilePresentType
+    private var nickname: String?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -122,6 +123,7 @@ final public class PostViewController: UIViewController {
             filepath: data.profilePictureUrl,
             nickname: data.nickname
         )
+        self.nickname = data.nickname
     }
     
     private func setNavigationBar() {
@@ -198,7 +200,10 @@ final public class PostViewController: UIViewController {
     }
     
     @objc private func didTapMiniProfile(_ sender: Any) {
-        coordinator.showProfile(profileType: .myProfile)
+        guard let nickname = nickname else {
+            return
+        }
+        coordinator.showProfile(profileType: .myProfile, nickname: nickname)
     }
     
     @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {

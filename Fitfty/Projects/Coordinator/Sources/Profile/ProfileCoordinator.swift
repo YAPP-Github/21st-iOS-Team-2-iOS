@@ -16,6 +16,7 @@ final class ProfileCoordinator: Coordinator {
     var type: CoordinatorType { .profile }
     var profileType: ProfileType
     var presentType: ProfilePresentType
+    var nickname: String?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -27,11 +28,13 @@ final class ProfileCoordinator: Coordinator {
     init(
         navigationController: BaseNavigationController = BaseNavigationController(),
         profileType: ProfileType,
-        presentType: ProfilePresentType
+        presentType: ProfilePresentType,
+        nickname: String?
     ) {
         self.navigationController = navigationController
         self.profileType = profileType
         self.presentType = presentType
+        self.nickname = nickname
     }
     
     func start() {
@@ -50,7 +53,8 @@ private extension ProfileCoordinator {
             coordinator: self,
             profileType: profileType,
             presentType: presentType,
-            viewModel: ProfileViewModel()
+            viewModel: ProfileViewModel(),
+            nickname: nickname
         )
         return viewController
     }

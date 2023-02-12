@@ -15,6 +15,7 @@ public enum FitftyAPI {
     case getMyProfile
     case getPost(boardToken: String)
     case postMyFitfty(parameters: [String: Any])
+    case getOtherUserProfile(nickname: String)
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -44,6 +45,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/boards/\(boardToken)"
         case .postMyFitfty:
             return "/boards/new"
+        case .getOtherUserProfile(let nickname):
+            return "/users/profile/\(nickname)"
         }
     }
     
@@ -56,6 +59,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .getMyProfile:
             return .get
         case .getPost:
+            return .get
+        case.getOtherUserProfile:
             return .get
         }
     }

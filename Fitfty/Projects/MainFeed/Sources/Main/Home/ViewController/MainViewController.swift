@@ -329,7 +329,8 @@ private extension MainViewController {
     }
     
     @objc func didTapProfileStackView(_ sender: Any?) {
-        coordinator.showProfile(profileType: .userProfile)
+        // TODO: 닉네임 넣어줘야 함
+        coordinator.showProfile(profileType: .userProfile, nickname: "Ari")
     }
     
     func showErrorNotiView() {
