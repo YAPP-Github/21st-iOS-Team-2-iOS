@@ -13,6 +13,9 @@ let project = Project.makeModule(
     product: .staticFramework,
     dependencies: [
         .SPM.Moya,
+        .SPM.KakaoSDKAuth,
+        .SPM.KakaoSDKUser,
+        .SPM.KakaoSDKCommon,
         .Project.Common,
         .package(product: "Amplify"),
         .package(product: "AWSCognitoAuthPlugin"),

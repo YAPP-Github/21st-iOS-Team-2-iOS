@@ -7,6 +7,7 @@
 //
 
 import UIKit
+
 import Auth
 import Common
 
@@ -24,7 +25,22 @@ final class AuthCoordinator: Coordinator {
     
     func start() {
         let viewController = makeAuthViewController()
+        navigationController.pushViewController(viewController, animated: false)
+    }
+}
+
+extension AuthCoordinator: AuthCoordinatorInterface {
+    func pushIntroView() {
+        let viewController = makeIntroViewController()
         navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func pushPermissionView() {
+        let viewController = makePermissionViewController()
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func pushMainFeedView() {
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
@@ -35,22 +51,20 @@ private extension AuthCoordinator {
             viewModel: AuthViewModel(),
             coordinator: self
         )
-        viewController.coordinator = self
         return viewController
     }
-}
-
-extension AuthCoordinator: AuthCoordinatorInterface {
     
-    func presentKakaoLoginView() {
-        
+    func makeIntroViewController() -> UIViewController {
+        let viewController = AuthIntroViewController(
+            coordinator: self
+        )
+        return viewController
     }
     
-    func pushMainFeedView() {
-        
-    }
-    
-    func pushOnboardingView() {
-        
+    func makePermissionViewController() -> UIViewController {
+        let viewController = AuthPermissionViewController(
+            coordinator: self
+        )
+        return viewController
     }
 }

@@ -37,6 +37,7 @@ line_length:
     - 300
     - 400
 disabled_rules: # 제외하고 싶은 룰
+    - nesting
     - colon
     - control_statement
     - trailing_whitespace
