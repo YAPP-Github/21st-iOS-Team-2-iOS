@@ -122,7 +122,7 @@ extension MainCoordinator: MainCoordinatorInterface {
         coordinator.start()
     }
     
-    public func showProfile(profileType: ProfileType, userToken: String) {
+    public func showProfile(profileType: ProfileType, nickName: String) {
         let coordinator = makeProfileCoordinator(profileType: profileType)
         coordinator.start()
     }
