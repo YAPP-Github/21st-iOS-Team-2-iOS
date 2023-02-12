@@ -94,10 +94,10 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     
     public var task: Moya.Task {
         switch self {
-        case .signInKakao(let parameters),
-             .signInApple(let parameters),
-             .setUserDetails(let parameters),
-             .postMyFitfty(let parameters),
+        case .signInKakao(let parameter),
+             .signInApple(let parameter),
+             .setUserDetails(let parameter),
+             .postMyFitfty(let parameter),
              .codyList(let parameter),
              .filteredCodyList(let parameter):
             let parameters = updateParameters(parameter)
