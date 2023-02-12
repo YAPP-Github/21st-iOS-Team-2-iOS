@@ -12,6 +12,7 @@ import Combine
 public protocol UserManager {
     var isNewUser: Bool { get }
     var currentLocation: Address? { get }
+    var hasCompletedWelcomePage: Bool { get }
     
     var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { get }
     var gender: Gender? { get }
@@ -21,6 +22,7 @@ public protocol UserManager {
     func updateCurrentLocation(_ address: Address)
     func updateGender(_ gender: Gender)
     func updateGuestState(_ isGuest: Bool)
+    func updateCompletedWelcomePage()
 }
 
 public final class DefaultUserManager {
@@ -52,6 +54,10 @@ extension DefaultUserManager: UserManager {
         return Address(address)
     }
     
+    public var hasCompletedWelcomePage: Bool {
+        localStorage.read(key: .hasCompletedWelcomePage) as? Bool ?? false
+    }
+    
     public var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { _location.eraseToAnyPublisher() }
     public var gender: Gender? { _gender }
     public var isGuest: AnyPublisher<Bool, Never> { _guestState.eraseToAnyPublisher() }
@@ -76,6 +82,10 @@ extension DefaultUserManager: UserManager {
     
     public func updateGuestState(_ isGuest: Bool) {
         _guestState.send(isGuest)
+    }
+    
+    public func updateCompletedWelcomePage() {
+        localStorage.write(key: .hasCompletedWelcomePage, value: true)
     }
     
 }
