@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Kingfisher
 
 final class PostView: UIView {
     
@@ -105,9 +106,12 @@ final class PostView: UIView {
 }
 
 extension PostView {
-    func setUp(content: String, hits: String, bookmark: String, date: String) {
+    func setUp(content: String, hits: String, bookmark: String, date: String, weather: WeatherTag, filepath: String) {
         contentLabel.text = content
         dateLabel.text = date
-        postInfoView.setUp(hits: hits, bookmark: bookmark, weatherTag: .coldWaveWeather)
+        postInfoView.setUp(hits: hits, bookmark: bookmark, weather: weather)
+        if let url = URL(string: filepath) {
+            postImageView.kf.setImage(with: url)
+        }
     }
 }

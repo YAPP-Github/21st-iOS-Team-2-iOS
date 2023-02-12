@@ -11,24 +11,29 @@ import Foundation
 public struct PostResponse: Codable {
     
     public let result: String
-    public let data: PostData
+    public let data: PostData?
     public let message: String?
     public let errorCode: String?
     
 }
 
-// MARK: - DataClass
 public struct PostData: Codable {
     
-    public let boardToken, nickname: String
+    public  let boardToken, userToken, nickname: String
     public let profilePictureUrl: String?
-    public let filePath: String
-    public let content: String
-    public let location: String
-    public let temperature: Int
-    public let cloudType: String
-    public let photoTakenTime: String
-    public let views: Int
-    public let bookmarkCnt: Int
-    
+    public let filePath, content: String
+    public let tagGroupInfo: TagGroupInfo
+    public let location: String?
+    public let temperature: Int?
+    public let cloudType, photoTakenTime: String?
+    public let views, bookmarkCnt: Int
+    public let bookmarked: Bool
+
+}
+
+// MARK: - TagGroupInfo
+public struct TagGroupInfo: Codable {
+    public let weather: String
+    public let style: [String]
+    public let gender: String
 }

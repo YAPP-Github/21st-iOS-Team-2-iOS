@@ -8,10 +8,14 @@
 
 import UIKit
 import Common
+import Core
+import Combine
+import Kingfisher
 
 final public class PostViewController: UIViewController {
 
     private var coordinator: PostCoordinatorInterface
+    private var cancellables: Set<AnyCancellable> = .init()
     private var viewModel: PostViewModel
     private let postView = PostView()
     
@@ -39,46 +43,20 @@ final public class PostViewController: UIViewController {
        return stackView
     }()
     
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        loadingView.stopAnimating()
+        return loadingView
+    }()
+    
     private var profileType: ProfileType
     private var presentType: ProfilePresentType
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUpConstraintLayout()
-        postView.setUp(content: """
-                        (1,2,3,4)
-
-                        Baby, got me looking so crazy
-
-                        빠져버리는 daydream
-
-                        Got me feeling you
-
-                        너도 말해줄래
-
-                        누가 내게 뭐라든
-
-                        남들과는 달라 넌
-
-                        Maybe you could be the one
-
-                        날 믿어봐 한번
-
-                        I'm not looking for just fun
-
-                        Maybe I could be the one
-
-                        Oh baby
-                        예민하대 나 lately
-
-                        너 없이는 매일 매일이 yeah
-                        """,
-                       hits: "51254",
-                       bookmark: "312",
-                       date: "22.08.15"
-        )
+        bind()
         viewModel.input.viewDidLoad()
-        miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -111,6 +89,39 @@ final public class PostViewController: UIViewController {
     
     deinit {
         coordinator.finishedTapGesture()
+    }
+    
+    private func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .update(let response, let profileType):
+                    self?.update(response)
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                }
+            }).store(in: &cancellables)
+    }
+    
+    private func update(_ response: PostResponse) {
+        guard let data = response.data else {
+            return
+        }
+        // TODO: 날짜 YY/MM/DD 변환 작업 해야 함
+        postView.setUp(
+            content: data.content,
+            hits: String(data.views).insertComma,
+            bookmark: String(data.bookmarkCnt).insertComma,
+            date: data.photoTakenTime ?? "",
+            weather: data.tagGroupInfo.weather.stringToWeatherTag ?? .coldWaveWeather,
+            filepath: data.filePath
+        )
+        miniProfileView.setUp(
+            filepath: data.profilePictureUrl,
+            nickname: data.nickname
+        )
     }
     
     private func setNavigationBar() {
@@ -156,7 +167,7 @@ final public class PostViewController: UIViewController {
     }
     
     private func setUpConstraintLayout() {
-        view.addSubviews(miniProfileView, scrollView)
+        view.addSubviews(miniProfileView, scrollView, loadingIndicatorView)
        scrollView.addSubviews(stackView)
         NSLayoutConstraint.activate([
             miniProfileView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -173,7 +184,12 @@ final public class PostViewController: UIViewController {
             stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)
+            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         ])
     }
     

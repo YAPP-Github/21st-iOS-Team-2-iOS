@@ -76,7 +76,7 @@ final public class ProfileViewController: UIViewController {
         registerHeaderView()
         applySnapshot()
         setMiniProfileView(isHidden: true)
-        miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
+    //    miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
     }
     
     @objc func didTapMoreVerticalButton(_ sender: Any?) {

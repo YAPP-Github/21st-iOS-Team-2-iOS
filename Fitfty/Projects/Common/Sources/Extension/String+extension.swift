@@ -34,4 +34,20 @@ public extension String {
             return self
         }
     }
+    
+    var stringToWeatherTag: WeatherTag? {
+        switch self {
+        case "HOT":
+            return .hotWeather
+        case "WARM":
+            return .warmWeather
+        case "CHILLY":
+            return .chillyWeather
+        case "COLD":
+            return .coldWeather
+        case "FREEZING":
+            return .coldWaveWeather
+        default: return nil
+        }
+    }
 }
