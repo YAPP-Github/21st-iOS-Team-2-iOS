@@ -289,7 +289,7 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
         let data = data.filter {
             ($0.isToday && ["03", "06", "09", "12", "15", "18", "21"].contains($0.date.toString(.hour))) ||
             (
-                $0.date.addDays(-1).toString(.baseDate) == date.toString(.baseDate) &&
+                $0.date.addDays(1).toString(.baseDate) == date.toString(.baseDate) &&
                 $0.date.toString(.hour) == "00"
             )
         }.map { $0.temp }
