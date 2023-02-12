@@ -50,4 +50,38 @@ public extension String {
         default: return nil
         }
     }
+    
+    var koreanWeatherTag: String {
+        guard let temp = Int(self) else {
+            return self
+        }
+        if temp >= 23 {
+            return "더운 날"
+        } else if temp >= 17 && temp < 23 {
+            return "따뜻한 날"
+        } else if temp >= 9 && temp < 17 {
+            return "쌀쌀한 날"
+        } else if temp >= 3 && temp < 9 {
+            return "추운 날"
+        } else {
+            return "한파"
+        }
+    }
+    
+    var englishWeatherTag: String {
+        guard let temp = Int(self) else {
+            return self
+        }
+        if temp >= 23 {
+            return "HOT"
+        } else if temp >= 17 && temp < 23 {
+            return "WARM"
+        } else if temp >= 9 && temp < 17 {
+            return "CHILLY"
+        } else if temp >= 3 && temp < 9 {
+            return "COLD"
+        } else {
+            return "FREEZING"
+        }
+    }
 }

@@ -35,14 +35,6 @@ final class ContentCell: UICollectionViewCell {
         return button
     }()
     
-    private lazy var modifyPhotoButton: UIButton = {
-        let button = UIButton()
-        button.setTitle(nil, for: .normal)
-        button.backgroundColor = .clear
-        button.isHidden = true
-        return button
-    }()
-    
     private lazy var codyImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -50,8 +42,15 @@ final class ContentCell: UICollectionViewCell {
         return imageView
     }()
     
+    private lazy var tapView: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapView)))
+        return view
+    }()
+    
     private let maxTextCount = 2200
-    private let textViewPlaceHolder = "2200자 이내로 설명을 남길 수 있어요."
+    private let textViewPlaceHolder = "내 코디에 대한 설명을 남겨보세요."
    
     private lazy var contentTextView: UITextView = {
         let textView = UITextView()
@@ -80,28 +79,50 @@ final class ContentCell: UICollectionViewCell {
         contentTextView.textColor = CommonAsset.Colors.gray04.color
     }
     
+    deinit {
+        removeNotificationCenter()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpConstraintsLayout()
+        setNotificationCenter()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setNotificationCenter() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didTapView),
+            name: .resignKeyboard,
+            object: nil
+        )
+    }
+    
+    private func removeNotificationCenter() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .resignKeyboard,
+            object: nil
+        )
+    }
+    
     private func setUpConstraintsLayout() {
         contentView.addSubviews(codyImageView, backgroundButton, uploadPhotoButton,
-                                modifyPhotoButton, contentTextView, guidanceLabel)
+                                contentTextView, guidanceLabel, tapView)
         NSLayoutConstraint.activate([
             backgroundButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             backgroundButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             backgroundButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             backgroundButton.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width*0.936),
             
-            modifyPhotoButton.topAnchor.constraint(equalTo: backgroundButton.topAnchor),
-            modifyPhotoButton.leadingAnchor.constraint(equalTo: backgroundButton.leadingAnchor),
-            modifyPhotoButton.trailingAnchor.constraint(equalTo: backgroundButton.trailingAnchor),
-            modifyPhotoButton.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width*0.936*0.6),
+            tapView.topAnchor.constraint(equalTo: backgroundButton.topAnchor),
+            tapView.leadingAnchor.constraint(equalTo: backgroundButton.leadingAnchor),
+            tapView.trailingAnchor.constraint(equalTo: backgroundButton.trailingAnchor),
+            tapView.heightAnchor.constraint(equalTo: backgroundButton.heightAnchor),
             
             codyImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             codyImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -116,7 +137,7 @@ final class ContentCell: UICollectionViewCell {
             contentTextView.topAnchor.constraint(equalTo: backgroundButton.bottomAnchor, constant: 20),
             contentTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             contentTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
+            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
             
             guidanceLabel.centerXAnchor.constraint(equalTo: backgroundButton.centerXAnchor),
             guidanceLabel.centerYAnchor.constraint(equalTo: backgroundButton.centerYAnchor)
@@ -126,11 +147,19 @@ final class ContentCell: UICollectionViewCell {
     @objc func didTapBackgroundButton(_ sender: UIButton) {
         contentTextView.resignFirstResponder()
     }
+    
+    @objc func didTapView(_ sender: Any?) {
+        contentTextView.resignFirstResponder()
+        tapView.isHidden = true
+    }
+    
 }
 
 extension ContentCell: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         NotificationCenter.default.post(name: .scrollToBottom, object: nil)
+        NotificationCenter.default.post(name: .showKeyboard, object: nil)
+        tapView.isHidden = false
         if textView.text == textViewPlaceHolder {
             textView.text = nil
             textView.textColor = .black
@@ -200,7 +229,7 @@ extension ContentCell {
     
     public func setActionUploadPhotoButton(_ target: Any?, action: Selector) {
         uploadPhotoButton.addTarget(target, action: action, for: .touchUpInside)
-        modifyPhotoButton.addTarget(target, action: action, for: .touchUpInside)
+        backgroundButton.addTarget(target, action: action, for: .touchUpInside)
     }
     
     public func setDisableEditting() {
@@ -213,6 +242,5 @@ extension ContentCell {
     public func setHiddenBackgroundButton() {
         backgroundButton.backgroundColor = .clear
         uploadPhotoButton.isHidden = true
-        modifyPhotoButton.isHidden = false
     }
 }

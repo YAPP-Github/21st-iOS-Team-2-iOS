@@ -13,6 +13,11 @@ let project = Project.makeModule(
     product: .staticFramework,
     dependencies: [
         .SPM.Moya,
-        .Project.Common
+        .Project.Common,
+        .package(product: "Amplify"),
+        .package(product: "AWSCognitoAuthPlugin"),
+        .package(product: "AWSS3StoragePlugin"),
+        .package(product: "AWSAPIPlugin"),
+        .package(product: "AWSDataStorePlugin")
     ]
 )

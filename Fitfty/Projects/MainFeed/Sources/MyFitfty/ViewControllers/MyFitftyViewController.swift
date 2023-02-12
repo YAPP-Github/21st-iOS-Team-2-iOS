@@ -27,6 +27,7 @@ final public class MyFitftyViewController: UIViewController {
         collectionView.register(ContentCell.self)
         collectionView.register(StyleTagCell.self)
         collectionView.register(WeatherTagCell.self)
+        collectionView.register(GenderCell.self)
         collectionView.register(Common.HeaderView.self, forSupplementaryViewOfKind: Common.HeaderView.className)
         collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
         collectionView.delegate = self
@@ -53,8 +54,15 @@ final public class MyFitftyViewController: UIViewController {
         return UIBarButtonItem(customView: button)
     }()
     
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        loadingView.stopAnimating()
+        return loadingView
+    }()
+    
     private var selectedImage: UIImage?
-    private var contentText = "2200자 이내로 설명을 남길 수 있어요."
+    private var contentText = "내 코디에 대한 설명을 남겨보세요."
+    private var imageInfoMessage: String?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,7 +107,7 @@ final public class MyFitftyViewController: UIViewController {
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
-        coordinator.dismiss()
+        viewModel.input.didTapUpload()
     }
     
     @objc func scrollToBottom() {
@@ -127,6 +135,10 @@ final public class MyFitftyViewController: UIViewController {
         }
         viewModel.input.getPhAssetInfo(phAssetInfo)
     }
+    
+    @objc func resignKeyboard(_ sender: Any?) {
+        NotificationCenter.default.post(name: .resignKeyboard, object: nil)
+    }
 }
 
 private extension MyFitftyViewController {
@@ -141,6 +153,20 @@ private extension MyFitftyViewController {
                     self?.selectedImage = image
                 case .content(let text):
                     self?.contentText = text
+                case .isEnabledUpload(let isEnabled):
+                    self?.navigationItem.rightBarButtonItem =
+                    isEnabled ? self?.enableRightBarButton : self?.disableRightBarButton
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                case .imageInfoMessage(let message):
+                    self?.imageInfoMessage = message
+                case .completed(let isCompleted):
+                    guard isCompleted else {
+                        return
+                    }
+                    self?.coordinator.dismiss()
                 }
             }).store(in: &cancellables)
     }
@@ -168,12 +194,16 @@ private extension MyFitftyViewController {
     }
     
     func setUpConstraintLayout() {
-        view.addSubviews(collectionView)
+        view.addSubviews(collectionView, loadingIndicatorView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         ])
     }
     
@@ -262,7 +292,15 @@ extension MyFitftyViewController {
                         weahterTag: weatherTag,
                         isSelected: isSelected
                     )
-                    return cell ?? UICollectionViewCell()
+                    return cell
+                    
+                case .genderTag(let gender, let isSelected):
+                    let cell = collectionView.dequeueReusableCell(GenderCell.self, for: indexPath)
+                    cell?.setUp(
+                        gender: gender,
+                        isSelected: isSelected
+                    )
+                    return cell
                     
                 case .styleTag(let styleTag, let isSelected):
                     let cell = collectionView.dequeueReusableCell(StyleTagCell.self, for: indexPath)
@@ -286,16 +324,17 @@ extension MyFitftyViewController {
                     ) as? Common.HeaderView
                     
                     reusableView?.setUp(
-                        largeTitle: "날씨 태그를 골라주세요.",
-                        smallTitle: "사진을 업로드하면 촬영한 날의 날씨 정보를 자동으로 불러와요.",
-                        largeTitleFont: FitftyFont.appleSDBold(size: 16).font ?? .systemFont(ofSize: 16),
+                        largeTitle: "어떤 날씨에 입는 옷인가요?",
+                        smallTitle: self.imageInfoMessage ?? "사진을 업로드하면 촬영한 날의 날씨 정보를 자동으로 불러와요.",
+                        largeTitleFont: FitftyFont.appleSDSemiBold(size: 16).font ?? .systemFont(ofSize: 16),
                         smallTitleFont: FitftyFont.appleSDMedium(size: 14).font ?? .systemFont(ofSize: 14),
                         smallTitleColor: CommonAsset.Colors.gray05.color,
                         largeTitleTopAnchorConstant: 32,
                         smallTitleTopAchorConstant: 8
                     )
+                    reusableView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.resignKeyboard)))
                     return reusableView
-                } else if section == .styleTag {
+                } else if section == .genderTag {
                     let reusableView = collectionView.dequeueReusableSupplementaryView(
                         ofKind: elementKind,
                         withReuseIdentifier: Common.HeaderView.className,
@@ -303,9 +342,9 @@ extension MyFitftyViewController {
                     ) as? Common.HeaderView
                     
                     reusableView?.setUp(
-                        largeTitle: "스타일 태그를 골라주세요.",
+                        largeTitle: "어떤 스타일인가요?",
                         smallTitle: nil,
-                        largeTitleFont: FitftyFont.appleSDBold(size: 16).font ?? .systemFont(ofSize: 16),
+                        largeTitleFont: FitftyFont.appleSDSemiBold(size: 16).font ?? .systemFont(ofSize: 16),
                         smallTitleFont: nil,
                         smallTitleColor: nil,
                         largeTitleTopAnchorConstant: 28,
@@ -330,13 +369,16 @@ extension MyFitftyViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applySnapshot(_ sections: [MyFitftySection], _ animated: Bool) {
+    private func applySnapshot(_ sections: [MyFitftySection], _ isCodyImage: Bool) {
         var snapshot = NSDiffableDataSourceSnapshot<MyFitftySectionKind, MyFitftyCellModel>()
         sections.forEach {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
-        dataSource?.apply(snapshot, animatingDifferences: animated)
+        if isCodyImage {
+            snapshot.reloadSections([.weatherTag])
+        }
+        dataSource?.apply(snapshot, animatingDifferences: isCodyImage)
     }
         
 }
@@ -351,6 +393,7 @@ extension MyFitftyViewController {
             case .content: return self?.contentSectionLayout()
             case .weatherTag: return self?.weatherTagSectionLayout()
             case .styleTag: return self?.styleTagSectionLayout()
+            case .genderTag: return self?.genderTagSectionLayout()
             default: return nil
             }
         }
@@ -359,7 +402,7 @@ extension MyFitftyViewController {
     private func contentSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+290)
+            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+55+64)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
@@ -406,15 +449,6 @@ extension MyFitftyViewController {
         
         section.interGroupSpacing = 8
         section.orthogonalScrollingBehavior = .continuous
-        
-        section.boundarySupplementaryItems = [
-            NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: .init(
-                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width-40),
-                    heightDimension: .estimated(50)
-                ),
-                elementKind: Common.HeaderView.className, alignment: .top)
-        ]
         return section
     }
     
@@ -454,6 +488,44 @@ extension MyFitftyViewController {
         ]
         return section
     }
+    
+    private func genderTagSectionLayout() -> NSCollectionLayoutSection? {
+        let layoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(100),
+            heightDimension: .absolute(43)
+        )
+        
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: layoutSize.widthDimension,
+                heightDimension: layoutSize.heightDimension
+            ),
+            subitems: [.init(layoutSize: layoutSize)]
+        )
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 28, trailing: 20)
+        section.interGroupSpacing = 8
+        section.orthogonalScrollingBehavior = .continuous
+        
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width-40),
+                    heightDimension: .estimated(82)
+                ),
+                elementKind: Common.HeaderView.className, alignment: .top),
+
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width-40),
+                    heightDimension: .absolute(1)
+                ),
+                elementKind: FooterView.className, alignment: .bottom)
+        ]
+        return section
+    }
+    
 }
 
 // MARK: - UICollectionViewDelegate

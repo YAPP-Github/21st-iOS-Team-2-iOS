@@ -9,6 +9,7 @@
 import UIKit
 import MainFeed
 import Common
+import Core
 
 final class MyFitftyCoordinator: Coordinator {
     var type: CoordinatorType { .myFitfty }
@@ -36,7 +37,11 @@ private extension MyFitftyCoordinator {
         let viewController = MyFitftyViewController(
             coordinator: self,
             myFitftyType: myFitftyType,
-            viewModel: MyFitftyViewModel()
+            viewModel: MyFitftyViewModel(
+                weatherRepository: DefaultWeatherRepository(),
+                addressRepository: DefaultAddressRepository(),
+                userManager: DefaultUserManager.shared
+            )
         )
         viewController.modalPresentationStyle = .fullScreen
         return viewController
