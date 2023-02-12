@@ -112,29 +112,18 @@ extension MainViewModel: MainViewModelInput {
     }
     
     func didTapTag(_ tag: Tag) {
-        if tag.isGender {
-            _currentGender.send(Gender(tag.title))
-        } else {
-            var styles = _currentStyles.value
-            let style = StyleTag(tag.title) ?? .minimal
-            if let index = styles.firstIndex(of: style) {
-                styles.remove(at: index)
-            } else {
-                styles.append(style)
-            }
-            _currentStyles.send(styles)
-        }
+        updateTags(tag)
         Task { [weak self] in
             guard let self = self else {
                 return
             }
             do {
                 let styles = self._currentStyles.value
-                let gender = self._currentGender.value
-                let codyList = try await self.getCodyList(gender: gender ?? .female, styles: styles)
+                let gender = self._currentGender.value ?? .female
+                let codyList = try await self.getCodyList(gender: gender, styles: styles)
                 currentState.send(.sections([
                     MainFeedSection(sectionKind: .weather, items: self._weathers),
-                    self.configureTags(styles: styles, gender: gender ?? .female),
+                    self.configureTags(styles: styles, gender: gender),
                     self.configureCodyList(codyList)
                 ]))
             } catch {
@@ -264,5 +253,20 @@ private extension MainViewModel {
             sectionKind: .style,
             items: tags
         )
+    }
+    
+    func updateTags(_ tag: Tag) {
+        if tag.isGender {
+            _currentGender.send(Gender(tag.title))
+        } else {
+            var styles = _currentStyles.value
+            let style = StyleTag(tag.title) ?? .minimal
+            if let index = styles.firstIndex(of: style) {
+                styles.remove(at: index)
+            } else {
+                styles.append(style)
+            }
+            _currentStyles.send(styles)
+        }
     }
 }
