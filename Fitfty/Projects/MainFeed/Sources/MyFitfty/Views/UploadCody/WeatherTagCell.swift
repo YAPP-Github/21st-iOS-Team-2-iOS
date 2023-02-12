@@ -49,6 +49,10 @@ final class WeatherTagCell: UICollectionViewCell {
         tapView.isHidden = true
     }
     
+    deinit {
+        removeNotificationCenter()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpConstraintsLayout()
@@ -69,6 +73,19 @@ final class WeatherTagCell: UICollectionViewCell {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(resignKeyboard),
+            name: .resignKeyboard,
+            object: nil
+        )
+    }
+    
+    private func removeNotificationCenter() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .showKeyboard,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
             name: .resignKeyboard,
             object: nil
         )
