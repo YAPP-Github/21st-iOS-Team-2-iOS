@@ -122,6 +122,8 @@ final public class ProfileViewController: UIViewController {
                     isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
                 case .sections(let sections):
                     self?.applySnapshot(sections)
+                case .showPost(let profileType, let boardToken):
+                    self?.coordinator.showPost(profileType: profileType, boardToken: boardToken)
                 }
             }).store(in: &cancellables)
     }
@@ -380,7 +382,12 @@ private extension ProfileViewController {
 extension ProfileViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        coordinator.showPost(profileType: profileType)
+        switch presentType {
+        case .mainProfile:
+            viewModel.input.didTapPostWithoutMenu(selectedIndex: indexPath.row)
+        case .tabProfile:
+            viewModel.input.didTapPostWithMenu(selectedIndex: indexPath.row, menuType: menuType)
+        }
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {

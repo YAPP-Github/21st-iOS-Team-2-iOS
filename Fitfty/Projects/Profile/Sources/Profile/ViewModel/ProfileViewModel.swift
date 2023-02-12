@@ -17,6 +17,8 @@ protocol ProfileViewModelInput {
     func viewDidLoadWithMenu(menuType: MenuType)
     func viewDidLoadWithoutMenu(nickname: String)
     func didTapMenu(_ menuType: MenuType)
+    func didTapPostWithMenu(selectedIndex: Int, menuType: MenuType)
+    func didTapPostWithoutMenu(selectedIndex: Int)
     
 }
 
@@ -24,6 +26,7 @@ public final class ProfileViewModel {
     
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
+    private var response: ProfileResponse?
     public init() { }
     
 }
@@ -48,25 +51,53 @@ extension ProfileViewModel: ProfileViewModelInput {
         }
     }
     
-    func didTapPost(selectedIndex: Int, menuType: MenuType, presentType: ProfilePresentType) {
-        //        let myUserToken = response.data?.userToken
-        //        switch presentType {
-        //        case .mainProfile: // 메인에서 들어간 경우 내 핏프티만 보여줌
-        //            <#code#>
-        //        case .tabProfile: // 탭에서 들어간 경우 내 핏프티, 북마크 메뉴로 나뉨
-        //            switch menuType {
-        //            case .myFitfty:
-        //                guard let writerUserToken = response.data?.codiList[selectedIndex].userToken else {
-        //                    return
-        //                }
-        //            case .bookmark:
-        //                guard let writerUserToken = response.data?.bookmarkList[selectedIndex].userToken else {
-        //                    return
-        //                }
-        //            }
-        //        }
-        //
-        
+    func didTapPostWithMenu(selectedIndex: Int, menuType: MenuType) {
+        guard let myUserToken = response?.data?.userToken else {
+            return
+        }
+        switch menuType {
+        case .myFitfty:
+            guard let otherUserToken = response?.data?.codiList[selectedIndex].userToken else {
+                return
+            }
+            guard let boardToken = response?.data?.codiList[selectedIndex].boardToken else {
+                return
+            }
+            if myUserToken == otherUserToken {
+                currentState.send(.showPost(.myProfile, boardToken))
+            } else {
+                currentState.send(.showPost(.userProfile, boardToken))
+            }
+        case .bookmark:
+            guard let otherUserToken = response?.data?.bookmarkList[selectedIndex].userToken else {
+                return
+            }
+            guard let boardToken = response?.data?.bookmarkList[selectedIndex].boardToken else {
+                return
+            }
+            if myUserToken == otherUserToken {
+                currentState.send(.showPost(.myProfile, boardToken))
+            } else {
+                currentState.send(.showPost(.userProfile, boardToken))
+            }
+        }
+    }
+    
+    func didTapPostWithoutMenu(selectedIndex: Int) {
+        guard let myUserToken = response?.data?.userToken else {
+            return
+        }
+        guard let otherUserToken = response?.data?.codiList[selectedIndex].userToken else {
+            return
+        }
+        guard let boardToken = response?.data?.codiList[selectedIndex].boardToken else {
+            return
+        }
+        if myUserToken == otherUserToken {
+            currentState.send(.showPost(.myProfile, boardToken))
+        } else {
+            currentState.send(.showPost(.userProfile, boardToken))
+        }
     }
     
 }
@@ -78,6 +109,7 @@ extension ProfileViewModel: ViewModelType {
         case errorMessage(String)
         case update(ProfileResponse)
         case sections([ProfileSection])
+        case showPost(ProfileType, String)
     }
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
@@ -95,6 +127,7 @@ extension ProfileViewModel {
                 self.currentState.send(.isLoading(true))
                 
                 let response = try await getOtherUserProfile(nickname: nickname)
+                self.response = response
                 if response.result == "SUCCESS" {
                     self.currentState.send(.update(response))
                     self.currentState.send(.isLoading(false))
@@ -125,6 +158,7 @@ extension ProfileViewModel {
                 self.currentState.send(.isLoading(true))
                 
                 let response = try await getMyProfile()
+                self.response = response
                 if response.result == "SUCCESS" {
                     self.currentState.send(.update(response))
                     self.currentState.send(.isLoading(false))

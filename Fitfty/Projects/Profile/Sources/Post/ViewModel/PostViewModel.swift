@@ -14,7 +14,7 @@ import Core
 protocol PostViewModelInput {
     
     var input: PostViewModelInput { get }
-    func viewDidLoad()
+    func viewDidLoad(boardToken: String)
 }
 
 public final class PostViewModel {
@@ -29,10 +29,10 @@ public final class PostViewModel {
 extension PostViewModel: PostViewModelInput {
     var input: PostViewModelInput { self }
     
-    func viewDidLoad() {
+    func viewDidLoad(boardToken: String) {
         currentState.send(.isLoading(true))
       
-        update(boardToken: "brd_VyEbyNcLTHUixtjv")
+        update(boardToken: boardToken)
     }
         
 }
