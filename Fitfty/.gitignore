@@ -93,3 +93,7 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+amplify/
+graphql/
+.graphqlconfig.yml
+API.swift
