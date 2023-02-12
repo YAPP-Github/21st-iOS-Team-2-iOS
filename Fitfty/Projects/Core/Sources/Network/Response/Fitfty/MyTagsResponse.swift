@@ -11,8 +11,8 @@ import Common
 
 // MARK: - Welcome
 public struct FitftyMyTagsResponse: Codable {
-    public let result: String
-    public let data: MyTagsResponse
+    public let result: FitftyResult
+    public let data: MyTagsResponse?
     public let message: String?
     public let errorCode: String?
 }
