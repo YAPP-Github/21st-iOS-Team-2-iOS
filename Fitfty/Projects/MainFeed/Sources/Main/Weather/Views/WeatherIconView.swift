@@ -12,7 +12,7 @@ import Common
 final class WeatherIconView: UIStackView {
     
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: 90, height: 34)
+        return CGSize(width: 95, height: 34)
     }
     
     override init(frame: CGRect) {
@@ -29,6 +29,7 @@ final class WeatherIconView: UIStackView {
         stackView.backgroundColor = .clear
         stackView.addArrangedSubviews(meridiemLabel, precipitationLabel)
         stackView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        stackView.setContentCompressionResistancePriority(.required, for: .vertical)
         return stackView
     }()
     

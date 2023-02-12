@@ -12,6 +12,7 @@ import Moya
 public enum FitftyAPI {
     case signInKakao(parameters: [String: Any])
     case signInApple(parameters: [String: Any])
+    case getUserPrivacy
     case getMyProfile
     case checkNickname(query: String)
     case setUserDetails(parameters: [String: Any])
@@ -39,6 +40,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/auth/sign-in/kakao/"
         case .signInApple:
             return "/auth/sign-in/apple/"
+        case .getUserPrivacy:
+            return "/users/privacy"
         case .getMyProfile:
             return "/users/profile"
         case .checkNickname(let query):
@@ -57,6 +60,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .postMyFitfty:
             return .post
         case .getMyProfile,
+             .getUserPrivacy,
              .checkNickname:
             return .get
         case .setUserDetails:
@@ -84,13 +88,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
 public extension FitftyAPI {
     static func request<T: Decodable>(target: FitftyAPI, dataType: T.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
-            // TODO: 임시로 구현해둔 어드민 토큰 사용 코드. 로그인 기능 구현 완료 후 삭제할 코드입니다.
-            let tokenClosure: (TargetType) -> String = { _ in
-                return APIKey.adminToken
-            }
-            let authPlugin = AccessTokenPlugin(tokenClosure: tokenClosure)
-            let provider = MoyaProvider<FitftyAPI>(plugins: [authPlugin])
-            
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -110,13 +108,7 @@ public extension FitftyAPI {
     
     static func request(target: FitftyAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
-            // TODO: 임시로 구현해둔 어드민 토큰 사용 코드. 로그인 기능 구현 완료 후 삭제할 코드입니다.
-            let tokenClosure: (TargetType) -> String = { _ in
-                return APIKey.adminToken
-            }
-            let authPlugin = AccessTokenPlugin(tokenClosure: tokenClosure)
-            let provider = MoyaProvider<FitftyAPI>(plugins: [authPlugin])
-            
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -127,5 +119,18 @@ public extension FitftyAPI {
                 }
             }
         }
+    }
+    
+    private static func getAuthPlugin() -> AccessTokenPlugin {
+        let tokenClosure: (TargetType) -> String = { _ in
+            guard let identifier = UserDefaults.standard.read(key: .userIdentifier) as? String,
+                  let account = UserDefaults.standard.read(key: .userAccount) as? String,
+                  let token = Keychain.loadData(serviceIdentifier: identifier, forKey: account) else {
+                Logger.debug(error: SocialLoginError.noToken, message: "No Token")
+                return ""
+            }
+            return token
+        }
+        return AccessTokenPlugin(tokenClosure: tokenClosure)
     }
 }

@@ -27,5 +27,6 @@ let project = Project.makeModule(
         .package(product: "AWSS3StoragePlugin")
     ],
     resources: ["Resources/**"],
-    infoPlist: .file(path: "Support/Info.plist")
+    infoPlist: .file(path: "Support/Info.plist"),
+    entitlements: "Fitfty.entitlements"
 )
