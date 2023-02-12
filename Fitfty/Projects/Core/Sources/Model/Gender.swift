@@ -19,3 +19,18 @@ public enum Gender: String, Codable, CaseIterable {
         }
     }
 }
+
+public extension Gender {
+    init?(_ localized: String) {
+        switch localized {
+        case "남":
+            self = .male
+            
+        case "여":
+            self = .female
+            
+        default:
+            return nil
+        }
+    }
+}
