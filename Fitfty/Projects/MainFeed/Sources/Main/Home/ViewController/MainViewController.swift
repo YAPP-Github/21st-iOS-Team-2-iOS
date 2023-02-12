@@ -100,6 +100,8 @@ private extension MainViewController {
                 case .sections(let sections):
                     self?.hideErrorNotiView()
                     self?.applySnapshot(sections)
+                    
+                case .showWelcomeSheet:
                     self?.showWelcomeView()
                 }
             }).store(in: &cancellables)
