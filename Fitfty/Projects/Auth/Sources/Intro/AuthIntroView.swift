@@ -94,7 +94,6 @@ final class AuthIntroView: UIView {
             temperatureImageView.widthAnchor.constraint(equalToConstant: Style.TemperatureImageView.size.width)
         ])
         
-        temperatureImageView.image = Style.TemperatureImageView.image
         temperatureImageView.contentMode = .scaleAspectFit
     }
     
@@ -107,7 +106,6 @@ final class AuthIntroView: UIView {
             temperatureDegreeImageView.widthAnchor.constraint(equalToConstant: Style.TemperatureDegreeImageView.size.width)
         ])
         
-        temperatureDegreeImageView.image = Style.TemperatureDegreeImageView.image
         temperatureDegreeImageView.contentMode = .scaleAspectFit
     }
     
@@ -120,7 +118,6 @@ final class AuthIntroView: UIView {
             cloudIconImageView.widthAnchor.constraint(equalToConstant: Style.CloudIconImageView.size.width)
         ])
         
-        cloudIconImageView.image = Style.CloudIconImageView.image
         cloudIconImageView.contentMode = .scaleAspectFit
     }
     
@@ -160,19 +157,16 @@ private extension AuthIntroView {
         enum TemperatureImageView {
             static let margin: UIEdgeInsets = .init(top: 0, left: 24, bottom: 68, right: 0)
             static let size: CGSize = .init(width: 46, height: 72)
-            static let image = CommonAsset.Images.introTemperature.image
         }
         
         enum TemperatureDegreeImageView {
             static let margin: UIEdgeInsets = .init(top: 0, left: 6, bottom: 53, right: 0)
             static let size: CGSize = .init(width: 17, height: 17)
-            static let image = CommonAsset.Images.introTemperatureDegree.image
         }
         
         enum CloudIconImageView {
             static let margin: UIEdgeInsets = .init(top: 28, left: 0, bottom: 0, right: 22)
             static let size: CGSize = .init(width: 43, height: 31)
-            static let image = CommonAsset.Images.introCloudSun.image
         }
         
         enum NextButton {
