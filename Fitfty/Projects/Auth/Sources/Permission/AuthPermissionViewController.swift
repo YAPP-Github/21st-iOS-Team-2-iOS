@@ -43,8 +43,7 @@ final public class AuthPermissionViewController: UIViewController {
     private func didTapNextButton() {
         requestPermission()
         
-        /// - NOTE: 임시로 메인피드로 보내주는 코드, 온보딩 작업 완료 후 지워질 코드
-        coordinator.pushMainFeedView()
+        coordinator.pushOnboardingFlow()
     }
     
     private func requestPermission() {
