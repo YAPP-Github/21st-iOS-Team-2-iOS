@@ -68,6 +68,7 @@ extension MainViewModel: ViewModelType, MainViewModelOutput {
         case errorMessage(String)
         case isLoading(Bool)
         case sections([MainFeedSection])
+        case showWelcomeSheet
     }
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
@@ -99,6 +100,10 @@ extension MainViewModel: MainViewModelInput {
             default: return
             }
         }).store(in: &cancellables)
+        
+        if userManager.hasCompletedWelcomePage == false {
+            currentState.send(.showWelcomeSheet)
+        }
     }
     
     func refresh() {
