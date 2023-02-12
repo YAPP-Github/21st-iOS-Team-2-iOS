@@ -30,7 +30,7 @@ public final class DefaultUserManager {
     private let localStorage: LocalStorageService
     
     private var _location: CurrentValueSubject<(longitude: Double, latitude: Double)?, Never> = .init(nil)
-    private var _gender: Gender? = nil
+    private var _gender: Gender?
     private var _guestState: CurrentValueSubject<Bool, Never> = .init(true)
     
     private var cancellables: Set<AnyCancellable> = .init()
