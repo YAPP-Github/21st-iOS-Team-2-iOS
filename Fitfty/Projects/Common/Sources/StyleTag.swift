@@ -37,19 +37,19 @@ public enum StyleTag {
     public var styleTagEnglishString: String {
         switch self {
         case .minimal:
-            return "minimal"
+            return "MINIMAL"
         case .modern:
-            return "modern"
+            return "MODERN"
         case .casual:
-            return "casual"
+            return "CASUAL"
         case .street:
-            return "street"
+            return "STREET"
         case .lovely:
-            return "lovely"
+            return "LOVELY"
         case .hip:
-            return "hip"
+            return "HIP"
         case .luxury:
-            return "luxury"
+            return "LUXURY"
         }
     }
     

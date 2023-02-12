@@ -30,6 +30,13 @@ final class WeatherTagCell: UICollectionViewCell {
         return label
     }()
     
+    private lazy var tapView: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapView)))
+        return view
+    }()
+    
     override func systemLayoutSizeFitting(
         _ targetSize: CGSize,
         withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
@@ -38,29 +45,83 @@ final class WeatherTagCell: UICollectionViewCell {
         return CGSize(width: intrinsicContentSize.width, height: intrinsicContentSize.height)
     }
     
+    override func prepareForReuse() {
+        tapView.isHidden = true
+    }
+    
+    deinit {
+        removeNotificationCenter()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpConstraintsLayout()
+        setNotificationCenter()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
     
+    private func setNotificationCenter() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(showKeyboard),
+            name: .showKeyboard,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(resignKeyboard),
+            name: .resignKeyboard,
+            object: nil
+        )
+    }
+    
+    private func removeNotificationCenter() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .showKeyboard,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .resignKeyboard,
+            object: nil
+        )
+    }
+    
     private func setUpConstraintsLayout() {
-        contentView.addSubviews(titleLabel)
+        contentView.addSubviews(titleLabel, tapView)
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            tapView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            tapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            tapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            tapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
+    }
+    
+    @objc func didTapView(_ sender: Any?) {
+        tapView.isHidden = true
+        NotificationCenter.default.post(name: .resignKeyboard, object: nil)
+    }
+    
+    @objc func showKeyboard(_ sender: Any?) {
+        tapView.isHidden = false
+    }
+    
+    @objc func resignKeyboard(_ sender: Any?) {
+        tapView.isHidden = true
     }
 }
 
 extension WeatherTagCell {
     func setUp(weahterTag: WeatherTag, isSelected: Bool) {
-        titleLabel.text = weahterTag.weatherTagString
+        titleLabel.text = weahterTag.emojiWeatherTag
         titleLabel.textColor = isSelected ? weahterTag.textColor : CommonAsset.Colors.gray06.color
         titleLabel.backgroundColor = isSelected ? weahterTag.backgroundColor : CommonAsset.Colors.gray01.color
     }
