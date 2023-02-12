@@ -144,7 +144,6 @@ private extension MainViewModel {
             }
             do {
                 let address = try await self.getAddress(longitude: longitude, latitude: latitude)
-                await self.setUpTags()
                 let styles = self._currentStyles.value
                 let gender = self._currentGender.value ?? .female
                 let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
@@ -196,18 +195,9 @@ private extension MainViewModel {
         return codyList
     }
     
-    func getGender() async -> Gender {
-        return await withCheckedContinuation { continuation in
-            userManager.isGuest
-                .map { [weak self] isGuest -> Gender in
-                    if isGuest {
-                        return .female
-                    } else {
-                        return self?.userManager.gender ?? .female
-                    }
-                }.sink(receiveValue: { gender in
-                    continuation.resume(returning: gender)
-                }).store(in: &cancellables)
+    func getTags() async -> (Gender, [StyleTag]) {
+        guard _currentGender.value == nil else {
+            return (_currentGender.value ?? .female, _currentStyles.value)
         }
     }
     
@@ -216,8 +206,17 @@ private extension MainViewModel {
             Task {
                 do {
                     let response = try await fitftyRepository.fetchMyInfo()
-                    continuation.resume(returning: response.data.style)
-                    _currentStyles.send(response.data.style)
+                    if let data = response.data {
+                        continuation.resume(returning: (data.gender, data.style))
+                        _currentStyles.send(data.style)
+                        _currentGender.send(data.gender)
+                        userManager.updateGender(data.gender)
+                        userManager.updateGuestState(false)
+                    } else {
+                        Logger.debug(error: ViewModelError.failure(
+                            errorCode: response.errorCode ?? "", message: response.message ?? ""
+                        ), message: "태그 설정 조회 실패")
+                    }
                 } catch {
                     Logger.debug(error: error, message: "태그 설정 조회 실패")
                     continuation.resume(returning: [])
@@ -250,15 +249,6 @@ private extension MainViewModel {
             sectionKind: .style,
             items: tags
         )
-    }
-    
-    func setUpTags() async {
-        if _currentGender.value == nil {
-            _currentGender.send(await getGender())
-        }
-        if _currentStyles.value.isEmpty {
-            _currentStyles.send(await getStyleTags())
-        }
     }
     
     func updateTags(_ tag: Tag) {
