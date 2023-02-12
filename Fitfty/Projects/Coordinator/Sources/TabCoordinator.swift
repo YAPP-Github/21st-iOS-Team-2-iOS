@@ -112,6 +112,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             )
             tabBarItem.imageInsets = UIEdgeInsets(top: 12, left: 40, bottom: -12, right: -40)
             coordinator.navigationController.tabBarItem = tabBarItem
+            coordinator.parentCoordinator = self
             tabBarController.addChild(coordinator.navigationController)
             
         case .createCody:
@@ -136,6 +137,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             )
             tabBarItem.imageInsets = UIEdgeInsets(top: 12, left: -40, bottom: -12, right: 40)
             coordinator.navigationController.tabBarItem = tabBarItem
+            coordinator.parentCoordinator = self
             tabBarController.addChild(coordinator.navigationController)
         }
         
@@ -151,6 +153,19 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
             return
         }
         tabBarController.selectedIndex = page.pageOrderNumber
+        switch page {
+        case .weather:
+            tabBarController.tabBar.items?[page.pageOrderNumber].image = page.selectedIconImage
+            tabBarController.tabBar.items?[TabBarPage.profile.pageOrderNumber].image = TabBarPage.profile.pageIconImage
+            
+        case .profile:
+            tabBarController.tabBar.items?[page.pageOrderNumber].image = page.selectedIconImage
+            tabBarController.tabBar.items?[TabBarPage.weather.pageOrderNumber].image = TabBarPage.weather.pageIconImage
+            
+        default:
+            return
+        }
+
     }
     
     func currentPage() -> TabBarPage? {

@@ -75,8 +75,8 @@ private extension ProfileCoordinator {
         return coordinator
     }
     
-    func makeMyFitftyCoordinator() -> MyFitftyCoordinator {
-        let coordinator = MyFitftyCoordinator(myFitftyType: .modifyMyFitfty)
+    func makeMyFitftyCoordinator(_ myFitftyType: MyFitftyType) -> MyFitftyCoordinator {
+        let coordinator = MyFitftyCoordinator(myFitftyType: myFitftyType)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -123,8 +123,8 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         navigationController.present(bottomSheetViewController, animated: false)
     }
     
-    func showModifyMyFitfty() {
-        let coordinator = makeMyFitftyCoordinator()
+    func showMyFitfty(_ myFitftyType: MyFitftyType) {
+        let coordinator = makeMyFitftyCoordinator(myFitftyType)
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
         navigationController.present(coordinator.navigationController, animated: true)
@@ -140,6 +140,13 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
     func showSetting() {
         let coordinator = makeSettingCoordinator()
         coordinator.start()
+    }
+    
+    func switchMainTab() {
+        guard let tabCoordinator = parentCoordinator as? TabCoordinator else {
+            return
+        }
+        tabCoordinator.setSelectedIndex(0)
     }
     
     func dismiss() {
@@ -167,6 +174,13 @@ extension ProfileCoordinator: CoordinatorFinishDelegate {
     
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
+        switch childCoordinator.type {
+        case .myFitfty:
+            navigationController.dismiss(animated: true) {
+                childCoordinator.navigationController.viewControllers.removeAll()
+            }
+        default: break
+        }
     }
     
 }
