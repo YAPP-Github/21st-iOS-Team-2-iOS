@@ -14,6 +14,7 @@ public enum FitftyAPI {
     case signInApple(parameters: [String: Any])
     case getMyProfile
     case codyList(parameters: [String: Any])
+    case filteredCodyList(parameters: [String: Any])
     case mySettings
 }
 
@@ -42,6 +43,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/users/profile"
         case .codyList:
             return "/styles"
+        case .filteredCodyList:
+            return "/styles/filter"
         case .mySettings:
             return "/users/details"
         }
@@ -54,7 +57,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return .post
         case .getMyProfile:
             return .get
-        case .codyList, .mySettings:
+        case .codyList, .mySettings, .filteredCodyList:
             return .get
         }
     }
@@ -65,9 +68,13 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .signInApple(let parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
             
-        case .codyList(let parameter):
+        case .codyList(let parameter),
+             .filteredCodyList(let parameter):
             let parameters = updateParameters(parameter)
-            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: parameters,
+                encoding: URLEncoding.init(destination: .queryString, arrayEncoding: .noBrackets)
+            )
             
         default:
             return .requestPlain
@@ -77,6 +84,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     public var headers: [String : String]? {
         return nil
     }
+    
 }
 
 public extension FitftyAPI {

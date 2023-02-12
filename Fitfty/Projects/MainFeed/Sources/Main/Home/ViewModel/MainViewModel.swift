@@ -18,6 +18,8 @@ protocol MainViewModelInput {
     func viewDidLoad()
     
     func refresh()
+    
+    func didTapTag(_ tag: Tag)
 }
 
 protocol MainViewModelOutput {
@@ -40,6 +42,10 @@ public final class MainViewModel {
         (nil, nil)
     )
     private var _currentAverageTemp: CurrentValueSubject<Int, Never> = .init(0)
+    private var _currentStyles: CurrentValueSubject<[StyleTag], Never> = .init([])
+    private var _currentGender: CurrentValueSubject<Gender?, Never> = .init(nil)
+    
+    private var _weathers: [MainCellModel] = []
 
     public init(
         addressRepository: AddressRepository,
@@ -103,6 +109,39 @@ extension MainViewModel: MainViewModelInput {
         }
         currentState.send(.isLoading(true))
         update(longitude: longitude, latitude: latitude)
+    }
+    
+    func didTapTag(_ tag: Tag) {
+        if tag.isGender {
+            _currentGender.send(Gender(tag.title))
+        } else {
+            var styles = _currentStyles.value
+            let style = StyleTag(tag.title) ?? .minimal
+            if let index = styles.firstIndex(of: style) {
+                styles.remove(at: index)
+            } else {
+                styles.append(style)
+            }
+            _currentStyles.send(styles)
+        }
+        Task { [weak self] in
+            guard let self = self else {
+                return
+            }
+            do {
+                let styles = self._currentStyles.value
+                let gender = self._currentGender.value
+                let codyList = try await self.getCodyList(gender: gender ?? .female, styles: styles)
+                currentState.send(.sections([
+                    MainFeedSection(sectionKind: .weather, items: self._weathers),
+                    self.configureTags(styles: styles, gender: gender ?? .female),
+                    self.configureCodyList(codyList)
+                ]))
+            } catch {
+                Logger.debug(error: error, message: "코디 목록 가져오기 실패")
+                self.currentState.send(.errorMessage("코디 목록을 업데이트 하는데 알 수 없는 에러가 발생하여 실패하였습니다."))
+            }
+        }
     }
     
 }
@@ -191,6 +230,7 @@ private extension MainViewModel {
                 do {
                     let response = try await fitftyRepository.fetchMyInfo()
                     continuation.resume(returning: response.data.style)
+                    _currentStyles.send(response.data.style)
                 } catch {
                     Logger.debug(error: error, message: "태그 설정 조회 실패")
                     continuation.resume(returning: [])
@@ -200,26 +240,29 @@ private extension MainViewModel {
     }
     
     func configureWeathers(_ weathers: [ShortTermForecast]) -> MainFeedSection {
+        let items = weathers.map { MainCellModel.weather($0)}
+        _weathers = items
         return MainFeedSection(
             sectionKind: .weather,
-            items: weathers.map { MainCellModel.weather($0)}
+            items: items
         )
     }
     
     func configureCodyList(_ list: [CodyResponse]) -> MainFeedSection {
+        let items = list.map { MainCellModel.cody($0)}
         return MainFeedSection(
             sectionKind: .cody,
-            items: list.map { MainCellModel.cody($0)}
+            items: list.map { MainCellModel.cody($0) }
         )
     }
     
     func configureTags(styles: [StyleTag], gender: Gender) -> MainFeedSection {
         let defaultData: [String] = ["filter"] + Gender.allCases.map { $0.localized} + StyleTag.allCases.map { $0.styleTagKoreanString }
         let userData: [String] = [gender.localized] + styles.map { $0.styleTagKoreanString }
-        let tags: [Tag] = defaultData.map { Tag(title: $0, isSelected: userData.contains($0)) }
+        let tags: [MainCellModel] = defaultData.map { MainCellModel.styleTag(Tag(title: $0, isSelected: userData.contains($0))) }
         return MainFeedSection(
             sectionKind: .style,
-            items: tags.map { MainCellModel.styleTag($0) }
+            items: tags
         )
     }
 }

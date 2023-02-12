@@ -22,9 +22,15 @@ public final class DefaultFitftyRepository: FitftyRepository {
     public init() {}
     
     public func fetchCodyList(weather: WeatherTag, gender: Gender?, styles: [StyleTag]?) async throws -> FitftyMainCodyListResponse {
-        let request = try CodyListRequest(weather: weather, gender: gender, style: styles).asDictionary()
+        let request: [String: Any] = try CodyListRequest(weather: weather, gender: gender, style: styles).asDictionary()
+        let target: FitftyAPI
+        if gender == nil {
+            target = .codyList(parameters: request)
+        } else {
+            target = .filteredCodyList(parameters: request)
+        }
         return try await FitftyAPI.request(
-            target: .codyList(parameters: request),
+            target: target,
             dataType: FitftyMainCodyListResponse.self
         )
     }
