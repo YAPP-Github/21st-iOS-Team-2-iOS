@@ -43,6 +43,12 @@ final public class ProfileViewController: UIViewController {
         return loadingView
     }()
     
+    private lazy var emptyView: EmptyView = {
+        let view = EmptyView()
+        view.isHidden = true
+        return view
+    }()
+    
     private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
     
     private var profileFilePath: String?
@@ -143,11 +149,15 @@ final public class ProfileViewController: UIViewController {
     }
     
     @objc func didTapMyFitftyMenu(_ sender: Any?) {
+        collectionView.isScrollEnabled = true
+        emptyView.isHidden = true
         menuType = .myFitfty
         viewModel.input.didTapMenu(.myFitfty)
     }
     
     @objc func didTapBookmarkMenu(_ sender: Any?) {
+        collectionView.isScrollEnabled = true
+        emptyView.isHidden = true
         menuType = .bookmark
         viewModel.input.didTapMenu(.bookmark)
     }
@@ -157,7 +167,7 @@ final public class ProfileViewController: UIViewController {
 private extension ProfileViewController {
     
     func setUpConstraintLayout() {
-        view.addSubviews(collectionView, miniProfileView, seperatorView, loadingIndicatorView)
+        view.addSubviews(collectionView, miniProfileView, seperatorView, loadingIndicatorView, emptyView)
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -177,7 +187,13 @@ private extension ProfileViewController {
             loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
             loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
             loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            
+            emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyView.topAnchor.constraint(equalTo: view.topAnchor, constant: presentType.headerHeight+160),
+            emptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 86),
+            emptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -86),
+            emptyView.heightAnchor.constraint(equalToConstant: 92)
         ])
     }
     
@@ -300,6 +316,12 @@ private extension ProfileViewController {
         }
         snapshot.reloadSections([.feed])
         dataSource?.apply(snapshot, animatingDifferences: true)
+        guard sections.first?.items.count == 0 else {
+            return
+        }
+        collectionView.isScrollEnabled = false
+        emptyView.isHidden = false
+        emptyView.setUp(menuType)
     }
     
     func postLayout() -> UICollectionViewLayout {
