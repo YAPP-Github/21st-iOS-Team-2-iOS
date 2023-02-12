@@ -333,8 +333,6 @@ private extension MyFitftyViewModel {
             }
             do {
                 let response = try await postMyFitfty(request)
-                print(try request.asDictionary())
-                print(response)
                 if response.result == "SUCCESS" {
                     self.currentState.send(.completed(true))
                 } else {
@@ -351,7 +349,6 @@ private extension MyFitftyViewModel {
     
     func getDailyWeather(date: Date, longitude: Double, latitude: Double) async throws -> DailyWeather {
         currentState.send(.isLoading(true))
-        print(longitude.description, latitude.description)
         let dailyWeather = try await self.weatherRepository.fetchDailyWeather(
             for: date,
             longitude: longitude.description,
@@ -370,8 +367,6 @@ private extension MyFitftyViewModel {
     }
     
     func postMyFitfty(_ request: MyFitftyRequest) async throws -> MyFitftyResponse {
-        print(request)
-        print(try request.asDictionary())
         let response = try await FitftyAPI.request(
             target: .postMyFitfty(parameters: request.asDictionary()),
             dataType: MyFitftyResponse.self
