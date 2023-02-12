@@ -14,6 +14,7 @@ public enum FitftyAPI {
     case signInApple(parameters: [String: Any])
     case getUserPrivacy
     case getMyProfile
+    case postMyFitfty(parameters: [String: Any])
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -41,13 +42,16 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/users/privacy"
         case .getMyProfile:
             return "/users/profile"
+        case .postMyFitfty:
+            return "/boards/new"
         }
     }
     
     public var method: Moya.Method {
         switch self {
         case .signInKakao,
-             .signInApple:
+             .signInApple,
+             .postMyFitfty:
             return .post
         case .getUserPrivacy,
              .getMyProfile:
@@ -58,7 +62,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     public var task: Moya.Task {
         switch self {
         case .signInKakao(let parameters),
-             .signInApple(let parameters):
+             .signInApple(let parameters),
+             .postMyFitfty(let parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         default:
             return .requestPlain
