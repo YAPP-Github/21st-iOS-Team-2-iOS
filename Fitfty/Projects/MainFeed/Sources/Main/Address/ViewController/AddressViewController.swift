@@ -19,8 +19,7 @@ public final class AddressViewController: UIViewController {
     private let viewModel: AddressViewModel
     
     public override func viewDidLoad() {
-        super.viewDidLoad() .
-        
+        super.viewDidLoad()
         setUp()
         bind()
     }
