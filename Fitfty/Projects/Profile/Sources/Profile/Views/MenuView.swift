@@ -82,3 +82,24 @@ final class MenuView: UIView {
         menuState = .bookmark
     }
 }
+
+extension MenuView {
+    
+    func setMyFitftyButtonTarget(_ target: Any?, action: Selector) {
+        myFitftyIconButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+    func setBookmarkButtonTarget(_ target: Any?, action: Selector) {
+        bookmarkIconButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+    func setMenuState(_ menuType: MenuType) {
+        switch menuType {
+        case .myFitfty:
+            menuState = .myFitfty
+        case .bookmark:
+            menuState = .bookmark
+        }
+    }
+    
+}

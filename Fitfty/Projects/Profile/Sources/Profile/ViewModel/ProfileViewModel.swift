@@ -14,7 +14,9 @@ import Core
 protocol ProfileViewModelInput {
     
     var input: ProfileViewModelInput { get }
-    func viewDidLoad(_ profileType: ProfileType)
+    func viewDidLoad(_ profileType: ProfileType, _ menuType: MenuType)
+    func didTapMenu(_ menuType: MenuType)
+    
 }
 
 
@@ -30,8 +32,17 @@ public final class ProfileViewModel {
 extension ProfileViewModel: ProfileViewModelInput {
     var input: ProfileViewModelInput { self }
     
-    func viewDidLoad(_ profileType: ProfileType) {
-        update(profileType: profileType)
+    func viewDidLoad(_ profileType: ProfileType, _ menuType: MenuType) {
+        update(profileType: profileType, menuType: menuType)
+    }
+    
+    func didTapMenu(_ menuType: MenuType) {
+        switch menuType {
+        case .myFitfty:
+            update(profileType: .myProfile, menuType: .myFitfty)
+        case .bookmark:
+            update(profileType: .myProfile, menuType: .bookmark)
+        }
     }
         
 }
@@ -51,7 +62,7 @@ extension ProfileViewModel: ViewModelType {
 
 extension ProfileViewModel {
     
-    func update(profileType: ProfileType) {
+    func update(profileType: ProfileType, menuType: MenuType) {
         Task { [weak self] in
             guard let self = self else {
                 return
@@ -70,15 +81,24 @@ extension ProfileViewModel {
                     guard let data = response.data else {
                         return
                     }
-                    
                     var profileCellModels: [ProfileCellModel] = []
-                    for cody in data.codiList {
-                        profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
-                    }
                     
-                    self.currentState.send(.sections([
-                        ProfileSection(sectionKind: .feed, items: profileCellModels)
-                    ]))
+                    switch menuType {
+                    case .myFitfty:
+                        for cody in data.codiList {
+                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
+                        }
+                        self.currentState.send(.sections([
+                            ProfileSection(sectionKind: .feed, items: profileCellModels)
+                        ]))
+                    case .bookmark:
+                        for cody in data.bookmarkList {
+                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
+                        }
+                        self.currentState.send(.sections([
+                            ProfileSection(sectionKind: .feed, items: profileCellModels)
+                        ]))
+                    }
                     
                 case .userProfile:
                     self.currentState.send(.isLoading(false))

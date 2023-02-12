@@ -48,6 +48,7 @@ final public class ProfileViewController: UIViewController {
     private var profileFilePath: String?
     private var nickname: String?
     private var myMessage: String?
+    private var menuType: MenuType = .myFitfty
     
     private var headerViewElementKind: String {
         switch presentType {
@@ -62,7 +63,7 @@ final public class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
-        viewModel.input.viewDidLoad(profileType)
+        viewModel.input.viewDidLoad(profileType, menuType)
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -139,6 +140,16 @@ final public class ProfileViewController: UIViewController {
     
     @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {
         coordinator.finished()
+    }
+    
+    @objc func didTapMyFitftyMenu(_ sender: Any?) {
+        menuType = .myFitfty
+        viewModel.input.didTapMenu(.myFitfty)
+    }
+    
+    @objc func didTapBookmarkMenu(_ sender: Any?) {
+        menuType = .bookmark
+        viewModel.input.didTapMenu(.bookmark)
     }
     
 }
@@ -269,7 +280,9 @@ private extension ProfileViewController {
                         filepath: self?.profileFilePath
                     )
                 }
-                
+                supplementaryView.menuView.setMyFitftyButtonTarget(self, action: #selector(self?.didTapMyFitftyMenu))
+                supplementaryView.menuView.setBookmarkButtonTarget(self, action: #selector(self?.didTapBookmarkMenu))
+                supplementaryView.menuView.setMenuState(self?.menuType ?? .myFitfty)
                 supplementaryView.setButtonTarget(target: self, action: #selector(self?.didTapSettingButton(_:)))
                 return supplementaryView
                 
