@@ -72,7 +72,7 @@ extension AlbumViewModel: AlbumViewModelInput {
             return
         }
         currentState.send(.completed(true))
-        currentState.send(.sendImage)
+        selectImage()
     }
     
     func didTapImage(index: Int) {
@@ -95,24 +95,17 @@ extension AlbumViewModel: AlbumViewModelOutput {
             size: .init(width: 3200, height: 3200),
             contentMode: .aspectFill
         ) {  image in
-            var dateToString: String?
-            if let date = phAsset.creationDate {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = DateFormat.yyMMddDot.rawValue
-                dateToString = dateFormatter.string(from: date)
-            }
-            
-            var latitude: String?; var longitude: String?
+            var latitude: Double?; var longitude: Double?
             if let location = phAsset.location {
-                latitude = String(location.coordinate.latitude)
-                longitude = String(location.coordinate.longitude)
+                latitude = location.coordinate.latitude
+                longitude = location.coordinate.longitude
             }
             
             let phAssetInfo = PHAssetInfo(
                 image: image,
                 latitude: latitude,
                 longitude: longitude,
-                date: dateToString
+                date: phAsset.creationDate
             )
             NotificationCenter.default.post(name: .selectPhAsset, object: phAssetInfo)
         }
@@ -128,7 +121,6 @@ extension AlbumViewModel: ViewModelType {
         case sections([AlbumSection])
         case reloadAlbum(String)
         case completed(Bool)
-        case sendImage
     }
     
 }

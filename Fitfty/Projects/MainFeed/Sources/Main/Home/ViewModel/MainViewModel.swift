@@ -122,7 +122,7 @@ private extension MainViewModel {
                         try await self.getWeathers(longitude: longitude, latitude: latitude)
                     ),
                     MainFeedSection(
-                        sectionKind: .style, items: Array(0...6).map { _ in MainCellModel.styleTag(UUID()) }
+                        sectionKind: .style, items: Array(0...8).map { _ in MainCellModel.styleTag(UUID()) }
                     ),
                     MainFeedSection(
                         sectionKind: .cody, items: Array(0...10).map { _ in MainCellModel.cody(UUID()) }

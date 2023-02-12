@@ -16,6 +16,11 @@ let project = Project.makeModule(
         .Project.MainFeed,
         .Project.Onboarding,
         .Project.Profile,
-        .Project.Setting
+        .Project.Setting,
+        .package(product: "Amplify"),
+        .package(product: "AWSCognitoAuthPlugin"),
+        .package(product: "AWSS3StoragePlugin"),
+        .package(product: "AWSAPIPlugin"),
+        .package(product: "AWSDataStorePlugin")
     ]
 )

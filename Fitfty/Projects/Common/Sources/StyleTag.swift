@@ -20,7 +20,7 @@ public enum StyleTag {
         case .minimal:
             return "미니멀"
         case .modern:
-            return "포멀"
+            return "모던"
         case .casual:
             return "캐주얼"
         case .street:
@@ -37,19 +37,19 @@ public enum StyleTag {
     public var styleTagEnglishString: String {
         switch self {
         case .minimal:
-            return "minimal"
+            return "MINIMAL"
         case .modern:
-            return "modern"
+            return "MODERN"
         case .casual:
-            return "casual"
+            return "CASUAL"
         case .street:
-            return "street"
+            return "STREET"
         case .lovely:
-            return "lovely"
+            return "LOVELY"
         case .hip:
-            return "hip"
+            return "HIP"
         case .luxury:
-            return "luxury"
+            return "LUXURY"
         }
     }
 }
