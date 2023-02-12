@@ -16,6 +16,8 @@ public enum FitftyAPI {
     case codyList(parameters: [String: Any])
     case filteredCodyList(parameters: [String: Any])
     case mySettings
+    case addBookmark(boardToken: String)
+    case deleteBookmark(boardToken: String)
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -47,18 +49,27 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/styles/filter"
         case .mySettings:
             return "/users/details"
+        case .addBookmark(let boardToken),
+             .deleteBookmark(let boardToken):
+            return "/boards/bookmark/\(boardToken.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
         }
     }
     
     public var method: Moya.Method {
         switch self {
         case .signInKakao,
-             .signInApple:
+             .signInApple,
+             .addBookmark:
             return .post
-        case .getMyProfile:
+            
+        case .getMyProfile,
+             .codyList,
+             .mySettings,
+             .filteredCodyList:
             return .get
-        case .codyList, .mySettings, .filteredCodyList:
-            return .get
+            
+        case .deleteBookmark:
+            return .delete
         }
     }
     
