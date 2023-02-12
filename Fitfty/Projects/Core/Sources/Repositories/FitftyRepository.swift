@@ -11,7 +11,7 @@ import Common
 
 public protocol FitftyRepository {
     
-    func fetchCodyList(weather: WeatherTag) async throws -> FitftyMainCodyListResponse
+    func fetchCodyList(weather: WeatherTag, gender: Gender?, styles: [StyleTag]?) async throws -> FitftyMainCodyListResponse
     
     func fetchMyInfo() async throws -> FitftyMyTagsResponse
     
@@ -21,8 +21,8 @@ public final class DefaultFitftyRepository: FitftyRepository {
     
     public init() {}
     
-    public func fetchCodyList(weather: WeatherTag) async throws -> FitftyMainCodyListResponse {
-        let request = try CodyListRequest(weather: weather).asDictionary()
+    public func fetchCodyList(weather: WeatherTag, gender: Gender?, styles: [StyleTag]?) async throws -> FitftyMainCodyListResponse {
+        let request = try CodyListRequest(weather: weather, gender: gender, style: styles).asDictionary()
         return try await FitftyAPI.request(
             target: .codyList(parameters: request),
             dataType: FitftyMainCodyListResponse.self

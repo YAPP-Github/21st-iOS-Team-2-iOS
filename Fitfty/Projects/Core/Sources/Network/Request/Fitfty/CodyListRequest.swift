@@ -11,4 +11,6 @@ import Common
 
 struct CodyListRequest: Codable {
     let weather: WeatherTag
+    var gender: Gender?
+    var style: [StyleTag]?
 }

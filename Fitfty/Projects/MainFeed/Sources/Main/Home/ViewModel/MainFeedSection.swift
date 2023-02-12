@@ -34,7 +34,7 @@ enum MainSectionKind {
 enum MainCellModel: Hashable {
     
     case weather(ShortTermForecast)
-    case styleTag(UUID)
+    case styleTag(Tag)
     case cody(CodyResponse)
     
     func hash(into hasher: inout Hasher) {
@@ -42,8 +42,8 @@ enum MainCellModel: Hashable {
         case .weather(let shortTermForecast):
             hasher.combine(shortTermForecast)
             
-        case .styleTag(let uuid):
-            hasher.combine(uuid)
+        case .styleTag(let tag):
+            hasher.combine(tag)
             
         case .cody(let cody):
             hasher.combine(cody)
@@ -63,6 +63,8 @@ extension MainCellModel: Equatable {
         case (.cody(let lhs), .cody(let rhs)):
             return lhs == rhs
             
+        case (.styleTag(let lhs), .styleTag(let rhs)):
+            return lhs == rhs
         default: return false
         }
     }

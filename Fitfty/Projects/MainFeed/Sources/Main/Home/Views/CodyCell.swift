@@ -8,6 +8,8 @@
 
 import UIKit
 import Common
+import Core
+import Kingfisher
 
 final class CodyCell: UICollectionViewCell {
     
@@ -119,8 +121,12 @@ final class CodyCell: UICollectionViewCell {
 
 extension CodyCell {
     
-    func setUp() {
-        
+    func setUp(cody: CodyResponse) {
+        if let url = URL(string: cody.filePath) {
+            codyImageView.kf.setImage(with: url)
+        }
+        viewsCountLabel.text = cody.views.description
+        nameLabel.text = cody.nickname
     }
     
 }
@@ -128,6 +134,7 @@ extension CodyCell {
 private extension CodyCell {
     
     func reset() {
+        codyImageView.kf.cancelDownloadTask()
         codyImageView.image = nil
         viewsCountLabel.text = nil
         nameLabel.text = nil
