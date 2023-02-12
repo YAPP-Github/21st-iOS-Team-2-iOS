@@ -12,8 +12,6 @@ import Kingfisher
 
 final class PostView: UIView {
     
-    private var isBookmark: Bool = true
-    
     private lazy var postImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -40,7 +38,6 @@ final class PostView: UIView {
         button.tintColor = .white
         button.setImage(CommonAsset.Images.bookmarkFill.image, for: .normal)
         button.setPreferredSymbolConfiguration(.init(scale: .large), forImageIn: .normal)
-        button.addTarget(self, action: #selector(didTapBookmarkButton), for: .touchUpInside)
         return button
     }()
     
@@ -95,22 +92,23 @@ final class PostView: UIView {
             bookmarkButton.centerYAnchor.constraint(equalTo: bookmarkView.centerYAnchor)
         ])
     }
-    
-    @objc func didTapBookmarkButton(_ sender: UIButton) {
-        isBookmark = !isBookmark
-        bookmarkButton.setImage(
-            isBookmark ? CommonAsset.Images.bookmarkFill.image : CommonAsset.Images.bookmark.image, for: .normal
-        )
-    }
+
 }
 
 extension PostView {
-    func setUp(content: String, hits: String, bookmark: String, date: String, weather: WeatherTag, filepath: String) {
+    func setUp(content: String, hits: String, bookmark: String, date: String, weather: WeatherTag, filepath: String, isBookmarked: Bool) {
         contentLabel.text = content
         dateLabel.text = date
         postInfoView.setUp(hits: hits, bookmark: bookmark, weatherTag: weather)
         if let url = URL(string: filepath) {
             postImageView.kf.setImage(with: url)
         }
+        bookmarkButton.setImage(
+            isBookmarked ? CommonAsset.Images.bookmarkFill.image : CommonAsset.Images.bookmark.image, for: .normal
+        )
+    }
+    
+    func setBookmarkButtonAction(_ tareget: Any?, action: Selector) {
+        bookmarkButton.addTarget(tareget, action: action, for: .touchUpInside)
     }
 }
