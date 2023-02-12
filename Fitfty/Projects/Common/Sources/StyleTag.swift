@@ -85,6 +85,5 @@ public extension StyleTag {
             return nil
         }
     
-        
     }
 }
