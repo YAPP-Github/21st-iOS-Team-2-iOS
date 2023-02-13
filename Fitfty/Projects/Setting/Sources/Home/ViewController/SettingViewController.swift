@@ -146,12 +146,16 @@ extension SettingViewController: UICollectionViewDelegate {
         switch item {
         case .profile:
             coordinator?.showProfileSetting()
+            
         case .myInfo:
             coordinator?.showMyInfoSetting()
+            
         case .termsOfUse:
-            break
+            coordinator?.showTermsOfUse()
+            
         case .privacyRule:
-            break
+            coordinator?.showPrivacyRule()
+            
         default: break
         }
     }
