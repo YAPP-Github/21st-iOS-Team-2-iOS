@@ -24,6 +24,7 @@ identifier_name:
         - pm
         - tm
         - etc
+        - to
 function_body_length:
     - 150 # warning
     - 300 # error

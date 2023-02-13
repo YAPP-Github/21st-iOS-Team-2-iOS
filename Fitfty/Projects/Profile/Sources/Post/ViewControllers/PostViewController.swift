@@ -120,7 +120,7 @@ final public class PostViewController: UIViewController {
             content: data.content,
             hits: String(data.views).insertComma,
             bookmark: String(data.bookmarkCnt).insertComma,
-            date: data.photoTakenTime ?? "",
+            date: data.createdAt.yymmddFromCreatedDate,
             weather: data.tagGroupInfo.weather.stringToWeatherTag ?? .coldWaveWeather,
             filepath: data.filePath,
             isBookmarked: data.bookmarked
