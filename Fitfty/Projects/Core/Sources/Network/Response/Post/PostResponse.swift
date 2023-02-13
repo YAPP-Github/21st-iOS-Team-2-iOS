@@ -25,7 +25,8 @@ public struct PostData: Codable {
     public let tagGroupInfo: TagGroup
     public let location: String?
     public let temperature: Int?
-    public let cloudType, photoTakenTime: String?
+    public let cloudType: String?
+    public let createdAt: String
     public let views, bookmarkCnt: Int
     public let bookmarked: Bool
 
