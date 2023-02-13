@@ -7,8 +7,10 @@
 //
 
 import UIKit
-import Common
+
 import Setting
+import Common
+import Core
 
 final class PersonalInfoCoordinator: Coordinator {
     
@@ -32,7 +34,12 @@ final class PersonalInfoCoordinator: Coordinator {
 private extension PersonalInfoCoordinator {
     
     func makePersonalInfoViewController() -> UIViewController {
-        let viewController = PersonalInfoViewController(coordinator: self, viewModel: PersonalInfoViewModel())
+        let viewController = PersonalInfoViewController(
+            coordinator: self,
+            viewModel: PersonalInfoViewModel(
+                repository: DefaultSettingRepository()
+            )
+        )
         return viewController
     }
     
