@@ -119,7 +119,7 @@ private extension PersonalInfoViewController {
                     self?.coordinator?.showAuthView()
                     
                 case .pushWithdrawAccountView:
-                    break
+                    self?.coordinator?.pushWithdrawView()
                     
                 case .popView:
                     self?.coordinator?.finished()
