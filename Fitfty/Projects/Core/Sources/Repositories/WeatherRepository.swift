@@ -21,6 +21,8 @@ public protocol WeatherRepository {
     func fetchCurrentWeather(longitude: String, latitude: String) async throws -> CurrentWeather
     
     func fetchWeatherNow(longitude: String, latitude: String) async throws -> WeatherNow
+    
+    func getTodayAverageTemp(longitude: String, latitude: String) async throws -> Int
 
 }
 
@@ -99,6 +101,12 @@ public final class DefaultWeatherRepository: WeatherRepository {
             forecast: currentShortTermForecast.forecast,
             date: currentShortTermForecast.date
         )
+    }
+    
+    public func getTodayAverageTemp(longitude: String, latitude: String) async throws -> Int {
+        try await pastShortTermForecast(longitude: longitude, latitude: latitude)
+        let data = _pastShortTermForecast
+        return transferService.averageTemp(data, date: Date())
     }
     
 }

@@ -112,16 +112,16 @@ final public class PostViewController: UIViewController {
     }
     
     private func update(_ response: PostResponse) {
-        guard let data = response.data else {
+        guard let data = response.data,
+              let weather = data.tagGroupInfo.weather.stringToWeatherTag else {
             return
         }
-        // TODO: 날짜 YY/MM/DD 변환 작업 해야 함
         postView.setUp(
             content: data.content,
             hits: String(data.views).insertComma,
             bookmark: String(data.bookmarkCnt).insertComma,
             date: data.createdAt.yymmddFromCreatedDate,
-            weather: data.tagGroupInfo.weather.stringToWeatherTag ?? .coldWaveWeather,
+            weather: weather,
             filepath: data.filePath,
             isBookmarked: data.bookmarked
         )
