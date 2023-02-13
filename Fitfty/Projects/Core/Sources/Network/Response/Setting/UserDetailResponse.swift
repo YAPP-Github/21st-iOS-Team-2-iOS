@@ -8,14 +8,14 @@
 
 import Foundation
 
-public struct SettingUserDetailResponse: Codable {
+public struct SettingUserProfileResponse: Codable {
     public let result: String
-    public let data: SettingUserDetailData?
+    public let data: SettingUserProfileData?
     public let message: String?
     public let errorCode: String?
 }
 
-public struct SettingUserDetailData: Codable {
+public struct SettingUserProfileData: Codable {
     public let message: String?
     public let profilePictureUrl: String?
 }
