@@ -7,16 +7,20 @@
 //
 
 import UIKit
+import Combine
 import Common
 
 public class WelcomeViewController: UIViewController {
 
     private weak var coordinator: WelcomeCoordinatorInterface?
     private var viewModel: WelcomeViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
+        bind()
+        viewModel.input.viewDidLoad()
     }
     
     public init(coordinator: WelcomeCoordinatorInterface, viewModel: WelcomeViewModel) {
@@ -84,6 +88,16 @@ public class WelcomeViewController: UIViewController {
 
 private extension WelcomeViewController {
     
+    func bind() {
+        viewModel.state
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .nickName(let name):
+                    self?.welcomeLabel.text = "\(name)님 안녕하세요?\n핏프티에 오신걸 환영해요."
+                }
+            }).store(in: &cancellables)
+    }
+    
     func setUp() {
         setUpBackgroundView()
         setUpLayout()
@@ -118,6 +132,7 @@ private extension WelcomeViewController {
     }
     
     @objc func didTapStartButton(_ sender: FitftyButton) {
+        viewModel.input.didTapStart()
         coordinator?.dismiss()
     }
 }

@@ -15,6 +15,7 @@ public enum LocalKey: String {
     case gender
     case userIdentifier
     case userAccount
+    case hasCompletedWelcomePage
 }
 
 public protocol LocalStorageService: AnyObject {

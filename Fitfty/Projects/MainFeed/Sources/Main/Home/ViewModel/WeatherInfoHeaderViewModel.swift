@@ -38,21 +38,11 @@ extension WeatherInfoHeaderViewModel: WeatherInfoHeaderViewModelInput {
     var input: WeatherInfoHeaderViewModelInput { self }
     
     func fetch() {
-        currentState.send(.isLoading(true))
         userManager.location
             .compactMap { $0 }
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
                 self?.getCurrentWeather(longitude: longitude, latitude: latitude)
             }).store(in: &cancellables)
-        
-        currentState.sink(receiveValue: { [weak self] state in
-            switch state {
-            case .currentWeather:
-                self?.currentState.send(.isLoading(false))
-                
-            default: return
-            }
-        }).store(in: &cancellables)
     }
 }
 
@@ -63,7 +53,6 @@ extension WeatherInfoHeaderViewModel: ViewModelType {
     
     enum ViewModelState {
         case currentWeather(CurrentWeather)
-        case isLoading(Bool)
     }
 }
 

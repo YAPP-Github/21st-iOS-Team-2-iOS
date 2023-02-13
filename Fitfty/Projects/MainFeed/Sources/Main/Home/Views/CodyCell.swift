@@ -7,11 +7,15 @@
 //
 
 import UIKit
+import Combine
 import Common
+import Core
+import Kingfisher
 
 final class CodyCell: UICollectionViewCell {
     
-    private var isBookmark: Bool = false
+    private var viewModel: CodyCellViewModel?
+    private var cancellables: Set<AnyCancellable> = .init()
     
     override var intrinsicContentSize: CGSize {
         return CGSize(width: 256, height: 256)
@@ -67,6 +71,7 @@ final class CodyCell: UICollectionViewCell {
     
     private lazy var codyImageView: UIImageView = {
         let image = UIImageView()
+        image.contentMode = .scaleAspectFill
         image.layer.cornerRadius = 15
         image.clipsToBounds = true
         image.image = CommonAsset.Images.sample.image
@@ -119,8 +124,31 @@ final class CodyCell: UICollectionViewCell {
 
 extension CodyCell {
     
-    func setUp() {
-        
+    func setUp(cody: CodyResponse) {
+        viewModel = .init(fitftyRepository: DefaultFitftyRepository(), cody: cody)
+        bind()
+        viewModel?.input.fetch()
+    }
+    
+    func bind() {
+        viewModel?.state.sinkOnMainThread(receiveValue: { [weak self] state in
+            switch state {
+            case .cody(let cody):
+                if let url = URL(string: cody.filePath) {
+                    self?.codyImageView.kf.setImage(with: url)
+                }
+                self?.viewsCountLabel.text = cody.views.description
+                self?.nameLabel.text = cody.nickname
+                self?.bookmarkButton.setImage(
+                    cody.bookmarked ? CommonAsset.Images.bookmarkFill.image : CommonAsset.Images.bookmark.image, for: .normal
+                )
+                
+            case .bookmarkState(let isBookmark):
+                self?.bookmarkButton.setImage(
+                    isBookmark ? CommonAsset.Images.bookmarkFill.image : CommonAsset.Images.bookmark.image, for: .normal
+                )
+            }
+        }).store(in: &cancellables)
     }
     
 }
@@ -128,6 +156,7 @@ extension CodyCell {
 private extension CodyCell {
     
     func reset() {
+        codyImageView.kf.cancelDownloadTask()
         codyImageView.image = nil
         viewsCountLabel.text = nil
         nameLabel.text = nil
@@ -150,9 +179,6 @@ private extension CodyCell {
     }
     
     @objc func didTapBookmarkButton(_ sender: UIButton) {
-        isBookmark = !isBookmark
-        bookmarkButton.setImage(
-            isBookmark ? CommonAsset.Images.bookmarkFill.image : CommonAsset.Images.bookmark.image, for: .normal
-        )
+        viewModel?.input.didTapBookmark()
     }
 }

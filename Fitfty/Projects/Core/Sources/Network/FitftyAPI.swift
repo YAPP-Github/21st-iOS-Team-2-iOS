@@ -17,6 +17,11 @@ public enum FitftyAPI {
     case checkNickname(query: String)
     case setUserDetails(parameters: [String: Any])
     case postMyFitfty(parameters: [String: Any])
+    case codyList(parameters: [String: Any])
+    case filteredCodyList(parameters: [String: Any])
+    case mySettings
+    case addBookmark(boardToken: String)
+    case deleteBookmark(boardToken: String)
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -50,6 +55,15 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/users/details"
         case .postMyFitfty:
             return "/boards/new"
+        case .codyList:
+            return "/styles"
+        case .filteredCodyList:
+            return "/styles/filter"
+        case .mySettings:
+            return "/users/details"
+        case .addBookmark(let boardToken),
+             .deleteBookmark(let boardToken):
+            return "/boards/bookmark/\(boardToken.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
         }
     }
     
@@ -57,24 +71,41 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         switch self {
         case .signInKakao,
              .signInApple,
-             .postMyFitfty:
+             .postMyFitfty,
+             .addBookmark:
             return .post
+            
         case .getMyProfile,
              .getUserPrivacy,
-             .checkNickname:
+             .checkNickname,
+             .codyList,
+             .mySettings,
+             .getMyProfile,
+             .filteredCodyList:
             return .get
+            
         case .setUserDetails:
             return .put
+            
+        case .deleteBookmark:
+            return .delete
         }
     }
     
     public var task: Moya.Task {
         switch self {
-        case .signInKakao(let parameters),
-             .signInApple(let parameters),
-             .setUserDetails(let parameters),
-             .postMyFitfty(let parameters):
-            return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
+        case .signInKakao(let parameter),
+             .signInApple(let parameter),
+             .setUserDetails(let parameter),
+             .postMyFitfty(let parameter),
+             .codyList(let parameter),
+             .filteredCodyList(let parameter):
+            let parameters = updateParameters(parameter)
+            return .requestParameters(
+                parameters: parameters,
+                encoding: URLEncoding.init(destination: .queryString, arrayEncoding: .noBrackets)
+            )
+            
         default:
             return .requestPlain
         }
@@ -83,6 +114,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     public var headers: [String : String]? {
         return nil
     }
+    
 }
 
 public extension FitftyAPI {
@@ -132,5 +164,21 @@ public extension FitftyAPI {
             return token
         }
         return AccessTokenPlugin(tokenClosure: tokenClosure)
+    }
+}
+
+private extension FitftyAPI {
+    func updateParameters(_ parameter: [String: Any]) -> [String: Any] {
+        return parameter
+    }
+}
+
+public enum FitftyAPIError: LocalizedError {
+    case notFound(String?)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .notFound(let message): return message
+        }
     }
 }

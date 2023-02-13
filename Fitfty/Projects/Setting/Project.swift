@@ -14,6 +14,7 @@ let project = Project.makeModule(
     dependencies: [
         .Project.Common,
         .Project.Core,
-        .SPM.Moya
+        .SPM.Moya,
+        .SPM.Kingfisher
     ]
 )
