@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Common
 
 final public class FeedSettingCell: UICollectionViewCell {
     

@@ -12,10 +12,17 @@ import Combine
 public protocol UserManager {
     var isNewUser: Bool { get }
     var currentLocation: Address? { get }
+    var hasCompletedWelcomePage: Bool { get }
+    
     var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { get }
+    var gender: Gender? { get }
+    var isGuest: AnyPublisher<Bool, Never> { get }
     
     func updateUserState(_ state: Bool)
     func updateCurrentLocation(_ address: Address)
+    func updateGender(_ gender: Gender)
+    func updateGuestState(_ isGuest: Bool)
+    func updateCompletedWelcomePage()
 }
 
 public final class DefaultUserManager {
@@ -25,6 +32,8 @@ public final class DefaultUserManager {
     private let localStorage: LocalStorageService
     
     private var _location: CurrentValueSubject<(longitude: Double, latitude: Double)?, Never> = .init(nil)
+    private var _gender: Gender?
+    private var _guestState: CurrentValueSubject<Bool, Never> = .init(true)
     
     private var cancellables: Set<AnyCancellable> = .init()
     
@@ -45,7 +54,13 @@ extension DefaultUserManager: UserManager {
         return Address(address)
     }
     
+    public var hasCompletedWelcomePage: Bool {
+        localStorage.read(key: .hasCompletedWelcomePage) as? Bool ?? false
+    }
+    
     public var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { _location.eraseToAnyPublisher() }
+    public var gender: Gender? { _gender }
+    public var isGuest: AnyPublisher<Bool, Never> { _guestState.eraseToAnyPublisher() }
     
     public func updateUserState(_ state: Bool) {
         localStorage.write(key: .isNewUser, value: state)
@@ -59,6 +74,18 @@ extension DefaultUserManager: UserManager {
         _location.send(
             (Double(address.x) ?? 126.977829174031, Double(address.y) ?? 37.5663174209601)
         )
+    }
+    
+    public func updateGender(_ gender: Gender) {
+        _gender = gender
+    }
+    
+    public func updateGuestState(_ isGuest: Bool) {
+        _guestState.send(isGuest)
+    }
+    
+    public func updateCompletedWelcomePage() {
+        localStorage.write(key: .hasCompletedWelcomePage, value: true)
     }
     
 }
