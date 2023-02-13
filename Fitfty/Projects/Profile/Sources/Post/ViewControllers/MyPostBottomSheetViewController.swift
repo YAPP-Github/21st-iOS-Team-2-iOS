@@ -18,6 +18,7 @@ final public class MyPostBottomSheetViewController: UIViewController {
     
     private let myPostBottomSheetView = MyPostBottomSheetView()
     private var boardToken: String
+    private var filepath: String
     
     private lazy var loadingIndicatorView: LoadingView = {
         let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
@@ -38,11 +39,13 @@ final public class MyPostBottomSheetViewController: UIViewController {
     public init(
         coordinator: PostCoordinatorInterface,
         viewModel: PostBottomSheetViewModel,
-        boardToken: String
+        boardToken: String,
+        filepath: String
     ) {
         self.coordinator = coordinator
         self.viewModel = viewModel
         self.boardToken = boardToken
+        self.filepath = filepath
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -65,7 +68,7 @@ final public class MyPostBottomSheetViewController: UIViewController {
         let alert = UIAlertController(title: "게시글을 정말 삭제하시겠어요?", message: "게시글은 수정도 가능해요.\n삭제한 게시물은 복구가 불가능해요.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "돌아가기", style: .default))
         alert.addAction(UIAlertAction(title: "삭제하기", style: .default, handler: { _ in
-            self.viewModel.input.didTapDeleteButton(boardToken: self.boardToken)
+            self.viewModel.input.didTapDeleteButton(boardToken: self.boardToken, filepath: self.filepath)
         }))
         present(alert, animated: true)
     }

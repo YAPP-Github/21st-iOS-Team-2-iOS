@@ -14,7 +14,7 @@ import Core
 protocol PostBottomSheetViewModelInput {
     
     var input: PostBottomSheetViewModelInput { get }
-    func didTapDeleteButton(boardToken: String)
+    func didTapDeleteButton(boardToken: String, filepath: String)
 }
 
 public final class PostBottomSheetViewModel {
@@ -24,20 +24,31 @@ public final class PostBottomSheetViewModel {
     
     public init() { }
     
+    private func filenameFromFilepath(_ filepath: String) -> String? {
+        let splitSlash = filepath.components(separatedBy: "/")
+        print(splitSlash.last)
+        return splitSlash.last
+    }
+    
 }
 
 extension PostBottomSheetViewModel: PostBottomSheetViewModelInput {
     var input: PostBottomSheetViewModelInput { self }
     
-    func didTapDeleteButton(boardToken: String) {
+    func didTapDeleteButton(boardToken: String, filepath: String) {
         Task { [weak self] in
             guard let self = self else {
                 return
             }
             do {
+                print(filepath)
+                guard let filename = self.filenameFromFilepath(filepath) else {
+                    return
+                }
                 self.currentState.send(.isLoading(true))
                 let response = try await deletePost(boardToken: boardToken)
                 if response.result == "SUCCESS" {
+                    try await AmplifyManager.shared.delete(fileName: filename)
                     self.currentState.send(.completed(true))
                 } else {
                     self.currentState.send(.errorMessage("게시글 삭제에 알 수 없는 에러가 발생했습니다."))

@@ -18,6 +18,7 @@ final public class PostViewController: UIViewController {
     private var cancellables: Set<AnyCancellable> = .init()
     private var viewModel: PostViewModel
     private var boardToken: String
+    private var filepath: String?
     
     private let postView = PostView()
     
@@ -129,6 +130,7 @@ final public class PostViewController: UIViewController {
             nickname: data.nickname
         )
         self.nickname = data.nickname
+        self.filepath = data.filePath
     }
     
     private func setNavigationBar() {
@@ -201,7 +203,10 @@ final public class PostViewController: UIViewController {
     }
     
     @objc private func didTapRightBarButton(_ sender: Any) {
-        coordinator.showBottomSheet(boardToken: boardToken)
+        guard let filepath = filepath else {
+            return
+        }
+        coordinator.showBottomSheet(boardToken: boardToken, filepath: filepath)
     }
     
     @objc private func didTapMiniProfile(_ sender: Any) {
