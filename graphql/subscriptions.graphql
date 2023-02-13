@@ -1,0 +1,73 @@
+# this is an auto generated file. This will be overwritten
+subscription OnCreateTask($filter: ModelSubscriptionTaskFilterInput) {
+  onCreateTask(filter: $filter) {
+    id
+    title
+    description
+    status
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateTask($filter: ModelSubscriptionTaskFilterInput) {
+  onUpdateTask(filter: $filter) {
+    id
+    title
+    description
+    status
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteTask($filter: ModelSubscriptionTaskFilterInput) {
+  onDeleteTask(filter: $filter) {
+    id
+    title
+    description
+    status
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateNote($filter: ModelSubscriptionNoteFilterInput) {
+  onCreateNote(filter: $filter) {
+    id
+    content
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateNote($filter: ModelSubscriptionNoteFilterInput) {
+  onUpdateNote(filter: $filter) {
+    id
+    content
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteNote($filter: ModelSubscriptionNoteFilterInput) {
+  onDeleteNote(filter: $filter) {
+    id
+    content
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}

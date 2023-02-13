@@ -12,7 +12,7 @@ import Common
 public protocol PostCoordinatorInterface: AnyObject {
     
     func showProfile(profileType: ProfileType, nickname: String)
-    func showBottomSheet()
+    func showBottomSheet(boardToken: String)
     func showModifyMyFitfty()
     func dismiss()
     func popToRoot()
