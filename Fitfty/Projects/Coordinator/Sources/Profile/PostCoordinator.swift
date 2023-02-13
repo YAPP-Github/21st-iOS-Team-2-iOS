@@ -70,8 +70,8 @@ private extension PostCoordinator {
         return bottomSheetViewController
     }
     
-    func makeMyFitftyCoordinator() -> MyFitftyCoordinator {
-        let coordinator = MyFitftyCoordinator(myFitftyType: .modifyMyFitfty)
+    func makeMyFitftyCoordinator(boardToken: String) -> MyFitftyCoordinator {
+        let coordinator = MyFitftyCoordinator(myFitftyType: .modifyMyFitfty, boardToken: boardToken)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -105,9 +105,9 @@ extension PostCoordinator: PostCoordinatorInterface {
         navigationController.present(bottomSheetViewController, animated: false)
     }
     
-    func showModifyMyFitfty() {
+    func showModifyMyFitfty(boardToken: String) {
         navigationController.dismiss(animated: false)
-        let coordinator = makeMyFitftyCoordinator()
+        let coordinator = makeMyFitftyCoordinator(boardToken: boardToken)
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
         navigationController.present(coordinator.navigationController, animated: true)

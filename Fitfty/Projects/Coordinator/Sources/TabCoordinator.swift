@@ -185,7 +185,7 @@ extension TabCoordinator: UITabBarControllerDelegate {
             return true
         }
         if tabBar == .createCody {
-            let coordinator = MyFitftyCoordinator(myFitftyType: .uploadMyFitfty)
+            let coordinator = MyFitftyCoordinator(myFitftyType: .uploadMyFitfty, boardToken: nil)
             childCoordinators.append(coordinator)
             coordinator.finishDelegate = self
             coordinator.parentCoordinator = self

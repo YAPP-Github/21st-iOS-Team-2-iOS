@@ -61,6 +61,7 @@ final public class MyFitftyViewController: UIViewController {
     }()
     
     private var selectedImage: UIImage?
+    private var selectedImageFilepath: String?
     private var contentText = "내 코디에 대한 설명을 남겨보세요."
     private var imageInfoMessage: String?
     
@@ -168,6 +169,8 @@ private extension MyFitftyViewController {
                         return
                     }
                     self?.coordinator.dismiss()
+                case .codyFilepath(let filepath):
+                    self?.selectedImageFilepath = filepath
                 }
             }).store(in: &cancellables)
     }
@@ -273,9 +276,11 @@ extension MyFitftyViewController {
                     cell?.setActionUploadPhotoButton(self, action: #selector(self.didTapUploadPhotoButton))
                     switch self.myFitftyType {
                     case .modifyMyFitfty:
-                        cell?.setUp(codyImage: CommonAsset.Images.profileSample.image)
-                        cell?.setUp(content: "오늘의 핏프티~~")
                         cell?.setDisableEditting()
+                        cell?.setUp(content: self.contentText)
+                        if let selectedImageFilepath = self.selectedImageFilepath {
+                            cell?.setUp(filepath: selectedImageFilepath)
+                        }
                         
                     case .uploadMyFitfty:
                         cell?.setUp(content: self.contentText)

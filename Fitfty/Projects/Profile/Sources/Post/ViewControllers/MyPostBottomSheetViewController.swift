@@ -61,7 +61,7 @@ final public class MyPostBottomSheetViewController: UIViewController {
     }
    
     @objc func didTapModifyButton(_ sender: Any?) {
-        coordinator.showModifyMyFitfty()
+        coordinator.showModifyMyFitfty(boardToken: boardToken)
     }
     
     @objc func didTapDeleteButton(_ sender: Any?) {

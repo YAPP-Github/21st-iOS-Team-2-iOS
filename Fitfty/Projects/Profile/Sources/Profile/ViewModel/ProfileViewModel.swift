@@ -142,8 +142,14 @@ extension ProfileViewModel {
                     self.currentState.send(.sections([
                         ProfileSection(sectionKind: .feed, items: profileCellModels)
                     ]))
+                } else {
+                    currentState.send(.isLoading(false))
+                    currentState.send(.errorMessage("프로필 조회에 알 수 없는 에러가 발생했습니다."))
                 }
-                    
+            } catch {
+                Logger.debug(error: error, message: "프로필 조회를 실패")
+                currentState.send(.isLoading(false))
+                currentState.send(.errorMessage("프로필 조회에 알 수 없는 에러가 발생했습니다."))
             }
             
         }
