@@ -117,7 +117,7 @@ final public class PostViewController: UIViewController {
             return
         }
         postView.setUp(
-            content: data.content,
+            content: data.content ?? "",
             hits: String(data.views).insertComma,
             bookmark: String(data.bookmarkCnt).insertComma,
             date: data.createdAt.yymmddFromCreatedDate,
@@ -125,6 +125,7 @@ final public class PostViewController: UIViewController {
             filepath: data.filePath,
             isBookmarked: data.bookmarked
         )
+        //print("profilePictureUrl = \(data.profilePictureUrl!)")
         miniProfileView.setUp(
             filepath: data.profilePictureUrl,
             nickname: data.nickname

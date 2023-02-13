@@ -260,7 +260,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
                         location = data.location
                         
                         currentState.send(.codyFilepath(data.filePath))
-                        currentState.send(.content(data.content))
+                        currentState.send(.content(data.content ?? ""))
                         
                         let weaterTagIndex = getWeatherTagIndex(data.tagGroupInfo.weather)
                         changeTag(.weatherTag, selectedIndex: weaterTagIndex)
