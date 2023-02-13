@@ -330,6 +330,7 @@ private extension MyFitftyViewModel {
                 return
             }
             do {
+                self.currentState.send(.isLoading(true))
                 if let selectedPhAssetInfo = selectedPhAssetInfo,
                    let content = contentText,
                    let tagGroup = getTapGroup() {
@@ -362,8 +363,10 @@ private extension MyFitftyViewModel {
                     self.currentState.send(.completed(false))
                     self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
                 }
+                self.currentState.send(.isLoading(false))
             } catch {
                 Logger.debug(error: error, message: "핏프티 등록 실패")
+                self.currentState.send(.isLoading(false))
                 self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
             }
         }
