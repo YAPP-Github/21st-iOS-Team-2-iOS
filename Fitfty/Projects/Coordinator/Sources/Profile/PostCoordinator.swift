@@ -109,7 +109,7 @@ extension PostCoordinator: PostCoordinatorInterface {
         navigationController.dismiss(animated: false)
         let coordinator = makeMyFitftyCoordinator(boardToken: boardToken)
         coordinator.start()
-        coordinator.navigationController.modalPresentationStyle = .overFullScreen
+        coordinator.navigationController.modalPresentationStyle = .fullScreen
         navigationController.present(coordinator.navigationController, animated: true)
     }
     

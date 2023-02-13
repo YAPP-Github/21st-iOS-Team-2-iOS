@@ -14,7 +14,7 @@ import Core
 protocol PostViewModelInput {
     
     var input: PostViewModelInput { get }
-    func viewDidLoad(boardToken: String)
+    func viewWillAppear(boardToken: String)
     func didTapBookmark(boardToken: String)
 }
 
@@ -30,7 +30,7 @@ public final class PostViewModel {
 extension PostViewModel: PostViewModelInput {
     var input: PostViewModelInput { self }
     
-    func viewDidLoad(boardToken: String) {
+    func viewWillAppear(boardToken: String) {
         currentState.send(.isLoading(true))
         
         update(boardToken: boardToken)
