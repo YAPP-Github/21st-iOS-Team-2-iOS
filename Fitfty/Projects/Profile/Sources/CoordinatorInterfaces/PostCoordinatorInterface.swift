@@ -13,7 +13,7 @@ public protocol PostCoordinatorInterface: AnyObject {
     
     func showProfile(profileType: ProfileType, nickname: String)
     func showBottomSheet(boardToken: String, filepath: String)
-    func showModifyMyFitfty()
+    func showModifyMyFitfty(boardToken: String)
     func dismiss()
     func popToRoot()
     func finished()

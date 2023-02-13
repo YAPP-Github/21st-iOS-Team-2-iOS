@@ -29,7 +29,9 @@ public final class MyFitftyViewModel {
     
     private let weatherRepository: WeatherRepository
     private let addressRepository: AddressRepository
+    private let myFitftyType: MyFitftyType
     private let userManager: UserManager
+    private let boardToken: String?
     private var cancellables: Set<AnyCancellable> = .init()
     
     private var styleTagItems : [(styleTag: StyleTag, isSelected: Bool)] = [
@@ -62,15 +64,20 @@ public final class MyFitftyViewModel {
     private var temperature: String?
     private var cloudType: String?
     private var photoTakenTime: String?
+    private var filepath: String?
     
     public init(
         weatherRepository: WeatherRepository,
         addressRepository: AddressRepository,
-        userManager: UserManager
+        userManager: UserManager,
+        myFitftyType: MyFitftyType,
+        boardToken: String?
     ) {
         self.weatherRepository = weatherRepository
         self.addressRepository = addressRepository
         self.userManager = userManager
+        self.boardToken = boardToken
+        self.myFitftyType = myFitftyType
     }
     
 }
@@ -130,14 +137,26 @@ extension MyFitftyViewModel {
     }
     
     private func checkIsEnabledUpload() -> Bool {
-        if contentText != nil
-            && contentText != textViewPlaceHolder
-            && selectedPhAssetInfo != nil
-            && styleTagItems.filter({ $0.isSelected == true }).count > 0
-            && weatherTagItems.filter({ $0.isSelected == true }).count > 0 {
-            return true
-        } else {
-            return false
+        switch myFitftyType {
+        case .uploadMyFitfty:
+            if contentText != nil
+                && contentText != textViewPlaceHolder
+                && selectedPhAssetInfo != nil
+                && styleTagItems.filter({ $0.isSelected == true }).count > 0
+                && weatherTagItems.filter({ $0.isSelected == true }).count > 0 {
+                return true
+            } else {
+                return false
+            }
+        case .modifyMyFitfty:
+            if contentText != nil
+                && contentText != textViewPlaceHolder
+                && styleTagItems.filter({ $0.isSelected == true }).count > 0
+                && weatherTagItems.filter({ $0.isSelected == true }).count > 0 {
+                return true
+            } else {
+                return false
+            }
         }
     }
     
@@ -148,16 +167,36 @@ extension MyFitftyViewModel {
     }
     
     private func getWeatherTagIndex(_ string: String) -> Int? {
-        if string == WeatherTag.coldWaveWeather.koreanWeatherTag {
+        if string == WeatherTag.coldWaveWeather.koreanWeatherTag || string == WeatherTag.coldWaveWeather.englishWeatherTag {
             return 0
-        } else if string == WeatherTag.coldWeather.koreanWeatherTag {
+        } else if string == WeatherTag.coldWeather.koreanWeatherTag || string == WeatherTag.coldWeather.englishWeatherTag {
             return 1
-        } else if string == WeatherTag.chillyWeather.koreanWeatherTag {
+        } else if string == WeatherTag.chillyWeather.koreanWeatherTag || string == WeatherTag.chillyWeather.englishWeatherTag {
             return 2
-        } else if string == WeatherTag.warmWeather.koreanWeatherTag {
+        } else if string == WeatherTag.warmWeather.koreanWeatherTag || string == WeatherTag.warmWeather.englishWeatherTag {
             return 3
-        } else if string == WeatherTag.hotWeather.koreanWeatherTag {
+        } else if string == WeatherTag.hotWeather.koreanWeatherTag || string == WeatherTag.hotWeather.englishWeatherTag {
             return 4
+        } else {
+            return nil
+        }
+    }
+    
+    private func getStyleTagIndex(_ string: String) -> Int? {
+        if string == StyleTag.minimal.styleTagEnglishString {
+            return 0
+        } else if string == StyleTag.modern.styleTagEnglishString {
+            return 1
+        } else if string == StyleTag.casual.styleTagEnglishString {
+            return 2
+        } else if string == StyleTag.street.styleTagEnglishString {
+            return 3
+        } else if string == StyleTag.lovely.styleTagEnglishString {
+            return 4
+        } else if string == StyleTag.hip.styleTagEnglishString {
+            return 5
+        } else if string == StyleTag.luxury.styleTagEnglishString {
+            return 6
         } else {
             return nil
         }
@@ -187,12 +226,64 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     var input: MyFitftyViewModelInput { self }
     
     func viewDidLoad() {
-        currentState.send(.sections([
-            MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
-            MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
-            MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
-            MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
-        ], true))
+        switch myFitftyType {
+        case .uploadMyFitfty:
+            currentState.send(.sections([
+                MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
+                MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+                MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
+                MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
+            ], true))
+        case .modifyMyFitfty:
+            Task { [weak self] in
+                do {
+                    currentState.send(.isLoading(true))
+                    guard let self = self else {
+                        return
+                    }
+                    guard let boardToken = boardToken else {
+                        return
+                    }
+                    let response = try await self.getPost(boardToken: boardToken)
+                    if response.result == "SUCCESS" {
+                        guard let data = response.data else {
+                            return
+                        }
+                        contentText = data.content
+                        filepath = data.filePath
+                        currentState.send(.codyFilepath(data.filePath))
+                        currentState.send(.content(data.content))
+                        
+                        let weaterTagIndex = getWeatherTagIndex(data.tagGroupInfo.weather)
+                        changeTag(.weatherTag, selectedIndex: weaterTagIndex)
+                        
+                        let genderTagIndex = data.tagGroupInfo.gender == "FEMALE" ? 0 : 1
+                        changeTag(.genderTag, selectedIndex: genderTagIndex)
+                        
+                        for styleTagString in data.tagGroupInfo.style {
+                            let styleTagIndex = getStyleTagIndex(styleTagString)
+                            changeTag(.styleTag, selectedIndex: styleTagIndex)
+                        }
+                        
+                        currentState.send(.sections([
+                            MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
+                            MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
+                            MyFitftySection(sectionKind: .genderTag, items: getGenderTagCellModels()),
+                            MyFitftySection(sectionKind: .styleTag, items: getStyleTagCellModels())
+                        ], true))
+                        currentState.send(.isLoading(false))
+                    } else {
+                        currentState.send(.isLoading(false))
+                        currentState.send(.errorMessage("프로필 조회에 알 수 없는 에러가 발생했습니다."))
+                    }
+                } catch {
+                    Logger.debug(error: error, message: "작성했던 게시글 조회 실패")
+                    currentState.send(.isLoading(false))
+                    currentState.send(.errorMessage("작성했던 게시글 조회에 알 수 없는 에러가 발생했습니다."))
+                }
+            }
+        }
+        
     }
     
     func getPhAssetInfo(_ phAssetInfo: PHAssetInfo) {
@@ -232,7 +323,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     }
     
     func didTapUpload() {
-       upload()
+        upload()
     }
     
 }
@@ -250,6 +341,7 @@ extension MyFitftyViewModel: ViewModelType {
         case isLoading(Bool)
         case errorMessage(String)
         case completed(Bool)
+        case codyFilepath(String)
     }
     
 }
@@ -331,33 +423,53 @@ private extension MyFitftyViewModel {
             }
             do {
                 self.currentState.send(.isLoading(true))
-                if let selectedPhAssetInfo = selectedPhAssetInfo,
-                   let content = contentText,
+                if let content = contentText,
                    let tagGroup = getTapGroup() {
-                    let data = selectedPhAssetInfo.image.jpegData(compressionQuality: 1) ?? Data()
-                    guard let weatherTag = self.getWeaherTagString() else {
-                        return
-                    }
-                    let filename =
-                    (self.genderTagItems[0].isSelected ? "female/" : "male/") + weatherTag + "_" + Date().currentfullDate
-                    let filepath = try await AmplifyManager.shared.uploadImage(data: data, fileName: filename)
-                   
-                    let request = MyFitftyRequest(
-                        filePath: filepath.absoluteString,
-                        content: content,
-                        temperature: self.temperature,
-                        location: self.location,
-                        cloudType: cloudType,
-                        photoTakenTime: photoTakenTime,
-                        tagGroup: tagGroup
-                    )
-                   
-                    let response = try await postMyFitfty(request)
-                    if response.result == "SUCCESS" {
-                        self.currentState.send(.completed(true))
-                    } else {
-                        self.currentState.send(.completed(false))
-                        self.currentState.send(.errorMessage("모든 항목을 선택해야 합니다."))
+                    
+                    switch myFitftyType  {
+                    case .uploadMyFitfty:
+                        guard let selectedPhAssetInfo = selectedPhAssetInfo else {
+                            return
+                        }
+                        let data = selectedPhAssetInfo.image.jpegData(compressionQuality: 1) ?? Data()
+                        guard let weatherTag = self.getWeaherTagString() else {
+                            return
+                        }
+                        let filename =
+                        (self.genderTagItems[0].isSelected ? "female/" : "male/") + weatherTag + "_" + Date().currentfullDate
+                        let filepath = try await AmplifyManager.shared.uploadImage(data: data, fileName: filename)
+                        
+                        let request = MyFitftyRequest(
+                            filePath: filepath.absoluteString,
+                            content: content,
+                            temperature: self.temperature,
+                            location: self.location,
+                            cloudType: cloudType,
+                            photoTakenTime: photoTakenTime,
+                            tagGroup: tagGroup
+                        )
+                        
+                        let response = try await postMyFitfty(request)
+                        if response.result == "SUCCESS" {
+                            self.currentState.send(.completed(true))
+                        } else {
+                            self.currentState.send(.completed(false))
+                            self.currentState.send(.errorMessage("모든 항목을 선택해야 합니다."))
+                        }
+
+                    case .modifyMyFitfty:
+                        guard let filepath = filepath else {
+                            return
+                        }
+                        let request = MyFitftyRequest(
+                            filePath: filepath,
+                            content: content,
+                            temperature: self.temperature,
+                            location: self.location,
+                            cloudType: cloudType,
+                            photoTakenTime: photoTakenTime,
+                            tagGroup: tagGroup
+                        )
                     }
                 } else {
                     self.currentState.send(.completed(false))
@@ -395,6 +507,14 @@ private extension MyFitftyViewModel {
         let response = try await FitftyAPI.request(
             target: .postMyFitfty(parameters: request.asDictionary()),
             dataType: MyFitftyResponse.self
+        )
+        return response
+    }
+    
+    func getPost(boardToken: String) async throws -> PostResponse {
+        let response = try await FitftyAPI.request(
+            target: .getPost(boardToken: boardToken),
+            dataType: PostResponse.self
         )
         return response
     }

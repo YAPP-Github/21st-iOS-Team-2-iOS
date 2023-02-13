@@ -81,7 +81,7 @@ private extension ProfileCoordinator {
     }
     
     func makeMyFitftyCoordinator(_ myFitftyType: MyFitftyType) -> MyFitftyCoordinator {
-        let coordinator = MyFitftyCoordinator(myFitftyType: myFitftyType)
+        let coordinator = MyFitftyCoordinator(myFitftyType: myFitftyType, boardToken: nil)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)

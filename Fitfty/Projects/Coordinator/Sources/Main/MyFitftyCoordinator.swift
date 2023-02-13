@@ -14,33 +14,40 @@ import Core
 final class MyFitftyCoordinator: Coordinator {
     var type: CoordinatorType { .myFitfty }
     var myFitftyType: MyFitftyType
-    
+    var boardToken: String?
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
     var finishDelegate: CoordinatorFinishDelegate?
     
-    init(navigationController: BaseNavigationController = BaseNavigationController(), myFitftyType: MyFitftyType) {
+    init(
+        navigationController: BaseNavigationController = BaseNavigationController(),
+        myFitftyType: MyFitftyType,
+        boardToken: String?
+    ) {
         self.navigationController = navigationController
         self.myFitftyType = myFitftyType
+        self.boardToken = boardToken
     }
     
     func start() {
-        let viewController = makeMyFitftyViewController()
+        let viewController = makeMyFitftyViewController(boardToken: boardToken)
         navigationController.pushViewController(viewController, animated: true)
     }
 }
 
 private extension MyFitftyCoordinator {
-    func makeMyFitftyViewController() -> UIViewController {
+    func makeMyFitftyViewController(boardToken: String?) -> UIViewController {
         let viewController = MyFitftyViewController(
             coordinator: self,
             myFitftyType: myFitftyType,
             viewModel: MyFitftyViewModel(
                 weatherRepository: DefaultWeatherRepository(),
                 addressRepository: DefaultAddressRepository(),
-                userManager: DefaultUserManager.shared
+                userManager: DefaultUserManager.shared,
+                myFitftyType: myFitftyType,
+                boardToken: boardToken
             )
         )
         viewController.modalPresentationStyle = .fullScreen
