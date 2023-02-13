@@ -163,6 +163,16 @@ extension MyFitftyViewModel {
         }
     }
     
+    private func getTapGroup() -> TagGroup? {
+        let weatherTag = weatherTagItems.filter { $0.isSelected==true }.first?.weatherTag.englishWeatherTag
+        guard let weatherTag = weatherTag else {
+            return nil
+        }
+        let genderTag = genderTagItems[0].isSelected ? "FEMALE" : "MALE"
+        let styleTag = styleTagItems.filter { $0.isSelected==true }.map { $0.styleTag.styleTagEnglishString }
+        return TagGroup(weather: weatherTag, style: styleTag, gender: genderTag)
+    }
+    
 }
 
 extension MyFitftyViewModel: MyFitftyViewModelInput {
@@ -215,26 +225,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     }
     
     func didTapUpload() {
-        if let selectedPhAssetInfo = selectedPhAssetInfo,
-           let content = contentText {
-            let weatherTag = weatherTagItems.filter { $0.isSelected==true }.first?.weatherTag.englishWeatherTag
-            guard let weatherTag = weatherTag else {
-                return
-            }
-            let genderTag = genderTagItems[0].isSelected ? "FEMALE" : "MALE"
-            let styleTag = styleTagItems.filter { $0.isSelected==true }.map { $0.styleTag.styleTagEnglishString }
-            
-            let request = MyFitftyRequest(
-                filePath: "https://fitfty.s3.ap-northeast-2.amazonaws.com/cody.png", // selectedPhAssetInfo.image
-                content: content,
-                temperature: temperature,
-                location: location,
-                cloudType: cloudType,
-                photoTakenTime: photoTakenTime,
-                tagGroup: TagGroup(weather: weatherTag, style: styleTag, gender: genderTag)
-            )
-            upload(request: request)
-        }
+       upload()
     }
     
 }
@@ -326,20 +317,39 @@ private extension MyFitftyViewModel {
         }
     }
     
-    func upload(request: MyFitftyRequest) {
+    func upload() {
         Task { [weak self] in
             guard let self = self else {
                 return
             }
             do {
-                let response = try await postMyFitfty(request)
-                if response.result == "SUCCESS" {
-                    self.currentState.send(.completed(true))
+                if let selectedPhAssetInfo = selectedPhAssetInfo,
+                   let content = contentText,
+                   let tagGroup = getTapGroup() {
+                    let data = selectedPhAssetInfo.image.jpegData(compressionQuality: 1) ?? Data()
+                    let filepath = try await AmplifyManager.shared.uploadImage(data: data, fileName: Date().currentfullDate)
+                   
+                    let request = MyFitftyRequest(
+                        filePath: filepath.absoluteString,
+                        content: content,
+                        temperature: self.temperature,
+                        location: self.location,
+                        cloudType: cloudType,
+                        photoTakenTime: photoTakenTime,
+                        tagGroup: tagGroup
+                    )
+                   
+                    let response = try await postMyFitfty(request)
+                    if response.result == "SUCCESS" {
+                        self.currentState.send(.completed(true))
+                    } else {
+                        self.currentState.send(.completed(false))
+                        self.currentState.send(.errorMessage("모든 항목을 선택해야 합니다."))
+                    }
                 } else {
                     self.currentState.send(.completed(false))
                     self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
                 }
-                
             } catch {
                 Logger.debug(error: error, message: "핏프티 등록 실패")
                 self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
