@@ -11,8 +11,8 @@ import Foundation
 public protocol SettingRepository {
     func getUserPrivacy() async throws -> UserPrivacyResponse
     func updateUserPrivacy(nickname: String, birthday: String, gender: String) async throws
-    func getUserProfile() async throws -> SettingUserDetailResponse
-    func updateUserProfile() async throws
+    func getUserProfile() async throws -> SettingUserProfileResponse
+    func updateUserProfile(profilePictureUrl: String?, message: String?) async throws
     func withdrawAccount() async throws -> Bool
     func logout()
 }
@@ -30,19 +30,21 @@ public final class DefaultSettingRepository: SettingRepository {
                                                 birthday: birthday,
                                                 gender: gender).asDictionary()
         
-        let response = try await FitftyAPI.request(
+        _ = try await FitftyAPI.request(
             target: .updateUserPrivacy(parameters: parameters),
             dataType: UserPrivacyResponse.self
         )
     }
     
-    public func getUserProfile() async throws -> SettingUserDetailResponse {
+    public func getUserProfile() async throws -> SettingUserProfileResponse {
         return try await FitftyAPI.request(target: .getMyProfile,
-                                           dataType: SettingUserDetailResponse.self)
+                                           dataType: SettingUserProfileResponse.self)
     }
     
-    public func updateUserProfile() async throws {
-        
+    public func updateUserProfile(profilePictureUrl: String?, message: String?) async throws {
+        let parameters = try SettingUserProfileRequest(profilePictureUrl: profilePictureUrl ?? "",
+                                                       message: message).asDictionary()
+        let response = try await FitftyAPI.request(target: .updateMyProfile(parameters: parameters), dataType: SettingUserProfileResponse.self)
     }
     
     public func withdrawAccount() async throws -> Bool {
@@ -52,6 +54,6 @@ public final class DefaultSettingRepository: SettingRepository {
     }
 
     public func logout() {
-        Keychain.deleteTokenData()
+        SessionManager.shared.deleteUserSession()
     }
 }
