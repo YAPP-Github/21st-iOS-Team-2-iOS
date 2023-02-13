@@ -1,0 +1,18 @@
+{
+  "resourceName": "s3cd53a277",
+  "policyUUID": "cd53a277",
+  "bucketName": "team-fitfty",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

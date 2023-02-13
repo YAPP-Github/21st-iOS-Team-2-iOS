@@ -22,18 +22,11 @@ public struct PostData: Codable {
     public  let boardToken, userToken, nickname: String
     public let profilePictureUrl: String?
     public let filePath, content: String
-    public let tagGroupInfo: TagGroupInfo
+    public let tagGroupInfo: TagGroup
     public let location: String?
     public let temperature: Int?
     public let cloudType, photoTakenTime: String?
     public let views, bookmarkCnt: Int
     public let bookmarked: Bool
 
-}
-
-// MARK: - TagGroupInfo
-public struct TagGroupInfo: Codable {
-    public let weather: String
-    public let style: [String]
-    public let gender: String
 }

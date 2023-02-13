@@ -14,8 +14,8 @@ import Core
 protocol ProfileViewModelInput {
     
     var input: ProfileViewModelInput { get }
-    func viewDidLoadWithMenu(menuType: MenuType)
-    func viewDidLoadWithoutMenu(nickname: String)
+    func viewWillAppearWithMenu(menuType: MenuType)
+    func viewWillAppearWithoutMenu(nickname: String)
     func didTapMenu(_ menuType: MenuType)
     func didTapPostWithMenu(selectedIndex: Int, menuType: MenuType)
     func didTapPostWithoutMenu(selectedIndex: Int)
@@ -34,11 +34,11 @@ public final class ProfileViewModel {
 extension ProfileViewModel: ProfileViewModelInput {
     var input: ProfileViewModelInput { self }
     
-    func viewDidLoadWithMenu(menuType: MenuType) {
+    func viewWillAppearWithMenu(menuType: MenuType) {
         updateWithMenu(menuType: menuType)
     }
     
-    func viewDidLoadWithoutMenu(nickname: String) {
+    func viewWillAppearWithoutMenu(nickname: String) {
         updateWithoutMenu(nickname: nickname)
     }
     

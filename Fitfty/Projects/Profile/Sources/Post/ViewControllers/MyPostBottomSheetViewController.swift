@@ -7,11 +7,23 @@
 //
 
 import UIKit
+import Common
+import Combine
 
 final public class MyPostBottomSheetViewController: UIViewController {
     
     private var coordinator: PostCoordinatorInterface
+    private var viewModel: PostBottomSheetViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
+    
     private let myPostBottomSheetView = MyPostBottomSheetView()
+    private var boardToken: String
+    
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        loadingView.stopAnimating()
+        return loadingView
+    }()
     
     override public func removeFromParent() {
         super.removeFromParent()
@@ -20,12 +32,17 @@ final public class MyPostBottomSheetViewController: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setConstratintsLayout()
-        setButtonAction()
+        setUp()
     }
     
-    public init(coordinator: PostCoordinatorInterface) {
+    public init(
+        coordinator: PostCoordinatorInterface,
+        viewModel: PostBottomSheetViewModel,
+        boardToken: String
+    ) {
         self.coordinator = coordinator
+        self.viewModel = viewModel
+        self.boardToken = boardToken
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -34,26 +51,56 @@ final public class MyPostBottomSheetViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setConstratintsLayout() {
-        view.addSubviews(myPostBottomSheetView)
-        NSLayoutConstraint.activate([
-            myPostBottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            myPostBottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            myPostBottomSheetView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40)
-        ])
+    private func setUp() {
+        bind()
+        setConstratintsLayout()
+        setButtonAction()
     }
-    
-    private func setButtonAction() {
-        myPostBottomSheetView.setActionDeleteButton(self, action: #selector(didTapDeleteButton))
-        myPostBottomSheetView.setActionModifyButton(self, action: #selector(didTapModifyButton))
-    }
-    
+   
     @objc func didTapModifyButton(_ sender: Any?) {
         coordinator.showModifyMyFitfty()
     }
     
     @objc func didTapDeleteButton(_ sender: Any?) {
-        coordinator.popToRoot()
+        viewModel.input.didTapDeleteButton(boardToken: boardToken)
     }
 
+}
+
+private extension MyPostBottomSheetViewController {
+    
+    func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                case .completed(let completed):
+                    guard completed else {
+                        return
+                    }
+                    self?.coordinator.popToRoot()
+                }
+            }).store(in: &cancellables)
+    }
+    
+    func setConstratintsLayout() {
+        view.addSubviews(myPostBottomSheetView, loadingIndicatorView)
+        NSLayoutConstraint.activate([
+            myPostBottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            myPostBottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            myPostBottomSheetView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40),
+            
+            loadingIndicatorView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            loadingIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+    }
+    
+    func setButtonAction() {
+        myPostBottomSheetView.setActionDeleteButton(self, action: #selector(didTapDeleteButton))
+        myPostBottomSheetView.setActionModifyButton(self, action: #selector(didTapModifyButton))
+    }
+    
 }

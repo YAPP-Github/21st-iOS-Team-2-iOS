@@ -1,0 +1,100 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-21st-ios-team-2-ios-dev-141946-authRole",
+      "UnauthRoleArn": "arn:aws:iam::772734169005:role/amplify-21st-ios-team-2-ios-dev-141946-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::772734169005:role/amplify-21st-ios-team-2-ios-dev-141946-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-21st-ios-team-2-ios-dev-141946-deployment",
+      "UnauthRoleName": "amplify-21st-ios-team-2-ios-dev-141946-unauthRole",
+      "StackName": "amplify-21st-ios-team-2-ios-dev-141946",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:772734169005:stack/amplify-21st-ios-team-2-ios-dev-141946/ddef4280-aa94-11ed-bee1-0a42e11407b2",
+      "AmplifyAppId": "dwmiyb409z5ra"
+    }
+  },
+  "api": {
+    "amplifyDatasource": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "description": "",
+              "apiKeyExpirationDays": 7
+            }
+          }
+        },
+        "GraphQLAPIIdOutput": "mo7qwawfmfewnfyly3ffap3otq",
+        "GraphQLAPIEndpointOutput": "https://6chwlewcbvh6hkyx7gztdb6fq4.appsync-api.ap-northeast-2.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-ocxmih3aijcgnerlmhzi43ffmq"
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-21st-ios-team-2-ios-dev-141946-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apiamplifyDatasource"
+      },
+      "lastPushTimeStamp": "2023-02-12T05:28:07.694Z",
+      "lastPushDirHash": "HeZV9lyReZ+XFhPvfiNEXeDL+0U="
+    }
+  },
+  "auth": {
+    "21stiosteam2ios514cc532": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-21st-ios-team-2-ios-dev-141946-deployment/amplify-cfn-templates/auth/21stiosteam2ios514cc532-cloudformation-template.json",
+        "logicalId": "auth21stiosteam2ios514cc532"
+      },
+      "lastPushTimeStamp": "2023-02-12T05:28:07.694Z",
+      "output": {
+        "UserPoolId": "ap-northeast-2_QxGiyZPNH",
+        "AppClientIDWeb": "5aoa1tbq7ogi4c7dm33bcldtqk",
+        "AppClientID": "1qucjlqdvnego9k27tnaknj863",
+        "IdentityPoolId": "ap-northeast-2:0700b5e7-09ad-44ea-9222-bf91fe2037fd",
+        "UserPoolArn": "arn:aws:cognito-idp:ap-northeast-2:772734169005:userpool/ap-northeast-2_QxGiyZPNH",
+        "IdentityPoolName": "21stiosteam2ios514cc532_identitypool_514cc532__dev",
+        "UserPoolName": "21stiosteam2ios514cc532_userpool_514cc532"
+      },
+      "lastPushDirHash": "S3HKKLMjHBtwYAb2r6ww9mdX//U="
+    }
+  },
+  "storage": {
+    "s3cd53a277": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "lastPushTimeStamp": "2023-02-12T05:28:07.694Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-21st-ios-team-2-ios-dev-141946-deployment/amplify-cfn-templates/storage/cloudformation-template.json",
+        "logicalId": "storages3cd53a277"
+      },
+      "output": {
+        "BucketName": "team-fitftyteam-dev",
+        "Region": "ap-northeast-2"
+      },
+      "lastPushDirHash": "/BfMsVXe1ydGLRMgFCV3/trWAjY="
+    }
+  }
+}

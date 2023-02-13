@@ -69,21 +69,20 @@ final public class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
-        switch presentType {
-        case .mainProfile:
-            guard let nickname = nickname else {
-                return
-            }
-            viewModel.input.viewDidLoadWithoutMenu(nickname: nickname)
-        case .tabProfile:
-            viewModel.input.viewDidLoadWithMenu(menuType: menuType)
-        }
-       
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNavigationBar()
+        switch presentType {
+        case .mainProfile:
+            guard let nickname = nickname else {
+                return
+            }
+            viewModel.input.viewWillAppearWithoutMenu(nickname: nickname)
+        case .tabProfile:
+            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
+        }
     }
     
     public init(
@@ -110,43 +109,11 @@ final public class ProfileViewController: UIViewController {
         coordinator.finishedTapGesture()
     }
     
-    private func bind() {
-        viewModel.state.compactMap { $0 }
-            .sinkOnMainThread(receiveValue: { [weak self] state in
-                switch state {
-                case .update(let response):
-                    self?.update(response)
-                case .errorMessage(let message):
-                    self?.showAlert(message: message)
-                case .isLoading(let isLoading):
-                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
-                case .sections(let sections):
-                    self?.applySnapshot(sections)
-                case .showPost(let profileType, let boardToken):
-                    self?.coordinator.showPost(profileType: profileType, boardToken: boardToken)
-                }
-            }).store(in: &cancellables)
-    }
-    
     private func setUp() {
         setUpConstraintLayout()
         setUpDataSource()
         registerHeaderView()
         setMiniProfileView(isHidden: true)
-    }
-    
-    private func update(_ response: ProfileResponse) {
-        guard let data = response.data else {
-            return
-        }
-        self.profileFilePath = data.profilePictureUrl
-        self.myMessage = data.message ?? "\(data.nickname)의 프로필이에요."
-        self.nickname = data.nickname
-        
-        miniProfileView.setUp(
-            filepath: data.message,
-            nickname: data.nickname
-        )
     }
     
     @objc func didTapMoreVerticalButton(_ sender: Any?) {
@@ -186,6 +153,24 @@ final public class ProfileViewController: UIViewController {
 }
 
 private extension ProfileViewController {
+    
+    private func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .update(let response):
+                    self?.update(response)
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                case .sections(let sections):
+                    self?.applySnapshot(sections)
+                case .showPost(let profileType, let boardToken):
+                    self?.coordinator.showPost(profileType: profileType, boardToken: boardToken)
+                }
+            }).store(in: &cancellables)
+    }
     
     func setUpConstraintLayout() {
         view.addSubviews(collectionView, miniProfileView, seperatorView, loadingIndicatorView, emptyView)
@@ -266,6 +251,24 @@ private extension ProfileViewController {
         miniProfileView.isHidden = isHidden
         seperatorView.isHidden = isHidden
     }
+    
+    private func update(_ response: ProfileResponse) {
+        guard let data = response.data else {
+            return
+        }
+        self.profileFilePath = data.profilePictureUrl
+        self.myMessage = data.message ?? "\(data.nickname)의 프로필이에요."
+        self.nickname = data.nickname
+        
+        miniProfileView.setUp(
+            filepath: data.message,
+            nickname: data.nickname
+        )
+    }
+
+}
+
+private extension ProfileViewController {
     
     func setUpDataSource() {
         dataSource = UICollectionViewDiffableDataSource<ProfileSectionKind, ProfileCellModel>(

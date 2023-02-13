@@ -201,7 +201,7 @@ final public class PostViewController: UIViewController {
     }
     
     @objc private func didTapRightBarButton(_ sender: Any) {
-        coordinator.showBottomSheet()
+        coordinator.showBottomSheet(boardToken: boardToken)
     }
     
     @objc private func didTapMiniProfile(_ sender: Any) {
