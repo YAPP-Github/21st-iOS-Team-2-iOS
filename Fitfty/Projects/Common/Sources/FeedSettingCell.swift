@@ -9,11 +9,12 @@
 import UIKit
 import Common
 
-final class FeedSettingCell: UICollectionViewCell {
+final public class FeedSettingCell: UICollectionViewCell {
     
     private var selectedState: Bool = false
+    private var style: StyleTag = .minimal
     
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         reset()
     }
@@ -27,14 +28,22 @@ final class FeedSettingCell: UICollectionViewCell {
         super.init(coder: coder)
     }
     
+    public func retrieveState() -> Bool {
+        return selectedState
+    }
+    
+    public func retrieveStyle() -> StyleTag {
+        return style
+    }
+    
     private lazy var backgroundStackView: UIStackView = {
         let stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill, spacing: .zero)
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.directionalLayoutMargins = NSDirectionalEdgeInsets(
             top: 12.5,
-            leading: 32,
+            leading: 25,
             bottom: 12.5,
-            trailing: 32
+            trailing: 25
         )
         stackView.backgroundColor = CommonAsset.Colors.primaryBlueDark.color
         stackView.clipsToBounds = true
@@ -57,12 +66,13 @@ final class FeedSettingCell: UICollectionViewCell {
 
 extension FeedSettingCell {
     
-    func setUp(title: String, isSelected: Bool) {
+    public func setUp(style: StyleTag = .minimal, title: String, isSelected: Bool) {
+        self.style = style
         titleLabel.text = title
         highlight(isSelected)
     }
     
-    func toggle() {
+    public func toggle() {
         highlight(!selectedState)
     }
 }
@@ -80,6 +90,7 @@ private extension FeedSettingCell {
     }
     
     func reset() {
+        style = .minimal
         titleLabel.text = nil
         highlight(false)
     }

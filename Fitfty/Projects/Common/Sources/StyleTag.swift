@@ -52,4 +52,12 @@ public enum StyleTag {
             return "LUXURY"
         }
     }
+    
+    static public func tags() -> [StyleTag] {
+        return [.minimal, .modern, .casual]
+    }
+    
+    static public func otherTags() -> [StyleTag] {
+        return [.hip, .street, .lovely, .luxury]
+    }
 }
