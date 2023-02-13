@@ -62,7 +62,12 @@ final public class MyPostBottomSheetViewController: UIViewController {
     }
     
     @objc func didTapDeleteButton(_ sender: Any?) {
-        viewModel.input.didTapDeleteButton(boardToken: boardToken)
+        let alert = UIAlertController(title: "게시글을 정말 삭제하시겠어요?", message: "게시글은 수정도 가능해요.\n삭제한 게시물은 복구가 불가능해요.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "돌아가기", style: .default))
+        alert.addAction(UIAlertAction(title: "삭제하기", style: .default, handler: { _ in
+            self.viewModel.input.didTapDeleteButton(boardToken: self.boardToken)
+        }))
+        present(alert, animated: true)
     }
 
 }

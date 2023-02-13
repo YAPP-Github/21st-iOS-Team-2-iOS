@@ -9,14 +9,22 @@
 import Foundation
 import Common
 
-public struct ProfileSection {
+public struct ProfileSection: Hashable {
     
     let sectionKind: ProfileSectionKind
     var items: [ProfileCellModel]
     
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(sectionKind)
+    }
+        
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.sectionKind == rhs.sectionKind
+    }
+    
 }
 
-public enum ProfileSectionKind: CaseIterable {
+public enum ProfileSectionKind: Hashable {
     case feed
     
     init?(index: Int) {
@@ -39,4 +47,5 @@ enum ProfileCellModel: Hashable {
             hasher.combine(uuid)
         }
     }
+
 }
