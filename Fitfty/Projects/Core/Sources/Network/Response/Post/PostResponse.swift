@@ -21,7 +21,8 @@ public struct PostData: Codable {
     
     public  let boardToken, userToken, nickname: String
     public let profilePictureUrl: String?
-    public let filePath, content: String
+    public let filePath: String
+    public let content: String?
     public let tagGroupInfo: TagGroup
     public let location: String?
     public let temperature: Int?
