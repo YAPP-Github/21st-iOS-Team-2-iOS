@@ -163,9 +163,16 @@ extension MyFitftyViewModel {
         }
     }
     
-    private func getTapGroup() -> TagGroup? {
+    private func getWeaherTagString() -> String? {
         let weatherTag = weatherTagItems.filter { $0.isSelected==true }.first?.weatherTag.englishWeatherTag
         guard let weatherTag = weatherTag else {
+            return nil
+        }
+        return weatherTag
+    }
+    
+    private func getTapGroup() -> TagGroup? {
+        guard let weatherTag = getWeaherTagString() else {
             return nil
         }
         let genderTag = genderTagItems[0].isSelected ? "FEMALE" : "MALE"
@@ -327,7 +334,12 @@ private extension MyFitftyViewModel {
                    let content = contentText,
                    let tagGroup = getTapGroup() {
                     let data = selectedPhAssetInfo.image.jpegData(compressionQuality: 1) ?? Data()
-                    let filepath = try await AmplifyManager.shared.uploadImage(data: data, fileName: Date().currentfullDate)
+                    guard let weatherTag = self.getWeaherTagString() else {
+                        return
+                    }
+                    let filename =
+                    (self.genderTagItems[0].isSelected ? "female/" : "male/") + weatherTag + "_" + Date().currentfullDate
+                    let filepath = try await AmplifyManager.shared.uploadImage(data: data, fileName: filename)
                    
                     let request = MyFitftyRequest(
                         filePath: filepath.absoluteString,

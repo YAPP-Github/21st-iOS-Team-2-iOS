@@ -25,9 +25,15 @@ public final class PostBottomSheetViewModel {
     public init() { }
     
     private func filenameFromFilepath(_ filepath: String) -> String? {
-        let splitSlash = filepath.components(separatedBy: "/")
-        print(splitSlash.last)
-        return splitSlash.last
+        if filepath.contains("female") {
+            let splitGender = filepath.components(separatedBy: "female")
+            return "female" + splitGender[1]
+        } else if filepath.contains("male") {
+            let splitGender = filepath.components(separatedBy: "male")
+            return "male" + splitGender[1]
+        } else {
+            return nil
+        }
     }
     
 }
@@ -41,7 +47,6 @@ extension PostBottomSheetViewModel: PostBottomSheetViewModelInput {
                 return
             }
             do {
-                print(filepath)
                 guard let filename = self.filenameFromFilepath(filepath) else {
                     return
                 }
