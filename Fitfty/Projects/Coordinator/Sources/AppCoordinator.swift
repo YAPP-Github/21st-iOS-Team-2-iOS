@@ -37,6 +37,13 @@ final public class AppCoordinator: Coordinator {
         let coordinator = makeTabBarCoordinator()
         coordinator.start()
     }
+    
+    func reloadWindow() {
+        childCoordinators.removeAll()
+        navigationController.viewControllers.removeAll()
+        
+        showAuthFlow()
+    }
 }
 
 private extension AppCoordinator {
