@@ -60,12 +60,12 @@ final public class PostViewController: UIViewController {
         super.viewDidLoad()
         setUpConstraintLayout()
         bind()
-        viewModel.input.viewDidLoad(boardToken: boardToken)
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNavigationBar()
+        viewModel.input.viewWillAppear(boardToken: boardToken)
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
