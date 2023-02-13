@@ -100,6 +100,8 @@ private extension MainViewController {
                 case .sections(let sections):
                     self?.hideErrorNotiView()
                     self?.applySnapshot(sections)
+                    
+                case .showWelcomeSheet:
                     self?.showWelcomeView()
                 }
             }).store(in: &cancellables)
@@ -159,14 +161,14 @@ private extension MainViewController {
                     )
                     return cell ?? UICollectionViewCell()
                     
-                case .styleTag:
-                    let items = ["filter", "남", "여", "미니멀", "모던", "캐주얼", "힙", "포멀", "러블리"]
+                case .styleTag(let tag):
                     let cell = collectionView.dequeueReusableCell(StyleCell.self, for: indexPath)
-                    cell?.setUp(text: items[indexPath.item])
+                    cell?.setUp(tag: tag)
                     return cell ?? UICollectionViewCell()
                     
-                case .cody:
+                case .cody(let cody):
                     let cell = collectionView.dequeueReusableCell(CodyCell.self, for: indexPath)
+                    cell?.setUp(cody: cody)
                     cell?.addProfileViewGestureRecognizer(self, action: #selector(self.didTapProfileStackView))
                     return cell
                 }
@@ -328,9 +330,14 @@ private extension MainViewController {
         coordinator.showWeatherInfo()
     }
     
-    @objc func didTapProfileStackView(_ sender: Any?) {
-        // TODO: 닉네임 넣어줘야 함
-        coordinator.showProfile(profileType: .userProfile, nickname: "Ari")
+    @objc func didTapProfileStackView(_ sender: UITapGestureRecognizer) {
+        guard let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)),
+              let cellModel = dataSource?.itemIdentifier(for: indexPath),
+              case let MainCellModel.cody(cody) = cellModel
+        else {
+            return
+        }
+        coordinator.showProfile(profileType: .userProfile, nickname: cody.nickname)
     }
     
     func showErrorNotiView() {
@@ -361,11 +368,26 @@ extension MainViewController: UICollectionViewDelegate {
         switch section {
         case .weather:
             didTapWeather()
-        case .cody:
-            coordinator.showPost(profileType: .userProfile)
+            
         case .style:
             let cell = collectionView.cellForItem(at: indexPath) as? StyleCell
+            guard let cellModel = dataSource?.itemIdentifier(for: indexPath),
+                  case let MainCellModel.styleTag(tag) = cellModel,
+                  tag.isGender || tag.isStyle
+            else {
+                return
+            }
             cell?.toggle()
+            viewModel.input.didTapTag(tag)
+            
+        case .cody:
+            guard let cellModel = dataSource?.itemIdentifier(for: indexPath),
+                  case let MainCellModel.cody(cody) = cellModel
+            else {
+                return
+            }
+            coordinator.showPost(profileType: .userProfile, userToken: cody.userToken, boardToken: cody.boardToken)
+            
         default: return
         }
     }

@@ -111,4 +111,5 @@ extension PostView {
     func setBookmarkButtonAction(_ tareget: Any?, action: Selector) {
         bookmarkButton.addTarget(tareget, action: action, for: .touchUpInside)
     }
+
 }

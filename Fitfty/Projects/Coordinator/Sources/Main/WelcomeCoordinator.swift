@@ -9,6 +9,7 @@
 import UIKit
 import MainFeed
 import Common
+import Core
 
 final class WelcomeCoordinator: Coordinator {
     
@@ -34,7 +35,12 @@ final class WelcomeCoordinator: Coordinator {
 private extension WelcomeCoordinator {
     
     func makeAddressViewController() -> UIViewController {
-        let viewController = WelcomeViewController(coordinator: self, viewModel: WelcomeViewModel())
+        let viewController = WelcomeViewController(
+            coordinator: self, viewModel: WelcomeViewModel(
+                fitftyRepository: DefaultFitftyRepository(),
+                userManager: DefaultUserManager.shared
+            )
+        )
         return viewController
     }
     

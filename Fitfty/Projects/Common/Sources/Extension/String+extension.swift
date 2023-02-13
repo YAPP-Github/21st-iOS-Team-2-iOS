@@ -47,15 +47,15 @@ public extension String {
     var stringToWeatherTag: WeatherTag? {
         switch self {
         case "HOT":
-            return .hotWeather
+            return .hot
         case "WARM":
-            return .warmWeather
+            return .warm
         case "CHILLY":
-            return .chillyWeather
+            return .chilly
         case "COLD":
-            return .coldWeather
+            return .cold
         case "FREEZING":
-            return .coldWaveWeather
+            return .freezing
         default: return nil
         }
     }

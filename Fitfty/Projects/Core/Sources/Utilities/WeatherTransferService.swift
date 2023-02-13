@@ -65,6 +65,9 @@ public protocol WeatherTransferService {
     /// 만약 찾지 못한다면, 수도권기상청 지점코드(108)를 대신 반환합니다.
     func dailyWeatherListBranchCode(_ address: String) -> Int
     
+    /// 단기예보 데이터를 가지고 날짜에 해당하는 평균 온도를 구합니다.
+    func averageTemp(_ data: [ShortTermForecast], date: Date) -> Int
+    
 }
 
 public final class DefaultWeatherTransferService: WeatherTransferService {
@@ -280,6 +283,17 @@ public final class DefaultWeatherTransferService: WeatherTransferService {
         return branchList
             .filter { address.contains($0.key) }
             .first?.value ?? 108
+    }
+    
+    public func averageTemp(_ data: [ShortTermForecast], date: Date) -> Int {
+        let data = data.filter {
+            ($0.isToday && ["03", "06", "09", "12", "15", "18", "21"].contains($0.date.toString(.hour))) ||
+            (
+                $0.date.addDays(1).toString(.baseDate) == date.toString(.baseDate) &&
+                $0.date.toString(.hour) == "00"
+            )
+        }.map { $0.temp }
+        return data.reduce(0, +) / 8
     }
     
 }

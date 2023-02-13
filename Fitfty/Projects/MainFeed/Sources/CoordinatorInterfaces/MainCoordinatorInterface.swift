@@ -15,7 +15,7 @@ public protocol MainCoordinatorInterface: AnyObject {
     
     func showProfile(profileType: ProfileType, nickname: String)
     
-    func showPost(profileType: ProfileType)
+    func showPost(profileType: ProfileType, userToken: String, boardToken: String)
 
     func showWeatherInfo()
     

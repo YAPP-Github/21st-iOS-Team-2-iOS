@@ -92,6 +92,7 @@ public final class ErrorNotiView: UIView {
 private extension ErrorNotiView {
     
     func configure() {
+        backgroundColor = .white
         let backgroundView = UIView()
         backgroundView.addSubviews(weatherImageView, backgroundStackView, buttonStackView)
         NSLayoutConstraint.activate([

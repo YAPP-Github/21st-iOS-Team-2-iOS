@@ -9,10 +9,18 @@
 import Foundation
 import Core
 
-public struct MainFeedSection: Hashable {
+public struct MainFeedSection: Hashable, Equatable {
     
     let sectionKind: MainSectionKind
     var items: [MainCellModel]
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(sectionKind)
+    }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.sectionKind == rhs.sectionKind
+    }
     
 }
 
@@ -34,19 +42,19 @@ enum MainSectionKind {
 enum MainCellModel: Hashable {
     
     case weather(ShortTermForecast)
-    case styleTag(UUID)
-    case cody(UUID)
+    case styleTag(Tag)
+    case cody(CodyResponse)
     
     func hash(into hasher: inout Hasher) {
         switch self {
         case .weather(let shortTermForecast):
             hasher.combine(shortTermForecast)
             
-        case .styleTag(let uuid):
-            hasher.combine(uuid)
+        case .styleTag(let tag):
+            hasher.combine(tag)
             
-        case .cody(let uuid):
-            hasher.combine(uuid)
+        case .cody(let cody):
+            hasher.combine(cody)
         }
 
     }
@@ -57,9 +65,14 @@ extension MainCellModel: Equatable {
     
     static func == (lhs: MainCellModel, rhs: MainCellModel) -> Bool {
         switch (lhs, rhs) {
-        case (.weather(let weatherLhs), .weather(let weatherRhs)):
-            return weatherLhs == weatherRhs
+        case (.weather(let lhs), .weather(let rhs)):
+            return lhs == rhs
             
+        case (.cody(let lhs), .cody(let rhs)):
+            return lhs == rhs
+            
+        case (.styleTag(let lhs), .styleTag(let rhs)):
+            return lhs == rhs
         default: return false
         }
     }

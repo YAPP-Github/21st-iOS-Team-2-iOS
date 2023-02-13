@@ -17,12 +17,6 @@ final class WeatherInfoHeaderView: UICollectionReusableView {
     
     private lazy var weatherInfoView: WeatherInfoView = .init()
     
-    private lazy var loadingIndicatorView: LoadingView = {
-        let loadingView: LoadingView = .init(backgroundColor: .white, alpha: 1, style: .medium)
-        loadingView.startAnimating()
-        return loadingView
-    }()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -33,16 +27,12 @@ final class WeatherInfoHeaderView: UICollectionReusableView {
     }
     
     private func configure() {
-        addSubviews(weatherInfoView, loadingIndicatorView)
+        addSubviews(weatherInfoView)
         NSLayoutConstraint.activate([
             weatherInfoView.topAnchor.constraint(equalTo: topAnchor),
             weatherInfoView.leadingAnchor.constraint(equalTo: leadingAnchor),
             weatherInfoView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            weatherInfoView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            loadingIndicatorView.widthAnchor.constraint(equalTo: widthAnchor),
-            loadingIndicatorView.heightAnchor.constraint(equalTo: heightAnchor),
-            loadingIndicatorView.topAnchor.constraint(equalTo: topAnchor),
-            loadingIndicatorView.leadingAnchor.constraint(equalTo: leadingAnchor)
+            weatherInfoView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     
@@ -56,9 +46,6 @@ final class WeatherInfoHeaderView: UICollectionReusableView {
                     minimum: weather.minTemp,
                     maximum: weather.maxTemp
                 )
-                
-            case .isLoading(let isLoading):
-                isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
             }
         }).store(in: &cancellables)
     }
