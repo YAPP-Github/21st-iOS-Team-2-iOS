@@ -38,6 +38,7 @@ private extension MainCoordinator {
             viewModel: MainViewModel(
                 addressRepository: DefaultAddressRepository(),
                 weatherRepository: DefaultWeatherRepository(),
+                fitftyRepository: DefaultFitftyRepository(),
                 userManager: DefaultUserManager.shared
             )
         )
@@ -116,12 +117,12 @@ extension MainCoordinator: MainCoordinatorInterface {
         navigationController.present(viewController, animated: false)
     }
     
-    public func showPost(profileType: ProfileType) {
+    public func showPost(profileType: ProfileType, userToken: String, boardToken: String) {
         let coordinator = makePostCoordinator(profileType: profileType)
         coordinator.start()
     }
     
-    public func showProfile(profileType: ProfileType) {
+    public func showProfile(profileType: ProfileType, nickName: String) {
         let coordinator = makeProfileCoordinator(profileType: profileType)
         coordinator.start()
     }

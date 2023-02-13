@@ -12,7 +12,8 @@ let project = Project.makeModule(
     name: "Common",
     product: .staticFramework,
     dependencies: [
-        .SPM.Moya
+        .SPM.Moya,
+        .SPM.Kingfisher
     ],
     resources: ["Resources/**"]
 )

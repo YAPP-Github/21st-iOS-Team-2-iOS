@@ -43,11 +43,11 @@ public final class MyFitftyViewModel {
     ]
     
     private var weatherTagItems: [(weatherTag: WeatherTag, isSelected: Bool)] = [
-        (.coldWaveWeather, false),
-        (.coldWeather, false),
-        (.chillyWeather, false),
-        (.warmWeather, false),
-        (.hotWeather, false)
+        (.freezing, false),
+        (.cold, false),
+        (.chilly, false),
+        (.warm, false),
+        (.hot, false)
     ]
     
     private var genderTagItems: [(gender: String, isSelected: Bool)] = [
@@ -148,15 +148,15 @@ extension MyFitftyViewModel {
     }
     
     private func getWeatherTagIndex(_ string: String) -> Int? {
-        if string == WeatherTag.coldWaveWeather.koreanWeatherTag {
+        if string == WeatherTag.freezing.koreanWeatherTag {
             return 0
-        } else if string == WeatherTag.coldWeather.koreanWeatherTag {
+        } else if string == WeatherTag.cold.koreanWeatherTag {
             return 1
-        } else if string == WeatherTag.chillyWeather.koreanWeatherTag {
+        } else if string == WeatherTag.chilly.koreanWeatherTag {
             return 2
-        } else if string == WeatherTag.warmWeather.koreanWeatherTag {
+        } else if string == WeatherTag.warm.koreanWeatherTag {
             return 3
-        } else if string == WeatherTag.hotWeather.koreanWeatherTag {
+        } else if string == WeatherTag.hot.koreanWeatherTag {
             return 4
         } else {
             return nil
