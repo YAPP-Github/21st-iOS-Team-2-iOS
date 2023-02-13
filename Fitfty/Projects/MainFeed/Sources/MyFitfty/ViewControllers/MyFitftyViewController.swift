@@ -107,6 +107,7 @@ final public class MyFitftyViewController: UIViewController {
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
+        enableRightBarButton.isEnabled = false
         viewModel.input.didTapUpload()
     }
     
