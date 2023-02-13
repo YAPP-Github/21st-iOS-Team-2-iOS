@@ -12,8 +12,11 @@ import Moya
 public enum FitftyAPI {
     case signInKakao(parameters: [String: Any])
     case signInApple(parameters: [String: Any])
+    case getUserPrivacy
     case getMyProfile
     case getPost(boardToken: String)
+    case checkNickname(query: String)
+    case setUserDetails(parameters: [String: Any])
     case postMyFitfty(parameters: [String: Any])
     case getOtherUserProfile(nickname: String)
     case deletePost(boardToken: String)
@@ -40,10 +43,16 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/auth/sign-in/kakao/"
         case .signInApple:
             return "/auth/sign-in/apple/"
+        case .getUserPrivacy:
+            return "/users/privacy"
         case .getMyProfile:
             return "/users/profile"
         case .getPost(let boardToken):
             return "/boards/\(boardToken)"
+        case .checkNickname(let query):
+            return "/users/nickname/\(query)"
+        case .setUserDetails:
+            return "/users/details"
         case .postMyFitfty:
             return "/boards/new"
         case .getOtherUserProfile(let nickname):
@@ -59,7 +68,9 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .signInApple,
              .postMyFitfty:
             return .post
-        case .getMyProfile:
+        case .getMyProfile,
+             .getUserPrivacy,
+             .checkNickname:
             return .get
         case .getPost:
             return .get
@@ -67,6 +78,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return .get
         case .deletePost:
             return .delete
+        case .setUserDetails:
+            return .put
         }
     }
     
@@ -74,6 +87,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         switch self {
         case .signInKakao(let parameters),
              .signInApple(let parameters),
+             .setUserDetails(let parameters),
              .postMyFitfty(let parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         default:
@@ -89,13 +103,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
 public extension FitftyAPI {
     static func request<T: Decodable>(target: FitftyAPI, dataType: T.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
-            // TODO: 임시로 구현해둔 어드민 토큰 사용 코드. 로그인 기능 구현 완료 후 삭제할 코드입니다.
-            let tokenClosure: (TargetType) -> String = { _ in
-                return APIKey.adminToken
-            }
-            let authPlugin = AccessTokenPlugin(tokenClosure: tokenClosure)
-            let provider = MoyaProvider<FitftyAPI>(plugins: [authPlugin])
-            
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -115,13 +123,7 @@ public extension FitftyAPI {
     
     static func request(target: FitftyAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
-            // TODO: 임시로 구현해둔 어드민 토큰 사용 코드. 로그인 기능 구현 완료 후 삭제할 코드입니다.
-            let tokenClosure: (TargetType) -> String = { _ in
-                return APIKey.adminToken
-            }
-            let authPlugin = AccessTokenPlugin(tokenClosure: tokenClosure)
-            let provider = MoyaProvider<FitftyAPI>(plugins: [authPlugin])
-            
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -132,5 +134,18 @@ public extension FitftyAPI {
                 }
             }
         }
+    }
+    
+    private static func getAuthPlugin() -> AccessTokenPlugin {
+        let tokenClosure: (TargetType) -> String = { _ in
+            guard let identifier = UserDefaults.standard.read(key: .userIdentifier) as? String,
+                  let account = UserDefaults.standard.read(key: .userAccount) as? String,
+                  let token = Keychain.loadData(serviceIdentifier: identifier, forKey: account) else {
+                Logger.debug(error: SocialLoginError.noToken, message: "No Token")
+                return ""
+            }
+            return token
+        }
+        return AccessTokenPlugin(tokenClosure: tokenClosure)
     }
 }
