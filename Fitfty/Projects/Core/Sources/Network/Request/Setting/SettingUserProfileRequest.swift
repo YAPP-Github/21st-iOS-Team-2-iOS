@@ -7,3 +7,8 @@
 //
 
 import Foundation
+
+struct SettingUserProfileRequest: Encodable {
+    let profilePictureUrl: String?
+    let message: String?
+}
