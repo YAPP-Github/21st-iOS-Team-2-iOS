@@ -47,6 +47,14 @@ private extension PersonalInfoCoordinator {
 
 extension PersonalInfoCoordinator: PersonalInfoCoordinatorInterface {
     
+    func showAuthView() {
+        reloadWindow()
+    }
+    
+    func pushWithdrawView() {
+        
+    }
+    
     func finished() {
         navigationController.popViewController(animated: true)
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)

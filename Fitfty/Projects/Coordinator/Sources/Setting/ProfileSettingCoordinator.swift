@@ -7,8 +7,10 @@
 //
 
 import UIKit
-import Common
+
 import Setting
+import Common
+import Core
 
 final class ProfileSettingCoordinator: Coordinator {
     
@@ -34,7 +36,12 @@ final class ProfileSettingCoordinator: Coordinator {
 private extension ProfileSettingCoordinator {
     
     func makeProfileSettingViewController() -> UIViewController {
-        let viewController = ProfileSettingViewController(coordinator: self, viewModel: ProfileSettingViewModel())
+        let viewController = ProfileSettingViewController(
+            coordinator: self,
+            viewModel: ProfileSettingViewModel(
+                repository: DefaultSettingRepository()
+            )
+        )
         return viewController
     }
     
