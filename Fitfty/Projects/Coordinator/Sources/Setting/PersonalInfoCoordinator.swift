@@ -43,16 +43,32 @@ private extension PersonalInfoCoordinator {
         return viewController
     }
     
+    func makeWithdrawViewController(state: WithdrawViewState) -> UIViewController {
+        let viewController = WithdrawViewController(
+            state: state,
+            coordinator: self,
+            viewModel: WithdrawViewModel(
+                repository: DefaultSettingRepository()
+            )
+        )
+        return viewController
+    }
+    
 }
 
 extension PersonalInfoCoordinator: PersonalInfoCoordinatorInterface {
-    
     func showAuthView() {
         reloadWindow()
     }
     
     func pushWithdrawView() {
-        
+        let viewController = makeWithdrawViewController(state: .withdraw)
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func pushWithdrawConfirmView() {
+        let viewController = makeWithdrawViewController(state: .withdrawConfirm)
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     func finished() {
@@ -60,4 +76,7 @@ extension PersonalInfoCoordinator: PersonalInfoCoordinatorInterface {
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
     
+    func pop() {
+        navigationController.popViewController(animated: true)
+    }
 }
