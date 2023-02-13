@@ -12,8 +12,11 @@ import Moya
 public enum FitftyAPI {
     case signInKakao(parameters: [String: Any])
     case signInApple(parameters: [String: Any])
+    case withdrawAccount
     case getUserPrivacy
+    case updateUserPrivacy(parameters: [String: Any])
     case getMyProfile
+    case updateMyProfile(parameters: [String: Any])
     case checkNickname(query: String)
     case setUserDetails(parameters: [String: Any])
     case postMyFitfty(parameters: [String: Any])
@@ -40,9 +43,13 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/auth/sign-in/kakao/"
         case .signInApple:
             return "/auth/sign-in/apple/"
-        case .getUserPrivacy:
+        case .withdrawAccount:
+            return "/auth/me"
+        case .getUserPrivacy,
+             .updateUserPrivacy:
             return "/users/privacy"
-        case .getMyProfile:
+        case .getMyProfile,
+             .updateMyProfile:
             return "/users/profile"
         case .checkNickname(let query):
             return "/users/nickname/\(query)"
@@ -63,8 +70,12 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .getUserPrivacy,
              .checkNickname:
             return .get
-        case .setUserDetails:
+        case .setUserDetails,
+             .updateUserPrivacy,
+             .updateMyProfile:
             return .put
+        case .withdrawAccount:
+            return .delete
         }
     }
     
@@ -73,7 +84,9 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .signInKakao(let parameters),
              .signInApple(let parameters),
              .setUserDetails(let parameters),
-             .postMyFitfty(let parameters):
+             .postMyFitfty(let parameters),
+             .updateUserPrivacy(let parameters),
+             .updateMyProfile(let parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         default:
             return .requestPlain
