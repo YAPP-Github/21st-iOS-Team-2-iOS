@@ -20,6 +20,7 @@ public enum FitftyAPI {
     case postMyFitfty(parameters: [String: Any])
     case getOtherUserProfile(nickname: String)
     case deletePost(boardToken: String)
+    case putPost(parameters: [String: Any], boardToken: String)
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -61,6 +62,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/users/profile/\(nickname)"
         case .deletePost(let boardToken):
             return "/boards/\(boardToken)"
+        case .putPost(_, let boardToken):
+            return "/boards/\(boardToken)"
         }
     }
     
@@ -78,7 +81,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return .get
         case .deletePost:
             return .delete
-        case .setUserDetails:
+        case .setUserDetails,
+             .putPost:
             return .put
         }
     }
@@ -88,7 +92,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .signInKakao(let parameters),
              .signInApple(let parameters),
              .setUserDetails(let parameters),
-             .postMyFitfty(let parameters):
+             .postMyFitfty(let parameters),
+             .putPost(let parameters, _):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         default:
             return .requestPlain

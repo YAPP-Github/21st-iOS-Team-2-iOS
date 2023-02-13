@@ -27,6 +27,7 @@ public struct PostData: Codable {
     public let temperature: Int?
     public let cloudType: String?
     public let createdAt: String
+    public let photoTakenTime: String?
     public let views, bookmarkCnt: Int
     public let bookmarked: Bool
 

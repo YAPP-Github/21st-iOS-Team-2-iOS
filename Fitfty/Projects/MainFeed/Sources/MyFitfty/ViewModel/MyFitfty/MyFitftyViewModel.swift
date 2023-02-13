@@ -251,6 +251,13 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
                         }
                         contentText = data.content
                         filepath = data.filePath
+                        if let temperature = data.temperature {
+                            self.temperature = String(temperature)
+                        }
+                        cloudType = data.cloudType
+                        photoTakenTime = data.photoTakenTime
+                        location = data.location
+                        
                         currentState.send(.codyFilepath(data.filePath))
                         currentState.send(.content(data.content))
                         
@@ -263,6 +270,22 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
                         for styleTagString in data.tagGroupInfo.style {
                             let styleTagIndex = getStyleTagIndex(styleTagString)
                             changeTag(.styleTag, selectedIndex: styleTagIndex)
+                        }
+                        
+                        if let temperature = data.temperature,
+                           let cloudType = data.cloudType,
+                           let photoTakenTime = data.photoTakenTime {
+                            let imageInfoMessage = """
+                            사진 찍은 날의 날씨 정보를 불러왔어요. \(photoTakenTime.yymmddFromCreatedDate) / 평균 \(temperature)도
+                            \(cloudType)에 입는 옷이 아니라면 고쳐주세요.
+                            """
+                            currentState.send(.imageInfoMessage(imageInfoMessage))
+                        } else {
+                            let imageInfoMessage = """
+                            사진에 등록된 날짜 · 위치 정보가 없어요.
+                            직접 어떤 날씨에 입는 옷인지 선택해주세요.
+                            """
+                            currentState.send(.imageInfoMessage(imageInfoMessage))
                         }
                         
                         currentState.send(.sections([
@@ -425,8 +448,7 @@ private extension MyFitftyViewModel {
                 self.currentState.send(.isLoading(true))
                 if let content = contentText,
                    let tagGroup = getTapGroup() {
-                    
-                    switch myFitftyType  {
+                    switch myFitftyType {
                     case .uploadMyFitfty:
                         guard let selectedPhAssetInfo = selectedPhAssetInfo else {
                             return
@@ -454,11 +476,12 @@ private extension MyFitftyViewModel {
                             self.currentState.send(.completed(true))
                         } else {
                             self.currentState.send(.completed(false))
-                            self.currentState.send(.errorMessage("모든 항목을 선택해야 합니다."))
+                            self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
                         }
 
                     case .modifyMyFitfty:
-                        guard let filepath = filepath else {
+                        guard let filepath = filepath,
+                              let boardToken = boardToken else {
                             return
                         }
                         let request = MyFitftyRequest(
@@ -466,10 +489,19 @@ private extension MyFitftyViewModel {
                             content: content,
                             temperature: self.temperature,
                             location: self.location,
-                            cloudType: cloudType,
-                            photoTakenTime: photoTakenTime,
+                            cloudType: self.cloudType,
+                            photoTakenTime: self.photoTakenTime,
                             tagGroup: tagGroup
                         )
+                        print(request)
+                        let response = try await putPost(request: request, boardToken: boardToken)
+                        if response.result == "SUCCESS" {
+                            self.currentState.send(.completed(true))
+                        } else {
+                            print(response)
+                            self.currentState.send(.completed(false))
+                            self.currentState.send(.errorMessage("핏프티 수정에 알 수 없는 에러가 발생했습니다."))
+                        }
                     }
                 } else {
                     self.currentState.send(.completed(false))
@@ -503,10 +535,10 @@ private extension MyFitftyViewModel {
         return address
     }
     
-    func postMyFitfty(_ request: MyFitftyRequest) async throws -> MyFitftyResponse {
+    func postMyFitfty(_ request: MyFitftyRequest) async throws -> UploadMyFitftyResponse {
         let response = try await FitftyAPI.request(
             target: .postMyFitfty(parameters: request.asDictionary()),
-            dataType: MyFitftyResponse.self
+            dataType: UploadMyFitftyResponse.self
         )
         return response
     }
@@ -515,6 +547,14 @@ private extension MyFitftyViewModel {
         let response = try await FitftyAPI.request(
             target: .getPost(boardToken: boardToken),
             dataType: PostResponse.self
+        )
+        return response
+    }
+    
+    func putPost(request: MyFitftyRequest, boardToken: String) async throws -> ModifyMyFitftyResponse {
+        let response = try await FitftyAPI.request(
+            target: .putPost(parameters: request.asDictionary(), boardToken: boardToken),
+            dataType: ModifyMyFitftyResponse.self
         )
         return response
     }
