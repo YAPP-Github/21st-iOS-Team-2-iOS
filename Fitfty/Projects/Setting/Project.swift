@@ -14,6 +14,11 @@ let project = Project.makeModule(
     dependencies: [
         .Project.Common,
         .Project.Core,
-        .SPM.Moya
+        .SPM.Moya,
+        .package(product: "Amplify"),
+        .package(product: "AWSCognitoAuthPlugin"),
+        .package(product: "AWSS3StoragePlugin"),
+        .package(product: "AWSAPIPlugin"),
+        .package(product: "AWSDataStorePlugin")
     ]
 )
