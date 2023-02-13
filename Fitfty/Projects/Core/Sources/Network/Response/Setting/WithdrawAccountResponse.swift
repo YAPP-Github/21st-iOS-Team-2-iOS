@@ -7,3 +7,10 @@
 //
 
 import Foundation
+
+struct WithdrawAccountResponse: Codable {
+    let result: String
+    let data: String?
+    let message: String?
+    let errorCode: String?
+}
