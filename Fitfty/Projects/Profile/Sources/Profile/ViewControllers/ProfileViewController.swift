@@ -262,7 +262,7 @@ private extension ProfileViewController {
         self.nickname = data.nickname
         
         miniProfileView.setUp(
-            filepath: data.message,
+            filepath: data.profilePictureUrl,
             nickname: data.nickname
         )
     }
