@@ -7,22 +7,26 @@
 //
 
 import UIKit
+import Combine
+
 import Common
 
 public final class ProfileSettingViewController: UIViewController {
     
     private weak var coordinator: ProfileSettingCoordinatorInterface?
     private var viewModel: ProfileSettingViewModel
+    private var cancellables = Set<AnyCancellable>()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setUp()
     }
     
     public init(coordinator: ProfileSettingCoordinatorInterface, viewModel: ProfileSettingViewModel) {
         self.coordinator = coordinator
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        setUp()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -36,7 +40,7 @@ public final class ProfileSettingViewController: UIViewController {
     
     private lazy var navigationBarView: BarView = {
         let barView = BarView(title: "프로필 설정", isChevronButtonHidden: true)
-        barView.setCancelButtonTarget(target: self, action: #selector(didTapCancelButton(_:)))
+        barView.setCancelButtonTarget(target: self, action: #selector(didTapSaveButton(_:)))
         return barView
     }()
     
@@ -76,14 +80,14 @@ public final class ProfileSettingViewController: UIViewController {
     }()
     
     private lazy var introductionTextField: FitftyTextField = {
-        let textFiled = FitftyTextField(style: .normal, placeHolderText: "20자 이내 한 줄 소개를 입력해주세요.")
+        let textFiled = FitftyTextField(style: .normal, placeHolderText: "30자 이내 한 줄 소개를 입력해주세요.")
         textFiled.becomeFirstResponder()
         return textFiled
     }()
     
-    private lazy var cancelButton: FitftyButton = {
-        let button = FitftyButton(style: .enabled, title: "닫기")
-        button.setButtonTarget(target: self, action: #selector(didTapCancelButton(_:)))
+    private lazy var saveButton: FitftyButton = {
+        let button = FitftyButton(style: .enabled, title: "수정하기")
+        button.setButtonTarget(target: self, action: #selector(didTapSaveButton(_:)))
         return button
     }()
 }
@@ -94,9 +98,31 @@ private extension ProfileSettingViewController {
         setUpLayout()
     }
     
+    func bind() {
+        viewModel.state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                switch state {
+                case .updateProfileMessage(let text):
+                    self?.introductionTextField.text = text
+                    
+                case .updateProfileImage(let imageString):
+                    break
+                    
+                case .showErrorAlert(let error):
+                    self?.showAlert(message: error.localizedDescription)
+                    
+                case .dismiss:
+                    self?.coordinator?.dismiss()
+                    
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     func setUpLayout() {
         view.backgroundColor = .white
-        view.addSubviews(navigationBarView, profileView, introductionView, cancelButton)
+        view.addSubviews(navigationBarView, profileView, introductionView, saveButton)
         NSLayoutConstraint.activate([
             navigationBarView.topAnchor.constraint(equalTo: view.topAnchor),
             navigationBarView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -107,14 +133,14 @@ private extension ProfileSettingViewController {
             introductionView.topAnchor.constraint(equalTo: profileView.bottomAnchor, constant: 24),
             introductionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             introductionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            cancelButton.topAnchor.constraint(equalTo: introductionView.bottomAnchor, constant: 32),
-            cancelButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            cancelButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+            saveButton.topAnchor.constraint(equalTo: introductionView.bottomAnchor, constant: 32),
+            saveButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            saveButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
         ])
     }
     
-    @objc func didTapCancelButton(_ sender: UITapGestureRecognizer) {
-        coordinator?.dismiss()
+    @objc func didTapSaveButton(_ sender: UITapGestureRecognizer) {
+        viewModel.didTapSaveButton()
     }
     
     @objc func didTapEditProfileButton(_ sender: UIButton) {
