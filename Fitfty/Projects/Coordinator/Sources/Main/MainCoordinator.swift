@@ -64,7 +64,7 @@ private extension MainCoordinator {
             navigationController: navigationController,
             profileType: profileType,
             presentType: .mainProfile,
-            boardToken: "brd_OLDLsnYssAoYVXAD"
+            boardToken: "brd_W4fRiw1NIN644wwt"
         )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
