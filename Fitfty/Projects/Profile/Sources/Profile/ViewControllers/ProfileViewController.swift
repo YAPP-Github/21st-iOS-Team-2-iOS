@@ -65,26 +65,6 @@ final public class ProfileViewController: UIViewController {
         }
     }
     
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        setUp()
-        bind()
-    }
-    
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setNavigationBar()
-        switch presentType {
-        case .mainProfile:
-            guard let nickname = nickname else {
-                return
-            }
-            viewModel.input.viewWillAppearWithoutMenu(nickname: nickname)
-        case .tabProfile:
-            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
-        }
-    }
-    
     public init(
         coordinator: ProfileCoordinatorInterface,
         profileType: ProfileType,
@@ -107,6 +87,27 @@ final public class ProfileViewController: UIViewController {
     
     deinit {
         coordinator.finishedTapGesture()
+    }
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setUp()
+        bind()
+    }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setNavigationBar()
+        emptyView.isHidden = true
+        switch presentType {
+        case .mainProfile:
+            guard let nickname = nickname else {
+                return
+            }
+            viewModel.input.viewWillAppearWithoutMenu(nickname: nickname)
+        case .tabProfile:
+            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
+        }
     }
     
     private func setUp() {
@@ -338,14 +339,15 @@ private extension ProfileViewController {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
-        snapshot.reloadSections([.feed])
-        dataSource?.apply(snapshot, animatingDifferences: true)
-        guard sections.first?.items.count == 0 else {
-            return
+        dataSource?.apply(snapshot, animatingDifferences: true) {
+            guard sections.first?.items.count == 0 else {
+                return
+            }
+            self.collectionView.isScrollEnabled = false
+            self.emptyView.isHidden = false
+            self.emptyView.setUp(self.menuType)
         }
-        collectionView.isScrollEnabled = false
-        emptyView.isHidden = false
-        emptyView.setUp(menuType)
+        
     }
     
     func postLayout() -> UICollectionViewLayout {
