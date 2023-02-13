@@ -8,6 +8,7 @@
 
 import UIKit
 import Combine
+import Kingfisher
 
 import Common
 
@@ -27,6 +28,8 @@ public final class ProfileSettingViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         setUp()
         bind()
+        
+        viewModel.getUserProfile()
     }
     
     required init?(coder: NSCoder) {
@@ -107,14 +110,15 @@ private extension ProfileSettingViewController {
                     self?.introductionTextField.text = text
                     
                 case .updateProfileImage(let imageString):
-                    break
+                    if let url = URL(string: imageString ?? "") {
+                        self?.profileImageView.kf.setImage(with: url)
+                    }
                     
                 case .showErrorAlert(let error):
                     self?.showAlert(message: error.localizedDescription)
                     
                 case .dismiss:
                     self?.coordinator?.dismiss()
-                    
                 }
             }
             .store(in: &cancellables)
@@ -140,7 +144,8 @@ private extension ProfileSettingViewController {
     }
     
     @objc func didTapSaveButton(_ sender: UITapGestureRecognizer) {
-        viewModel.didTapSaveButton()
+        // TODO: - imageUrl 넘겨주기 처리 필요
+        viewModel.didTapSaveButton(imageUrl: nil, message: introductionTextField.text)
     }
     
     @objc func didTapEditProfileButton(_ sender: UIButton) {

@@ -29,14 +29,11 @@ public final class ProfileSettingViewModel: ViewModelType {
         self.repository = repository
     }
     
-    func didTapSaveButton() {
-        
+    func didTapSaveButton(imageUrl: String?, message: String?) {
+        saveUserProfile(imageUrl: imageUrl, message: message)
     }
-}
-
-
-extension ProfileSettingViewModel {
-    private func getUserProfile() {
+    
+    func getUserProfile() {
         Task {
             do {
                 let response = try await repository.getUserProfile()
@@ -48,8 +45,18 @@ extension ProfileSettingViewModel {
             }
         }
     }
-    
-    private func saveUserProfile() {
-        
+}
+
+extension ProfileSettingViewModel {    
+    private func saveUserProfile(imageUrl: String?, message: String?) {
+        Task {
+            do {
+                try await repository.updateUserProfile(profilePictureUrl: imageUrl, message: message)
+                
+                currentState.send(.dismiss)
+            } catch {
+                currentState.send(.showErrorAlert(error))
+            }
+        }
     }
 }
