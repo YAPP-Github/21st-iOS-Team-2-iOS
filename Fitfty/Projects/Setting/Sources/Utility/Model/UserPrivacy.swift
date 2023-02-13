@@ -9,17 +9,8 @@
 import Foundation
 
 public struct UserPrivacy {
-    public let email: String
-    public let nickname: String?
-    public let birtyday: String?
-    public let gender: String?
-    public let message: String?
-    
-    public init(email: String, nickname: String?, birtyday: String?, gender: String?, message: String?) {
-        self.email = email
-        self.nickname = nickname
-        self.birtyday = birtyday
-        self.gender = gender
-        self.message = message
-    }
+    let email: String?
+    var nickname: String?
+    var birtyday: String?
+    var gender: String?
 }
