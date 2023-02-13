@@ -55,11 +55,12 @@ private extension PostCoordinator {
         return viewController
     }
     
-    func makePostBottomSheetViewController(boardToken: String) -> UIViewController {
+    func makePostBottomSheetViewController(boardToken: String, filepath: String) -> UIViewController {
         let viewController = MyPostBottomSheetViewController(
             coordinator: self,
             viewModel: PostBottomSheetViewModel(),
-            boardToken: boardToken
+            boardToken: boardToken,
+            filepath: filepath
         )
         let bottomSheetViewController = BottomSheetViewController(
             style: .custom(196),
@@ -98,8 +99,8 @@ extension PostCoordinator: PostCoordinatorInterface {
         coordinator.start()
     }
     
-    func showBottomSheet(boardToken: String) {
-        let bottomSheetViewController = makePostBottomSheetViewController(boardToken: boardToken)
+    func showBottomSheet(boardToken: String, filepath: String) {
+        let bottomSheetViewController = makePostBottomSheetViewController(boardToken: boardToken, filepath: filepath)
         bottomSheetViewController.modalPresentationStyle = .overFullScreen
         navigationController.present(bottomSheetViewController, animated: false)
     }
