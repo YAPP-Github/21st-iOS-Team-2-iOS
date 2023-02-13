@@ -13,7 +13,7 @@ final class MiniProfileView: UIView {
 
     private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
     }()

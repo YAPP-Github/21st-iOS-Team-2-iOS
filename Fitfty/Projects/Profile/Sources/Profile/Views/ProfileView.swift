@@ -14,7 +14,7 @@ final class ProfileView: UIView {
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = CommonAsset.Images.profileSample.image
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 52
         return imageView
