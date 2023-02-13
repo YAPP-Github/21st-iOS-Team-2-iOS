@@ -30,7 +30,9 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     public var authorizationType: AuthorizationType? {
         switch self {
         case .signInKakao,
-             .signInApple:
+             .signInApple,
+             .getPost,
+             .getOtherUserProfile:
             return .none
         default:
             return .bearer
@@ -70,11 +72,9 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return .post
         case .getMyProfile,
              .getUserPrivacy,
-             .checkNickname:
-            return .get
-        case .getPost:
-            return .get
-        case.getOtherUserProfile:
+             .checkNickname,
+             .getPost,
+             .getOtherUserProfile:
             return .get
         case .deletePost:
             return .delete
