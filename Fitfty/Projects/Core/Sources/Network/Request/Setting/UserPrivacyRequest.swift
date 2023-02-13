@@ -7,3 +7,9 @@
 //
 
 import Foundation
+
+struct UserPrivacyRequest: Encodable {
+    let nickname: String
+    let birthday: String
+    let gender: String
+}
