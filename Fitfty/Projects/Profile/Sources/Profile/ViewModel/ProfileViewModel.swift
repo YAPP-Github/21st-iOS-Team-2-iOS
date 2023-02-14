@@ -86,20 +86,10 @@ extension ProfileViewModel: ProfileViewModelInput {
     }
     
     func didTapPostWithoutMenu(selectedIndex: Int) {
-        guard let myUserToken = response?.data?.userToken else {
-            return
-        }
-        guard let otherUserToken = response?.data?.codiList[selectedIndex].userToken else {
-            return
-        }
         guard let boardToken = response?.data?.codiList[selectedIndex].boardToken else {
             return
         }
-        if myUserToken == otherUserToken {
-            currentState.send(.showPost(.myProfile, boardToken))
-        } else {
-            currentState.send(.showPost(.userProfile, boardToken))
-        }
+        currentState.send(.showPost(.userProfile, boardToken))
     }
     
     func didTapMoreVertical() {
