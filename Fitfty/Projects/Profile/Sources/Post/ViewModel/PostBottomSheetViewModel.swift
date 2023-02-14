@@ -83,10 +83,10 @@ extension PostBottomSheetViewModel: ViewModelType {
 
 extension PostBottomSheetViewModel {
     
-    func deletePost(boardToken: String) async throws -> PostDeleteResponse {
+    func deletePost(boardToken: String) async throws -> FitftyResponse {
         let response = try await FitftyAPI.request(
             target: .deletePost(boardToken: boardToken),
-            dataType: PostDeleteResponse.self
+            dataType: FitftyResponse.self
         )
         return response
     }

@@ -88,8 +88,11 @@ private extension ProfileCoordinator {
         return coordinator
     }
     
-    func makeReportViewController() -> UIViewController {
-        let coordinator = ReportCoordinator(reportType: .userReport)
+    func makeReportViewController(reportedToken: String) -> UIViewController {
+        let coordinator = ReportCoordinator(
+            reportType: .userReport,
+            reportedToken: reportedToken
+        )
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()
@@ -113,8 +116,8 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         coordinator.start()
     }
     
-    func showReport() {
-        let viewController = makeReportViewController()
+    func showReport(reportedToken: String) {
+        let viewController = makeReportViewController(reportedToken: reportedToken)
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
     }

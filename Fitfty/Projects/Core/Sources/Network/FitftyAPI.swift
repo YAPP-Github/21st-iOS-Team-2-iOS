@@ -26,6 +26,8 @@ public enum FitftyAPI {
     case mySettings
     case addBookmark(boardToken: String)
     case deleteBookmark(boardToken: String)
+    case reportUser(parameters: UserReportRequest)
+    case reportPost(parameters: PostReportRequest)
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -78,6 +80,10 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .addBookmark(let boardToken),
              .deleteBookmark(let boardToken):
             return "/boards/bookmark/\(boardToken.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        case .reportUser:
+            return "/reports/user/new"
+        case .reportPost:
+            return "/reports/board/new"
         }
     }
     
@@ -86,7 +92,9 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .signInKakao,
              .signInApple,
              .postMyFitfty,
-             .addBookmark:
+             .addBookmark,
+             .reportUser,
+             .reportPost:
             return .post
             
         case .getMyProfile,
@@ -121,6 +129,12 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .codyList(let parameters),
              .putPost(let parameters, _):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
+            
+        case .reportPost(let parameters):
+            return .requestJSONEncodable(parameters)
+            
+        case .reportUser(let parameters):
+            return .requestJSONEncodable(parameters)
             
         case .filteredCodyList(let parameter):
             let parameters = updateParameters(parameter)

@@ -19,6 +19,7 @@ protocol ProfileViewModelInput {
     func didTapMenu(_ menuType: MenuType)
     func didTapPostWithMenu(selectedIndex: Int, menuType: MenuType)
     func didTapPostWithoutMenu(selectedIndex: Int)
+    func didTapMoreVertical()
     
 }
 
@@ -32,6 +33,7 @@ public final class ProfileViewModel {
 }
 
 extension ProfileViewModel: ProfileViewModelInput {
+    
     var input: ProfileViewModelInput { self }
     
     func viewWillAppearWithMenu(menuType: MenuType) {
@@ -100,6 +102,13 @@ extension ProfileViewModel: ProfileViewModelInput {
         }
     }
     
+    func didTapMoreVertical() {
+        guard let userToken = response?.data?.userToken else {
+            return
+        }
+        currentState.send(.report(userToken))
+    }
+    
 }
 
 extension ProfileViewModel: ViewModelType {
@@ -110,6 +119,7 @@ extension ProfileViewModel: ViewModelType {
         case update(ProfileResponse)
         case sections([ProfileSection])
         case showPost(ProfileType, String)
+        case report(String)
     }
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
