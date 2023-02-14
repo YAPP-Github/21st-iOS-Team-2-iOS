@@ -22,9 +22,9 @@ final public class DetailReportViewController: UIViewController {
         return barView
     }()
     
-    private lazy var cancelButton: FitftyButton = {
+    private lazy var reportButton: FitftyButton = {
         let button = FitftyButton(style: .enabled, title: "신고하기")
-        button.setButtonTarget(target: self, action: #selector(didTapCancelButton(_:)))
+        button.setButtonTarget(target: self, action: #selector(didTapReportButton(_:)))
         return button
     }()
     
@@ -59,7 +59,10 @@ final public class DetailReportViewController: UIViewController {
         viewModel.input.viewDidLoad()
     }
     
-    public init(coordinator: DetailReportCoordinatorInterface, viewModel: DetailReportViewModel) {
+    public init(
+        coordinator: DetailReportCoordinatorInterface,
+        viewModel: DetailReportViewModel
+    ) {
         self.coordinator = coordinator
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -70,7 +73,7 @@ final public class DetailReportViewController: UIViewController {
     }
     
     private func setConstraintsLayout() {
-        view.addSubviews(navigationBarView, tableView, cancelButton, loadingIndicatorView)
+        view.addSubviews(navigationBarView, tableView, reportButton, loadingIndicatorView)
         NSLayoutConstraint.activate([
             navigationBarView.topAnchor.constraint(equalTo: view.topAnchor),
             navigationBarView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -82,9 +85,9 @@ final public class DetailReportViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor, constant: 10),
             tableView.heightAnchor.constraint(equalToConstant: 240),
             
-            cancelButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 25),
-            cancelButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            cancelButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            reportButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 25),
+            reportButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            reportButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
             loadingIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             loadingIndicatorView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
@@ -94,6 +97,10 @@ final public class DetailReportViewController: UIViewController {
     private func setUp() {
         setConstraintsLayout()
         setDataSource()
+    }
+    
+    @objc func didTapReportButton(_ sender: UITapGestureRecognizer) {
+        viewModel.input.didTapReportButton()
     }
     
     @objc func didTapCancelButton(_ sender: UITapGestureRecognizer) {

@@ -17,12 +17,14 @@ public protocol UserManager {
     var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { get }
     var gender: Gender? { get }
     var isGuest: AnyPublisher<Bool, Never> { get }
+    var myUserToken: String? { get }
     
     func updateUserState(_ state: Bool)
     func updateCurrentLocation(_ address: Address)
     func updateGender(_ gender: Gender)
     func updateGuestState(_ isGuest: Bool)
     func updateCompletedWelcomePage()
+    func updateUserToken(_ myUserToken: String)
 }
 
 public final class DefaultUserManager {
@@ -34,7 +36,8 @@ public final class DefaultUserManager {
     private var _location: CurrentValueSubject<(longitude: Double, latitude: Double)?, Never> = .init(nil)
     private var _gender: Gender?
     private var _guestState: CurrentValueSubject<Bool, Never> = .init(true)
-    
+    private var _myUserToken: String?
+
     private var cancellables: Set<AnyCancellable> = .init()
     
     private init(localStorage: LocalStorageService) {
@@ -61,6 +64,7 @@ extension DefaultUserManager: UserManager {
     public var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { _location.eraseToAnyPublisher() }
     public var gender: Gender? { _gender }
     public var isGuest: AnyPublisher<Bool, Never> { _guestState.eraseToAnyPublisher() }
+    public var myUserToken: String? { _myUserToken }
     
     public func updateUserState(_ state: Bool) {
         localStorage.write(key: .isNewUser, value: state)
@@ -86,6 +90,10 @@ extension DefaultUserManager: UserManager {
     
     public func updateCompletedWelcomePage() {
         localStorage.write(key: .hasCompletedWelcomePage, value: true)
+    }
+    
+    public func updateUserToken(_ myUserToken: String) {
+        _myUserToken = myUserToken
     }
     
 }
