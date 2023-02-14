@@ -136,16 +136,13 @@ extension MainViewModel: MainViewModelInput {
                         list.append((codyList[i], profileTypes[i]))
                     }
                 } else {
-                    if userManager.myUserToken == nil {
-                        let userPrivacy = try await self.getUserPrivacy()
-                        guard let myUserToken = userPrivacy.data?.userToken else {
-                            return
-                        }
-                        userManager.updateUserToken(myUserToken)
-                    }
+                    let userPrivacy = try await self.getUserPrivacy()
+                    self.myUserToken = userPrivacy.data?.userToken
+                    
                     for i in 0..<codyList.count {
                         list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
                     }
+                    
                 }
                 currentState.send(.sections([
                     MainFeedSection(sectionKind: .weather, items: self._weathers),
@@ -184,13 +181,9 @@ private extension MainViewModel {
                         list.append((codyList[i], profileTypes[i]))
                     }
                 } else {
-                    if userManager.myUserToken == nil {
-                        let userPrivacy = try await self.getUserPrivacy()
-                        guard let myUserToken = userPrivacy.data?.userToken else {
-                            return
-                        }
-                        userManager.updateUserToken(myUserToken)
-                    }
+                    let userPrivacy = try await self.getUserPrivacy()
+                    self.myUserToken = userPrivacy.data?.userToken
+                    
                     for i in 0..<codyList.count {
                         list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
                     }

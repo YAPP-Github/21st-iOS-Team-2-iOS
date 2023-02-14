@@ -93,7 +93,6 @@ final public class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
-        print("presentType \(presentType)")
     }
     
     public override func viewWillAppear(_ animated: Bool) {
