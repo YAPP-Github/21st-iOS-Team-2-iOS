@@ -101,12 +101,11 @@ private extension PostCoordinator {
         coordinator.start()
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
-        let bottomSheetViewController =
-        BottomSheetViewController(
+        let bottomSheetViewController = BottomSheetViewController(
             style: .small,
             contentViewController: coordinator.navigationController
         )
-        bottomSheetDelegate = bottomSheetViewController
+        coordinator.bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
     
