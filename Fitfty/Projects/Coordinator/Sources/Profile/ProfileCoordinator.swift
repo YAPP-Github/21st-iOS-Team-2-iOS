@@ -89,27 +89,18 @@ private extension ProfileCoordinator {
     }
     
     func makeReportViewController() -> UIViewController {
-        let bottomSheetViewController =
-        BottomSheetViewController(
-            style: .small,
-            contentViewController: ReportViewController(coordinator: self)
-        )
-        bottomSheetDelegate = bottomSheetViewController
-        return bottomSheetViewController
-    }
-    
-    func makeDetailReportViewController() -> UIViewController {
-        let coordinator = DetailReportCoordinator()
+        let coordinator = ReportCoordinator(reportType: .userReport)
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
-        let bottomSheetViewController = BottomSheetViewController(
-            style: .custom(480),
+        let bottomSheetViewController =
+        BottomSheetViewController(
+            style: .small,
             contentViewController: coordinator.navigationController
         )
-        coordinator.bottomSheetDelegate = bottomSheetViewController
+        bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
     
@@ -123,9 +114,9 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
     }
     
     func showReport() {
-        let bottomSheetViewController = makeReportViewController()
-        bottomSheetViewController.modalPresentationStyle = .overFullScreen
-        navigationController.present(bottomSheetViewController, animated: false)
+        let viewController = makeReportViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
     func showMyFitfty(_ myFitftyType: MyFitftyType) {
@@ -133,13 +124,6 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
         navigationController.present(coordinator.navigationController, animated: true)
-    }
-    
-    func showDetailReport() {
-        navigationController.dismiss(animated: false)
-        let viewController = makeDetailReportViewController()
-        viewController.modalPresentationStyle = .overFullScreen
-        navigationController.present(viewController, animated: false)
     }
     
     func showSetting() {

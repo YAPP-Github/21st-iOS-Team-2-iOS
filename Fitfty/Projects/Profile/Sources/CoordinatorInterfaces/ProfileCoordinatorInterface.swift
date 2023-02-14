@@ -13,7 +13,6 @@ public protocol ProfileCoordinatorInterface: AnyObject {
     func showReport()
     func showMyFitfty(_ myFitftyType: MyFitftyType)
     func switchMainTab()
-    func showDetailReport()
     func showSetting()
     func dismiss()
     func finished()

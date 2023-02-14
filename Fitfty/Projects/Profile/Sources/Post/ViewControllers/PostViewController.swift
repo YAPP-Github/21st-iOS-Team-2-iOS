@@ -125,7 +125,6 @@ final public class PostViewController: UIViewController {
             filepath: data.filePath,
             isBookmarked: data.bookmarked
         )
-        //print("profilePictureUrl = \(data.profilePictureUrl!)")
         miniProfileView.setUp(
             filepath: data.profilePictureUrl,
             nickname: data.nickname
@@ -145,24 +144,19 @@ final public class PostViewController: UIViewController {
             break
         }
         
-        switch profileType {
-        case .myProfile:
-            navigationController?.navigationItem.setCustomRightBarButton(
-                self,
-                action: #selector(didTapRightBarButton),
-                image: CommonAsset.Images.btnMoreVertical.image,
-                size: 24
-            )
-        case .userProfile:
-            break
-        }
+        navigationController?.navigationItem.setCustomRightBarButton(
+            self,
+            action: #selector(didTapRightBarButton),
+            image: CommonAsset.Images.btnMoreVertical.image,
+            size: 24
+        )
         
         let cancelButton = UIBarButtonItem(
                 image: CommonAsset.Images.btnArrowleft.image,
                 style: .plain,
                 target: self,
                 action: #selector(didTapBackButton(_:))
-            )
+        )
         navigationItem.leftBarButtonItem = cancelButton
         
     }
@@ -207,7 +201,13 @@ final public class PostViewController: UIViewController {
         guard let filepath = filepath else {
             return
         }
-        coordinator.showBottomSheet(boardToken: boardToken, filepath: filepath)
+        switch profileType {
+        case .myProfile:
+            coordinator.showBottomSheet(boardToken: boardToken, filepath: filepath)
+        case .userProfile:
+            print("userProfile")
+        }
+        
     }
     
     @objc private func didTapMiniProfile(_ sender: Any) {

@@ -90,6 +90,23 @@ private extension PostCoordinator {
         childCoordinators.append(coordinator)
         return coordinator
     }
+    
+    func makeReportViewController() -> UIViewController {
+        let coordinator = ReportCoordinator(reportType: .userReport)
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        let bottomSheetViewController =
+        BottomSheetViewController(
+            style: .small,
+            contentViewController: coordinator.navigationController
+        )
+        bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
+    }
+    
 }
 
 extension PostCoordinator: PostCoordinatorInterface {
