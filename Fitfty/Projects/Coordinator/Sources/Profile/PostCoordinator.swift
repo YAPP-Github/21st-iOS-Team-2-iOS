@@ -92,7 +92,7 @@ private extension PostCoordinator {
     }
     
     func makeReportViewController() -> UIViewController {
-        let coordinator = ReportCoordinator(reportType: .userReport)
+        let coordinator = ReportCoordinator(reportType: .postReport)
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()
@@ -128,6 +128,12 @@ extension PostCoordinator: PostCoordinatorInterface {
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .fullScreen
         navigationController.present(coordinator.navigationController, animated: true)
+    }
+    
+    func showReport() {
+        let viewController = makeReportViewController()
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
     func dismiss() {

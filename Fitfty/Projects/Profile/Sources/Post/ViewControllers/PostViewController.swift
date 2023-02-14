@@ -103,6 +103,7 @@ final public class PostViewController: UIViewController {
                 switch state {
                 case .update(let response):
                     self?.update(response)
+                    self?.navigationItem.rightBarButtonItem?.isEnabled = true
                 case .errorMessage(let message):
                     self?.showAlert(message: message)
                 case .isLoading(let isLoading):
@@ -150,6 +151,7 @@ final public class PostViewController: UIViewController {
             image: CommonAsset.Images.btnMoreVertical.image,
             size: 24
         )
+        navigationItem.rightBarButtonItem?.isEnabled = false
         
         let cancelButton = UIBarButtonItem(
                 image: CommonAsset.Images.btnArrowleft.image,
@@ -205,7 +207,7 @@ final public class PostViewController: UIViewController {
         case .myProfile:
             coordinator.showBottomSheet(boardToken: boardToken, filepath: filepath)
         case .userProfile:
-            print("userProfile")
+            coordinator.showReport()
         }
         
     }

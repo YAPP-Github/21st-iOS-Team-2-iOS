@@ -164,7 +164,7 @@ extension ProfileCoordinator: CoordinatorFinishDelegate {
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
         switch childCoordinator.type {
-        case .myFitfty:
+        case .myFitfty, .report:
             navigationController.dismiss(animated: true) {
                 childCoordinator.navigationController.viewControllers.removeAll()
             }

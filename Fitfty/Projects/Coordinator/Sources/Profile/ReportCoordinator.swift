@@ -82,8 +82,6 @@ extension ReportCoordinator: ReportCoordinatorInterface {
             self.navigationController.viewControllers.removeAll()
             self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         }
-        navigationController.dismiss(animated: false)
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
 }
 
@@ -92,7 +90,7 @@ extension ReportCoordinator: CoordinatorFinishDelegate {
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
         switch childCoordinator.type {
-        case .myFitfty:
+        case .detailReport:
             navigationController.dismiss(animated: true) {
                 childCoordinator.navigationController.viewControllers.removeAll()
             }
