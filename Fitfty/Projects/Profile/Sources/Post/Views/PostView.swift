@@ -15,6 +15,7 @@ final class PostView: UIView {
     private lazy var postImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
         
