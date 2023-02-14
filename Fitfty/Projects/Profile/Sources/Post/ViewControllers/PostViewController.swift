@@ -58,8 +58,7 @@ final public class PostViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setUpConstraintLayout()
-        bind()
+        setUp()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -95,6 +94,12 @@ final public class PostViewController: UIViewController {
     
     deinit {
         coordinator.finishedTapGesture()
+    }
+    
+    private func setUp() {
+        bind()
+        setUpConstraintLayout()
+        postView.setBookmarkButtonAction(self, action: #selector(didTapBookmarkButton))
     }
     
     private func bind() {
@@ -209,7 +214,6 @@ final public class PostViewController: UIViewController {
         guard let nickname = nickname else {
             return
         }
-        print(nickname)
         coordinator.showProfile(profileType: profileType, nickname: nickname)
     }
     
@@ -217,4 +221,9 @@ final public class PostViewController: UIViewController {
         coordinator.finished()
     }
     
+    @objc func didTapBookmarkButton(_ sender: Any) {
+        viewModel.input.didTapBookmark(boardToken: boardToken)
+    }
+    
 }
+

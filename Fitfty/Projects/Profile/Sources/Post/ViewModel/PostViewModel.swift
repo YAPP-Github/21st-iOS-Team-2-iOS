@@ -22,22 +22,23 @@ public final class PostViewModel {
     
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
+    private var isBookmarked: Bool?
     
     public init() { }
     
 }
 
 extension PostViewModel: PostViewModelInput {
+    
     var input: PostViewModelInput { self }
     
     func viewWillAppear(boardToken: String) {
         currentState.send(.isLoading(true))
-        
         update(boardToken: boardToken)
     }
     
     func didTapBookmark(boardToken: String) {
-        requestBookmark()
+        requestBookmark(boardToken: boardToken)
         update(boardToken: boardToken)
     }
     
@@ -55,7 +56,7 @@ extension PostViewModel: ViewModelType {
     
 }
 
-extension PostViewModel {
+private extension PostViewModel {
     
     func update(boardToken: String) {
         Task { [weak self] in
@@ -68,6 +69,7 @@ extension PostViewModel {
                 guard response.result == "SUCCESS" else {
                     return
                 }
+                self.isBookmarked = response.data?.bookmarked
                 self.currentState.send(.update(response))
                 currentState.sink(receiveValue: { [weak self] state in
                     switch state {
@@ -86,6 +88,27 @@ extension PostViewModel {
         
     }
     
+    func requestBookmark(boardToken: String) {
+        Task { [weak self] in
+            guard let self = self else {
+                return
+            }
+            do {
+                guard let isBookmarked = self.isBookmarked else {
+                    return
+                }
+                let response = try await bookmark(isBookmarked, boardToken: boardToken)
+                print(response)
+                if response.result == .fail {
+                    self.currentState.send(.errorMessage("북마크 업데이트 실패"))
+                }
+            } catch {
+                self.currentState.send(.errorMessage("북마크 업데이트 실패"))
+                Logger.debug(error: error, message: "북마크 업데이트 실패")
+            }
+        }
+    }
+    
     func getPost(boardToken: String) async throws -> PostResponse {
         let response = try await FitftyAPI.request(
             target: .getPost(boardToken: boardToken),
@@ -94,25 +117,9 @@ extension PostViewModel {
         return response
     }
     
-}
-
-private extension PostViewModel {
-    
-    func requestBookmark() {
-//        Task { [weak self] in
-//            guard let self = self else {
-//                return
-//            }
-//            do {
-//                let response = try await fitftyRepository.bookmark(self.isBookmark, boardToken: self.cody.boardToken)
-//                if response.result == .fail {
-//                    let error = CodyCellViewModelError.failure(errorCode: response.errorCode ?? "", message: response.message ?? "")
-//                    Logger.debug(error: error, message: "북마크 업데이트 실패")
-//                }
-//            } catch {
-//                Logger.debug(error: error, message: "북마크 업데이트 실패")
-//            }
-//        }
+    func bookmark(_ isBookmark: Bool, boardToken: String) async throws -> BookmarkResponse {
+        let target: FitftyAPI = isBookmark ? .addBookmark(boardToken: boardToken) : .deleteBookmark(boardToken: boardToken)
+        return try await FitftyAPI.request(target: target, dataType: BookmarkResponse.self)
     }
     
 }
