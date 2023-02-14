@@ -16,22 +16,26 @@ protocol DetailReportViewModelInput {
     var input: DetailReportViewModelInput { get }
     func didTapTitle(index: Int)
     func viewDidLoad()
-    
+    func didTapReportButton()
 }
 
 public final class DetailReportViewModel {
     
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
-    private var reports: [(title: String, isSelected: Bool)] = [
-        ("음란성 / 선정성 게시물", false),
-        ("날씨 태그가 사진과 어울리지 않음", false),
-        ("지적재산권 침해", false),
-        ("혐오 / 욕설 / 인신공격", false),
-        ("같은 내용 반복 게시", false),
-        ("기타", false)
+    private var userManager: UserManager
+    private var reports: [(detailReportType: DetailReportType, isSelected: Bool)] = [
+        (.OBSCENE, false),
+        (.WEATHER, false),
+        (.COPYRIGHT, false),
+        (.INSULT, false),
+        (.REPEAT, false),
+        (.MISC, false)
     ]
-    public init() { }
+    
+    public init(userManager: UserManager) {
+        self.userManager = userManager
+    }
     
 }
 
@@ -42,7 +46,7 @@ extension DetailReportViewModel: DetailReportViewModelInput {
         var reportCellModels = [ReportCellModel]()
         for i in 0..<reports.count {
             reports[i].isSelected =  i == index ? true : false
-            reportCellModels.append(ReportCellModel.report(reports[i].title, reports[i].isSelected))
+            reportCellModels.append(ReportCellModel.report(reports[i].detailReportType.koreanDetailReport, reports[i].isSelected))
         }
         
         currentState.send(.sections([
@@ -53,10 +57,21 @@ extension DetailReportViewModel: DetailReportViewModelInput {
         ]))
     }
     
+    func didTapReportButton() {
+        if reports.filter({ $0.isSelected }).count < 1 {
+            currentState.send(.completed(false))
+        } else {
+            guard let report = reports.filter({ $0.isSelected }).first?.detailReportType.englishDetailReport else {
+                return
+            }
+            print([report])
+        }
+    }
+    
     func viewDidLoad() {
         var reportCellModels = [ReportCellModel]()
         for i in 0..<reports.count {
-            reportCellModels.append(ReportCellModel.report(reports[i].title, reports[i].isSelected))
+            reportCellModels.append(ReportCellModel.report(reports[i].detailReportType.koreanDetailReport, reports[i].isSelected))
         }
         currentState.send(.sections([
             DetailReportSection(

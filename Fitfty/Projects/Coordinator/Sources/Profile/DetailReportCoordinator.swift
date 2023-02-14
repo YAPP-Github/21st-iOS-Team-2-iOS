@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Profile
 import Common
+import Core
 
 final class DetailReportCoordinator: Coordinator {
     
@@ -37,7 +38,7 @@ private extension DetailReportCoordinator {
     func makeDetailReportViewController() -> UIViewController {
         let viewController = DetailReportViewController(
             coordinator: self,
-            viewModel: DetailReportViewModel()
+            viewModel: DetailReportViewModel(userManager: DefaultUserManager.shared)
         )
         return viewController
     }

@@ -136,12 +136,12 @@ extension MainViewModel: MainViewModelInput {
                         list.append((codyList[i], profileTypes[i]))
                     }
                 } else {
-                    if self.myUserToken == nil {
+                    if userManager.myUserToken == nil {
                         let userPrivacy = try await self.getUserPrivacy()
                         guard let myUserToken = userPrivacy.data?.userToken else {
                             return
                         }
-                        self.myUserToken = myUserToken
+                        userManager.updateUserToken(myUserToken)
                     }
                     for i in 0..<codyList.count {
                         list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
@@ -184,12 +184,12 @@ private extension MainViewModel {
                         list.append((codyList[i], profileTypes[i]))
                     }
                 } else {
-                    if self.myUserToken == nil {
+                    if userManager.myUserToken == nil {
                         let userPrivacy = try await self.getUserPrivacy()
                         guard let myUserToken = userPrivacy.data?.userToken else {
                             return
                         }
-                        self.myUserToken = myUserToken
+                        userManager.updateUserToken(myUserToken)
                     }
                     for i in 0..<codyList.count {
                         list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
