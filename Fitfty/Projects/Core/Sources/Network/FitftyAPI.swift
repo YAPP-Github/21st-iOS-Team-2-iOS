@@ -132,7 +132,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
 public extension FitftyAPI {
     static func request<T: Decodable>(target: FitftyAPI, dataType: T.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin(), MoyaCacheablePlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -152,7 +152,7 @@ public extension FitftyAPI {
     
     static func request(target: FitftyAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin(), MoyaCacheablePlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -191,6 +191,15 @@ public enum FitftyAPIError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .notFound(let message): return message
+        }
+    }
+}
+
+extension FitftyAPI: MoyaCacheable {
+    var cachePolicy: MoyaCacheablePolicy {
+        switch self {
+        case .getMyProfile: return .reloadIgnoringLocalCacheData
+        default: return .useProtocolCachePolicy
         }
     }
 }

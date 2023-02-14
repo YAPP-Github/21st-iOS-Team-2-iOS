@@ -24,13 +24,29 @@ public final class ProfileSettingViewModel: ViewModelType {
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
+    private var currentImage: CurrentValueSubject<Data?, Never> = .init(nil)
 
     public init(repository: SettingRepository) {
         self.repository = repository
     }
     
-    func didTapSaveButton(imageUrl: String?, message: String?) {
-        saveUserProfile(imageUrl: imageUrl, message: message)
+    func didTapSaveButton(message: String?) {
+        Task {
+            do {
+                var url: String?
+                if let imageData = currentImage.value {
+                    let userToken = try await repository.getUserPrivacy().data?.userToken ?? UUID().uuidString
+                    url = try await AmplifyManager.shared.uploadImage(data: imageData, fileName: "profile/\(userToken)").absoluteString
+                }
+                saveUserProfile(imageUrl: url, message: message)
+            } catch {
+                currentState.send(.showErrorAlert(error))
+            }
+        }
+    }
+    
+    func didTapEditProfileImage(imageData: Data?) {
+        currentImage.send(imageData)
     }
     
     func getUserProfile() {
