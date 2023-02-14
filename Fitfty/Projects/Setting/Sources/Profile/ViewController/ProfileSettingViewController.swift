@@ -148,7 +148,6 @@ private extension ProfileSettingViewController {
     }
     
     @objc func didTapSaveButton(_ sender: UITapGestureRecognizer) {
-        // TODO: - imageUrl 넘겨주기 처리 필요
         viewModel.didTapSaveButton(message: introductionTextField.text)
     }
     
