@@ -25,6 +25,7 @@ identifier_name:
         - tm
         - etc
         - to
+        - i
 function_body_length:
     - 150 # warning
     - 300 # error
