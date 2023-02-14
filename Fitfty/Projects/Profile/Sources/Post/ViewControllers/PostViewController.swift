@@ -137,14 +137,7 @@ final public class PostViewController: UIViewController {
     private func setNavigationBar() {
         navigationController?.navigationBar.topItem?.title = ""
         navigationController?.navigationBar.prefersLargeTitles = false
-        
-        switch presentType {
-        case .tabProfile:
-            navigationController?.navigationBar.isHidden = false
-        case .mainProfile:
-            break
-        }
-        
+        navigationController?.navigationBar.isHidden = false
         navigationController?.navigationItem.setCustomRightBarButton(
             self,
             action: #selector(didTapRightBarButton),
@@ -216,7 +209,8 @@ final public class PostViewController: UIViewController {
         guard let nickname = nickname else {
             return
         }
-        coordinator.showProfile(profileType: .myProfile, nickname: nickname)
+        print(nickname)
+        coordinator.showProfile(profileType: profileType, nickname: nickname)
     }
     
     @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {

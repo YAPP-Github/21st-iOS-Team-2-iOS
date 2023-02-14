@@ -200,7 +200,7 @@ private extension ProfileViewController {
             loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             
             emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyView.topAnchor.constraint(equalTo: view.topAnchor, constant: presentType.headerHeight+160),
+            emptyView.topAnchor.constraint(equalTo: view.topAnchor, constant: profileType.headerHeight+160),
             emptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 86),
             emptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -86),
             emptyView.heightAnchor.constraint(equalToConstant: 92)
@@ -236,11 +236,11 @@ private extension ProfileViewController {
     }
     
     func registerHeaderView() {
-        switch presentType {
-        case .mainProfile:
+        switch profileType {
+        case .userProfile:
             collectionView.register(UserProfileHeaderView.self,
                                     forSupplementaryViewOfKind: headerViewElementKind)
-        case .tabProfile:
+        case .myProfile:
             collectionView.register(MyProfileHeaderView.self,
                                     forSupplementaryViewOfKind: headerViewElementKind)
         }
@@ -286,8 +286,8 @@ private extension ProfileViewController {
             })
         
         dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
-            switch self?.presentType {
-            case .mainProfile:
+            switch self?.profileType {
+            case .userProfile:
                 guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: UserProfileHeaderView.className,
@@ -304,7 +304,7 @@ private extension ProfileViewController {
                 }
                 return supplementaryView
                 
-            case .tabProfile:
+            case .myProfile:
                 guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: MyProfileHeaderView.className,
@@ -369,7 +369,7 @@ private extension ProfileViewController {
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
                     widthDimension: .absolute(UIScreen.main.bounds.width),
-                    heightDimension: .estimated(presentType.headerHeight)
+                    heightDimension: .estimated(profileType.headerHeight)
                 ),
                 elementKind: headerViewElementKind,
                 alignment: .top
@@ -394,7 +394,7 @@ extension ProfileViewController: UICollectionViewDelegate {
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y >= presentType.headerHeight {
+        if scrollView.contentOffset.y >= profileType.headerHeight {
             setMiniProfileView(isHidden: false)
         } else {
             setMiniProfileView(isHidden: true)
