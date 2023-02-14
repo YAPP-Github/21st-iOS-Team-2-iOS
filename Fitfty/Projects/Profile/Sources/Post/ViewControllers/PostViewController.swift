@@ -207,7 +207,7 @@ final public class PostViewController: UIViewController {
         case .myProfile:
             coordinator.showBottomSheet(boardToken: boardToken, filepath: filepath)
         case .userProfile:
-            coordinator.showReport()
+            coordinator.showReport(reportedToken: boardToken)
         }
         
     }

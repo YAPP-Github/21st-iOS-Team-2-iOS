@@ -19,10 +19,14 @@ public protocol FitftyRepository {
     
     func getUserPrivacy() async throws -> UserPrivacyResponse
     
+    func report(_ request: PostReportRequest) async throws -> FitftyResponse
+    
+    func report(_ request: UserReportRequest) async throws -> FitftyResponse
+    
 }
 
 public final class DefaultFitftyRepository: FitftyRepository {
-    
+   
     public init() {}
     
     public func fetchCodyList(weather: WeatherTag, gender: Gender?, styles: [StyleTag]?) async throws -> FitftyMainCodyListResponse {
@@ -51,4 +55,13 @@ public final class DefaultFitftyRepository: FitftyRepository {
     public func getUserPrivacy() async throws -> UserPrivacyResponse {
         return try await FitftyAPI.request(target: .getUserPrivacy, dataType: UserPrivacyResponse.self)
     }
+    
+    public func report(_ request: PostReportRequest) async throws -> FitftyResponse {
+        return try await FitftyAPI.request(target: .reportPost(parameters: request), dataType: FitftyResponse.self)
+    }
+    
+    public func report(_ request: UserReportRequest) async throws -> FitftyResponse {
+        return try await FitftyAPI.request(target: .reportUser(parameters: request), dataType: FitftyResponse.self)
+    }
+    
 }

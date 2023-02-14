@@ -91,8 +91,11 @@ private extension PostCoordinator {
         return coordinator
     }
     
-    func makeReportViewController() -> UIViewController {
-        let coordinator = ReportCoordinator(reportType: .postReport)
+    func makeReportViewController(reportedToken: String) -> UIViewController {
+        let coordinator = ReportCoordinator(
+            reportType: .postReport,
+            reportedToken: reportedToken
+        )
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()
@@ -130,8 +133,8 @@ extension PostCoordinator: PostCoordinatorInterface {
         navigationController.present(coordinator.navigationController, animated: true)
     }
     
-    func showReport() {
-        let viewController = makeReportViewController()
+    func showReport(reportedToken: String) {
+        let viewController = makeReportViewController(reportedToken: reportedToken)
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
     }

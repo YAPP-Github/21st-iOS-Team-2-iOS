@@ -122,7 +122,10 @@ private extension DetailReportViewController {
                     isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
                     
                 case .completed(let isCompleted):
-                    print("isCompleted \(isCompleted)")
+                    guard isCompleted else {
+                        return
+                    }
+                    self?.coordinator.dismiss()
                     
                 case .sections(let sections):
                     self?.applySnapshot(sections)

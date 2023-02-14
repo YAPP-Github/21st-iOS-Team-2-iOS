@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct PostDeleteResponse: Codable {
+public struct FitftyResponse: Codable {
     public let result: String
     public let data: String?
     public let message: String?

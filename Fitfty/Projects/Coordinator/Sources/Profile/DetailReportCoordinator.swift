@@ -15,6 +15,9 @@ import Core
 final class DetailReportCoordinator: Coordinator {
     
     var type: CoordinatorType { .detailReport }
+    var reportedToken: String
+    var reportType: ReportType
+    
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
@@ -22,8 +25,14 @@ final class DetailReportCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+    init(
+        navigationController: BaseNavigationController = BaseNavigationController(),
+        reportedToken: String,
+        reportType: ReportType
+    ) {
         self.navigationController = navigationController
+        self.reportedToken = reportedToken
+        self.reportType = reportType
     }
     
     func start() {
@@ -38,7 +47,12 @@ private extension DetailReportCoordinator {
     func makeDetailReportViewController() -> UIViewController {
         let viewController = DetailReportViewController(
             coordinator: self,
-            viewModel: DetailReportViewModel(userManager: DefaultUserManager.shared)
+            viewModel: DetailReportViewModel(
+                userManager: DefaultUserManager.shared,
+                reportedToken: reportedToken,
+                reportType: reportType,
+                fitftyRepository: DefaultFitftyRepository()
+            )
         )
         return viewController
     }

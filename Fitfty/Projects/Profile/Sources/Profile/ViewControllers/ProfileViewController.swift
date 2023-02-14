@@ -118,7 +118,7 @@ final public class ProfileViewController: UIViewController {
     }
     
     @objc func didTapMoreVerticalButton(_ sender: Any?) {
-        coordinator.showReport()
+        viewModel.input.didTapMoreVertical()
     }
     
     @objc func didTapSettingButton(_ sender: UIButton) {
@@ -170,6 +170,8 @@ private extension ProfileViewController {
                     self?.applySnapshot(sections)
                 case .showPost(let profileType, let boardToken):
                     self?.coordinator.showPost(profileType: profileType, boardToken: boardToken)
+                case .report(let repotedToken):
+                    self?.coordinator.showReport(reportedToken: repotedToken)
                 }
             }).store(in: &cancellables)
     }
