@@ -35,7 +35,10 @@ final class DetailReportCoordinator: Coordinator {
 private extension DetailReportCoordinator {
     
     func makeDetailReportViewController() -> UIViewController {
-        let viewController = DetailReportViewController(coordinator: self)
+        let viewController = DetailReportViewController(
+            coordinator: self,
+            viewModel: DetailReportViewModel()
+        )
         return viewController
     }
     
