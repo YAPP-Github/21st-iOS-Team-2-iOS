@@ -315,7 +315,7 @@ private extension MainViewModel {
             .sink { value in
                 isGuest = value
             }.store(in: &cancellables)
-        guard let isGuest else {
+        guard let isGuest = isGuest else {
             return false
         }
         if isGuest {

@@ -78,10 +78,7 @@ extension ReportCoordinator: ReportCoordinatorInterface {
     }
     
     func dismiss() {
-        bottomSheetDelegate?.dismissBottomSheet { [weak self] in
-            guard let self = self else {
-                return
-            }
+        bottomSheetDelegate?.dismissBottomSheet { 
             self.navigationController.viewControllers.removeAll()
             self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         }
@@ -94,8 +91,9 @@ extension ReportCoordinator: CoordinatorFinishDelegate {
         childDidFinish(childCoordinator, parent: self)
         switch childCoordinator.type {
         case .detailReport:
-            navigationController.dismiss(animated: true) {
-                childCoordinator.navigationController.viewControllers.removeAll()
+            bottomSheetDelegate?.dismissBottomSheet { 
+                self.navigationController.viewControllers.removeAll()
+                self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
             }
         default: break
         }
