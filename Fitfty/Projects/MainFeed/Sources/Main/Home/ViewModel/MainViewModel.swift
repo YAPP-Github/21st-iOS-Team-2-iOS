@@ -46,6 +46,7 @@ public final class MainViewModel {
     private var _currentGender: CurrentValueSubject<Gender?, Never> = .init(nil)
     
     private var _weathers: [MainCellModel] = []
+    private var myUserToken: String?
 
     public init(
         addressRepository: AddressRepository,
@@ -126,10 +127,30 @@ extension MainViewModel: MainViewModelInput {
                 let styles = self._currentStyles.value
                 let gender = self._currentGender.value ?? .female
                 let codyList = try await self.getCodyList(gender: gender, styles: styles)
+                let profileTypes: [ProfileType]
+                var list: [(CodyResponse, ProfileType)] = []
+                
+                if self.isGuest() {
+                    profileTypes = Array(repeating: .userProfile, count: codyList.count)
+                    for i in 0..<codyList.count {
+                        list.append((codyList[i], profileTypes[i]))
+                    }
+                } else {
+                    if self.myUserToken == nil {
+                        let userPrivacy = try await self.getUserPrivacy()
+                        guard let myUserToken = userPrivacy.data?.userToken else {
+                            return
+                        }
+                        self.myUserToken = myUserToken
+                    }
+                    for i in 0..<codyList.count {
+                        list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
+                    }
+                }
                 currentState.send(.sections([
                     MainFeedSection(sectionKind: .weather, items: self._weathers),
                     self.configureTags(styles: styles, gender: gender),
-                    self.configureCodyList(codyList)
+                    self.configureCodyList(list)
                 ]))
             } catch {
                 Logger.debug(error: error, message: "코디 목록 가져오기 실패")
@@ -154,12 +175,33 @@ private extension MainViewModel {
                 let styles = tags.1
                 let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
                 let codyList = try await self.getCodyList(gender: gender, styles: styles)
+                let profileTypes: [ProfileType]
+                var list: [(CodyResponse, ProfileType)] = []
+                
+                if self.isGuest() {
+                    profileTypes = Array(repeating: .userProfile, count: codyList.count)
+                    for i in 0..<codyList.count {
+                        list.append((codyList[i], profileTypes[i]))
+                    }
+                } else {
+                    if self.myUserToken == nil {
+                        let userPrivacy = try await self.getUserPrivacy()
+                        guard let myUserToken = userPrivacy.data?.userToken else {
+                            return
+                        }
+                        self.myUserToken = myUserToken
+                    }
+                    for i in 0..<codyList.count {
+                        list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
+                    }
+                }
                 self.currentState.send(.currentLocation(address))
                 self.currentState.send(.sections([
                     self.configureWeathers(weathers),
                     self.configureTags(styles: styles, gender: gender),
-                    self.configureCodyList(codyList)
+                    self.configureCodyList(list)
                 ]))
+            
             } catch {
                 Logger.debug(error: error, message: "사용자 위치 및 날씨 가져오기 실패")
                 self.currentState.send(.errorMessage("현재 위치의 날씨 정보를 가져오는데 알 수 없는 에러가 발생했습니다."))
@@ -201,6 +243,10 @@ private extension MainViewModel {
         return codyList
     }
     
+    func getUserPrivacy() async throws -> UserPrivacyResponse {
+        return try await fitftyRepository.getUserPrivacy()
+    }
+    
     func getTags() async -> (Gender, [StyleTag]) {
         guard _currentGender.value == nil else {
             return (_currentGender.value ?? .female, _currentStyles.value)
@@ -237,10 +283,10 @@ private extension MainViewModel {
         )
     }
     
-    func configureCodyList(_ list: [CodyResponse]) -> MainFeedSection {
+    func configureCodyList(_ list: [(CodyResponse, ProfileType)]) -> MainFeedSection {
         return MainFeedSection(
             sectionKind: .cody,
-            items: list.map { MainCellModel.cody($0) }
+            items: list.map { MainCellModel.cody($0.0, $0.1) }
         )
     }
     
@@ -268,4 +314,22 @@ private extension MainViewModel {
             _currentStyles.send(styles)
         }
     }
+    
+    func isGuest() -> Bool {
+        var isGuest: Bool?
+        userManager.isGuest
+            .compactMap { $0 }
+            .sink { value in
+                isGuest = value
+            }.store(in: &cancellables)
+        guard let isGuest else {
+            return false
+        }
+        if isGuest {
+            return true
+        } else {
+            return false
+        }
+    }
+    
 }

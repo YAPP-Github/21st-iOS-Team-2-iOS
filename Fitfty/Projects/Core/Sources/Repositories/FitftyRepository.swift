@@ -17,6 +17,8 @@ public protocol FitftyRepository {
     
     func bookmark(_ isBookmark: Bool, boardToken: String) async throws -> BookmarkResponse
     
+    func getUserPrivacy() async throws -> UserPrivacyResponse
+    
 }
 
 public final class DefaultFitftyRepository: FitftyRepository {
@@ -44,5 +46,9 @@ public final class DefaultFitftyRepository: FitftyRepository {
     public func bookmark(_ isBookmark: Bool, boardToken: String) async throws -> BookmarkResponse {
         let target: FitftyAPI = isBookmark ? .addBookmark(boardToken: boardToken) : .deleteBookmark(boardToken: boardToken)
         return try await FitftyAPI.request(target: target, dataType: BookmarkResponse.self)
+    }
+    
+    public func getUserPrivacy() async throws -> UserPrivacyResponse {
+        return try await FitftyAPI.request(target: .getUserPrivacy, dataType: UserPrivacyResponse.self)
     }
 }

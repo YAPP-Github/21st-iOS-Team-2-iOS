@@ -166,7 +166,7 @@ private extension MainViewController {
                     cell?.setUp(tag: tag)
                     return cell ?? UICollectionViewCell()
                     
-                case .cody(let cody):
+                case .cody(let cody, _):
                     let cell = collectionView.dequeueReusableCell(CodyCell.self, for: indexPath)
                     cell?.setUp(cody: cody)
                     cell?.addProfileViewGestureRecognizer(self, action: #selector(self.didTapProfileStackView))
@@ -333,11 +333,11 @@ private extension MainViewController {
     @objc func didTapProfileStackView(_ sender: UITapGestureRecognizer) {
         guard let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)),
               let cellModel = dataSource?.itemIdentifier(for: indexPath),
-              case let MainCellModel.cody(cody) = cellModel
+              case let MainCellModel.cody(cody, profileType) = cellModel
         else {
             return
         }
-        coordinator.showProfile(profileType: .userProfile, nickname: cody.nickname)
+        coordinator.showProfile(profileType: profileType, nickname: cody.nickname)
     }
     
     func showErrorNotiView() {
@@ -382,11 +382,11 @@ extension MainViewController: UICollectionViewDelegate {
             
         case .cody:
             guard let cellModel = dataSource?.itemIdentifier(for: indexPath),
-                  case let MainCellModel.cody(cody) = cellModel
+                  case let MainCellModel.cody(cody, profileType) = cellModel
             else {
                 return
             }
-            coordinator.showPost(profileType: .userProfile, userToken: cody.userToken, boardToken: cody.boardToken)
+            coordinator.showPost(profileType: profileType, userToken: cody.userToken, boardToken: cody.boardToken)
             
         default: return
         }

@@ -8,18 +8,18 @@
 
 import Foundation
 
-struct UserPrivacyResponse: Codable {
-    let result: String
-    let data: UserData?
-    let message: String?
-    let errorCode: String?
+public struct UserPrivacyResponse: Codable {
+    public let result: String
+    public let data: UserData?
+    public let message: String?
+    public let errorCode: String?
 }
 
-struct UserData: Codable {
-    let email: String
-    let userToken: String
-    let nickname: String
-    let phoneNumber: String?
-    let gender: String?
-    let birthday: String?
+public struct UserData: Codable {
+    public let email: String
+    public let userToken: String
+    public let nickname: String
+    public let phoneNumber: String?
+    public let gender: String?
+    public let birthday: String?
 }
