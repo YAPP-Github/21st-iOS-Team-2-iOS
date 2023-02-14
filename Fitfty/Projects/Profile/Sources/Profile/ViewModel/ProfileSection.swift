@@ -37,14 +37,13 @@ public enum ProfileSectionKind: Hashable {
 
 enum ProfileCellModel: Hashable {
     
-    case feed(String, ProfileType, UUID)
+    case feed(String, ProfileType)
     
     func hash(into hasher: inout Hasher) {
         switch self {
-        case .feed(let filepath, let profileType, let uuid):
+        case .feed(let filepath, let profileType):
             hasher.combine(filepath)
             hasher.combine(profileType)
-            hasher.combine(uuid)
         }
     }
 
