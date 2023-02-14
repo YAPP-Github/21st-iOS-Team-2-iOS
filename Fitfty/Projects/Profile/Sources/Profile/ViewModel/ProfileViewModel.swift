@@ -137,7 +137,7 @@ extension ProfileViewModel {
                     }
                     var profileCellModels: [ProfileCellModel] = []
                     for cody in data.codiList {
-                        profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
+                        profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile))
                     }
                     self.currentState.send(.sections([
                         ProfileSection(sectionKind: .feed, items: profileCellModels)
@@ -177,14 +177,14 @@ extension ProfileViewModel {
                     switch menuType {
                     case .myFitfty:
                         for cody in data.codiList {
-                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
+                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile))
                         }
                         self.currentState.send(.sections([
                             ProfileSection(sectionKind: .feed, items: profileCellModels)
                         ]))
                     case .bookmark:
                         for cody in data.bookmarkList {
-                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
+                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile))
                         }
                         self.currentState.send(.sections([
                             ProfileSection(sectionKind: .feed, items: profileCellModels)

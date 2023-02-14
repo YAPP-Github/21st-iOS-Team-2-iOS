@@ -276,7 +276,7 @@ private extension ProfileViewController {
             collectionView: collectionView,
             cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
                 switch item {
-                case .feed(let filepath, _, _):
+                case .feed(let filepath, _):
                     guard let cell = collectionView.dequeueReusableCell(
                         withReuseIdentifier: FeedImageCell.className,
                         for: indexPath) as? FeedImageCell else {
