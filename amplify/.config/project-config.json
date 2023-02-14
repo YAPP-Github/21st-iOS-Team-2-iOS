@@ -1,8 +1,0 @@
-{
-  "projectName": "21st-iOS-Team-2-iOS",
-  "version": "3.1",
-  "frontend": "ios",
-  "providers": [
-    "awscloudformation"
-  ]
-}
