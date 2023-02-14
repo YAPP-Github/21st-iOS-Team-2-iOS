@@ -219,6 +219,7 @@ private extension MainViewModel {
                         Logger.debug(error: ViewModelError.failure(
                             errorCode: response.errorCode ?? "", message: response.message ?? ""
                         ), message: "태그 설정 조회 실패")
+                        continuation.resume(returning: (.female, []))
                     }
                 } catch {
                     Logger.debug(error: error, message: "태그 설정 조회 실패")
