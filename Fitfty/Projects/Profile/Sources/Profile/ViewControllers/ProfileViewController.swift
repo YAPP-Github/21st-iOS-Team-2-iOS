@@ -57,10 +57,10 @@ final public class ProfileViewController: UIViewController {
     private var menuType: MenuType = .myFitfty
     
     private var headerViewElementKind: String {
-        switch presentType {
-        case .mainProfile:
+        switch profileType {
+        case .userProfile:
             return UserProfileHeaderView.className
-        case .tabProfile:
+        case .myProfile:
             return MyProfileHeaderView.className
         }
     }
@@ -93,6 +93,7 @@ final public class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
+        print("presentType \(presentType)")
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -323,6 +324,14 @@ private extension ProfileViewController {
                 supplementaryView.menuView.setBookmarkButtonTarget(self, action: #selector(self?.didTapBookmarkMenu))
                 supplementaryView.menuView.setMenuState(self?.menuType ?? .myFitfty)
                 supplementaryView.setButtonTarget(target: self, action: #selector(self?.didTapSettingButton(_:)))
+                
+                switch self?.presentType {
+                case .mainProfile:
+                    supplementaryView.setBackButton(self, action: #selector(self?.didTapBackButton(_:)))
+                case .tabProfile, .none:
+                    break
+                }
+                
                 return supplementaryView
                 
             default:

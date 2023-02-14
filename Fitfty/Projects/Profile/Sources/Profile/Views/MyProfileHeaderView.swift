@@ -22,6 +22,13 @@ final class MyProfileHeaderView: UICollectionReusableView {
         return button
     }()
     
+    private lazy var backButton: UIButton = {
+        let button = UIButton()
+        button.setImage(CommonAsset.Images.btnArrowleft.image, for: .normal)
+        button.isHidden = true
+        return button
+    }()
+    
     let profileView = ProfileView()
     let menuView = MenuView()
     private let spacingView = UIView()
@@ -40,13 +47,16 @@ final class MyProfileHeaderView: UICollectionReusableView {
     }
     
     private func setUpConstraintLayout() {
-        addSubviews(settingButton, profileView, menuView, spacingView)
+        addSubviews(settingButton, profileView, menuView, spacingView, backButton)
     
         NSLayoutConstraint.activate([
             settingButton.widthAnchor.constraint(equalToConstant: 62),
             settingButton.heightAnchor.constraint(equalToConstant: 34),
             settingButton.topAnchor.constraint(equalTo: topAnchor, constant: 12),
             settingButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            
+            backButton.topAnchor.constraint(equalTo: topAnchor, constant: 11),
+            backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18),
             
             profileView.topAnchor.constraint(equalTo: settingButton.bottomAnchor, constant: 12),
             profileView.heightAnchor.constraint(equalToConstant: 173),
@@ -64,4 +74,13 @@ final class MyProfileHeaderView: UICollectionReusableView {
             spacingView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
+}
+
+extension MyProfileHeaderView {
+    
+    func setBackButton(_ target: Any?, action: Selector) {
+        backButton.isHidden = false
+        backButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
 }
