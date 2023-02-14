@@ -99,13 +99,13 @@ final public class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         setNavigationBar()
         emptyView.isHidden = true
-        switch presentType {
-        case .mainProfile:
+        switch profileType {
+        case .userProfile:
             guard let nickname = nickname else {
                 return
             }
             viewModel.input.viewWillAppearWithoutMenu(nickname: nickname)
-        case .tabProfile:
+        case .myProfile:
             viewModel.input.viewWillAppearWithMenu(menuType: menuType)
         }
     }
@@ -387,10 +387,10 @@ private extension ProfileViewController {
 extension ProfileViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        switch presentType {
-        case .mainProfile:
+        switch profileType {
+        case .userProfile:
             viewModel.input.didTapPostWithoutMenu(selectedIndex: indexPath.row)
-        case .tabProfile:
+        case .myProfile:
             viewModel.input.didTapPostWithMenu(selectedIndex: indexPath.row, menuType: menuType)
         }
     }

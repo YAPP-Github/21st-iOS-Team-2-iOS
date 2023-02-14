@@ -13,7 +13,7 @@ import Common
 
 final class DetailReportCoordinator: Coordinator {
     
-    var type: CoordinatorType { .profileSetting }
+    var type: CoordinatorType { .detailReport }
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
