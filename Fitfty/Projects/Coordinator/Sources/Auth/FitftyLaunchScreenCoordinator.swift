@@ -12,7 +12,7 @@ import Auth
 import Common
 
 protocol FitftyLaunchScreenCoordinatorDelegate: AnyObject {
-    func pushAuthView()
+    func pushAuthView(needsIntroView: Bool)
     func pushMainFeedView()
 }
 
@@ -36,8 +36,8 @@ final class FitftyLaunchScreenCoordinator: Coordinator {
 }
 
 extension FitftyLaunchScreenCoordinator: FitftyLaunchScreenCoordinatorInterface {
-    func pushAuthView() {
-        launchScreenDelegate?.pushAuthView()
+    func pushAuthView(needsIntroView: Bool) {
+        launchScreenDelegate?.pushAuthView(needsIntroView: needsIntroView)
     }
     
     func pushMainFeedView() {

@@ -41,29 +41,9 @@ final public class AuthPermissionViewController: UIViewController {
     
     @objc
     private func didTapNextButton() {
-        requestPermission()
+        requestTrackingPermission()
         
         coordinator.pushOnboardingFlow()
-    }
-    
-    private func requestPermission() {
-        requestLocationPermission()
-        requestAlbumAuthorizationPermission()
-        requestPushNotificationPermission()
-        requestTrackingPermission()
-    }
-    
-    private func requestLocationPermission() {
-        _ = LocationManager.shared
-    }
-    
-    private func requestAlbumAuthorizationPermission() {
-        PHPhotoLibrary.requestAuthorization(for: .readWrite) { _ in }
-    }
-    
-    private func requestPushNotificationPermission() {
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
     
     private func requestTrackingPermission() {

@@ -12,5 +12,6 @@ public protocol AuthCoordinatorInterface: AnyObject {
     func pushOnboardingFlow()
     func pushMainFeedFlow()
     func pushIntroView()
+    func pushAuthView()
     func pushPermissionView()
 }

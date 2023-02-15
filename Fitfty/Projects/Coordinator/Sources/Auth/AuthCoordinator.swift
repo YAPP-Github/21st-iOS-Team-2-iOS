@@ -19,17 +19,28 @@ final class AuthCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationController: BaseNavigationController) {
+    private let needsIntroView: Bool
+    
+    init(navigationController: BaseNavigationController, needsIntroView: Bool) {
         self.navigationController = navigationController
+        self.needsIntroView = needsIntroView
     }
     
     func start() {
-        let viewController = makeAuthViewController()
-        navigationController.pushViewController(viewController, animated: false)
+        if needsIntroView {
+            pushIntroView()
+        } else {
+            pushAuthView()
+        }
     }
 }
 
 extension AuthCoordinator: AuthCoordinatorInterface {
+    func pushAuthView() {
+        let viewController = makeAuthViewController()
+        navigationController.pushViewController(viewController, animated: false)
+    }
+    
     func pushIntroView() {
         let viewController = makeIntroViewController()
         navigationController.pushViewController(viewController, animated: true)
