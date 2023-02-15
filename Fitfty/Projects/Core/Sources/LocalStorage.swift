@@ -13,6 +13,7 @@ public enum LocalKey: String {
     case currentLocation
     case nickname
     case gender
+    case styles
     case userIdentifier
     case userAccount
     case hasCompletedWelcomePage

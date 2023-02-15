@@ -57,8 +57,11 @@ final public class NicknameViewController: UIViewController {
                     self?.contentView.setNextButtonStyle(isEnabled ? .enabled : .disabled)
                     self?.contentView.setNicknameTextFieldStyle(isEnabled ? .focused : .normal)
                     
-                case .pushGenderView:
-                    self?.coordinator.pushGenderView()
+                case .pushMainFeedView:
+                    self?.coordinator.pushMainFeedView()
+                
+                case .showErrorAlert(let error):
+                    self?.showAlert(message: error.localizedDescription)
                 }
             }
             .store(in: &cancellables)
