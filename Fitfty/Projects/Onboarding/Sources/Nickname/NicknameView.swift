@@ -13,7 +13,7 @@ import Common
 
 final class NicknameView: UIView {
     private let titleLabel = UILabel()
-    private let nicknameTextField = FitftyTextField(style: .normal, placeHolderText: "영문 숫자 조합 6자 이상의 닉네임 입력")
+    private let nicknameTextField = FitftyTextField(style: .normal, placeHolderText: "영문 숫자 조합 1자 이상의 닉네임 입력")
     
     private let warningContainerStackView = UIStackView()
     
