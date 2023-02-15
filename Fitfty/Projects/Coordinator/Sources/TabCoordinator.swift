@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Core
 
 enum TabBarPage {
     
@@ -182,21 +183,31 @@ extension TabCoordinator: UITabBarControllerDelegate {
         _ tabBarController: UITabBarController,
         shouldSelect viewController: UIViewController
     ) -> Bool {
-        guard let indexOfTab = tabBarController.viewControllers?.firstIndex(of: viewController),
-              let tabBar = TabBarPage(index: indexOfTab) else {
+        if DefaultUserManager.shared.getCurrentGuestState() {
+            let alert = UIAlertController(title: "", message: "회원가입 시 코디 저장, 내 핏프티 업로드,\n계정 관리 등이 가능합니다.\n3초 소셜 로그인으로 더 많은 핏프티의 기능을 누려보세요!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "그냥 둘러보기", style: .default))
+            alert.addAction(UIAlertAction(title: "회원가입", style: .default, handler: { _ in
+                self.reloadWindow()
+            }))
+            navigationController.present(alert, animated: true)
+            return false
+        } else {
+            guard let indexOfTab = tabBarController.viewControllers?.firstIndex(of: viewController),
+                  let tabBar = TabBarPage(index: indexOfTab) else {
+                return true
+            }
+            if tabBar == .createCody {
+                let coordinator = MyFitftyCoordinator(myFitftyType: .uploadMyFitfty, boardToken: nil)
+                childCoordinators.append(coordinator)
+                coordinator.finishDelegate = self
+                coordinator.parentCoordinator = self
+                coordinator.start()
+                coordinator.navigationController.modalPresentationStyle = .fullScreen
+                tabBarController.present(coordinator.navigationController, animated: true)
+                return false
+            }
             return true
         }
-        if tabBar == .createCody {
-            let coordinator = MyFitftyCoordinator(myFitftyType: .uploadMyFitfty, boardToken: nil)
-            childCoordinators.append(coordinator)
-            coordinator.finishDelegate = self
-            coordinator.parentCoordinator = self
-            coordinator.start()
-            coordinator.navigationController.modalPresentationStyle = .fullScreen
-            tabBarController.present(coordinator.navigationController, animated: true)
-            return false
-        }
-        return true
     }
     
     public func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
