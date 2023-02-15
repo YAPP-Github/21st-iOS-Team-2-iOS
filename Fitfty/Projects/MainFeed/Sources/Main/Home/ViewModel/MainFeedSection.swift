@@ -8,6 +8,7 @@
 
 import Foundation
 import Core
+import Common
 
 public struct MainFeedSection: Hashable, Equatable {
     
@@ -43,7 +44,7 @@ enum MainCellModel: Hashable {
     
     case weather(ShortTermForecast)
     case styleTag(Tag)
-    case cody(CodyResponse)
+    case cody(CodyResponse, ProfileType)
     
     func hash(into hasher: inout Hasher) {
         switch self {
@@ -53,7 +54,7 @@ enum MainCellModel: Hashable {
         case .styleTag(let tag):
             hasher.combine(tag)
             
-        case .cody(let cody):
+        case .cody(let cody, _):
             hasher.combine(cody)
         }
 
@@ -68,7 +69,7 @@ extension MainCellModel: Equatable {
         case (.weather(let lhs), .weather(let rhs)):
             return lhs == rhs
             
-        case (.cody(let lhs), .cody(let rhs)):
+        case (.cody(let lhs, _), .cody(let rhs, _)):
             return lhs == rhs
             
         case (.styleTag(let lhs), .styleTag(let rhs)):

@@ -15,6 +15,7 @@ final class PostCoordinator: Coordinator {
     var type: CoordinatorType { .post }
     var profileType: ProfileType
     var presentType: ProfilePresentType
+    var boardToken: String
     
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
@@ -25,11 +26,13 @@ final class PostCoordinator: Coordinator {
     init(
         navigationController: BaseNavigationController = BaseNavigationController(),
         profileType: ProfileType,
-        presentType: ProfilePresentType
+        presentType: ProfilePresentType,
+        boardToken: String
     ) {
         self.navigationController = navigationController
         self.profileType = profileType
         self.presentType = presentType
+        self.boardToken = boardToken
     }
     
     func start() {
@@ -44,14 +47,21 @@ private extension PostCoordinator {
         let viewController = PostViewController(
             coordinator: self,
             profileType: profileType,
-            presentType: presentType
+            presentType: presentType,
+            viewModel: PostViewModel(),
+            boardToken: boardToken
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController
     }
     
-    func makeProfileBottomSheetViewController() -> UIViewController {
-        let viewController = MyPostBottomSheetViewController(coordinator: self)
+    func makePostBottomSheetViewController(boardToken: String, filepath: String) -> UIViewController {
+        let viewController = MyPostBottomSheetViewController(
+            coordinator: self,
+            viewModel: PostBottomSheetViewModel(),
+            boardToken: boardToken,
+            filepath: filepath
+        )
         let bottomSheetViewController = BottomSheetViewController(
             style: .custom(196),
             contentViewController: viewController
@@ -60,46 +70,72 @@ private extension PostCoordinator {
         return bottomSheetViewController
     }
     
-    func makeMyFitftyCoordinator() -> MyFitftyCoordinator {
-        let coordinator = MyFitftyCoordinator(myFitftyType: .modifyMyFitfty)
+    func makeMyFitftyCoordinator(boardToken: String) -> MyFitftyCoordinator {
+        let coordinator = MyFitftyCoordinator(myFitftyType: .modifyMyFitfty, boardToken: boardToken)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
         return coordinator
     }
     
-    func makeProfileCoordinator(profileType: ProfileType) -> ProfileCoordinator {
+    func makeProfileCoordinator(profileType: ProfileType, nickname: String) -> ProfileCoordinator {
         let coordinator = ProfileCoordinator(
             navigationController: navigationController,
             profileType: profileType,
-            presentType: .mainProfile
+            presentType: .mainProfile,
+            nickname: nickname
         )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
         return coordinator
     }
+    
+    func makeReportViewController(reportedToken: String) -> UIViewController {
+        let coordinator = ReportCoordinator(
+            reportType: .postReport,
+            reportedToken: reportedToken
+        )
+        coordinator.parentCoordinator = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+        coordinator.finishDelegate = self
+        coordinator.parentCoordinator = self
+        let bottomSheetViewController = BottomSheetViewController(
+            style: .small,
+            contentViewController: coordinator.navigationController
+        )
+        coordinator.bottomSheetDelegate = bottomSheetViewController
+        return bottomSheetViewController
+    }
+    
 }
 
 extension PostCoordinator: PostCoordinatorInterface {
     
-    func showProfile(profileType: ProfileType) {
-        let coordinator = makeProfileCoordinator(profileType: profileType)
+    func showProfile(profileType: ProfileType, nickname: String) {
+        let coordinator = makeProfileCoordinator(profileType: profileType, nickname: nickname)
         coordinator.start()
     }
     
-    func showBottomSheet() {
-        let bottomSheetViewController = makeProfileBottomSheetViewController()
+    func showBottomSheet(boardToken: String, filepath: String) {
+        let bottomSheetViewController = makePostBottomSheetViewController(boardToken: boardToken, filepath: filepath)
         bottomSheetViewController.modalPresentationStyle = .overFullScreen
         navigationController.present(bottomSheetViewController, animated: false)
     }
     
-    func showModifyMyFitfty() {
+    func showModifyMyFitfty(boardToken: String) {
         navigationController.dismiss(animated: false)
-        let coordinator = makeMyFitftyCoordinator()
+        let coordinator = makeMyFitftyCoordinator(boardToken: boardToken)
         coordinator.start()
-        coordinator.navigationController.modalPresentationStyle = .overFullScreen
+        coordinator.navigationController.modalPresentationStyle = .fullScreen
         navigationController.present(coordinator.navigationController, animated: true)
+    }
+    
+    func showReport(reportedToken: String) {
+        let viewController = makeReportViewController(reportedToken: reportedToken)
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
     func dismiss() {

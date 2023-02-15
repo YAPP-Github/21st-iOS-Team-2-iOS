@@ -16,6 +16,7 @@ final class ProfileCoordinator: Coordinator {
     var type: CoordinatorType { .profile }
     var profileType: ProfileType
     var presentType: ProfilePresentType
+    var nickname: String?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -27,11 +28,13 @@ final class ProfileCoordinator: Coordinator {
     init(
         navigationController: BaseNavigationController = BaseNavigationController(),
         profileType: ProfileType,
-        presentType: ProfilePresentType
+        presentType: ProfilePresentType,
+        nickname: String?
     ) {
         self.navigationController = navigationController
         self.profileType = profileType
         self.presentType = presentType
+        self.nickname = nickname
     }
     
     func start() {
@@ -49,16 +52,19 @@ private extension ProfileCoordinator {
         let viewController = ProfileViewController(
             coordinator: self,
             profileType: profileType,
-            presentType: presentType
+            presentType: presentType,
+            viewModel: ProfileViewModel(),
+            nickname: nickname
         )
         return viewController
     }
     
-    func makePostCoordinator(profileType: ProfileType) -> PostCoordinator {
+    func makePostCoordinator(profileType: ProfileType, boardToken: String) -> PostCoordinator {
         let coordinator = PostCoordinator(
             navigationController: navigationController,
             profileType: profileType,
-            presentType: presentType
+            presentType: presentType,
+            boardToken: boardToken
         )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
@@ -74,36 +80,30 @@ private extension ProfileCoordinator {
         return coordinator
     }
     
-    func makeMyFitftyCoordinator() -> MyFitftyCoordinator {
-        let coordinator = MyFitftyCoordinator(myFitftyType: .modifyMyFitfty)
+    func makeMyFitftyCoordinator(_ myFitftyType: MyFitftyType) -> MyFitftyCoordinator {
+        let coordinator = MyFitftyCoordinator(myFitftyType: myFitftyType, boardToken: nil)
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
         return coordinator
     }
     
-    func makeReportViewController() -> UIViewController {
-        let bottomSheetViewController =
-        BottomSheetViewController(
-            style: .small,
-            contentViewController: ReportViewController(coordinator: self)
+    func makeReportViewController(reportedToken: String) -> UIViewController {
+        let coordinator = ReportCoordinator(
+            reportType: .userReport,
+            reportedToken: reportedToken
         )
-        bottomSheetDelegate = bottomSheetViewController
-        return bottomSheetViewController
-    }
-    
-    func makeDetailReportViewController() -> UIViewController {
-        let coordinator = DetailReportCoordinator()
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
-        let bottomSheetViewController = BottomSheetViewController(
-            style: .custom(480),
+        let bottomSheetViewController =
+        BottomSheetViewController(
+            style: .small,
             contentViewController: coordinator.navigationController
         )
-        coordinator.bottomSheetDelegate = bottomSheetViewController
+        bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
     
@@ -111,34 +111,34 @@ private extension ProfileCoordinator {
 
 extension ProfileCoordinator: ProfileCoordinatorInterface {
     
-    func showPost(profileType: ProfileType) {
-        let coordinator = makePostCoordinator(profileType: profileType)
+    func showPost(profileType: ProfileType, boardToken: String) {
+        let coordinator = makePostCoordinator(profileType: profileType, boardToken: boardToken)
         coordinator.start()
     }
     
-    func showReport() {
-        let bottomSheetViewController = makeReportViewController()
-        bottomSheetViewController.modalPresentationStyle = .overFullScreen
-        navigationController.present(bottomSheetViewController, animated: false)
+    func showReport(reportedToken: String) {
+        let viewController = makeReportViewController(reportedToken: reportedToken)
+        viewController.modalPresentationStyle = .overFullScreen
+        navigationController.present(viewController, animated: false)
     }
     
-    func showModifyMyFitfty() {
-        let coordinator = makeMyFitftyCoordinator()
+    func showMyFitfty(_ myFitftyType: MyFitftyType) {
+        let coordinator = makeMyFitftyCoordinator(myFitftyType)
         coordinator.start()
         coordinator.navigationController.modalPresentationStyle = .overFullScreen
         navigationController.present(coordinator.navigationController, animated: true)
     }
     
-    func showDetailReport() {
-        navigationController.dismiss(animated: false)
-        let viewController = makeDetailReportViewController()
-        viewController.modalPresentationStyle = .overFullScreen
-        navigationController.present(viewController, animated: false)
-    }
-    
     func showSetting() {
         let coordinator = makeSettingCoordinator()
         coordinator.start()
+    }
+    
+    func switchMainTab() {
+        guard let tabCoordinator = parentCoordinator as? TabCoordinator else {
+            return
+        }
+        tabCoordinator.setSelectedIndex(0)
     }
     
     func dismiss() {
@@ -166,6 +166,13 @@ extension ProfileCoordinator: CoordinatorFinishDelegate {
     
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
+        switch childCoordinator.type {
+        case .myFitfty, .report:
+            navigationController.dismiss(animated: true) {
+                childCoordinator.navigationController.viewControllers.removeAll()
+            }
+        default: break
+        }
     }
     
 }

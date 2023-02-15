@@ -14,6 +14,13 @@ public extension Date {
         return Calendar.current.date(byAdding: .day, value: -1, to: self) ?? Date()
     }
     
+    var currentfullDate: String {
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = DateFormat.fullDate.rawValue
+        return dateFormatter.string(from: currentDate)
+    }
+    
     func toString(_ format: DateFormat) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "KST")
@@ -46,6 +53,7 @@ public extension Date {
         
         return dateFormatter.date(from: string)
     }
+    
 }
 
 public enum DateFormat: String {
@@ -62,4 +70,5 @@ public enum DateFormat: String {
     case yyyyMMddHyphen = "yyyy-MM-dd"
     case mmddHH = "MM/dd HH시"
     case yyMMddDot = "yy.MM.dd"
+    case fullDate = "yyyy_MMdd_HHmm_ssSSSS"
 }

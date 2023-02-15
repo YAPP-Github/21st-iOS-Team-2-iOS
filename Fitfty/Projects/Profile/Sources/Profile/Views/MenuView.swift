@@ -19,14 +19,12 @@ final class MenuView: UIView {
     private lazy var myFitftyIconButton: UIButton = {
         let button = UIButton()
         button.setImage(CommonAsset.Images.btnCodySelected.image, for: .normal)
-        button.addTarget(self, action: #selector(didTapMyFitftyButton), for: .touchUpInside)
         return button
     }()
     
     private lazy var bookmarkIconButton: UIButton = {
         let button = UIButton()
         button.setImage(CommonAsset.Images.btnBookmarkUnselected.image, for: .normal)
-        button.addTarget(self, action: #selector(didTapBookmarkButton), for: .touchUpInside)
         return button
     }()
     
@@ -35,6 +33,9 @@ final class MenuView: UIView {
         view.backgroundColor = CommonAsset.Colors.gray01.color
         return view
     }()
+    
+    private let myFitftyMenuView = UIView()
+    private let bookmarkMenuView = UIView()
     
     private var menuState: MenuState = .myFitfty {
         didSet {
@@ -59,26 +60,53 @@ final class MenuView: UIView {
     }
     
     private func setUpConstraintLayout() {
-        addSubviews(myFitftyIconButton, bookmarkIconButton, barView)
+        addSubviews(barView, myFitftyMenuView, bookmarkMenuView, myFitftyIconButton, bookmarkIconButton)
        
         NSLayoutConstraint.activate([
             barView.widthAnchor.constraint(equalToConstant: 1),
-            barView.heightAnchor.constraint(equalToConstant: 32),
+            barView.topAnchor.constraint(equalTo: topAnchor),
+            barView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -40),
             barView.centerXAnchor.constraint(equalTo: centerXAnchor),
             
+            myFitftyMenuView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
+            myFitftyMenuView.trailingAnchor.constraint(equalTo: barView.leadingAnchor),
+            myFitftyMenuView.topAnchor.constraint(equalTo: topAnchor),
+            myFitftyMenuView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -40),
+            
+            bookmarkMenuView.leadingAnchor.constraint(equalTo: barView.trailingAnchor),
+            bookmarkMenuView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
+            bookmarkMenuView.topAnchor.constraint(equalTo: topAnchor),
+            bookmarkMenuView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -40),
+            
             myFitftyIconButton.trailingAnchor.constraint(equalTo: barView.leadingAnchor, constant: -65),
-            myFitftyIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            myFitftyIconButton.centerYAnchor.constraint(equalTo: myFitftyMenuView.centerYAnchor),
             
             bookmarkIconButton.leadingAnchor.constraint(equalTo: barView.trailingAnchor, constant: 65),
-            bookmarkIconButton.topAnchor.constraint(equalTo: topAnchor, constant: 10)
+            bookmarkIconButton.centerYAnchor.constraint(equalTo: bookmarkMenuView.centerYAnchor)
         ])
     }
     
-    @objc func didTapMyFitftyButton(_ sender: UIButton) {
-        menuState = .myFitfty
+}
+
+extension MenuView {
+    
+    func setMyFitftyButtonTarget(_ target: Any?, action: Selector) {
+        myFitftyIconButton.addTarget(target, action: action, for: .touchUpInside)
+        myFitftyMenuView.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
     }
     
-    @objc func didTapBookmarkButton(_ sender: UIButton) {
-        menuState = .bookmark
+    func setBookmarkButtonTarget(_ target: Any?, action: Selector) {
+        bookmarkIconButton.addTarget(target, action: action, for: .touchUpInside)
+        bookmarkMenuView.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
     }
+    
+    func setMenuState(_ menuType: MenuType) {
+        switch menuType {
+        case .myFitfty:
+            menuState = .myFitfty
+        case .bookmark:
+            menuState = .bookmark
+        }
+    }
+    
 }

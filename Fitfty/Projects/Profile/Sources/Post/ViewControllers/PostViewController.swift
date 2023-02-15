@@ -8,10 +8,18 @@
 
 import UIKit
 import Common
+import Core
+import Combine
+import Kingfisher
 
 final public class PostViewController: UIViewController {
 
     private var coordinator: PostCoordinatorInterface
+    private var cancellables: Set<AnyCancellable> = .init()
+    private var viewModel: PostViewModel
+    private var boardToken: String
+    private var filepath: String?
+    
     private let postView = PostView()
     
     private lazy var miniProfileView: MiniProfileView = {
@@ -38,50 +46,25 @@ final public class PostViewController: UIViewController {
        return stackView
     }()
     
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        loadingView.stopAnimating()
+        return loadingView
+    }()
+    
     private var profileType: ProfileType
     private var presentType: ProfilePresentType
+    private var nickname: String?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setUpConstraintLayout()
-        postView.setUp(content: """
-                        (1,2,3,4)
-
-                        Baby, got me looking so crazy
-
-                        빠져버리는 daydream
-
-                        Got me feeling you
-
-                        너도 말해줄래
-
-                        누가 내게 뭐라든
-
-                        남들과는 달라 넌
-
-                        Maybe you could be the one
-
-                        날 믿어봐 한번
-
-                        I'm not looking for just fun
-
-                        Maybe I could be the one
-
-                        Oh baby
-                        예민하대 나 lately
-
-                        너 없이는 매일 매일이 yeah
-                        """,
-                       hits: "51254",
-                       bookmark: "312",
-                       date: "22.08.15"
-        )
-        miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
+        setUp()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNavigationBar()
+        viewModel.input.viewWillAppear(boardToken: boardToken)
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -89,10 +72,18 @@ final public class PostViewController: UIViewController {
         hideNavigationBar()
     }
     
-    public init(coordinator: PostCoordinatorInterface, profileType: ProfileType, presentType: ProfilePresentType) {
+    public init(
+        coordinator: PostCoordinatorInterface,
+        profileType: ProfileType,
+        presentType: ProfilePresentType,
+        viewModel: PostViewModel,
+        boardToken: String
+    ) {
         self.coordinator = coordinator
         self.profileType = profileType
         self.presentType = presentType
+        self.viewModel = viewModel
+        self.boardToken = boardToken
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -105,35 +96,67 @@ final public class PostViewController: UIViewController {
         coordinator.finishedTapGesture()
     }
     
+    private func setUp() {
+        bind()
+        setUpConstraintLayout()
+        postView.setBookmarkButtonAction(self, action: #selector(didTapBookmarkButton))
+    }
+    
+    private func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .update(let response):
+                    self?.update(response)
+                    self?.navigationItem.rightBarButtonItem?.isEnabled = true
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                }
+            }).store(in: &cancellables)
+    }
+    
+    private func update(_ response: PostResponse) {
+        guard let data = response.data,
+              let weather = data.tagGroupInfo.weather.stringToWeatherTag else {
+            return
+        }
+        postView.setUp(
+            content: data.content ?? "",
+            hits: String(data.views).insertComma,
+            bookmark: String(data.bookmarkCnt).insertComma,
+            date: data.createdAt.yymmddFromCreatedDate,
+            weather: weather,
+            filepath: data.filePath,
+            isBookmarked: data.bookmarked
+        )
+        miniProfileView.setUp(
+            filepath: data.profilePictureUrl,
+            nickname: data.nickname
+        )
+        self.nickname = data.nickname
+        self.filepath = data.filePath
+    }
+    
     private func setNavigationBar() {
         navigationController?.navigationBar.topItem?.title = ""
         navigationController?.navigationBar.prefersLargeTitles = false
-        
-        switch presentType {
-        case .tabProfile:
-            navigationController?.navigationBar.isHidden = false
-        case .mainProfile:
-            break
-        }
-        
-        switch profileType {
-        case .myProfile:
-            navigationController?.navigationItem.setCustomRightBarButton(
-                self,
-                action: #selector(didTapRightBarButton),
-                image: CommonAsset.Images.btnMoreVertical.image,
-                size: 24
-            )
-        case .userProfile:
-            break
-        }
+        navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationItem.setCustomRightBarButton(
+            self,
+            action: #selector(didTapRightBarButton),
+            image: CommonAsset.Images.btnMoreVertical.image,
+            size: 24
+        )
+        navigationItem.rightBarButtonItem?.isEnabled = false
         
         let cancelButton = UIBarButtonItem(
                 image: CommonAsset.Images.btnArrowleft.image,
                 style: .plain,
                 target: self,
                 action: #selector(didTapBackButton(_:))
-            )
+        )
         navigationItem.leftBarButtonItem = cancelButton
         
     }
@@ -148,7 +171,7 @@ final public class PostViewController: UIViewController {
     }
     
     private func setUpConstraintLayout() {
-        view.addSubviews(miniProfileView, scrollView)
+        view.addSubviews(miniProfileView, scrollView, loadingIndicatorView)
        scrollView.addSubviews(stackView)
         NSLayoutConstraint.activate([
             miniProfileView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -165,20 +188,41 @@ final public class PostViewController: UIViewController {
             stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)
+            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         ])
     }
     
     @objc private func didTapRightBarButton(_ sender: Any) {
-        coordinator.showBottomSheet()
+        guard let filepath = filepath else {
+            return
+        }
+        switch profileType {
+        case .myProfile:
+            coordinator.showBottomSheet(boardToken: boardToken, filepath: filepath)
+        case .userProfile:
+            coordinator.showReport(reportedToken: boardToken)
+        }
+        
     }
     
     @objc private func didTapMiniProfile(_ sender: Any) {
-        coordinator.showProfile(profileType: .myProfile)
+        guard let nickname = nickname else {
+            return
+        }
+        coordinator.showProfile(profileType: profileType, nickname: nickname)
     }
     
     @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {
         coordinator.finished()
+    }
+    
+    @objc func didTapBookmarkButton(_ sender: Any) {
+        viewModel.input.didTapBookmark(boardToken: boardToken)
     }
     
 }

@@ -61,6 +61,7 @@ final public class MyFitftyViewController: UIViewController {
     }()
     
     private var selectedImage: UIImage?
+    private var selectedImageFilepath: String?
     private var contentText = "내 코디에 대한 설명을 남겨보세요."
     private var imageInfoMessage: String?
     
@@ -73,9 +74,7 @@ final public class MyFitftyViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.largeTitleTextAttributes =
-        [NSAttributedString.Key.font: FitftyFont.appleSDBold(size: 24).font ?? UIFont.systemFont(ofSize: 24)]
+        setNavigationController()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -107,6 +106,7 @@ final public class MyFitftyViewController: UIViewController {
     }
     
     @objc func didTapUploadButton(_ sender: UIButton) {
+        enableRightBarButton.isEnabled = false
         viewModel.input.didTapUpload()
     }
     
@@ -167,13 +167,14 @@ private extension MyFitftyViewController {
                         return
                     }
                     self?.coordinator.dismiss()
+                case .codyFilepath(let filepath):
+                    self?.selectedImageFilepath = filepath
                 }
             }).store(in: &cancellables)
     }
     
     func setUpNavigationBar() {
         navigationItem.title = myFitftyType.navigationBarTitle
-        
         let leftButton: UIButton = {
           let button = UIButton()
             button.setImage(UIImage(systemName: "xmark"), for: .normal)
@@ -190,7 +191,13 @@ private extension MyFitftyViewController {
         case .modifyMyFitfty:
             navigationItem.rightBarButtonItem = enableRightBarButton
         }
-        
+    }
+    
+    func setNavigationController() {
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes =
+        [NSAttributedString.Key.font: FitftyFont.appleSDBold(size: 24).font ?? UIFont.systemFont(ofSize: 24)]
     }
     
     func setUpConstraintLayout() {
@@ -272,9 +279,11 @@ extension MyFitftyViewController {
                     cell?.setActionUploadPhotoButton(self, action: #selector(self.didTapUploadPhotoButton))
                     switch self.myFitftyType {
                     case .modifyMyFitfty:
-                        cell?.setUp(codyImage: CommonAsset.Images.profileSample.image)
-                        cell?.setUp(content: "오늘의 핏프티~~")
                         cell?.setDisableEditting()
+                        cell?.setUp(content: self.contentText)
+                        if let selectedImageFilepath = self.selectedImageFilepath {
+                            cell?.setUp(filepath: selectedImageFilepath)
+                        }
                         
                     case .uploadMyFitfty:
                         cell?.setUp(content: self.contentText)

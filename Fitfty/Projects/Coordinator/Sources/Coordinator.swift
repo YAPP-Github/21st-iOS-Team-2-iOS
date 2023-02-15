@@ -67,4 +67,6 @@ enum CoordinatorType {
     case feedSetting
     case personalInfo
     case onboarding
+    case detailReport
+    case report
 }
