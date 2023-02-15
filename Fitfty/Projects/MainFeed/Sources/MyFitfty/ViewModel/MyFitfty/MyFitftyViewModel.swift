@@ -167,7 +167,6 @@ extension MyFitftyViewModel {
     }
     
     private func getWeatherTagIndex(_ string: String) -> Int? {
-
         if string == WeatherTag.freezing.koreanWeatherTag || string == WeatherTag.freezing.englishWeatherTag {
             return 0
         } else if string == WeatherTag.cold.koreanWeatherTag || string == WeatherTag.cold.englishWeatherTag {
@@ -274,11 +273,11 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
                         }
                         
                         if let temperature = data.temperature,
-                           let cloudType = data.cloudType,
+                           let weather = data.tagGroupInfo.weather.stringToWeatherTag?.koreanWeatherTag,
                            let photoTakenTime = data.photoTakenTime {
                             let imageInfoMessage = """
                             사진 찍은 날의 날씨 정보를 불러왔어요. \(photoTakenTime.yymmddFromCreatedDate) / 평균 \(temperature)도
-                            \(cloudType)에 입는 옷이 아니라면 고쳐주세요.
+                            \(weather)에 입는 옷이 아니라면 고쳐주세요.
                             """
                             currentState.send(.imageInfoMessage(imageInfoMessage))
                         } else {
