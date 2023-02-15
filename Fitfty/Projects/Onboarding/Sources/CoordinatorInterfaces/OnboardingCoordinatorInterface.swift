@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol OnboardingCoordinatorInterface: AnyObject {
-    func pushGenderView()
+    func pushNicknameView()
     func pushStyleView()
     func pushMainFeedView()
     
