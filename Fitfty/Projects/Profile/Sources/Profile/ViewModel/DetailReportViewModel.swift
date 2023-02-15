@@ -76,7 +76,9 @@ extension DetailReportViewModel: DetailReportViewModelInput {
     }
     
     func didTapReportButton() {
-        if reports.filter({ $0.isSelected }).count < 1 {
+        if userManager.getCurrentGuestState() {
+            currentState.send(.errorMessage("로그인이 필요합니다."))
+        } else if reports.filter({ $0.isSelected }).count < 1 {
             currentState.send(.errorMessage("신고 사유를 선택해 주세요."))
         } else {
             report()
