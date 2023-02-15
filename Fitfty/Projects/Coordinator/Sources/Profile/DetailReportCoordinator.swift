@@ -10,10 +10,14 @@ import Foundation
 import UIKit
 import Profile
 import Common
+import Core
 
 final class DetailReportCoordinator: Coordinator {
     
-    var type: CoordinatorType { .profileSetting }
+    var type: CoordinatorType { .detailReport }
+    var reportedToken: String
+    var reportType: ReportType
+    
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
     
@@ -21,8 +25,14 @@ final class DetailReportCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+    init(
+        navigationController: BaseNavigationController = BaseNavigationController(),
+        reportedToken: String,
+        reportType: ReportType
+    ) {
         self.navigationController = navigationController
+        self.reportedToken = reportedToken
+        self.reportType = reportType
     }
     
     func start() {
@@ -35,7 +45,15 @@ final class DetailReportCoordinator: Coordinator {
 private extension DetailReportCoordinator {
     
     func makeDetailReportViewController() -> UIViewController {
-        let viewController = DetailReportViewController(coordinator: self)
+        let viewController = DetailReportViewController(
+            coordinator: self,
+            viewModel: DetailReportViewModel(
+                userManager: DefaultUserManager.shared,
+                reportedToken: reportedToken,
+                reportType: reportType,
+                fitftyRepository: DefaultFitftyRepository()
+            )
+        )
         return viewController
     }
     
@@ -44,14 +62,10 @@ private extension DetailReportCoordinator {
 extension DetailReportCoordinator: DetailReportCoordinatorInterface {
     
     func dismiss() {
-        navigationController.viewControllers.removeAll()
-        bottomSheetDelegate?.dismissBottomSheet { [weak self] in
-            guard let self = self else {
-                return
-            }
+        bottomSheetDelegate?.dismissBottomSheet { 
             self.navigationController.viewControllers.removeAll()
             self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         }
-        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
+    
 }

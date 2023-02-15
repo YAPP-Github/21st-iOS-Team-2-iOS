@@ -10,6 +10,7 @@ import Foundation
 import Combine
 
 public protocol UserManager {
+    
     var isNewUser: Bool { get }
     var currentLocation: Address? { get }
     var hasCompletedWelcomePage: Bool { get }
@@ -17,12 +18,14 @@ public protocol UserManager {
     var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { get }
     var gender: Gender? { get }
     var isGuest: AnyPublisher<Bool, Never> { get }
-    
+   
     func updateUserState(_ state: Bool)
     func updateCurrentLocation(_ address: Address)
     func updateGender(_ gender: Gender)
     func updateGuestState(_ isGuest: Bool)
     func updateCompletedWelcomePage()
+    func getCurrentGuestState() -> Bool
+   
 }
 
 public final class DefaultUserManager {
@@ -34,7 +37,7 @@ public final class DefaultUserManager {
     private var _location: CurrentValueSubject<(longitude: Double, latitude: Double)?, Never> = .init(nil)
     private var _gender: Gender?
     private var _guestState: CurrentValueSubject<Bool, Never> = .init(true)
-    
+   
     private var cancellables: Set<AnyCancellable> = .init()
     
     private init(localStorage: LocalStorageService) {
@@ -88,6 +91,10 @@ extension DefaultUserManager: UserManager {
         localStorage.write(key: .hasCompletedWelcomePage, value: true)
     }
     
+    public func getCurrentGuestState() -> Bool {
+        return _guestState.value
+    }
+ 
 }
 
 private extension DefaultUserManager {

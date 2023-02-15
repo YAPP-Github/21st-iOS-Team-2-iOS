@@ -13,7 +13,7 @@ public protocol MainCoordinatorInterface: AnyObject {
     
     func showSettingAddress()
     
-    func showProfile(profileType: ProfileType, nickName: String)
+    func showProfile(profileType: ProfileType, nickname: String)
     
     func showPost(profileType: ProfileType, userToken: String, boardToken: String)
 

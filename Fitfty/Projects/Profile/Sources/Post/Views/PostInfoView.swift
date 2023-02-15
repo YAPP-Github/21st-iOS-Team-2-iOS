@@ -104,9 +104,11 @@ final class PostInfoView: UIView {
 }
 
 extension PostInfoView {
+
     func setUp(hits: String, bookmark: String, weatherTag: WeatherTag) {
         weatherLabel.text = weatherTag.emojiWeatherTag
         hitsLabel.text = hits.insertComma
         bookmarkLabel.text = bookmark.insertComma
     }
+    
 }
