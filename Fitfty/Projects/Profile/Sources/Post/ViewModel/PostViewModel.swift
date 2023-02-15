@@ -39,7 +39,6 @@ extension PostViewModel: PostViewModelInput {
     
     func didTapBookmark(boardToken: String) {
         requestBookmark(boardToken: boardToken)
-        update(boardToken: boardToken)
     }
     
 }
@@ -98,10 +97,10 @@ private extension PostViewModel {
                     return
                 }
                 let response = try await bookmark(isBookmarked, boardToken: boardToken)
-                print(response)
                 if response.result == .fail {
                     self.currentState.send(.errorMessage("북마크 업데이트 실패"))
                 }
+                update(boardToken: boardToken)
             } catch {
                 self.currentState.send(.errorMessage("북마크 업데이트 실패"))
                 Logger.debug(error: error, message: "북마크 업데이트 실패")
@@ -118,7 +117,7 @@ private extension PostViewModel {
     }
     
     func bookmark(_ isBookmark: Bool, boardToken: String) async throws -> BookmarkResponse {
-        let target: FitftyAPI = isBookmark ? .addBookmark(boardToken: boardToken) : .deleteBookmark(boardToken: boardToken)
+        let target: FitftyAPI = isBookmark ? .deleteBookmark(boardToken: boardToken) : .addBookmark(boardToken: boardToken)
         return try await FitftyAPI.request(target: target, dataType: BookmarkResponse.self)
     }
     

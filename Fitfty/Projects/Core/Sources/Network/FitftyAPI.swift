@@ -39,7 +39,6 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         switch self {
         case .signInKakao,
              .signInApple,
-             .getPost,
              .getOtherUserProfile:
             return .none
         default:
