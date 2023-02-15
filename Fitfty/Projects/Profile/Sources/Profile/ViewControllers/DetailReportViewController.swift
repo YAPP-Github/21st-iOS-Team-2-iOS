@@ -125,7 +125,11 @@ private extension DetailReportViewController {
                     guard isCompleted else {
                         return
                     }
-                    self?.coordinator.dismiss()
+                    let alert = UIAlertController(title: "신고 접수가 완료됐어요.", message: "신고 접수는 fitfty에서 영업일 이내에 직접 검토할게요.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "이전 화면으로 돌아가기", style: .default, handler: { _ in
+                        self?.coordinator.dismiss()
+                    }))
+                    self?.present(alert, animated: true)
                     
                 case .sections(let sections):
                     self?.applySnapshot(sections)

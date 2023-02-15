@@ -19,7 +19,7 @@ enum DetailReportType {
     var koreanDetailReport: String {
         switch self {
         case .OBSCENE:
-            return "음란성/선정성"
+            return "음란성 / 선정성"
         case .WEATHER:
             return "날씨 태그가 사진과 어울리지 않음"
         case .COPYRIGHT:
@@ -27,9 +27,9 @@ enum DetailReportType {
         case .INSULT:
             return "혐오 / 욕설 / 인신공격"
         case .REPEAT:
-            return "같은내용 반복게시"
+            return "같은 내용 반복 게시"
         case .MISC:
-            return "기타"
+            return "기타 (team.fitfty@gmail.com로 제보)"
         }
     }
     
