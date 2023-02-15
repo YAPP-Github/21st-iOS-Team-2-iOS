@@ -14,4 +14,5 @@ public extension Notification.Name {
     static let selectPhAsset = Notification.Name(rawValue: "selectPhAsset")
     static let resignKeyboard = Notification.Name(rawValue: "resignKeyboard")
     static let showKeyboard = Notification.Name(rawValue: "showKeyboard")
+    static let showLoginNotification = Notification.Name(rawValue: "showLoginNotification")
 }
