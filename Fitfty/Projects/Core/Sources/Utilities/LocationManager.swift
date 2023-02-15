@@ -34,6 +34,7 @@ public final class LocationManager: NSObject {
         guard _location.value == nil else {
             return Empty().eraseToAnyPublisher()
         }
+        requestWhenInUseAuthorization()
         manager.startUpdatingLocation()
         return _location
             .eraseToAnyPublisher()
