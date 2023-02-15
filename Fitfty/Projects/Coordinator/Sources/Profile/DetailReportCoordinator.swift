@@ -67,4 +67,5 @@ extension DetailReportCoordinator: DetailReportCoordinatorInterface {
             self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         }
     }
+    
 }
