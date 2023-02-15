@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Kingfisher
 
 final class ContentCell: UICollectionViewCell {
     
@@ -227,6 +228,12 @@ extension ContentCell {
         codyImageView.image = codyImage
     }
     
+    public func setUp(filepath: String) {
+        let url = URL(string: filepath)
+        codyImageView.kf.indicatorType = .activity
+        codyImageView.kf.setImage(with: url)
+    }
+    
     public func setActionUploadPhotoButton(_ target: Any?, action: Selector) {
         uploadPhotoButton.addTarget(target, action: action, for: .touchUpInside)
         backgroundButton.addTarget(target, action: action, for: .touchUpInside)
@@ -235,6 +242,7 @@ extension ContentCell {
     public func setDisableEditting() {
         backgroundButton.backgroundColor = .black
         backgroundButton.alpha = 0.5
+        backgroundButton.isEnabled = false
         uploadPhotoButton.isHidden = true
         guidanceLabel.isHidden = false
     }

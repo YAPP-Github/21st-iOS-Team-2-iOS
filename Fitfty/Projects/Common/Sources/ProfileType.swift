@@ -7,8 +7,20 @@
 //
 
 import Foundation
+import UIKit
 
 public enum ProfileType {
+    
     case myProfile
     case userProfile
+    
+    public var headerHeight: CGFloat {
+        switch self {
+        case .userProfile:
+            return 196
+        case .myProfile:
+            return 283
+        }
+    }
+    
 }

@@ -16,15 +16,21 @@ public enum FitftyAPI {
     case getUserPrivacy
     case updateUserPrivacy(parameters: [String: Any])
     case getMyProfile
+    case getPost(boardToken: String)
     case updateMyProfile(parameters: [String: Any])
     case checkNickname(query: String)
     case setUserDetails(parameters: [String: Any])
     case postMyFitfty(parameters: [String: Any])
+    case getOtherUserProfile(nickname: String)
+    case deletePost(boardToken: String)
+    case putPost(parameters: [String: Any], boardToken: String)
     case codyList(parameters: [String: Any])
     case filteredCodyList(parameters: [String: Any])
     case mySettings
     case addBookmark(boardToken: String)
     case deleteBookmark(boardToken: String)
+    case reportUser(parameters: UserReportRequest)
+    case reportPost(parameters: PostReportRequest)
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -35,7 +41,8 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     public var authorizationType: AuthorizationType? {
         switch self {
         case .signInKakao,
-             .signInApple:
+             .signInApple,
+             .getOtherUserProfile:
             return .none
         default:
             return .bearer
@@ -56,12 +63,20 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .getMyProfile,
              .updateMyProfile:
             return "/users/profile"
+        case .getPost(let boardToken):
+            return "/boards/\(boardToken)"
         case .checkNickname(let query):
             return "/users/nickname/\(query)"
         case .setUserDetails:
             return "/users/details"
         case .postMyFitfty:
             return "/boards/new"
+        case .getOtherUserProfile(let nickname):
+            return "/users/profile/\(nickname)"
+        case .deletePost(let boardToken):
+            return "/boards/\(boardToken)"
+        case .putPost(_, let boardToken):
+            return "/boards/\(boardToken)"
         case .codyList:
             return "/styles"
         case .filteredCodyList:
@@ -71,6 +86,10 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .addBookmark(let boardToken),
              .deleteBookmark(let boardToken):
             return "/boards/bookmark/\(boardToken.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        case .reportUser:
+            return "/reports/user/new"
+        case .reportPost:
+            return "/reports/board/new"
         }
     }
     
@@ -79,18 +98,27 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
         case .signInKakao,
              .signInApple,
              .postMyFitfty,
-             .addBookmark:
+             .addBookmark,
+             .reportUser,
+             .reportPost:
             return .post
             
         case .getMyProfile,
              .getUserPrivacy,
              .checkNickname,
-             .codyList,
+             .getPost,
+             .getOtherUserProfile:
+            return .get
+        case .deletePost:
+            return .delete
+
+        case .codyList,
              .mySettings,
              .filteredCodyList:
             return .get
-
+            
         case .setUserDetails,
+             .putPost,
              .updateUserPrivacy,
              .updateMyProfile:
             return .put
@@ -103,21 +131,28 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
     
     public var task: Moya.Task {
         switch self {
-        case .postMyFitfty(let parameter),
-             .codyList(let parameter),
-             .filteredCodyList(let parameter):
+        case .signInKakao(let parameters),
+             .signInApple(let parameters),
+             .setUserDetails(let parameters),
+             .postMyFitfty(let parameters),
+             .codyList(let parameters),
+             .updateMyProfile(let parameters),
+             .putPost(let parameters, _):
+            return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
+            
+        case .reportPost(let parameters):
+            return .requestJSONEncodable(parameters)
+            
+        case .reportUser(let parameters):
+            return .requestJSONEncodable(parameters)
+            
+        case .filteredCodyList(let parameter):
             let parameters = updateParameters(parameter)
             return .requestParameters(
                 parameters: parameters,
                 encoding: URLEncoding.init(destination: .queryString, arrayEncoding: .noBrackets)
             )
-            
-        case .signInKakao(let parameter),
-             .signInApple(let parameter),
-             .setUserDetails(let parameter),
-             .updateUserPrivacy(let parameter),
-             .updateMyProfile(let parameter):
-            return .requestParameters(parameters: parameter, encoding: JSONEncoding.default)
+
         default:
             return .requestPlain
         }

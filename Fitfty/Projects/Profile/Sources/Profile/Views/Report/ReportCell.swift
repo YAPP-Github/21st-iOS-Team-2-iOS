@@ -9,12 +9,11 @@
 import UIKit
 import Common
 
-final class ReportView: UIStackView {
+final class ReportCell: UITableViewCell {
     
     private lazy var checkBoxButton: UIButton = {
         let button = UIButton()
         button.setImage(CommonAsset.Images.btnCheckBoxUnSelected.image, for: .normal)
-        button.setImage(CommonAsset.Images.btnCheckBoxSelected.image, for: .selected)
         button.isUserInteractionEnabled = false
         return button
     }()
@@ -26,10 +25,19 @@ final class ReportView: UIStackView {
         return label
     }()
     
-    init(title: String) {
-        super.init(frame: .zero)
-        titleLabel.text = title
-        setStackView()
+    private lazy var stackView:  UIStackView = {
+        let stackView = UIStackView(
+            axis: .horizontal,
+            alignment: .leading,
+            distribution: .fill,
+            spacing: 12
+        )
+        stackView.addArrangedSubviews(checkBoxButton, titleLabel)
+        return stackView
+    }()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         setConstraintsLayout()
     }
     
@@ -37,27 +45,27 @@ final class ReportView: UIStackView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setStackView() {
-        addArrangedSubviews(checkBoxButton, titleLabel)
-        self.axis = .horizontal
-        self.alignment = .leading
-        self.distribution = .fill
-        self.spacing = 12
-        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapReportView)))
-    }
-    
     private func setConstraintsLayout() {
+        addSubviews(stackView)
         NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             checkBoxButton.widthAnchor.constraint(equalToConstant: 20),
             checkBoxButton.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
+ 
 }
 
-extension ReportView {
+extension ReportCell {
     
-    @objc func didTapReportView(_ sender: UITapGestureRecognizer?) {
-        checkBoxButton.isSelected = checkBoxButton.isSelected ? false : true
+    func setUp(title: String, isSelected: Bool) {
+        if isSelected {
+            checkBoxButton.setImage(CommonAsset.Images.btnCheckBoxSelected.image, for: .normal)
+        } else {
+            checkBoxButton.setImage(CommonAsset.Images.btnCheckBoxUnSelected.image, for: .normal)
+        }
+        titleLabel.text = title
     }
-   
+    
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct MyFitftyResponse: Codable {
+public struct UploadMyFitftyResponse: Codable {
     public let result: String
     public let data: MyFitftyData?
     public let message: String?

@@ -8,14 +8,18 @@
 
 import UIKit
 import Common
+import Combine
+import Core
 
 final public class ProfileViewController: UIViewController {
     
+    private var cancellables: Set<AnyCancellable> = .init()
+    private var viewModel: ProfileViewModel
     private var coordinator: ProfileCoordinatorInterface
     private var profileType: ProfileType
     private var presentType: ProfilePresentType
-    
-    private var dataSource: UICollectionViewDiffableDataSource<ProfileSection, UUID>?
+    private var nickname: String?
+    private var dataSource: UICollectionViewDiffableDataSource<ProfileSectionKind, ProfileCellModel>?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: postLayout())
@@ -33,31 +37,46 @@ final public class ProfileViewController: UIViewController {
         return view
     }()
     
+    private lazy var loadingIndicatorView: LoadingView = {
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        loadingView.stopAnimating()
+        return loadingView
+    }()
+    
+    private lazy var emptyView: EmptyView = {
+        let view = EmptyView()
+        view.isHidden = true
+        view.setButtonAction(self, action: #selector(didTapEmptyViewButton))
+        return view
+    }()
+    
     private let miniProfileView = MiniProfileView(imageSize: 48, frame: .zero)
     
+    private var profileFilePath: String?
+    private var myMessage: String?
+    private var menuType: MenuType = .myFitfty
+    
     private var headerViewElementKind: String {
-        switch presentType {
-        case .mainProfile:
+        switch profileType {
+        case .userProfile:
             return UserProfileHeaderView.className
-        case .tabProfile:
+        case .myProfile:
             return MyProfileHeaderView.className
         }
     }
     
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        setUp()
-    }
-    
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setNavigationBar()
-    }
-    
-    public init(coordinator: ProfileCoordinatorInterface, profileType: ProfileType, presentType: ProfilePresentType) {
+    public init(
+        coordinator: ProfileCoordinatorInterface,
+        profileType: ProfileType,
+        presentType: ProfilePresentType,
+        viewModel: ProfileViewModel,
+        nickname: String?
+    ) {
         self.coordinator = coordinator
         self.profileType = profileType
         self.presentType = presentType
+        self.viewModel = viewModel
+        self.nickname = nickname
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -70,17 +89,36 @@ final public class ProfileViewController: UIViewController {
         coordinator.finishedTapGesture()
     }
     
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setUp()
+        bind()
+    }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setNavigationBar()
+        emptyView.isHidden = true
+        switch profileType {
+        case .userProfile:
+            guard let nickname = nickname else {
+                return
+            }
+            viewModel.input.viewWillAppearWithoutMenu(nickname: nickname)
+        case .myProfile:
+            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
+        }
+    }
+    
     private func setUp() {
         setUpConstraintLayout()
         setUpDataSource()
         registerHeaderView()
-        applySnapshot()
         setMiniProfileView(isHidden: true)
-        miniProfileView.setUp(image: CommonAsset.Images.profileSample.image, nickname: "iosLover")
     }
     
     @objc func didTapMoreVerticalButton(_ sender: Any?) {
-        coordinator.showReport()
+        viewModel.input.didTapMoreVertical()
     }
     
     @objc func didTapSettingButton(_ sender: UIButton) {
@@ -91,12 +129,55 @@ final public class ProfileViewController: UIViewController {
         coordinator.finished()
     }
     
+    @objc func didTapMyFitftyMenu(_ sender: Any?) {
+        collectionView.isScrollEnabled = true
+        emptyView.isHidden = true
+        menuType = .myFitfty
+        viewModel.input.didTapMenu(.myFitfty)
+    }
+    
+    @objc func didTapBookmarkMenu(_ sender: Any?) {
+        collectionView.isScrollEnabled = true
+        emptyView.isHidden = true
+        menuType = .bookmark
+        viewModel.input.didTapMenu(.bookmark)
+    }
+    
+    @objc func didTapEmptyViewButton(_ sender: Any?) {
+        switch menuType {
+        case .myFitfty:
+            coordinator.showMyFitfty(.uploadMyFitfty)
+        case .bookmark:
+            coordinator.switchMainTab()
+        }
+    }
 }
 
 private extension ProfileViewController {
     
+    private func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .update(let response):
+                    self?.update(response)
+                    self?.navigationItem.rightBarButtonItem?.isEnabled = true
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                case .isLoading(let isLoading):
+                    isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                case .sections(let sections):
+                    self?.applySnapshot(sections)
+                case .showPost(let profileType, let boardToken):
+                    self?.coordinator.showPost(profileType: profileType, boardToken: boardToken)
+                case .report(let repotedToken):
+                    self?.coordinator.showReport(reportedToken: repotedToken)
+                }
+            }).store(in: &cancellables)
+    }
+    
     func setUpConstraintLayout() {
-        view.addSubviews(collectionView, miniProfileView, seperatorView)
+        view.addSubviews(collectionView, miniProfileView, seperatorView, loadingIndicatorView, emptyView)
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -111,22 +192,27 @@ private extension ProfileViewController {
             seperatorView.heightAnchor.constraint(equalToConstant: 1),
             seperatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             seperatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            seperatorView.bottomAnchor.constraint(equalTo: miniProfileView.bottomAnchor)
+            seperatorView.bottomAnchor.constraint(equalTo: miniProfileView.bottomAnchor),
+            
+            loadingIndicatorView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            loadingIndicatorView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            loadingIndicatorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            
+            emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyView.topAnchor.constraint(equalTo: view.topAnchor, constant: profileType.headerHeight+160),
+            emptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 86),
+            emptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -86),
+            emptyView.heightAnchor.constraint(equalToConstant: 92)
         ])
     }
     
     func setNavigationBar() {
         navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.topItem?.title = ""
-        switch presentType {
-        case .tabProfile:
-            navigationController?.navigationBar.isHidden = true
-        case .mainProfile:
-            navigationController?.navigationBar.isHidden = false
-        }
-        
+       
         switch profileType {
         case .userProfile:
+            navigationController?.navigationBar.isHidden = false
             navigationItem.rightBarButtonItem =
             UIBarButtonItem(
                 image: CommonAsset.Images.btnMoreVertical.image,
@@ -135,8 +221,9 @@ private extension ProfileViewController {
                 action: #selector(didTapMoreVerticalButton)
             )
             navigationItem.rightBarButtonItem?.tintColor = .black
+            navigationItem.rightBarButtonItem?.isEnabled = false
         case .myProfile:
-            break
+            navigationController?.navigationBar.isHidden = true
         }
         
         let cancelButton = UIBarButtonItem(
@@ -149,11 +236,11 @@ private extension ProfileViewController {
     }
     
     func registerHeaderView() {
-        switch presentType {
-        case .mainProfile:
+        switch profileType {
+        case .userProfile:
             collectionView.register(UserProfileHeaderView.self,
                                     forSupplementaryViewOfKind: headerViewElementKind)
-        case .tabProfile:
+        case .myProfile:
             collectionView.register(MyProfileHeaderView.self,
                                     forSupplementaryViewOfKind: headerViewElementKind)
         }
@@ -164,39 +251,86 @@ private extension ProfileViewController {
         seperatorView.isHidden = isHidden
     }
     
+    private func update(_ response: ProfileResponse) {
+        guard let data = response.data else {
+            return
+        }
+        self.profileFilePath = data.profilePictureUrl
+        self.myMessage = data.message ?? "\(data.nickname)의 프로필이에요."
+        self.nickname = data.nickname
+        
+        miniProfileView.setUp(
+            filepath: data.profilePictureUrl,
+            nickname: data.nickname
+        )
+    }
+
+}
+
+private extension ProfileViewController {
+    
     func setUpDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<ProfileSection, UUID>(
+        dataSource = UICollectionViewDiffableDataSource<ProfileSectionKind, ProfileCellModel>(
             collectionView: collectionView,
-            cellProvider: { (collectionView, indexPath, _) -> UICollectionViewCell? in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: FeedImageCell.className,
-                    for: indexPath) as? FeedImageCell else {
-                    return UICollectionViewCell()
+            cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
+                switch item {
+                case .feed(let filepath, _):
+                    guard let cell = collectionView.dequeueReusableCell(
+                        withReuseIdentifier: FeedImageCell.className,
+                        for: indexPath) as? FeedImageCell else {
+                        return UICollectionViewCell()
+                    }
+                    cell.setUp(filepath: filepath)
+                    return cell
                 }
-                return cell
             })
         
         dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
-            switch self?.presentType {
-            case .mainProfile:
+            switch self?.profileType {
+            case .userProfile:
                 guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: UserProfileHeaderView.className,
                     for: indexPath) as? UserProfileHeaderView else {
                     return UICollectionReusableView()
                 }
-                supplementaryView.profileView.setUp(nickname: "useriosLover", content: "안녕하세용!")
+                if let nickname = self?.nickname,
+                   let content = self?.myMessage {
+                    supplementaryView.profileView.setUp(
+                        nickname: nickname,
+                        content: content,
+                        filepath: self?.profileFilePath
+                    )
+                }
                 return supplementaryView
                 
-            case .tabProfile:
+            case .myProfile:
                 guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: MyProfileHeaderView.className,
                     for: indexPath) as? MyProfileHeaderView else {
                     return UICollectionReusableView()
                 }
-                supplementaryView.profileView.setUp(nickname: "myiosLover", content: "안녕하세용!")
+                if let nickname = self?.nickname,
+                   let content = self?.myMessage {
+                    supplementaryView.profileView.setUp(
+                        nickname: nickname,
+                        content: content,
+                        filepath: self?.profileFilePath
+                    )
+                }
+                supplementaryView.menuView.setMyFitftyButtonTarget(self, action: #selector(self?.didTapMyFitftyMenu))
+                supplementaryView.menuView.setBookmarkButtonTarget(self, action: #selector(self?.didTapBookmarkMenu))
+                supplementaryView.menuView.setMenuState(self?.menuType ?? .myFitfty)
                 supplementaryView.setButtonTarget(target: self, action: #selector(self?.didTapSettingButton(_:)))
+                
+                switch self?.presentType {
+                case .mainProfile:
+                    supplementaryView.setBackButton(self, action: #selector(self?.didTapBackButton(_:)))
+                case .tabProfile, .none:
+                    break
+                }
+                
                 return supplementaryView
                 
             default:
@@ -205,11 +339,22 @@ private extension ProfileViewController {
         }
     }
     
-    func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<ProfileSection, UUID>()
-        snapshot.appendSections([.feed])
-        snapshot.appendItems(Array(0..<10).map {_ in UUID() })
-        dataSource?.apply(snapshot, animatingDifferences: true)
+    func applySnapshot(_ sections: [ProfileSection]) {
+        var snapshot = NSDiffableDataSourceSnapshot<ProfileSectionKind, ProfileCellModel>()
+        sections.forEach {
+            snapshot.appendSections([$0.sectionKind])
+            snapshot.appendItems($0.items)
+        }
+        snapshot.reloadSections([.feed])
+        dataSource?.apply(snapshot, animatingDifferences: true) {
+            guard sections.first?.items.count == 0 else {
+                return
+            }
+            self.collectionView.isScrollEnabled = false
+            self.emptyView.isHidden = false
+            self.emptyView.setUp(self.menuType)
+        }
+        
     }
     
     func postLayout() -> UICollectionViewLayout {
@@ -233,7 +378,7 @@ private extension ProfileViewController {
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: .init(
                     widthDimension: .absolute(UIScreen.main.bounds.width),
-                    heightDimension: .estimated(presentType.headerHeight)
+                    heightDimension: .estimated(profileType.headerHeight)
                 ),
                 elementKind: headerViewElementKind,
                 alignment: .top
@@ -249,11 +394,16 @@ private extension ProfileViewController {
 extension ProfileViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        coordinator.showPost(profileType: profileType)
+        switch profileType {
+        case .userProfile:
+            viewModel.input.didTapPostWithoutMenu(selectedIndex: indexPath.row)
+        case .myProfile:
+            viewModel.input.didTapPostWithMenu(selectedIndex: indexPath.row, menuType: menuType)
+        }
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y >= presentType.headerHeight {
+        if scrollView.contentOffset.y >= profileType.headerHeight {
             setMiniProfileView(isHidden: false)
         } else {
             setMiniProfileView(isHidden: true)

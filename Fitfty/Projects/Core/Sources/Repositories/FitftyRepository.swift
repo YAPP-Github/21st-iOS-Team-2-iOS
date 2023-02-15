@@ -17,10 +17,16 @@ public protocol FitftyRepository {
     
     func bookmark(_ isBookmark: Bool, boardToken: String) async throws -> BookmarkResponse
     
+    func getUserPrivacy() async throws -> UserPrivacyResponse
+    
+    func report(_ request: PostReportRequest) async throws -> FitftyResponse
+    
+    func report(_ request: UserReportRequest) async throws -> FitftyResponse
+    
 }
 
 public final class DefaultFitftyRepository: FitftyRepository {
-    
+   
     public init() {}
     
     public func fetchCodyList(weather: WeatherTag, gender: Gender?, styles: [StyleTag]?) async throws -> FitftyMainCodyListResponse {
@@ -45,4 +51,17 @@ public final class DefaultFitftyRepository: FitftyRepository {
         let target: FitftyAPI = isBookmark ? .addBookmark(boardToken: boardToken) : .deleteBookmark(boardToken: boardToken)
         return try await FitftyAPI.request(target: target, dataType: BookmarkResponse.self)
     }
+    
+    public func getUserPrivacy() async throws -> UserPrivacyResponse {
+        return try await FitftyAPI.request(target: .getUserPrivacy, dataType: UserPrivacyResponse.self)
+    }
+    
+    public func report(_ request: PostReportRequest) async throws -> FitftyResponse {
+        return try await FitftyAPI.request(target: .reportPost(parameters: request), dataType: FitftyResponse.self)
+    }
+    
+    public func report(_ request: UserReportRequest) async throws -> FitftyResponse {
+        return try await FitftyAPI.request(target: .reportUser(parameters: request), dataType: FitftyResponse.self)
+    }
+    
 }
