@@ -74,9 +74,7 @@ final public class MyFitftyViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.largeTitleTextAttributes =
-        [NSAttributedString.Key.font: FitftyFont.appleSDBold(size: 24).font ?? UIFont.systemFont(ofSize: 24)]
+        setNavigationController()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -177,7 +175,6 @@ private extension MyFitftyViewController {
     
     func setUpNavigationBar() {
         navigationItem.title = myFitftyType.navigationBarTitle
-        
         let leftButton: UIButton = {
           let button = UIButton()
             button.setImage(UIImage(systemName: "xmark"), for: .normal)
@@ -194,7 +191,13 @@ private extension MyFitftyViewController {
         case .modifyMyFitfty:
             navigationItem.rightBarButtonItem = enableRightBarButton
         }
-        
+    }
+    
+    func setNavigationController() {
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes =
+        [NSAttributedString.Key.font: FitftyFont.appleSDBold(size: 24).font ?? UIFont.systemFont(ofSize: 24)]
     }
     
     func setUpConstraintLayout() {
