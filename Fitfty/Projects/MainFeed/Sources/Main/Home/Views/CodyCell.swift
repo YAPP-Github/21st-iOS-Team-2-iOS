@@ -125,7 +125,11 @@ final class CodyCell: UICollectionViewCell {
 extension CodyCell {
     
     func setUp(cody: CodyResponse) {
-        viewModel = .init(fitftyRepository: DefaultFitftyRepository(), cody: cody)
+        viewModel = .init(
+            fitftyRepository: DefaultFitftyRepository(),
+            userManager: DefaultUserManager.shared,
+            cody: cody
+        )
         bind()
         viewModel?.input.fetch()
     }

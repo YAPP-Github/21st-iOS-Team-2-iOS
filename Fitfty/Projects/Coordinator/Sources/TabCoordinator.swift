@@ -88,6 +88,12 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
         let controllers: [BaseNavigationController] = pages.map({ getTabController($0) })
         
         prepareTabBarController(withTabControllers: controllers)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(showLoginNotification(_:)),
+            name: .showLoginNotification,
+            object: nil
+        )
     }
     
     private func prepareTabBarController(withTabControllers tabControllers: [UIViewController]) {
@@ -175,6 +181,16 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
         return TabBarPage.init(index: tabBarController.selectedIndex)
     }
     
+    @objc
+    private func showLoginNotification(_ sender: Notification? = nil) {
+        let alert = UIAlertController(title: "", message: "회원가입 시 코디 저장, 내 핏프티 업로드,\n계정 관리 등이 가능합니다.\n3초 소셜 로그인으로 더 많은 핏프티의 기능을 누려보세요!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "그냥 둘러보기", style: .default))
+        alert.addAction(UIAlertAction(title: "회원가입", style: .default, handler: { _ in
+            self.reloadWindow()
+        }))
+        tabBarController.present(alert, animated: true)
+    }
+    
 }
 
 extension TabCoordinator: UITabBarControllerDelegate {
@@ -184,12 +200,7 @@ extension TabCoordinator: UITabBarControllerDelegate {
         shouldSelect viewController: UIViewController
     ) -> Bool {
         if DefaultUserManager.shared.getCurrentGuestState() {
-            let alert = UIAlertController(title: "", message: "회원가입 시 코디 저장, 내 핏프티 업로드,\n계정 관리 등이 가능합니다.\n3초 소셜 로그인으로 더 많은 핏프티의 기능을 누려보세요!", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "그냥 둘러보기", style: .default))
-            alert.addAction(UIAlertAction(title: "회원가입", style: .default, handler: { _ in
-                self.reloadWindow()
-            }))
-            navigationController.present(alert, animated: true)
+            showLoginNotification()
             return false
         } else {
             guard let indexOfTab = tabBarController.viewControllers?.firstIndex(of: viewController),
