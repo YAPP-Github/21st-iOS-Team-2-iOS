@@ -25,14 +25,14 @@ final class OnboardingCoordinator: Coordinator {
     }
     
     func start() {
-        let viewController = makeNicknameViewController()
+        let viewController = makeGenderViewController()
         navigationController.pushViewController(viewController, animated: true)
     }
 }
 
 extension OnboardingCoordinator: OnboardingCoordinatorInterface {
-    func pushGenderView() {
-        let viewController = makeGenderViewController()
+    func pushNicknameView() {
+        let viewController = makeNicknameViewController()
         navigationController.pushViewController(viewController, animated: true)
     }
     

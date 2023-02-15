@@ -41,7 +41,7 @@ final class StyleView: UIView {
             statusView.heightAnchor.constraint(equalToConstant: Style.StatusView.height)
         ])
         
-        statusView.setStep(isFirst: false)
+        statusView.setStep(index: 1)
     }
     
     private func configureTitleLabel() {

@@ -56,11 +56,8 @@ final public class StyleViewController: UIViewController {
                 case .changeNextButtonState(let isEnabled):
                     self?.nextButton.setStyle(isEnabled ? .enabled : .disabled)
                     
-                case .pushMainFeedView:
-                    self?.coordinator.pushMainFeedView()
-                    
-                case .showErrorAlert(let error):
-                    self?.showAlert(message: error.localizedDescription)
+                case .pushNicknameView:
+                    self?.coordinator.pushNicknameView()
                 }
             }
             .store(in: &cancellables)

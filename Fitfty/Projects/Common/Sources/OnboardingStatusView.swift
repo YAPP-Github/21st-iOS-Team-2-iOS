@@ -12,6 +12,7 @@ final public class OnboardingStatusView: UIView {
     let stackView = UIStackView()
     let firstStepView = UIView()
     let secondStepView = UIView()
+    let thirdStepView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,13 +25,22 @@ final public class OnboardingStatusView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func setStep(isFirst: Bool) {
-        if isFirst {
+    public func setStep(index: Int) {
+        switch index {
+        case 0:
             firstStepView.layer.backgroundColor = Style.StepView.currentStepColor.cgColor
             secondStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
-        } else {
+            thirdStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
+        case 1:
             firstStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
             secondStepView.layer.backgroundColor = Style.StepView.currentStepColor.cgColor
+            thirdStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
+        case 2:
+            firstStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
+            secondStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
+            thirdStepView.layer.backgroundColor = Style.StepView.currentStepColor.cgColor
+        default:
+            break
         }
     }
     
@@ -38,6 +48,7 @@ final public class OnboardingStatusView: UIView {
         configureStackView()
         configureFirstStepView()
         configureSecondStepView()
+        configureThirdStepView()
     }
     
     private func configureStackView() {
@@ -66,6 +77,13 @@ final public class OnboardingStatusView: UIView {
         
         secondStepView.layer.cornerRadius = Style.StepView.radius
         secondStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
+    }
+    
+    private func configureThirdStepView() {
+        stackView.addArrangedSubviews(thirdStepView)
+        
+        thirdStepView.layer.cornerRadius = Style.StepView.radius
+        thirdStepView.layer.backgroundColor = Style.StepView.otherStepColor.cgColor
     }
 }
 

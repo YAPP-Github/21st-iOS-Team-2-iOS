@@ -12,8 +12,9 @@ import Combine
 import Common
 
 final class NicknameView: UIView {
+    private let statusView = OnboardingStatusView()
     private let titleLabel = UILabel()
-    private let nicknameTextField = FitftyTextField(style: .normal, placeHolderText: "영문 숫자 조합 6자 이상의 닉네임 입력")
+    private let nicknameTextField = FitftyTextField(style: .normal, placeHolderText: "영문 숫자 조합 1자 이상의 닉네임 입력")
     
     private let warningContainerStackView = UIStackView()
     
@@ -103,16 +104,29 @@ final class NicknameView: UIView {
     }
     
     private func configure() {
+        configureStatusView()
         configureTitleLabel()
         configureNicknameTextField()
         configureWarningContainerStackView()
         configureNextButton()
     }
     
+    private func configureStatusView() {
+        addSubviews(statusView)
+        NSLayoutConstraint.activate([
+            statusView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: Style.StatusView.margin.top),
+            statusView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Style.StatusView.margin.left),
+            statusView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Style.StatusView.margin.right),
+            statusView.heightAnchor.constraint(equalToConstant: Style.StatusView.height)
+        ])
+        
+        statusView.setStep(index: 2)
+    }
+    
     private func configureTitleLabel() {
         addSubviews(titleLabel)
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: Style.TitleLabel.margin.top),
+            titleLabel.topAnchor.constraint(equalTo: statusView.bottomAnchor, constant: Style.TitleLabel.margin.top),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Style.TitleLabel.margin.left),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Style.TitleLabel.margin.right)
         ])
@@ -218,6 +232,11 @@ final class NicknameView: UIView {
 
 private extension NicknameView {
     enum Style {
+        enum StatusView {
+            static let margin: UIEdgeInsets = .init(top: 18, left: 20, bottom: 0, right: 20)
+            static let height: CGFloat = 4
+        }
+        
         enum TitleLabel {
             static let margin: UIEdgeInsets = .init(top: 61, left: 20, bottom: 0, right: 32)
             static let numberOfLines = 0
