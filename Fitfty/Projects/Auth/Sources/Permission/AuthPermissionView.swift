@@ -54,7 +54,7 @@ final class AuthPermissionView: UIView {
     private func configurePermissionImageView() {
         addSubviews(permissionImageView)
         NSLayoutConstraint.activate([
-            permissionImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            permissionImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Style.PermissionImageView.margin.top),
             permissionImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Style.PermissionImageView.margin.left),
             permissionImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Style.PermissionImageView.margin.right),
             permissionImageView.heightAnchor.constraint(equalToConstant: Style.PermissionImageView.size.height)
@@ -87,9 +87,9 @@ private extension AuthPermissionView {
         }
         
         enum PermissionImageView {
-            static let margin: UIEdgeInsets = .init(top: 0, left: 62, bottom: 0, right: 93)
-            static let size: CGSize = .init(width: 220, height: 252)
-            static let image = CommonAsset.Images.permissionImageView.image
+            static let margin: UIEdgeInsets = .init(top: 72, left: 62, bottom: 0, right: 93)
+            static let size: CGSize = .init(width: 208, height: 136)
+            static let image = CommonAsset.Images.permissionImage.image
         }
         
         enum NextButton {

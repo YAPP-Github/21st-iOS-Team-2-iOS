@@ -60,11 +60,12 @@ private extension MainCoordinator {
         return bottomSheetViewController
     }
     
-    func makePostCoordinator(profileType: ProfileType) -> PostCoordinator {
+    func makePostCoordinator(profileType: ProfileType, boardToken: String) -> PostCoordinator {
         let coordinator = PostCoordinator(
             navigationController: navigationController,
             profileType: profileType,
-            presentType: .mainProfile
+            presentType: .mainProfile,
+            boardToken: boardToken
         )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
@@ -72,11 +73,12 @@ private extension MainCoordinator {
         return coordinator
     }
     
-    func makeProfileCoordinator(profileType: ProfileType) -> ProfileCoordinator {
+    func makeProfileCoordinator(profileType: ProfileType, nickname: String) -> ProfileCoordinator {
         let coordinator = ProfileCoordinator(
             navigationController: navigationController,
             profileType: profileType,
-            presentType: .mainProfile
+            presentType: .mainProfile,
+            nickname: nickname
         )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
@@ -118,12 +120,12 @@ extension MainCoordinator: MainCoordinatorInterface {
     }
     
     public func showPost(profileType: ProfileType, userToken: String, boardToken: String) {
-        let coordinator = makePostCoordinator(profileType: profileType)
+        let coordinator = makePostCoordinator(profileType: profileType, boardToken: boardToken)
         coordinator.start()
     }
     
-    public func showProfile(profileType: ProfileType, nickName: String) {
-        let coordinator = makeProfileCoordinator(profileType: profileType)
+    public func showProfile(profileType: ProfileType, nickname: String) {
+        let coordinator = makeProfileCoordinator(profileType: profileType, nickname: nickname)
         coordinator.start()
     }
     

@@ -9,10 +9,10 @@ import Common
 
 public protocol ProfileCoordinatorInterface: AnyObject {
     
-    func showPost(profileType: ProfileType)
-    func showReport()
-    func showModifyMyFitfty()
-    func showDetailReport()
+    func showPost(profileType: ProfileType, boardToken: String)
+    func showReport(reportedToken: String)
+    func showMyFitfty(_ myFitftyType: MyFitftyType)
+    func switchMainTab()
     func showSetting()
     func dismiss()
     func finished()

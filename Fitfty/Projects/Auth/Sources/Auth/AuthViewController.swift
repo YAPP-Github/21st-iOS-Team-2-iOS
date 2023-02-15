@@ -24,6 +24,7 @@ final public class AuthViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = true
     }
     
     public init(viewModel: AuthViewModel, coordinator: AuthCoordinatorInterface) {
@@ -54,8 +55,8 @@ final public class AuthViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 switch state {
-                case .pushIntroView:
-                    self?.coordinator.pushIntroView()
+                case .pushPermissionView:
+                    self?.coordinator.pushPermissionView()
                     
                 case .pushMainFeedView:
                     self?.coordinator.pushMainFeedFlow()
