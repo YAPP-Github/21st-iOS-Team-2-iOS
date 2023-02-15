@@ -70,8 +70,7 @@ private extension ReportCoordinator {
 
 extension ReportCoordinator: ReportCoordinatorInterface {
     
-    func showDetailReport(myUserToken: String, otherUserToken: String) {
-        print("showDetailReport")
+    func showDetailReport() {
         let viewController = makeDetailReportViewController()
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)

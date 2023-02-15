@@ -62,6 +62,6 @@ final public class ReportViewController: UIViewController {
     }
     
     @objc func didTapReportButton(_ sender: Any?) {
-        coordinator.showDetailReport(myUserToken: "zz", otherUserToken: "zzz")
+        coordinator.showDetailReport()
     }
 }
