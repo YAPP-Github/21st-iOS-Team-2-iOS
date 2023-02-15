@@ -27,6 +27,7 @@ final public class AuthViewModel: ViewModelType {
     
     func didTapKakaoLogin() {
         SocialLoginManager.shared.tryKakaoLogin(completionHandler: { [weak self] isNewUser in
+            DefaultUserManager.shared.updateGuestState(false)
             if isNewUser {
                 self?.currentState.send(.pushPermissionView)
             } else {
@@ -39,6 +40,7 @@ final public class AuthViewModel: ViewModelType {
     
     func didTapAppleLogin() {
         SocialLoginManager.shared.tryAppleLogin(completionHandler: { [weak self] isNewUser in
+            DefaultUserManager.shared.updateGuestState(false)
             if isNewUser {
                 self?.currentState.send(.pushPermissionView)
             } else {

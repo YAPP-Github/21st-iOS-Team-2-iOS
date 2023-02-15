@@ -63,7 +63,7 @@ final public class AuthViewController: UIViewController {
                     
                 case .showErrorAlert(let error):
                     self?.showErrorAlert(error)
-                }
+             au   }
             }
             .store(in: &cancellables)
     }

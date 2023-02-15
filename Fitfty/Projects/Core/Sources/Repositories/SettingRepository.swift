@@ -55,5 +55,6 @@ public final class DefaultSettingRepository: SettingRepository {
 
     public func logout() {
         SessionManager.shared.deleteUserSession()
+        DefaultUserManager.shared.updateGuestState(true)
     }
 }
