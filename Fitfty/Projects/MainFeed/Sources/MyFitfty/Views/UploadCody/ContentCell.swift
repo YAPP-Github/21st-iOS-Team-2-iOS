@@ -230,6 +230,7 @@ extension ContentCell {
     
     public func setUp(filepath: String) {
         let url = URL(string: filepath)
+        codyImageView.kf.indicatorType = .activity
         codyImageView.kf.setImage(with: url)
     }
     
