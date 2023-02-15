@@ -94,7 +94,7 @@ final class CodyCell: UICollectionViewCell {
     
     private lazy var profileImageView: UIImageView = {
         let image = UIImageView()
-        image.image = CommonAsset.Images.sample.image
+        image.image = CommonAsset.Images.profileDummy.image
         image.clipsToBounds = true
         image.layer.cornerRadius = 16
         image.widthAnchor.constraint(equalToConstant: 32).isActive = true
@@ -137,6 +137,9 @@ extension CodyCell {
                 if let url = URL(string: cody.filePath) {
                     self?.codyImageView.kf.setImage(with: url)
                 }
+                if let profileURL = cody.profilePictureUrl, let url = URL(string: profileURL) {
+                    self?.profileImageView.kf.setImage(with: url)
+                }
                 self?.viewsCountLabel.text = cody.views.description
                 self?.nameLabel.text = cody.nickname
                 self?.bookmarkButton.setImage(
@@ -157,7 +160,9 @@ private extension CodyCell {
     
     func reset() {
         codyImageView.kf.cancelDownloadTask()
+        profileImageView.kf.cancelDownloadTask()
         codyImageView.image = nil
+        profileImageView.image = CommonAsset.Images.profileDummy.image
         viewsCountLabel.text = nil
         nameLabel.text = nil
     }
