@@ -12,9 +12,12 @@ import Moya
 public enum FitftyAPI {
     case signInKakao(parameters: [String: Any])
     case signInApple(parameters: [String: Any])
+    case withdrawAccount
     case getUserPrivacy
+    case updateUserPrivacy(parameters: [String: Any])
     case getMyProfile
     case getPost(boardToken: String)
+    case updateMyProfile(parameters: [String: Any])
     case checkNickname(query: String)
     case setUserDetails(parameters: [String: Any])
     case postMyFitfty(parameters: [String: Any])
@@ -52,9 +55,13 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/auth/sign-in/kakao/"
         case .signInApple:
             return "/auth/sign-in/apple/"
-        case .getUserPrivacy:
+        case .withdrawAccount:
+            return "/auth/me"
+        case .getUserPrivacy,
+             .updateUserPrivacy:
             return "/users/privacy"
-        case .getMyProfile:
+        case .getMyProfile,
+             .updateMyProfile:
             return "/users/profile"
         case .getPost(let boardToken):
             return "/boards/\(boardToken)"
@@ -111,10 +118,13 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return .get
             
         case .setUserDetails,
-             .putPost:
+             .putPost,
+             .updateUserPrivacy,
+             .updateMyProfile:
             return .put
             
-        case .deleteBookmark:
+        case .deleteBookmark,
+             .withdrawAccount:
             return .delete
         }
     }
@@ -126,6 +136,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .setUserDetails(let parameters),
              .postMyFitfty(let parameters),
              .codyList(let parameters),
+             .updateMyProfile(let parameters),
              .putPost(let parameters, _):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
             
@@ -141,6 +152,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
                 parameters: parameters,
                 encoding: URLEncoding.init(destination: .queryString, arrayEncoding: .noBrackets)
             )
+
         default:
             return .requestPlain
         }
@@ -155,7 +167,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
 public extension FitftyAPI {
     static func request<T: Decodable>(target: FitftyAPI, dataType: T.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin(), MoyaCacheablePlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -175,7 +187,7 @@ public extension FitftyAPI {
     
     static func request(target: FitftyAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin(), MoyaCacheablePlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -214,6 +226,15 @@ public enum FitftyAPIError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .notFound(let message): return message
+        }
+    }
+}
+
+extension FitftyAPI: MoyaCacheable {
+    var cachePolicy: MoyaCacheablePolicy {
+        switch self {
+        case .getMyProfile: return .reloadIgnoringLocalCacheData
+        default: return .useProtocolCachePolicy
         }
     }
 }

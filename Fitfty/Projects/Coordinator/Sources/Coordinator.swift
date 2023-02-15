@@ -31,6 +31,17 @@ extension Coordinator {
             
         }
     }
+    
+    func rootCoordinator() -> Coordinator? {
+        if parentCoordinator != nil {
+            return parentCoordinator?.rootCoordinator()
+        }
+        return self
+    }
+    
+    func reloadWindow() {
+        (rootCoordinator() as? AppCoordinator)?.reloadWindow()
+    }
 }
 
 protocol CoordinatorFinishDelegate: AnyObject {

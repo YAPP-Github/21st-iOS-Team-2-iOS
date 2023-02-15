@@ -146,12 +146,16 @@ extension SettingViewController: UICollectionViewDelegate {
         switch item {
         case .profile:
             coordinator?.showProfileSetting()
+            
         case .myInfo:
             coordinator?.showMyInfoSetting()
-        case .feed:
-            coordinator?.showFeedSetting()
-        case .pushNoti:
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            
+        case .termsOfUse:
+            coordinator?.showTermsOfUse()
+            
+        case .privacyRule:
+            coordinator?.showPrivacyRule()
+            
         default: break
         }
     }

@@ -11,6 +11,7 @@ import UIKit
 public enum FitftyTextFieldStyle {
     case normal
     case focused
+    case disabled
 }
 
 final public class FitftyTextField: UITextField {
@@ -22,6 +23,8 @@ final public class FitftyTextField: UITextField {
                 configureNormalStyle()
             case .focused:
                 configureFocusedStyle()
+            case .disabled:
+                configureDisabledStyle()
             }
         }
     }
@@ -57,6 +60,10 @@ final public class FitftyTextField: UITextField {
         self.style = style
     }
     
+    public func setText(_ text: String) {
+        self.text = text
+    }
+    
     // MARK: - Private
     
     private func configureSelf() {
@@ -71,6 +78,8 @@ final public class FitftyTextField: UITextField {
             configureNormalStyle()
         case .focused:
             configureFocusedStyle()
+        case .disabled:
+            configureDisabledStyle()
         }
     }
     
@@ -82,5 +91,13 @@ final public class FitftyTextField: UITextField {
     private func configureFocusedStyle() {
         layer.borderWidth = 2
         layer.borderColor = CommonAsset.Colors.primaryBlueLight.color.cgColor
+    }
+    
+    private func configureDisabledStyle() {
+        textColor = CommonAsset.Colors.gray02.color
+        backgroundColor = .white
+        layer.borderWidth = 1
+        layer.borderColor = CommonAsset.Colors.gray02.color.cgColor
+        isUserInteractionEnabled = false
     }
 }

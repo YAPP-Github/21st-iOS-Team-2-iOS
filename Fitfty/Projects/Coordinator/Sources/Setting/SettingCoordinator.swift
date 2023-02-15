@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import WebKit
+
 import Setting
 import Common
 
@@ -96,6 +98,16 @@ extension SettingCoordinator: SettingCoordinatorInterface {
         coordinator.start()
     }
     
+    func showTermsOfUse() {
+        let webViewController = SettingWebViewController(url: "https://maze-mozzarella-6e5.notion.site/dd559e6017ee499fa569148b8621966d")
+        navigationController.present(webViewController, animated: true)
+    }
+    
+    func showPrivacyRule() {
+        let webViewController = SettingWebViewController(url: "https://maze-mozzarella-6e5.notion.site/ed1e98c3fee5417b89f85543f4a398d2")
+        navigationController.present(webViewController, animated: true)
+    }
+    
     func finished() {
         navigationController.popViewController(animated: true)
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
@@ -103,7 +115,6 @@ extension SettingCoordinator: SettingCoordinatorInterface {
 }
 
 extension SettingCoordinator: CoordinatorFinishDelegate {
-    
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         childDidFinish(childCoordinator, parent: self)
     }

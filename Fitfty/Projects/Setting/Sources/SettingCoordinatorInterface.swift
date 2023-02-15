@@ -9,12 +9,10 @@
 import Foundation
 
 public protocol SettingCoordinatorInterface: AnyObject {
-    
     func showProfileSetting()
-    
     func showFeedSetting()
-    
     func showMyInfoSetting()
-    
+    func showTermsOfUse()
+    func showPrivacyRule()
     func finished()
 }
