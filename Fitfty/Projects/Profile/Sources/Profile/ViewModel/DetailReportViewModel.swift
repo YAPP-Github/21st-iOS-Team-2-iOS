@@ -126,9 +126,6 @@ private extension DetailReportViewModel {
                         type: getSelectedReport()
                     )
                     let response = try await self.fitftyRepository.report(request)
-                    print(request)
-                    print(self.reportType)
-                    print(response)
                     guard response.result == "SUCCESS" else {
                         return
                     }
@@ -140,9 +137,6 @@ private extension DetailReportViewModel {
                         type: getSelectedReport()
                     )
                     let response = try await self.fitftyRepository.report(request)
-                    print(request)
-                    print(self.reportType)
-                    print(response)
                     guard response.result == "SUCCESS" else {
                         return
                     }

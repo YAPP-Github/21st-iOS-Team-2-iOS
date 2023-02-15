@@ -10,7 +10,7 @@ import Foundation
 
 public protocol ReportCoordinatorInterface: AnyObject {
     
-    func showDetailReport(myUserToken: String, otherUserToken: String)
+    func showDetailReport()
     func dismiss()
     
 }
