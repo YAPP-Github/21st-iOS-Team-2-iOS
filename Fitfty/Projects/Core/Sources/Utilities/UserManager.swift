@@ -24,6 +24,7 @@ public protocol UserManager {
     func updateGender(_ gender: Gender)
     func updateGuestState(_ isGuest: Bool)
     func updateCompletedWelcomePage()
+    func getCurrentGuestState() -> Bool
    
 }
 
@@ -88,6 +89,10 @@ extension DefaultUserManager: UserManager {
     
     public func updateCompletedWelcomePage() {
         localStorage.write(key: .hasCompletedWelcomePage, value: true)
+    }
+    
+    public func getCurrentGuestState() -> Bool {
+        return _guestState.value
     }
  
 }

@@ -47,6 +47,9 @@ public final class MainViewModel {
     
     private var _weathers: [MainCellModel] = []
     private var myUserToken: String?
+    private var isGuest: Bool {
+           userManager.getCurrentGuestState()
+    }
 
     public init(
         addressRepository: AddressRepository,
@@ -130,7 +133,7 @@ extension MainViewModel: MainViewModelInput {
                 let profileTypes: [ProfileType]
                 var list: [(CodyResponse, ProfileType)] = []
                 
-                if self.isGuest() {
+                if self.isGuest {
                     profileTypes = Array(repeating: .userProfile, count: codyList.count)
                     for i in 0..<codyList.count {
                         list.append((codyList[i], profileTypes[i]))
@@ -175,7 +178,7 @@ private extension MainViewModel {
                 let profileTypes: [ProfileType]
                 var list: [(CodyResponse, ProfileType)] = []
                 
-                if self.isGuest() {
+                if self.isGuest {
                     profileTypes = Array(repeating: .userProfile, count: codyList.count)
                     for i in 0..<codyList.count {
                         list.append((codyList[i], profileTypes[i]))
@@ -305,23 +308,6 @@ private extension MainViewModel {
                 styles.append(style)
             }
             _currentStyles.send(styles)
-        }
-    }
-    
-    func isGuest() -> Bool {
-        var isGuest: Bool?
-        userManager.isGuest
-            .compactMap { $0 }
-            .sink { value in
-                isGuest = value
-            }.store(in: &cancellables)
-        guard let isGuest = isGuest else {
-            return false
-        }
-        if isGuest {
-            return true
-        } else {
-            return false
         }
     }
     
