@@ -139,9 +139,7 @@ extension MyFitftyViewModel {
     private func checkIsEnabledUpload() -> Bool {
         switch myFitftyType {
         case .uploadMyFitfty:
-            if contentText != nil
-                && contentText != textViewPlaceHolder
-                && selectedPhAssetInfo != nil
+            if  selectedPhAssetInfo != nil
                 && styleTagItems.filter({ $0.isSelected == true }).count > 0
                 && weatherTagItems.filter({ $0.isSelected == true }).count > 0 {
                 return true
@@ -149,9 +147,7 @@ extension MyFitftyViewModel {
                 return false
             }
         case .modifyMyFitfty:
-            if contentText != nil
-                && contentText != textViewPlaceHolder
-                && styleTagItems.filter({ $0.isSelected == true }).count > 0
+            if  styleTagItems.filter({ $0.isSelected == true }).count > 0
                 && weatherTagItems.filter({ $0.isSelected == true }).count > 0 {
                 return true
             } else {
@@ -446,8 +442,7 @@ private extension MyFitftyViewModel {
             }
             do {
                 self.currentState.send(.isLoading(true))
-                if let content = contentText,
-                   let tagGroup = getTapGroup() {
+                if let tagGroup = getTapGroup() {
                     switch myFitftyType {
                     case .uploadMyFitfty:
                         guard let selectedPhAssetInfo = selectedPhAssetInfo else {
@@ -463,7 +458,7 @@ private extension MyFitftyViewModel {
                         
                         let request = MyFitftyRequest(
                             filePath: filepath.absoluteString,
-                            content: content,
+                            content: (self.contentText == self.textViewPlaceHolder ? "" : self.contentText) ?? "",
                             temperature: self.temperature,
                             location: self.location,
                             cloudType: cloudType,
@@ -486,7 +481,7 @@ private extension MyFitftyViewModel {
                         }
                         let request = MyFitftyRequest(
                             filePath: filepath,
-                            content: content,
+                            content: (self.contentText == self.textViewPlaceHolder ? "" : self.contentText) ?? "",
                             temperature: self.temperature,
                             location: self.location,
                             cloudType: self.cloudType,
