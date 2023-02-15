@@ -15,7 +15,8 @@ import Core
 final public class NicknameViewModel: ViewModelType {
     public enum ViewModelState {
         case changeNextButtonState(isEnabled: Bool)
-        case pushGenderView
+        case pushMainFeedView
+        case showErrorAlert(_ error: Error)
     }
     
     private let repository: OnboardingRepository
@@ -40,7 +41,29 @@ final public class NicknameViewModel: ViewModelType {
     
     func didTapNextButton() {
         UserDefaults.standard.write(key: .nickname, value: nickname)
-        currentState.send(.pushGenderView)
+        
+        setUserDetails { [weak self] in
+            self?.currentState.send(.pushMainFeedView)
+        }
+    }
+    
+    func setUserDetails(completionHandler: @escaping () -> Void) {
+        guard let styles = UserDefaults.standard.read(key: .styles) as? [String],
+              let gender = UserDefaults.standard.read(key: .gender) as? String else {
+            currentState.send(.showErrorAlert(OnboardingError.noUserData))
+            return
+        }
+        
+        Task {
+            do {
+                try await repository.setUserDetails(nickname: nickname,
+                                                    gender: gender,
+                                                    styles: styles)
+                completionHandler()
+            } catch {
+                currentState.send(.showErrorAlert(OnboardingError.others(error.localizedDescription)))
+            }
+        }
     }
 }
 
