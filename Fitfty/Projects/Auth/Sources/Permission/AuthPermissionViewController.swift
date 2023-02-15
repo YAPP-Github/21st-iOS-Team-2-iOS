@@ -42,11 +42,16 @@ final public class AuthPermissionViewController: UIViewController {
     @objc
     private func didTapNextButton() {
         requestTrackingPermission()
+        requestLocationPermission()
         
         coordinator.pushOnboardingFlow()
     }
     
     private func requestTrackingPermission() {
         ATTrackingManager.requestTrackingAuthorization { _ in }
+    }
+    
+    private func requestLocationPermission() {
+        LocationManager.shared.requestWhenInUseAuthorization()
     }
 }
