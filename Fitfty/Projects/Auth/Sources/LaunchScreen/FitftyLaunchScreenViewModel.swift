@@ -14,7 +14,7 @@ import Common
 
 final public class FitftyLaunchScreenViewModel: ViewModelType {
     public enum ViewModelState {
-        case pushAuthView
+        case pushAuthView(needsIntroView: Bool)
         case pushMainFeedView
     }
     
@@ -30,8 +30,18 @@ final public class FitftyLaunchScreenViewModel: ViewModelType {
             if hasSession {
                 currentState.send(.pushMainFeedView)
             } else {
-                currentState.send(.pushAuthView)
+                checkNeedToShowIntroView()
             }
+        }
+    }
+    
+    private func checkNeedToShowIntroView() {
+        let isNewUser = UserDefaults.standard.read(key: .isNewUser) as? Bool ?? true
+        if isNewUser {
+            UserDefaults.standard.write(key: .isNewUser, value: false)
+            currentState.send(.pushAuthView(needsIntroView: true))
+        } else {
+            currentState.send(.pushAuthView(needsIntroView: false))
         }
     }
 }

@@ -55,8 +55,8 @@ final public class FitftyLaunchScreenViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 switch state {
-                case .pushAuthView:
-                    self?.coordinator.pushAuthView()
+                case .pushAuthView(let needsIntroView):
+                    self?.coordinator.pushAuthView(needsIntroView: needsIntroView)
                 case .pushMainFeedView:
                     self?.coordinator.pushMainFeedView()
                 }

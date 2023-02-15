@@ -10,10 +10,10 @@ import UIKit
 
 import Common
 
-final class WithdrawImageCell: UICollectionViewCell {
+final public class WithdrawImageCell: UICollectionViewCell {
     private let imageView = UIImageView()
     
-    override var intrinsicContentSize: CGSize {
+    override public var intrinsicContentSize: CGSize {
         return CGSize(width: 221, height: 252)
     }
     
@@ -26,7 +26,7 @@ final class WithdrawImageCell: UICollectionViewCell {
         fatalError()
     }
     
-    func setUp(item: Int) {
+    public func setUp(item: Int) {
         switch item {
         case 0: imageView.image = CommonAsset.Images.introImage1.image
         case 1: imageView.image = CommonAsset.Images.introImage2.image
