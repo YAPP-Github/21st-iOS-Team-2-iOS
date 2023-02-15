@@ -101,8 +101,7 @@ private extension DefaultUserManager {
     
     func fetchCurrentLocation() {
         LocationManager.shared.currentLocation()
-            .compactMap { $0 }
-            .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
+            .map { ($0?.coordinate.longitude ?? 126.977829174031, $0?.coordinate.latitude ?? 37.5663174209601 )}
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
                 self?._location.send((longitude, latitude))
             }).store(in: &cancellables)
