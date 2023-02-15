@@ -38,7 +38,11 @@ extension PostViewModel: PostViewModelInput {
     }
     
     func didTapBookmark(boardToken: String) {
-        requestBookmark(boardToken: boardToken)
+        if DefaultUserManager.shared.getCurrentGuestState() {
+            currentState.send(.errorMessage("로그인이 필요합니다."))
+        } else {
+            requestBookmark(boardToken: boardToken)
+        }
     }
     
 }
