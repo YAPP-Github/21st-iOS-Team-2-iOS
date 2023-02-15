@@ -110,8 +110,12 @@ private extension ProfileSettingViewController {
                     self?.introductionTextField.text = text
                     
                 case .updateProfileImage(let imageString):
+                    self?.profileImageView.kf.indicatorType = .activity
                     if let url = URL(string: imageString ?? "") {
-                        self?.profileImageView.kf.setImage(with: url)
+                        self?.profileImageView.kf.setImage(
+                            with: url,
+                            options: [.forceRefresh]
+                        )
                     }
                     
                 case .showErrorAlert(let error):
@@ -144,8 +148,7 @@ private extension ProfileSettingViewController {
     }
     
     @objc func didTapSaveButton(_ sender: UITapGestureRecognizer) {
-        // TODO: - imageUrl 넘겨주기 처리 필요
-        viewModel.didTapSaveButton(imageUrl: nil, message: introductionTextField.text)
+        viewModel.didTapSaveButton(message: introductionTextField.text)
     }
     
     @objc func didTapEditProfileButton(_ sender: UIButton) {
@@ -166,6 +169,7 @@ extension ProfileSettingViewController: UIImagePickerControllerDelegate & UINavi
             return
         }
         profileImageView.image = selectedImage
+        viewModel.didTapEditProfileImage(imageData: selectedImage.jpegData(compressionQuality: 0.35))
         picker.dismiss(animated: true)
     }
     
