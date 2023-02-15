@@ -145,7 +145,7 @@ private extension PersonalInfoViewModel {
     
     func checkAvailableNickname(_ nickname: String) {
         self.userPrivacy.nickname = nickname
-        let regex = "^[0-9a-zA-Z]{6,30}$"
+        let regex = "^[0-9a-zA-Z._]{1,30}$"
         if nickname.range(of: regex, options: .regularExpression) != nil {
             hasAvailableNickname = true
         } else {
