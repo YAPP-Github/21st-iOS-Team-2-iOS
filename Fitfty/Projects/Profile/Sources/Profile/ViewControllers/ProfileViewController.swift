@@ -345,6 +345,7 @@ private extension ProfileViewController {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
+        snapshot.reloadSections([.feed])
         dataSource?.apply(snapshot, animatingDifferences: true) {
             guard sections.first?.items.count == 0 else {
                 return
