@@ -10,5 +10,5 @@ import Foundation
 
 public protocol FitftyLaunchScreenCoordinatorInterface: AnyObject {
     func pushMainFeedView()
-    func pushAuthView()
+    func pushAuthView(needsIntroView: Bool)
 }

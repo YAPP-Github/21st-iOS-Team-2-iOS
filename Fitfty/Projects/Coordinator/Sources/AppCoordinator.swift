@@ -28,8 +28,8 @@ final public class AppCoordinator: Coordinator {
         coordinator.start()
     }
     
-    func showAuthFlow() {
-        let coordinator = makeAuthCoordinator()
+    func showAuthFlow(needsIntroView: Bool) {
+        let coordinator = makeAuthCoordinator(needsIntroView: needsIntroView)
         coordinator.start()
     }
     
@@ -42,7 +42,7 @@ final public class AppCoordinator: Coordinator {
         childCoordinators.removeAll()
         navigationController.viewControllers.removeAll()
         
-        showAuthFlow()
+        showAuthFlow(needsIntroView: false)
     }
 }
 
@@ -57,8 +57,8 @@ private extension AppCoordinator {
         return coordinator
     }
     
-    func makeAuthCoordinator() -> Coordinator {
-        let coordinator = AuthCoordinator(navigationController: navigationController)
+    func makeAuthCoordinator(needsIntroView: Bool) -> Coordinator {
+        let coordinator = AuthCoordinator(navigationController: navigationController, needsIntroView: needsIntroView)
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
@@ -98,11 +98,11 @@ extension AppCoordinator: CoordinatorFinishDelegate {
 }
 
 extension AppCoordinator: FitftyLaunchScreenCoordinatorDelegate {
-    func pushAuthView() {
+    func pushAuthView(needsIntroView: Bool) {
         childCoordinators.removeAll()
         navigationController.viewControllers.removeAll()
         
-        showAuthFlow()
+        showAuthFlow(needsIntroView: needsIntroView)
     }
     
     func pushMainFeedView() {
