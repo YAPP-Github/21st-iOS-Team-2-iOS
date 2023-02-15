@@ -9,7 +9,9 @@
 import Foundation
 
 public protocol PersonalInfoCoordinatorInterface: AnyObject {
-    
+    func showAuthView()
+    func pushWithdrawView()
+    func pushWithdrawConfirmView()
     func finished()
-    
+    func pop()
 }
