@@ -45,6 +45,7 @@ extension FeedImageCell {
     
     func setUp(filepath: String) {
         if let url = URL(string: filepath) {
+            feedImageView.kf.indicatorType = .activity
             feedImageView.kf.setImage(with: url)
         }
     }
