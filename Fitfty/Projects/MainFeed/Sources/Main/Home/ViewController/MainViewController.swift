@@ -88,8 +88,8 @@ private extension MainViewController {
             .sinkOnMainThread(receiveValue: { [weak self] state in
                 switch state {
                 case .currentLocation(let address):
-                    if address.secondName.isEmpty, address.thirdName.isEmpty {
-                        self?.locationView.update(location: "\(address.fullName)")
+                    if address.secondName.isEmpty, address.thirdName.isEmpty || address.thirdName.isEmpty {
+                        self?.locationView.update(location: address.fullName)
                     } else {
                         self?.locationView.update(location: "\(address.secondName) \(address.thirdName)")
                     }
