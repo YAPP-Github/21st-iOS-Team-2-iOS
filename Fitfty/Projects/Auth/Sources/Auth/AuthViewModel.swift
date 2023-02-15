@@ -15,7 +15,7 @@ import Common
 
 final public class AuthViewModel: ViewModelType {
     public enum ViewModelState {
-        case pushIntroView
+        case pushPermissionView
         case pushMainFeedView
         case showErrorAlert(_ error: Error)
     }
@@ -28,7 +28,7 @@ final public class AuthViewModel: ViewModelType {
     func didTapKakaoLogin() {
         SocialLoginManager.shared.tryKakaoLogin(completionHandler: { [weak self] isNewUser in
             if isNewUser {
-                self?.currentState.send(.pushIntroView)
+                self?.currentState.send(.pushPermissionView)
             } else {
                 self?.currentState.send(.pushMainFeedView)
             }
@@ -40,7 +40,7 @@ final public class AuthViewModel: ViewModelType {
     func didTapAppleLogin() {
         SocialLoginManager.shared.tryAppleLogin(completionHandler: { [weak self] isNewUser in
             if isNewUser {
-                self?.currentState.send(.pushIntroView)
+                self?.currentState.send(.pushPermissionView)
             } else {
                 self?.currentState.send(.pushMainFeedView)
             }
