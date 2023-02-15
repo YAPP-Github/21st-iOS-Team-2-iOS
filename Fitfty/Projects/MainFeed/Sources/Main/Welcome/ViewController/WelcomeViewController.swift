@@ -61,7 +61,7 @@ public class WelcomeViewController: UIViewController {
     
     private lazy var welcomeLabel: UILabel = {
         let label = UILabel()
-        label.text = "User님 안녕하세요?\n핏프티에 오신걸 환영해요."
+        label.text = "손님 안녕하세요?\n핏프티에 오신걸 환영해요."
         label.textAlignment = .left
         label.textColor = .black
         label.numberOfLines = 2
