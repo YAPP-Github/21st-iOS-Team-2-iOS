@@ -21,11 +21,17 @@ final class CodyCellViewModel {
     
     private let cody: CodyResponse
     private let fitftyRepository: FitftyRepository
+    private let userManager: UserManager
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var isBookmark: Bool
     
-    init(fitftyRepository: FitftyRepository, cody: CodyResponse) {
+    init(
+        fitftyRepository: FitftyRepository,
+        userManager: UserManager,
+        cody: CodyResponse
+    ) {
         self.fitftyRepository = fitftyRepository
+        self.userManager = userManager
         self.cody = cody
         self.isBookmark = cody.bookmarked
     }
@@ -58,6 +64,11 @@ extension CodyCellViewModel: CodyCellViewModelInput {
 private extension CodyCellViewModel {
     
     func requestBookmark() {
+        guard userManager.getCurrentGuestState() == false else {
+            NotificationCenter.default.post(name: .showLoginNotification, object: nil)
+            currentState.send(.bookmarkState(false))
+            return
+        }
         Task { [weak self] in
             guard let self = self else {
                 return
