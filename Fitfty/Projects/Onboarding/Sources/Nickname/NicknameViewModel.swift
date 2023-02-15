@@ -70,7 +70,7 @@ final public class NicknameViewModel: ViewModelType {
 private extension NicknameViewModel {
     private func hasAvailableString(_ nickname: String) {
         self.nickname = nickname
-        let regex = "^[0-9a-zA-Z]{6,30}$"
+        let regex = "^[0-9a-zA-Z_.]{1,30}$"
         if nickname.range(of: regex, options: .regularExpression) != nil {
             hasAvailableString = true
             hasNoOverlappingNickname(nickname)
