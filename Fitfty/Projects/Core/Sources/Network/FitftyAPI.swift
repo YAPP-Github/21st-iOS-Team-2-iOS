@@ -12,8 +12,11 @@ import Moya
 public enum FitftyAPI {
     case signInKakao(parameters: [String: Any])
     case signInApple(parameters: [String: Any])
+    case withdrawAccount
     case getUserPrivacy
+    case updateUserPrivacy(parameters: [String: Any])
     case getMyProfile
+    case updateMyProfile(parameters: [String: Any])
     case checkNickname(query: String)
     case setUserDetails(parameters: [String: Any])
     case postMyFitfty(parameters: [String: Any])
@@ -45,9 +48,13 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/auth/sign-in/kakao/"
         case .signInApple:
             return "/auth/sign-in/apple/"
-        case .getUserPrivacy:
+        case .withdrawAccount:
+            return "/auth/me"
+        case .getUserPrivacy,
+             .updateUserPrivacy:
             return "/users/privacy"
-        case .getMyProfile:
+        case .getMyProfile,
+             .updateMyProfile:
             return "/users/profile"
         case .checkNickname(let query):
             return "/users/nickname/\(query)"
@@ -80,24 +87,23 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .checkNickname,
              .codyList,
              .mySettings,
-             .getMyProfile,
              .filteredCodyList:
             return .get
-            
-        case .setUserDetails:
+
+        case .setUserDetails,
+             .updateUserPrivacy,
+             .updateMyProfile:
             return .put
             
-        case .deleteBookmark:
+        case .deleteBookmark,
+             .withdrawAccount:
             return .delete
         }
     }
     
     public var task: Moya.Task {
         switch self {
-        case .signInKakao(let parameter),
-             .signInApple(let parameter),
-             .setUserDetails(let parameter),
-             .postMyFitfty(let parameter),
+        case .postMyFitfty(let parameter),
              .codyList(let parameter),
              .filteredCodyList(let parameter):
             let parameters = updateParameters(parameter)
@@ -106,6 +112,12 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
                 encoding: URLEncoding.init(destination: .queryString, arrayEncoding: .noBrackets)
             )
             
+        case .signInKakao(let parameter),
+             .signInApple(let parameter),
+             .setUserDetails(let parameter),
+             .updateUserPrivacy(let parameter),
+             .updateMyProfile(let parameter):
+            return .requestParameters(parameters: parameter, encoding: JSONEncoding.default)
         default:
             return .requestPlain
         }
@@ -120,7 +132,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
 public extension FitftyAPI {
     static func request<T: Decodable>(target: FitftyAPI, dataType: T.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin(), MoyaCacheablePlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -140,7 +152,7 @@ public extension FitftyAPI {
     
     static func request(target: FitftyAPI) async throws -> Response {
         return try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin()])
+            let provider = MoyaProvider<FitftyAPI>(plugins: [getAuthPlugin(), MoyaCacheablePlugin()])
             provider.request(target) { result in
                 switch result {
                 case .success(let response):
@@ -179,6 +191,15 @@ public enum FitftyAPIError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .notFound(let message): return message
+        }
+    }
+}
+
+extension FitftyAPI: MoyaCacheable {
+    var cachePolicy: MoyaCacheablePolicy {
+        switch self {
+        case .getMyProfile: return .reloadIgnoringLocalCacheData
+        default: return .useProtocolCachePolicy
         }
     }
 }

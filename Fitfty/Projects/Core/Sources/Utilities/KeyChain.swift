@@ -19,6 +19,14 @@ final class Keychain: NSObject {
          
         return data
     }
+    
+    public class func deleteTokenData() {
+        if let identifier = UserDefaults.standard.read(key: .userIdentifier) as? String,
+           let account = UserDefaults.standard.read(key: .userAccount) as? String,
+           let token = Keychain.loadData(serviceIdentifier: identifier, forKey: account) {
+            self.delete(service: identifier, forKey: account, data: token)
+        }
+    }
 }
 
 private extension Keychain {
@@ -55,5 +63,15 @@ private extension Keychain {
         }
          
         return contentsOfKeychain
+    }
+    
+    class func delete(service: String, forKey: String, data: String) {
+        let dataFromString: Data = data.data(using: String.Encoding.utf8)!
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword as String,
+                                    kSecAttrService as String: service,
+                                    kSecAttrAccount as String: forKey,
+                                    kSecValueData as String: dataFromString]
+        
+        SecItemDelete(query as CFDictionary)
     }
 }
