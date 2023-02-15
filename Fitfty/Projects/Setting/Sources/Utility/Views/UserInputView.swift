@@ -9,7 +9,7 @@
 import UIKit
 import Common
 
-final class UserInputView: UIStackView {
+final class UserInputView: UIView {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -21,36 +21,33 @@ final class UserInputView: UIStackView {
     
     convenience init(title: String, textField: UITextField) {
         self.init(frame: .zero)
-        configure()
         setUp(title: title, textField: textField)
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configure()
     }
     
-    required init(coder: NSCoder) {
-        super.init(coder: coder)
+    required init?(coder: NSCoder) {
+        fatalError()
     }
 
     func setUp(title: String, textField: UITextField) {
+        addSubviews(titleLabel, textField)
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: topAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+            textField.leadingAnchor.constraint(equalTo: leadingAnchor),
+            textField.trailingAnchor.constraint(equalTo: trailingAnchor),
+            textField.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+        
         titleLabel.text = title
-        addArrangedSubviews(textField)
     }
     
     func reset() {
-        arrangedSubviews.last?.removeFromSuperview()
-    }
-}
-
-private extension UserInputView {
-    
-    func configure() {
-        axis = .vertical
-        alignment = .fill
-        distribution = .fill
-        spacing = 4
-        addArrangedSubviews(titleLabel)
+        subviews.last?.removeFromSuperview()
     }
 }

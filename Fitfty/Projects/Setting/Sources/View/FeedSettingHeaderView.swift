@@ -26,8 +26,8 @@ final class FeedSettingHeaderView: UICollectionReusableView {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = CommonAsset.Colors.gray06.color
-        label.font = FitftyFont.appleSDSemiBold(size: 16).font
+        label.textColor = CommonAsset.Colors.gray07.color
+        label.font = FitftyFont.appleSDSemiBold(size: 13).font
         label.textAlignment = .left
         return label
     }()

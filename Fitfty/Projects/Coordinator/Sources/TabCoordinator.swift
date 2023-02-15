@@ -104,6 +104,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
         case .weather:
             let coordinator = MainCoordinator()
             childCoordinators.append(coordinator)
+            coordinator.parentCoordinator = self
             coordinator.start()
             let tabBarItem =  UITabBarItem.init(
                 title: nil,
@@ -129,6 +130,7 @@ final class TabCoordinator: NSObject, Coordinator, TabCoordinatorProtocol {
         case .profile:
             let coordinator = ProfileCoordinator(profileType: .myProfile, presentType: .tabProfile, nickname: nil)
             childCoordinators.append(coordinator)
+            coordinator.parentCoordinator = self
             coordinator.start()
             let tabBarItem =  UITabBarItem.init(
                 title: nil,

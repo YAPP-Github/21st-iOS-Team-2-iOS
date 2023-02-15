@@ -25,4 +25,8 @@ final public class SessionManager: NSObject {
             return false
         }
     }
+    
+    public func deleteUserSession() {
+        Keychain.deleteTokenData()
+    }
 }

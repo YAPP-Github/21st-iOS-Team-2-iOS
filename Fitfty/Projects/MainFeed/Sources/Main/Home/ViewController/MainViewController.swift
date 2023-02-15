@@ -377,7 +377,9 @@ extension MainViewController: UICollectionViewDelegate {
             else {
                 return
             }
-            cell?.toggle()
+            if tag.isStyle {
+                cell?.toggle()
+            }
             viewModel.input.didTapTag(tag)
             
         case .cody:

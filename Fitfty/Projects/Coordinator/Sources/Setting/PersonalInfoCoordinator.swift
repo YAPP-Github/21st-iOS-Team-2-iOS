@@ -7,8 +7,10 @@
 //
 
 import UIKit
-import Common
+
 import Setting
+import Common
+import Core
 
 final class PersonalInfoCoordinator: Coordinator {
     
@@ -32,17 +34,49 @@ final class PersonalInfoCoordinator: Coordinator {
 private extension PersonalInfoCoordinator {
     
     func makePersonalInfoViewController() -> UIViewController {
-        let viewController = PersonalInfoViewController(coordinator: self, viewModel: PersonalInfoViewModel())
+        let viewController = PersonalInfoViewController(
+            coordinator: self,
+            viewModel: PersonalInfoViewModel(
+                repository: DefaultSettingRepository()
+            )
+        )
+        return viewController
+    }
+    
+    func makeWithdrawViewController(state: WithdrawViewState) -> UIViewController {
+        let viewController = WithdrawViewController(
+            state: state,
+            coordinator: self,
+            viewModel: WithdrawViewModel(
+                repository: DefaultSettingRepository()
+            )
+        )
         return viewController
     }
     
 }
 
 extension PersonalInfoCoordinator: PersonalInfoCoordinatorInterface {
+    func showAuthView() {
+        reloadWindow()
+    }
+    
+    func pushWithdrawView() {
+        let viewController = makeWithdrawViewController(state: .withdraw)
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func pushWithdrawConfirmView() {
+        let viewController = makeWithdrawViewController(state: .withdrawConfirm)
+        navigationController.pushViewController(viewController, animated: true)
+    }
     
     func finished() {
         navigationController.popViewController(animated: true)
         finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
     
+    func pop() {
+        navigationController.popViewController(animated: true)
+    }
 }
