@@ -15,8 +15,7 @@ import Core
 final public class StyleViewModel: ViewModelType {
     public enum ViewModelState {
         case changeNextButtonState(isEnabled: Bool)
-        case pushMainFeedView
-        case showErrorAlert(_ error: Error)
+        case pushNicknameView
     }
     
     private let repository: OnboardingRepository
@@ -33,30 +32,10 @@ final public class StyleViewModel: ViewModelType {
         self.repository = repository
     }
     
-    func setUserDetails(completionHandler: @escaping () -> Void) {
-        let styles = styles.map({ $0.styleTagEnglishString })
-        guard let nickname = UserDefaults.standard.read(key: .nickname) as? String,
-              let gender = UserDefaults.standard.read(key: .gender) as? String else {
-            currentState.send(.showErrorAlert(OnboardingError.noUserData))
-            return
-        }
-        
-        Task {
-            do {
-                try await repository.setUserDetails(nickname: nickname,
-                                                    gender: gender,
-                                                    styles: styles)
-                completionHandler()
-            } catch {
-                currentState.send(.showErrorAlert(OnboardingError.others(error.localizedDescription)))
-            }
-        }
-    }
-    
     func didTapNextButton() {
-        setUserDetails { [weak self] in
-            self?.currentState.send(.pushMainFeedView)
-        }
+        let styles = styles.map({ $0.styleTagEnglishString })
+        UserDefaults.standard.write(key: .styles, value: styles)
+        currentState.send(.pushNicknameView)
     }
     
     func didSelectItem(style: StyleTag, isSelected: Bool) {
