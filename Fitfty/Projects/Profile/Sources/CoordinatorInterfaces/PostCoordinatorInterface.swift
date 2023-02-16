@@ -14,7 +14,7 @@ public protocol PostCoordinatorInterface: AnyObject {
     func showProfile(profileType: ProfileType, nickname: String)
     func showBottomSheet(boardToken: String, filepath: String)
     func showModifyMyFitfty(boardToken: String)
-    func showReport(reportedToken: String)
+    func showReport(userToken: String, boardToken: String)
     func dismiss()
     func popToRoot()
     func finished()
