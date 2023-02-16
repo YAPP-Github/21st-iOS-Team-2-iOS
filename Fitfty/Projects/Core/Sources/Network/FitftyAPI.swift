@@ -31,6 +31,8 @@ public enum FitftyAPI {
     case deleteBookmark(boardToken: String)
     case reportUser(parameters: UserReportRequest)
     case reportPost(parameters: PostReportRequest)
+    case getUserReportList
+    case getPostReportList
 }
 
 extension FitftyAPI: TargetType, AccessTokenAuthorizable {
@@ -90,6 +92,10 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
             return "/reports/user/new"
         case .reportPost:
             return "/reports/board/new"
+        case .getPostReportList:
+            return "/reports/board"
+        case .getUserReportList:
+            return "/reports/user"
         }
     }
     
@@ -107,8 +113,11 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .getUserPrivacy,
              .checkNickname,
              .getPost,
-             .getOtherUserProfile:
+             .getOtherUserProfile,
+             .getUserReportList,
+             .getPostReportList:
             return .get
+            
         case .deletePost:
             return .delete
 
