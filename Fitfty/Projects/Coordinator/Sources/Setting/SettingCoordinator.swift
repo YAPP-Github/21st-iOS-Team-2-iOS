@@ -76,8 +76,11 @@ private extension SettingCoordinator {
         return coordinator
     }
     
-    func makeReportListCoordinator() -> Coordinator {
-        let coordinator = ReportListCoordinator(navigationController: navigationController)
+    func makeReportListCoordinator(reportType: ReportType) -> Coordinator {
+        let coordinator = ReportListCoordinator(
+            navigationController: navigationController,
+            reportType: reportType
+        )
         coordinator.parentCoordinator = self
         coordinator.finishDelegate = self
         childCoordinators.append(coordinator)
@@ -115,8 +118,8 @@ extension SettingCoordinator: SettingCoordinatorInterface {
         navigationController.present(webViewController, animated: true)
     }
     
-    func showReportList() {
-        let coordinator = makeReportListCoordinator()
+    func showReportList(reportType: ReportType) {
+        let coordinator = makeReportListCoordinator(reportType: reportType)
         coordinator.start()
     }
     

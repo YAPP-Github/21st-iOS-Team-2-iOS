@@ -20,6 +20,7 @@ protocol ReportListViewModelInput {
 }
 
 public final class ReportListViewModel {
+    
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
     private var reportType: ReportType
@@ -70,7 +71,7 @@ extension ReportListViewModel {
                     }
                     var cellModels = [ReportListCellModel]()
                     for i in 0..<data.count {
-                        cellModels.append(ReportListCellModel.report(data[i].reportUserEmail, data[i].type[0], String(data[i].reportedCount)))
+                        cellModels.append(ReportListCellModel.report(data[i].reportUserEmail, getKoreanDetailReport(data[i].type[0]), String(data[i].reportedCount+1), data[i].reportedBoardFilePath))
                     }
                     self.currentState.send(.sections([ReportListSection(sectionKind: .report, items: cellModels)]))
                 case .userReport:
@@ -82,7 +83,7 @@ extension ReportListViewModel {
                     }
                     var cellModels = [ReportListCellModel]()
                     for i in 0..<data.count {
-                        cellModels.append(ReportListCellModel.report(data[i].reportedUserEmail, data[i].type[0], String(data[i].reportedCount)))
+                        cellModels.append(ReportListCellModel.report(data[i].reportedUserEmail, getKoreanDetailReport(data[i].type[0]), String(data[i].reportedCount+1), nil))
                     }
                     self.currentState.send(.sections([ReportListSection(sectionKind: .report, items: cellModels)]))
                 }
@@ -92,4 +93,16 @@ extension ReportListViewModel {
             }
         }
     }
+    
+    private func getKoreanDetailReport(_ english: String) -> String {
+        switch english {
+        case "OBSCENE": return "음란성/선정성"
+        case "WEATHER": return "날씨와맞지않음"
+        case "COPYRIGHT": return "지적재산권침해"
+        case "INSULT": return "혐오/욕설/인신공격"
+        case "REPEAT": return "같은내용반복"
+        default: return "기타"
+        }
+    }
+    
 }

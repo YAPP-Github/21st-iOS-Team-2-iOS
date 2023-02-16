@@ -14,7 +14,8 @@ final public class ReportListViewController: UIViewController {
     
     private let menuView = ReportMenuView()
     private var coordinator: ReportListCoordinatorInterface
-    let viewModel: ReportListViewModel
+    private var viewModel: ReportListViewModel
+    private var reportType: ReportType
     private var cancellables: Set<AnyCancellable> = .init()
     
     private lazy var tableView: UITableView = {
@@ -29,10 +30,12 @@ final public class ReportListViewController: UIViewController {
     
     public init(
         coordinator: ReportListCoordinatorInterface,
-        viewModel: ReportListViewModel
+        viewModel: ReportListViewModel,
+        reportType: ReportType
     ) {
         self.coordinator = coordinator
         self.viewModel = viewModel
+        self.reportType = reportType
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -51,6 +54,7 @@ final public class ReportListViewController: UIViewController {
         setConstraintsLayout()
         setNavigationBar()
         setDataSource()
+        menuView.setUp(reportType: reportType)
     }
     
     @objc func didTapBackButton(_ sender: Any?) {
@@ -105,10 +109,11 @@ private extension ReportListViewController {
         dataSource = UITableViewDiffableDataSource<ReportListSectionKind, ReportListCellModel>(
             tableView: tableView, cellProvider: { tableView, indexPath, item in
                 switch item {
-                case .report(let account, let detailReport, let count):
+                case .report(let account, let detailReport, let count, let filepath):
                     let cell = tableView.dequeueReusableCell(withIdentifier: ReportListCell.className, for: indexPath) as? ReportListCell
+                    cell?.setReportType(self.reportType)
                     cell?.selectionStyle = .none
-                    cell?.setUp(account: account, detailReport: detailReport, count: count)
+                    cell?.setUp(account: account, detailReport: detailReport, count: count, filePath: filepath)
                     return cell
                 }
             })
@@ -128,7 +133,12 @@ private extension ReportListViewController {
 extension ReportListViewController: UITableViewDelegate {
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
+        switch reportType {
+        case .userReport:
+            return 44
+        case .postReport:
+            return 120
+        }
     }
     
 }
