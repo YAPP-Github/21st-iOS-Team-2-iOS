@@ -132,7 +132,7 @@ private extension SettingViewController {
     private func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<SettingViewSection, Setting>()
         snapshot.appendSections([.setting])
-        snapshot.appendItems(Setting.settings())
+        snapshot.appendItems(Setting.adminSettings())
         dataSource?.apply(snapshot)
     }
 }
@@ -155,6 +155,10 @@ extension SettingViewController: UICollectionViewDelegate {
             
         case .privacyRule:
             coordinator?.showPrivacyRule()
+            
+        case .userReport,
+             .postReport:
+            coordinator?.showReportList()
             
         default: break
         }
