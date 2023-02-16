@@ -214,11 +214,6 @@ extension ASAuthorizationController: ASAuthorizationControllerDelegate {
             break
         }
         
-        guard hasEmail(email: email) else {
-            failedHandler?(SocialLoginError.noEmail)
-            return
-        }
-        
         let request = AppleLoginRequest(userIdentifier: userIdentifier,
                                         userName: fullName,
                                         userEmail: email,
