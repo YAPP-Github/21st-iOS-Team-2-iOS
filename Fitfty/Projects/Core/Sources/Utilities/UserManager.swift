@@ -44,7 +44,6 @@ public final class DefaultUserManager {
     
     private init(localStorage: LocalStorageService) {
         self.localStorage = localStorage
-        fetchCurrentLocation()
     }
 }
 
@@ -105,16 +104,17 @@ extension DefaultUserManager: UserManager {
     public func getAdminState() -> Bool {
         return _adminState.value
     }
- 
-}
-
-private extension DefaultUserManager {
     
-    func fetchCurrentLocation() {
+    public func fetchCurrentLocation() {
         LocationManager.shared.currentLocation()
-            .map { ($0?.coordinate.longitude ?? 126.977829174031, $0?.coordinate.latitude ?? 37.5663174209601 )}
+            .compactMap { $0 }
+            .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
                 self?._location.send((longitude, latitude))
             }).store(in: &cancellables)
+        Task {
+            _guestState.send(await SessionManager.shared.checkUserSession())
+        }
     }
+ 
 }
