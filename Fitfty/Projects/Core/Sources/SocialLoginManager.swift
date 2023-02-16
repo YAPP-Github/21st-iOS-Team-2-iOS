@@ -30,23 +30,45 @@ final public class SocialLoginManager: NSObject {
     
     public func tryKakaoLogin(completionHandler: @escaping (Bool) -> Void,
                               failedHandler: @escaping (Error) -> Void) {
-        guard isKakaoLoginAvailable() else {
-            failedHandler(SocialLoginError.loginFail)
-            return
-        }
-        
-        UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, _) in
-            if let accessToken = oauthToken?.accessToken {
-                self?.saveKakaoUserInfo()
-                self?.requestKakaoLogin(accessToken, completionHandler: completionHandler, failedHandler: failedHandler)
-            } else {
-                failedHandler(SocialLoginError.loginFail)
-            }
+        if isKakaoLoginAvailable() {
+            loginWithKakaoAccount(completionHandler: completionHandler,
+                                  failedHandler: failedHandler)
+        } else {
+            loginWithKakaoTalk(completionHandler: completionHandler,
+                               failedHandler: failedHandler)
         }
     }
     
     public func initailizeKakaoLoginSDK() {
         KakaoSDK.initSDK(appKey: APIKey.kakaoAppKeyForLogin)
+    }
+    
+    private func loginWithKakaoTalk(completionHandler: @escaping (Bool) -> Void,
+                                    failedHandler: @escaping (Error) -> Void) {
+        UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, _) in
+            if let accessToken = oauthToken?.accessToken {
+                self?.saveKakaoUserInfo()
+                self?.requestKakaoLogin(accessToken,
+                                        completionHandler: completionHandler,
+                                        failedHandler: failedHandler)
+            } else {
+                failedHandler(SocialLoginError.noKakaoAvailable)
+            }
+        }
+    }
+    
+    private func loginWithKakaoAccount(completionHandler: @escaping (Bool) -> Void,
+                                       failedHandler: @escaping (Error) -> Void) {
+        UserApi.shared.loginWithKakaoAccount { [weak self] (oauthToken, _) in
+            if let accessToken = oauthToken?.accessToken {
+                self?.saveKakaoUserInfo()
+                self?.requestKakaoLogin(accessToken,
+                                        completionHandler: completionHandler,
+                                        failedHandler: failedHandler)
+            } else {
+                failedHandler(SocialLoginError.noKakaoAvailable)
+            }
+        }
     }
     
     private func requestKakaoLogin(_ accessToken: String,
