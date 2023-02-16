@@ -13,7 +13,6 @@ final class ReportMenuView: UIView {
     
     private lazy var emailLabel: UILabel = {
         let label = UILabel()
-        label.text = "계정"
         label.font = FitftyFont.SFProDisplayBlack(size: 15).font
         return label
     }()
@@ -47,9 +46,21 @@ final class ReportMenuView: UIView {
             emailLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             emailLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             detailReportLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            detailReportLabel.leadingAnchor.constraint(equalTo: emailLabel.trailingAnchor, constant: 50),
+            detailReportLabel.leadingAnchor.constraint(equalTo: emailLabel.trailingAnchor, constant: 130),
             countLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            countLabel.leadingAnchor.constraint(equalTo: detailReportLabel.trailingAnchor, constant: 40)
+            countLabel.leadingAnchor.constraint(equalTo: detailReportLabel.trailingAnchor, constant: 50)
         ])
+    }
+}
+
+extension ReportMenuView {
+    
+    func setUp(reportType: ReportType) {
+        switch reportType {
+        case .postReport:
+            emailLabel.text = "사진"
+        case .userReport:
+            emailLabel.text = "계정"
+        }
     }
 }

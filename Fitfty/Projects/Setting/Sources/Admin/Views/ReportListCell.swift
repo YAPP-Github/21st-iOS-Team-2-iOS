@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Kingfisher
 
 final class ReportListCell: UITableViewCell {
     
@@ -23,7 +24,6 @@ final class ReportListCell: UITableViewCell {
         let label = UILabel()
         label.textColor = CommonAsset.Colors.gray06.color
         label.font = FitftyFont.appleSDMedium(size: 15).font
-        label.text = "dud@naver.com"
         return label
     }()
     
@@ -31,7 +31,6 @@ final class ReportListCell: UITableViewCell {
         let label = UILabel()
         label.textColor = CommonAsset.Colors.gray06.color
         label.font = FitftyFont.appleSDMedium(size: 15).font
-        label.text = "불쾌"
         return label
     }()
     
@@ -39,8 +38,14 @@ final class ReportListCell: UITableViewCell {
         let label = UILabel()
         label.textColor = CommonAsset.Colors.gray06.color
         label.font = FitftyFont.appleSDMedium(size: 15).font
-        label.text = "13"
         return label
+    }()
+    
+    private lazy var postImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -53,16 +58,16 @@ final class ReportListCell: UITableViewCell {
     }
     
     private func setConstraintsLayout() {
-        addSubviews(checkBoxButton, accountLabel, detailReportLabel, countLabel)
+        addSubviews(checkBoxButton, accountLabel, detailReportLabel, countLabel, postImageView)
         NSLayoutConstraint.activate([
             checkBoxButton.centerYAnchor.constraint(equalTo: centerYAnchor),
             checkBoxButton.widthAnchor.constraint(equalToConstant: 20),
             checkBoxButton.heightAnchor.constraint(equalToConstant: 20),
-            checkBoxButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            checkBoxButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
             
             accountLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             accountLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            accountLabel.widthAnchor.constraint(equalToConstant: 120),
+            accountLabel.widthAnchor.constraint(equalToConstant: 150),
             
             detailReportLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             detailReportLabel.leadingAnchor.constraint(equalTo: accountLabel.trailingAnchor, constant: 10),
@@ -70,7 +75,12 @@ final class ReportListCell: UITableViewCell {
             
             countLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             countLabel.leadingAnchor.constraint(equalTo: detailReportLabel.trailingAnchor, constant: 10),
-            countLabel.widthAnchor.constraint(equalToConstant: 50)
+            countLabel.widthAnchor.constraint(equalToConstant: 10),
+            
+            postImageView.widthAnchor.constraint(equalToConstant: 100),
+            postImageView.heightAnchor.constraint(equalToConstant: 100),
+            postImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            postImageView.leadingAnchor.constraint(equalTo: leadingAnchor)
         ])
     }
     
@@ -86,10 +96,25 @@ final class ReportListCell: UITableViewCell {
 
 extension ReportListCell {
     
-    func setUp(account: String, detailReport: String, count: String) {
+    func setUp(account: String, detailReport: String, count: String, filePath: String?) {
         accountLabel.text = account
         detailReportLabel.text = detailReport
         countLabel.text = count
+        guard let filePath = filePath else {
+            return
+        }
+        let url = URL(string: filePath)
+        postImageView.kf.setImage(with: url)
     }
     
+    func setReportType(_ reportType: ReportType) {
+        switch reportType {
+        case .userReport:
+            postImageView.isHidden = true
+        case.postReport:
+            accountLabel.isHidden = true
+        }
+        
+    }
+   
 }

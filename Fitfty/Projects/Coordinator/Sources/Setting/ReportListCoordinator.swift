@@ -15,28 +15,34 @@ import Core
 final class ReportListCoordinator: Coordinator {
     
     var type: CoordinatorType { .reportList }
+    var reportType: ReportType
     weak var finishDelegate: CoordinatorFinishDelegate?
     
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: BaseNavigationController
     
-    init(navigationController: BaseNavigationController = BaseNavigationController()) {
+    init(
+        navigationController: BaseNavigationController = BaseNavigationController(),
+        reportType: ReportType
+    ) {
         self.navigationController = navigationController
+        self.reportType = reportType
     }
     
     func start() {
-        let viewController = makeReportListViewController()
+        let viewController = makeReportListViewController(reportType: reportType)
         navigationController.pushViewController(viewController, animated: true)
     }
 }
 
 private extension ReportListCoordinator {
     
-    func makeReportListViewController() -> UIViewController {
+    func makeReportListViewController(reportType: ReportType) -> UIViewController {
         let viewController = ReportListViewController(
             coordinator: self,
-            viewModel: ReportListViewModel(reportType: .userReport, fitftyRepository: DefaultFitftyRepository())
+            viewModel: ReportListViewModel(reportType: reportType, fitftyRepository: DefaultFitftyRepository()),
+            reportType: reportType
         )
         return viewController
     }

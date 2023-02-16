@@ -156,9 +156,11 @@ extension SettingViewController: UICollectionViewDelegate {
         case .privacyRule:
             coordinator?.showPrivacyRule()
             
-        case .userReport,
-             .postReport:
-            coordinator?.showReportList()
+        case .userReport:
+            coordinator?.showReportList(reportType: .userReport)
+            
+        case .postReport:
+            coordinator?.showReportList(reportType: .postReport)
             
         default: break
         }

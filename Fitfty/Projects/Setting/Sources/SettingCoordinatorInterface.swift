@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Common
 
 public protocol SettingCoordinatorInterface: AnyObject {
     func showProfileSetting()
@@ -14,6 +15,6 @@ public protocol SettingCoordinatorInterface: AnyObject {
     func showMyInfoSetting()
     func showTermsOfUse()
     func showPrivacyRule()
-    func showReportList()
+    func showReportList(reportType: ReportType)
     func finished()
 }
