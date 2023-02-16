@@ -122,7 +122,7 @@ private extension DetailReportViewModel {
             }
             do {
                 switch reportType {
-                case .postReport:
+                case .postUserReport:
                     let request = PostReportRequest(
                         reportedBoardToken: self.reportedToken,
                         type: getSelectedReport()
