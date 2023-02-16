@@ -93,7 +93,7 @@ private extension PostCoordinator {
     
     func makeReportViewController(reportedToken: String) -> UIViewController {
         let coordinator = ReportCoordinator(
-            reportType: .postReport,
+            reportType: .postUserReport,
             reportedToken: reportedToken
         )
         coordinator.parentCoordinator = self
@@ -102,7 +102,7 @@ private extension PostCoordinator {
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
         let bottomSheetViewController = BottomSheetViewController(
-            style: .small,
+            style: .custom(196),
             contentViewController: coordinator.navigationController
         )
         coordinator.bottomSheetDelegate = bottomSheetViewController
