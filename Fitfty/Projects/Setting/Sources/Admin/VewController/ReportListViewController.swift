@@ -8,11 +8,14 @@
 
 import UIKit
 import Common
+import Combine
 
 final public class ReportListViewController: UIViewController {
     
     private let menuView = ReportMenuView()
     private var coordinator: ReportListCoordinatorInterface
+    let viewModel: ReportListViewModel
+    private var cancellables: Set<AnyCancellable> = .init()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -24,8 +27,12 @@ final public class ReportListViewController: UIViewController {
     
     private var dataSource: UITableViewDiffableDataSource<ReportListSectionKind, ReportListCellModel>?
     
-    public init(coordinator: ReportListCoordinatorInterface) {
+    public init(
+        coordinator: ReportListCoordinatorInterface,
+        viewModel: ReportListViewModel
+    ) {
         self.coordinator = coordinator
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -36,15 +43,14 @@ final public class ReportListViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUp()
+        viewModel.input.viewDidLoad()
     }
-  
+    
     private func setUp() {
+        bind()
         setConstraintsLayout()
         setNavigationBar()
         setDataSource()
-        applySnapshot([
-            ReportListSection(sectionKind: .report, items: [ReportListCellModel.report("a", true), ReportListCellModel.report("aa", true)])
-        ])
     }
     
     @objc func didTapBackButton(_ sender: Any?) {
@@ -54,6 +60,19 @@ final public class ReportListViewController: UIViewController {
 }
 
 private extension ReportListViewController {
+    
+    func bind() {
+        viewModel.state.compactMap { $0 }
+            .sinkOnMainThread(receiveValue: { [weak self] state in
+                switch state {
+                case .errorMessage(let message):
+                    self?.showAlert(message: message)
+                    
+                case .sections(let sections):
+                    self?.applySnapshot(sections)
+                }
+            }).store(in: &cancellables)
+    }
     
     func setConstraintsLayout() {
         view.addSubviews(menuView, tableView)
@@ -72,12 +91,12 @@ private extension ReportListViewController {
     func setNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.navigationBar.isHidden = false
-       
+        
         let cancelButton = UIBarButtonItem(
-                image: CommonAsset.Images.btnArrowleft.image,
-                style: .plain,
-                target: self,
-                action: #selector(didTapBackButton(_:))
+            image: CommonAsset.Images.btnArrowleft.image,
+            style: .plain,
+            target: self,
+            action: #selector(didTapBackButton(_:))
         )
         navigationItem.leftBarButtonItem = cancelButton
     }
@@ -86,9 +105,10 @@ private extension ReportListViewController {
         dataSource = UITableViewDiffableDataSource<ReportListSectionKind, ReportListCellModel>(
             tableView: tableView, cellProvider: { tableView, indexPath, item in
                 switch item {
-                case .report(let title, let isSelected):
+                case .report(let account, let detailReport, let count):
                     let cell = tableView.dequeueReusableCell(withIdentifier: ReportListCell.className, for: indexPath) as? ReportListCell
                     cell?.selectionStyle = .none
+                    cell?.setUp(account: account, detailReport: detailReport, count: count)
                     return cell
                 }
             })
@@ -102,7 +122,7 @@ private extension ReportListViewController {
         }
         dataSource?.apply(snapshot, animatingDifferences: false)
     }
-
+    
 }
 
 extension ReportListViewController: UITableViewDelegate {

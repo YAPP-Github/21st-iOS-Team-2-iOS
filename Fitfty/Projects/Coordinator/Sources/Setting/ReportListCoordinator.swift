@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Common
 import Setting
+import Core
 
 final class ReportListCoordinator: Coordinator {
     
@@ -33,7 +34,10 @@ final class ReportListCoordinator: Coordinator {
 private extension ReportListCoordinator {
     
     func makeReportListViewController() -> UIViewController {
-        let viewController = ReportListViewController(coordinator: self)
+        let viewController = ReportListViewController(
+            coordinator: self,
+            viewModel: ReportListViewModel(reportType: .userReport, fitftyRepository: DefaultFitftyRepository())
+        )
         return viewController
     }
     

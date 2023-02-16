@@ -8,16 +8,16 @@
 
 import Foundation
 
-struct UserReportListResponse: Codable {
-    let result: String
-    let data: [UserReportListData]?
-    let message, errorCode: String?
+public struct UserReportListResponse: Codable {
+    public let result: String
+    public let data: [UserReportListData]?
+    public let message, errorCode: String?
 }
 
-struct UserReportListData: Codable {
-    let reportToken, reportUserToken, reportUserEmail, reportedUserToken: String
-    let reportedUserEmail: String
-    let reportedCount: Int
-    let type: [String]
-    let isConfirmed: Bool
+public struct UserReportListData: Codable {
+    public let reportToken, reportUserToken, reportUserEmail, reportedUserToken: String
+    public let reportedUserEmail: String
+    public let reportedCount: Int
+    public let type: [String]
+    public let isConfirmed: Bool
 }
