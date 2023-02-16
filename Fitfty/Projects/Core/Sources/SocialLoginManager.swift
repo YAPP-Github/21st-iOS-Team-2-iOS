@@ -222,7 +222,7 @@ extension ASAuthorizationController: ASAuthorizationControllerDelegate {
     }
     
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        failedHandler?(error)
+        failedHandler?(SocialLoginError.loginFail)
     }
 }
 
