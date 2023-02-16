@@ -157,7 +157,6 @@ private extension WeatherViewModel {
                 longitude: longitude,
                 latitude: latitude
             )
-            userManager.updateCurrentLocation(address)
             return address
         }
     }

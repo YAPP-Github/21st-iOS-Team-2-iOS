@@ -42,6 +42,7 @@ private extension MainCoordinator {
                 userManager: DefaultUserManager.shared
             )
         )
+        DefaultUserManager.shared.fetchCurrentLocation()
         return viewController
     }
     

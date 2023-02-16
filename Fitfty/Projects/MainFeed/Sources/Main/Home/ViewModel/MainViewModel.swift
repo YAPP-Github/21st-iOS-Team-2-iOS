@@ -186,7 +186,6 @@ private extension MainViewModel {
                 } else {
                     let userPrivacy = try await self.getUserPrivacy()
                     self.myUserToken = userPrivacy.data?.userToken
-                    
                     for i in 0..<codyList.count {
                         list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
                     }
@@ -213,7 +212,6 @@ private extension MainViewModel {
                 longitude: longitude,
                 latitude: latitude
             )
-            userManager.updateCurrentLocation(address)
             return address
         }
     }
