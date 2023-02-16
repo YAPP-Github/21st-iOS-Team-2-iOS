@@ -91,10 +91,11 @@ private extension PostCoordinator {
         return coordinator
     }
     
-    func makeReportViewController(reportedToken: String) -> UIViewController {
+    func makeReportViewController(userToken: String, boardToken: String) -> UIViewController {
         let coordinator = ReportCoordinator(
-            reportType: .postReport,
-            reportedToken: reportedToken
+            reportPresentType: .postUserReport,
+            boardToken: boardToken,
+            userToken: userToken
         )
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
@@ -102,7 +103,7 @@ private extension PostCoordinator {
         coordinator.finishDelegate = self
         coordinator.parentCoordinator = self
         let bottomSheetViewController = BottomSheetViewController(
-            style: .small,
+            style: .custom(196),
             contentViewController: coordinator.navigationController
         )
         coordinator.bottomSheetDelegate = bottomSheetViewController
@@ -132,8 +133,8 @@ extension PostCoordinator: PostCoordinatorInterface {
         navigationController.present(coordinator.navigationController, animated: true)
     }
     
-    func showReport(reportedToken: String) {
-        let viewController = makeReportViewController(reportedToken: reportedToken)
+    func showReport(userToken: String, boardToken: String) {
+        let viewController = makeReportViewController(userToken: userToken, boardToken: boardToken)
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
     }

@@ -56,6 +56,7 @@ final public class MyPostBottomSheetViewController: UIViewController {
     
     private func setUp() {
         bind()
+        myPostBottomSheetView.setUpMyPost()
         setConstratintsLayout()
         setButtonAction()
     }
@@ -107,8 +108,8 @@ private extension MyPostBottomSheetViewController {
     }
     
     func setButtonAction() {
-        myPostBottomSheetView.setActionDeleteButton(self, action: #selector(didTapDeleteButton))
-        myPostBottomSheetView.setActionModifyButton(self, action: #selector(didTapModifyButton))
+        myPostBottomSheetView.setActionSecondButton(self, action: #selector(didTapDeleteButton))
+        myPostBottomSheetView.setActionFirstButton(self, action: #selector(didTapModifyButton))
     }
     
 }

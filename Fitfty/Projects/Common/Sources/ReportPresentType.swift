@@ -8,6 +8,11 @@
 
 import Foundation
 
+public enum ReportPresentType {
+    case userReport
+    case postUserReport
+}
+
 public enum ReportType {
     case userReport
     case postReport

@@ -11,18 +11,16 @@ import Common
 
 final class MyPostBottomSheetView: UIStackView {
     
-    private lazy var modifyButton: UIButton = {
+    private lazy var firstButton: UIButton = {
         let button = UIButton()
-        button.setTitle("게시물 수정", for: .normal)
         button.setTitleColor(CommonAsset.Colors.gray07.color, for: .normal)
         button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 18).font
         button.contentHorizontalAlignment = .left
         return button
     }()
     
-    private lazy var deleteButton: UIButton = {
+    private lazy var secondButton: UIButton = {
         let button = UIButton()
-        button.setTitle("게시물 삭제", for: .normal)
         button.setTitleColor(CommonAsset.Colors.error.color, for: .normal)
         button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 18).font
         button.contentHorizontalAlignment = .left
@@ -48,7 +46,7 @@ final class MyPostBottomSheetView: UIStackView {
         self.axis = .vertical
         self.distribution = .fill
         self.spacing = 24
-        addArrangedSubviews(modifyButton, seperatorView, deleteButton)
+        addArrangedSubviews(firstButton, seperatorView, secondButton)
         NSLayoutConstraint.activate([
             seperatorView.heightAnchor.constraint(equalToConstant: 1)
         ])
@@ -57,12 +55,24 @@ final class MyPostBottomSheetView: UIStackView {
 
 extension MyPostBottomSheetView {
     
-    func setActionModifyButton(_ target: Any?, action: Selector) {
-        modifyButton.addTarget(target, action: action, for: .touchUpInside)
+    func setUpMyPost() {
+        firstButton.setTitle("게시글 수정", for: .normal)
+        secondButton.setTitle("게시글 삭제", for: .normal)
     }
     
-    func setActionDeleteButton( _ target: Any?, action: Selector) {
-        deleteButton.addTarget(target, action: action, for: .touchUpInside)
+    func setUpUserPost() {
+        firstButton.setTitleColor(CommonAsset.Colors.error.color, for: .normal)
+        firstButton.setTitle("계정 신고", for: .normal)
+        secondButton.setTitle("게시글 신고", for: .normal)
+    }
+    
+    func setActionFirstButton(_ target: Any?, action: Selector) {
+        firstButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+    func setActionSecondButton( _ target: Any?, action: Selector) {
+        secondButton.addTarget(target, action: action, for: .touchUpInside)
     }
     
 }
+
