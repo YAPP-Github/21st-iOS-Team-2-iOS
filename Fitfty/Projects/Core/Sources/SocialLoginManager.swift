@@ -31,11 +31,11 @@ final public class SocialLoginManager: NSObject {
     public func tryKakaoLogin(completionHandler: @escaping (Bool) -> Void,
                               failedHandler: @escaping (Error) -> Void) {
         if isKakaoLoginAvailable() {
-            loginWithKakaoAccount(completionHandler: completionHandler,
-                                  failedHandler: failedHandler)
-        } else {
             loginWithKakaoTalk(completionHandler: completionHandler,
                                failedHandler: failedHandler)
+        } else {
+            loginWithKakaoAccount(completionHandler: completionHandler,
+                                  failedHandler: failedHandler)
         }
     }
     
