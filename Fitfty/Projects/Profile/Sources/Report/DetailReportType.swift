@@ -1,11 +1,9 @@
-//
 //  DetailReportType.swift
 //  Profile
 //
 //  Created by 임영선 on 2023/02/14.
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
-
 import Foundation
 
 enum DetailReportType {
@@ -15,7 +13,7 @@ enum DetailReportType {
     case INSULT
     case REPEAT
     case MISC
-    
+
     var koreanDetailReport: String {
         switch self {
         case .OBSCENE:
@@ -32,7 +30,7 @@ enum DetailReportType {
             return "기타 (team.fitfty@gmail.com로 제보)"
         }
     }
-    
+
     var englishDetailReport: String {
         switch self {
         case .OBSCENE:

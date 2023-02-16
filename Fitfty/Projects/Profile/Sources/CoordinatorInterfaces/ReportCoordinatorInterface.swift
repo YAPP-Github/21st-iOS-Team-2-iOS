@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import Common
 
 public protocol ReportCoordinatorInterface: AnyObject {
     
-    func showDetailReport()
+    func showDetailReport(_ reportType: ReportType, userToken: String?, boardToken: String?)
     func dismiss()
     
 }

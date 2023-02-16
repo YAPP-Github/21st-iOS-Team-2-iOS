@@ -18,6 +18,7 @@ final public class PostViewController: UIViewController {
     private var cancellables: Set<AnyCancellable> = .init()
     private var viewModel: PostViewModel
     private var boardToken: String
+    private var userToken: String?
     private var filepath: String?
     
     private let postView = PostView()
@@ -137,6 +138,7 @@ final public class PostViewController: UIViewController {
         )
         self.nickname = data.nickname
         self.filepath = data.filePath
+        self.userToken = data.userToken
     }
     
     private func setNavigationBar() {
@@ -205,7 +207,10 @@ final public class PostViewController: UIViewController {
         case .myProfile:
             coordinator.showBottomSheet(boardToken: boardToken, filepath: filepath)
         case .userProfile:
-            coordinator.showReport(reportedToken: boardToken)
+            guard let userToken = userToken else {
+                return
+            }
+            coordinator.showReport(userToken: userToken, boardToken: boardToken)
         }
         
     }
