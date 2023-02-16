@@ -46,7 +46,6 @@ private extension SettingCoordinator {
         childCoordinators.append(coordinator)
         coordinator.start()
         coordinator.finishDelegate = self
-        coordinator.parentCoordinator = self
         let bottomSheetViewController = BottomSheetViewController(
             style: .custom(UIScreen.main.bounds.height - 70),
             contentViewController: coordinator.navigationController
@@ -61,7 +60,6 @@ private extension SettingCoordinator {
         childCoordinators.append(coordinator)
         coordinator.start()
         coordinator.finishDelegate = self
-        coordinator.parentCoordinator = self
         let bottomSheetViewController = BottomSheetViewController(
             style: .custom(450),
             contentViewController: coordinator.navigationController
@@ -77,6 +75,15 @@ private extension SettingCoordinator {
         childCoordinators.append(coordinator)
         return coordinator
     }
+    
+    func makeReportListCoordinator() -> Coordinator {
+        let coordinator = ReportListCoordinator(navigationController: navigationController)
+        coordinator.parentCoordinator = self
+        coordinator.finishDelegate = self
+        childCoordinators.append(coordinator)
+        return coordinator
+    }
+    
 }
 
 extension SettingCoordinator: SettingCoordinatorInterface {
@@ -106,6 +113,11 @@ extension SettingCoordinator: SettingCoordinatorInterface {
     func showPrivacyRule() {
         let webViewController = SettingWebViewController(url: "https://maze-mozzarella-6e5.notion.site/ed1e98c3fee5417b89f85543f4a398d2")
         navigationController.present(webViewController, animated: true)
+    }
+    
+    func showReportList() {
+        let coordinator = makeReportListCoordinator()
+        coordinator.start()
     }
     
     func finished() {

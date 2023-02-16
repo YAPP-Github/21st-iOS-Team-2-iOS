@@ -14,5 +14,6 @@ public protocol SettingCoordinatorInterface: AnyObject {
     func showMyInfoSetting()
     func showTermsOfUse()
     func showPrivacyRule()
+    func showReportList()
     func finished()
 }
