@@ -52,7 +52,7 @@ final public class SocialLoginManager: NSObject {
                                         completionHandler: completionHandler,
                                         failedHandler: failedHandler)
             } else {
-                failedHandler(SocialLoginError.noKakaoAvailable)
+                failedHandler(SocialLoginError.loginFail)
             }
         }
     }
@@ -66,7 +66,7 @@ final public class SocialLoginManager: NSObject {
                                         completionHandler: completionHandler,
                                         failedHandler: failedHandler)
             } else {
-                failedHandler(SocialLoginError.noKakaoAvailable)
+                failedHandler(SocialLoginError.loginFail)
             }
         }
     }
