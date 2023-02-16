@@ -14,8 +14,9 @@ import Common
 final class ReportCoordinator: Coordinator {
     
     var type: CoordinatorType { .report }
-    var reportType: ReportType
-    var reportedToken: String
+    var reportPresentType: ReportPresentType
+    var userToken: String?
+    var boardToken: String?
     
     weak var finishDelegate: CoordinatorFinishDelegate?
     weak var bottomSheetDelegate: BottomSheetViewControllerDelegate?
@@ -26,16 +27,22 @@ final class ReportCoordinator: Coordinator {
     
     init(
         navigationController: BaseNavigationController = BaseNavigationController(),
-        reportType: ReportType,
-        reportedToken: String
+        reportPresentType: ReportPresentType,
+        boardToken: String?,
+        userToken: String?
     ) {
         self.navigationController = navigationController
-        self.reportType = reportType
-        self.reportedToken = reportedToken
+        self.reportPresentType = reportPresentType
+        self.userToken = userToken
+        self.boardToken = boardToken
     }
     
     func start() {
-        let viewController = makeReportViewController(reportType: reportType)
+        let viewController = makeReportViewController(
+            reportPresentType: reportPresentType,
+            userToken: userToken,
+            boardToken: boardToken
+        )
         navigationController.pushViewController(viewController, animated: true)
         navigationController.setNavigationBarHidden(true, animated: false)
     }
@@ -43,16 +50,18 @@ final class ReportCoordinator: Coordinator {
 
 private extension ReportCoordinator {
     
-    func makeReportViewController(reportType: ReportType) -> UIViewController {
+    func makeReportViewController(reportPresentType: ReportPresentType, userToken: String?, boardToken: String?) -> UIViewController {
         let viewController = ReportViewController(
             coordinator: self,
-            reportType: reportType
+            reportPresentType: reportPresentType,
+            userToken: userToken,
+            boardToken: boardToken
         )
         return viewController
     }
     
-    func makeDetailReportViewController() -> UIViewController {
-        let coordinator = DetailReportCoordinator(reportedToken: reportedToken, reportType: reportType)
+    func makeDetailReportViewController(reportType: ReportType, userToken: String?, boardToken: String?) -> UIViewController {
+        let coordinator = DetailReportCoordinator(reportType: reportType, boardToken: boardToken, userToken: userToken)
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()
@@ -70,8 +79,8 @@ private extension ReportCoordinator {
 
 extension ReportCoordinator: ReportCoordinatorInterface {
     
-    func showDetailReport() {
-        let viewController = makeDetailReportViewController()
+    func showDetailReport(_ reportType: ReportType, userToken: String?, boardToken: String?) {
+        let viewController = makeDetailReportViewController(reportType: reportType, userToken: userToken, boardToken: boardToken)
         viewController.modalPresentationStyle = .overFullScreen
         navigationController.present(viewController, animated: false)
     }

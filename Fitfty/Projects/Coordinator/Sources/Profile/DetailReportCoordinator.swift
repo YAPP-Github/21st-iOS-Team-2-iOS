@@ -15,7 +15,8 @@ import Core
 final class DetailReportCoordinator: Coordinator {
     
     var type: CoordinatorType { .detailReport }
-    var reportedToken: String
+    var userToken: String?
+    var boardToken: String?
     var reportType: ReportType
     
     weak var finishDelegate: CoordinatorFinishDelegate?
@@ -27,11 +28,13 @@ final class DetailReportCoordinator: Coordinator {
     
     init(
         navigationController: BaseNavigationController = BaseNavigationController(),
-        reportedToken: String,
-        reportType: ReportType
+        reportType: ReportType,
+        boardToken: String?,
+        userToken: String?
     ) {
         self.navigationController = navigationController
-        self.reportedToken = reportedToken
+        self.userToken = userToken
+        self.boardToken = boardToken
         self.reportType = reportType
     }
     
@@ -49,7 +52,8 @@ private extension DetailReportCoordinator {
             coordinator: self,
             viewModel: DetailReportViewModel(
                 userManager: DefaultUserManager.shared,
-                reportedToken: reportedToken,
+                userToken: userToken,
+                boardToken: boardToken,
                 reportType: reportType,
                 fitftyRepository: DefaultFitftyRepository()
             )

@@ -89,10 +89,7 @@ private extension ProfileCoordinator {
     }
     
     func makeReportViewController(reportedToken: String) -> UIViewController {
-        let coordinator = ReportCoordinator(
-            reportType: .userReport,
-            reportedToken: reportedToken
-        )
+        let coordinator = ReportCoordinator(reportPresentType: .userReport, boardToken: nil, userToken: reportedToken)
         coordinator.parentCoordinator = self
         childCoordinators.append(coordinator)
         coordinator.start()

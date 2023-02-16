@@ -24,7 +24,8 @@ public final class DetailReportViewModel {
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
     private var userManager: UserManager
-    private var reportedToken: String
+    private var userToken: String?
+    private var boardToken: String?
     private var reportType: ReportType
     private var fitftyRepository: FitftyRepository
     private var reports: [(detailReportType: DetailReportType, isSelected: Bool)] = [
@@ -38,12 +39,14 @@ public final class DetailReportViewModel {
     
     public init(
         userManager: UserManager,
-        reportedToken: String,
+        userToken: String?,
+        boardToken: String?,
         reportType: ReportType,
         fitftyRepository: FitftyRepository
     ) {
         self.userManager = userManager
-        self.reportedToken = reportedToken
+        self.userToken = userToken
+        self.boardToken = boardToken
         self.reportType = reportType
         self.fitftyRepository = fitftyRepository
     }
@@ -122,9 +125,12 @@ private extension DetailReportViewModel {
             }
             do {
                 switch reportType {
-                case .postUserReport:
+                case .postReport:
+                    guard let boardToken = boardToken else {
+                        return
+                    }
                     let request = PostReportRequest(
-                        reportedBoardToken: self.reportedToken,
+                        reportedBoardToken: boardToken,
                         type: getSelectedReport()
                     )
                     let response = try await self.fitftyRepository.report(request)
@@ -134,8 +140,11 @@ private extension DetailReportViewModel {
                     self.currentState.send(.completed(true))
                     
                 case .userReport:
+                    guard let userToken = userToken else {
+                        return
+                    }
                     let request = UserReportRequest(
-                        reportedUserToken: self.reportedToken,
+                        reportedUserToken: userToken,
                         type: getSelectedReport()
                     )
                     let response = try await self.fitftyRepository.report(request)

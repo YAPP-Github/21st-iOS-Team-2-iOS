@@ -12,7 +12,9 @@ import Common
 final public class ReportViewController: UIViewController {
     
     let coordinator: ReportCoordinatorInterface
-    let reportType: ReportType
+    let reportPresentType: ReportPresentType
+    var userToken: String?
+    var boardToken: String?
     
     private lazy var userReportButton: UIButton = {
         let button = UIButton()
@@ -20,7 +22,7 @@ final public class ReportViewController: UIViewController {
         button.setTitle("계정 신고", for: .normal)
         button.titleLabel?.font = FitftyFont.appleSDSemiBold(size: 18).font
         button.contentHorizontalAlignment = .left
-        button.addTarget(self, action: #selector(didTapReportButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapUserReportButton), for: .touchUpInside)
         return button
     }()
     
@@ -36,9 +38,16 @@ final public class ReportViewController: UIViewController {
         setUp()
     }
     
-    public init(coordinator: ReportCoordinatorInterface, reportType: ReportType) {
+    public init(
+        coordinator: ReportCoordinatorInterface,
+        reportPresentType: ReportPresentType,
+        userToken: String?,
+        boardToken: String?
+    ) {
         self.coordinator = coordinator
-        self.reportType = reportType
+        self.reportPresentType = reportPresentType
+        self.userToken = userToken
+        self.boardToken = boardToken
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -48,11 +57,11 @@ final public class ReportViewController: UIViewController {
     
     private func setUp() {
         setConstraintsLayout()
-        myPostBottomSheetView.setUpUserPost()
+        
     }
     
     private func setConstraintsLayout() {
-        switch reportType {
+        switch reportPresentType {
         case .userReport:
             view.addSubviews(userReportButton)
             NSLayoutConstraint.activate([
@@ -67,11 +76,19 @@ final public class ReportViewController: UIViewController {
                 myPostBottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
                 myPostBottomSheetView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40)
             ])
+            myPostBottomSheetView.setUpUserPost()
+            myPostBottomSheetView.setActionFirstButton(self, action: #selector(didTapUserReportButton))
+            myPostBottomSheetView.setActionSecondButton(self, action: #selector(didTapPostReportButton))
         }
     
     }
     
-    @objc func didTapReportButton(_ sender: Any?) {
-        coordinator.showDetailReport()
+    @objc func didTapUserReportButton(_ sender: Any?) {
+        coordinator.showDetailReport(.userReport, userToken: userToken, boardToken: boardToken)
     }
+    
+    @objc func didTapPostReportButton(_ sender: Any?) {
+        coordinator.showDetailReport(.postReport, userToken: userToken, boardToken: boardToken)
+    }
+    
 }
