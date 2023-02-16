@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Core
 
 public final class SettingViewController: UIViewController {
     
@@ -15,6 +16,8 @@ public final class SettingViewController: UIViewController {
     private var viewModel: SettingViewModel
     
     private var dataSource: UICollectionViewDiffableDataSource<SettingViewSection, Setting>?
+    
+    private let isAdmin = DefaultUserManager.shared.getAdminState()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -132,7 +135,11 @@ private extension SettingViewController {
     private func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<SettingViewSection, Setting>()
         snapshot.appendSections([.setting])
-        snapshot.appendItems(Setting.adminSettings())
+        if isAdmin {
+            snapshot.appendItems(Setting.adminSettings())
+        } else {
+            snapshot.appendItems(Setting.userSettings())
+        }
         dataSource?.apply(snapshot)
     }
 }
