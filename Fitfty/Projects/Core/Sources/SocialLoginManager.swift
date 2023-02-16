@@ -30,23 +30,45 @@ final public class SocialLoginManager: NSObject {
     
     public func tryKakaoLogin(completionHandler: @escaping (Bool) -> Void,
                               failedHandler: @escaping (Error) -> Void) {
-        guard isKakaoLoginAvailable() else {
-            failedHandler(SocialLoginError.loginFail)
-            return
+        if isKakaoLoginAvailable() {
+            loginWithKakaoTalk(completionHandler: completionHandler,
+                               failedHandler: failedHandler)
+        } else {
+            loginWithKakaoAccount(completionHandler: completionHandler,
+                                  failedHandler: failedHandler)
         }
-        
+    }
+    
+    public func initailizeKakaoLoginSDK() {
+        KakaoSDK.initSDK(appKey: APIKey.kakaoAppKeyForLogin)
+    }
+    
+    private func loginWithKakaoTalk(completionHandler: @escaping (Bool) -> Void,
+                                    failedHandler: @escaping (Error) -> Void) {
         UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, _) in
             if let accessToken = oauthToken?.accessToken {
                 self?.saveKakaoUserInfo()
-                self?.requestKakaoLogin(accessToken, completionHandler: completionHandler, failedHandler: failedHandler)
+                self?.requestKakaoLogin(accessToken,
+                                        completionHandler: completionHandler,
+                                        failedHandler: failedHandler)
             } else {
                 failedHandler(SocialLoginError.loginFail)
             }
         }
     }
     
-    public func initailizeKakaoLoginSDK() {
-        KakaoSDK.initSDK(appKey: APIKey.kakaoAppKeyForLogin)
+    private func loginWithKakaoAccount(completionHandler: @escaping (Bool) -> Void,
+                                       failedHandler: @escaping (Error) -> Void) {
+        UserApi.shared.loginWithKakaoAccount { [weak self] (oauthToken, _) in
+            if let accessToken = oauthToken?.accessToken {
+                self?.saveKakaoUserInfo()
+                self?.requestKakaoLogin(accessToken,
+                                        completionHandler: completionHandler,
+                                        failedHandler: failedHandler)
+            } else {
+                failedHandler(SocialLoginError.loginFail)
+            }
+        }
     }
     
     private func requestKakaoLogin(_ accessToken: String,
@@ -192,11 +214,6 @@ extension ASAuthorizationController: ASAuthorizationControllerDelegate {
             break
         }
         
-        guard hasEmail(email: email) else {
-            failedHandler?(SocialLoginError.noEmail)
-            return
-        }
-        
         let request = AppleLoginRequest(userIdentifier: userIdentifier,
                                         userName: fullName,
                                         userEmail: email,
@@ -205,7 +222,7 @@ extension ASAuthorizationController: ASAuthorizationControllerDelegate {
     }
     
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        failedHandler?(error)
+        failedHandler?(SocialLoginError.loginFail)
     }
 }
 

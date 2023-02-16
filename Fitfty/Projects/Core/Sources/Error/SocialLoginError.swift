@@ -10,6 +10,7 @@ import Foundation
 
 enum SocialLoginError: Error {
     case noEmail
+    case noKakaoAvailable
     case loginFail
     case expiredToken
     case noToken
@@ -21,6 +22,8 @@ extension SocialLoginError: LocalizedError {
         switch self {
         case .noEmail:
             return NSLocalizedString("이메일 제공에 동의해주셔야 서비스 이용이 가능해요", comment: "No Email")
+        case .noKakaoAvailable:
+            return NSLocalizedString("카카오 로그인을 이용할 수 없는 계정이에요. 다른 소셜 로그인으로 가입해주세요", comment: "Kakao Login Is Not Available")
         case .loginFail:
             return NSLocalizedString("로그인에 실패했습니다. 잠시 후 다시 시도해주세요", comment: "Login Fail")
         case .expiredToken:
