@@ -17,10 +17,10 @@ public enum WeatherTag: String, Codable {
     public var emojiWeatherTag: String {
         switch self {
         case .freezing:return "❄️ 한파"
-        case .cold:return "🌨 추운날"
+        case .cold:return "🌨 추운 날"
         case .chilly:return "🍂 쌀쌀한 날"
-        case .warm:return "☀️ 따듯한 날"
-        case .hot:return "🔥 더운날"
+        case .warm:return "☀️ 따뜻한 날"
+        case .hot:return "🔥 더운 날"
         }
     }
     
