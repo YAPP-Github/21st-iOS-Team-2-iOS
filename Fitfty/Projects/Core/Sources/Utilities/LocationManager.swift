@@ -35,7 +35,7 @@ public final class LocationManager: NSObject {
             return Empty().eraseToAnyPublisher()
         }
         requestWhenInUseAuthorization()
-        manager.startUpdatingLocation()
+        manager.requestLocation()
         return _location
             .eraseToAnyPublisher()
     }
@@ -56,7 +56,7 @@ extension LocationManager: CLLocationManagerDelegate {
         let status = manager.authorizationStatus
         switch status {
         case .authorizedAlways, .authorizedWhenInUse:
-            manager.startUpdatingLocation()
+            manager.requestLocation()
         case .notDetermined, .restricted:
             requestWhenInUseAuthorization()
         default:
