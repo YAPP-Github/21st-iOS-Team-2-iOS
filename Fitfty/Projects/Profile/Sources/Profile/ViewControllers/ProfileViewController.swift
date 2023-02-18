@@ -19,6 +19,7 @@ final public class ProfileViewController: UIViewController {
     private var profileType: ProfileType
     private var presentType: ProfilePresentType
     private var nickname: String?
+    private var isRefreshProfileImage = false
     private var dataSource: UICollectionViewDiffableDataSource<ProfileSectionKind, ProfileCellModel>?
     
     private lazy var collectionView: UICollectionView = {
@@ -38,7 +39,7 @@ final public class ProfileViewController: UIViewController {
     }()
     
     private lazy var loadingIndicatorView: LoadingView = {
-        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0), alpha: 1)
         loadingView.stopAnimating()
         return loadingView
     }()
@@ -106,6 +107,7 @@ final public class ProfileViewController: UIViewController {
             }
             viewModel.input.viewWillAppearWithoutMenu(nickname: nickname)
         case .myProfile:
+            isRefreshProfileImage = true
             viewModel.input.viewWillAppearWithMenu(menuType: menuType)
         }
     }
@@ -130,6 +132,7 @@ final public class ProfileViewController: UIViewController {
     }
     
     @objc func didTapMyFitftyMenu(_ sender: Any?) {
+        isRefreshProfileImage = false
         collectionView.isScrollEnabled = true
         emptyView.isHidden = true
         menuType = .myFitfty
@@ -137,6 +140,7 @@ final public class ProfileViewController: UIViewController {
     }
     
     @objc func didTapBookmarkMenu(_ sender: Any?) {
+        isRefreshProfileImage = false
         collectionView.isScrollEnabled = true
         emptyView.isHidden = true
         menuType = .bookmark
@@ -299,7 +303,8 @@ private extension ProfileViewController {
                     supplementaryView.profileView.setUp(
                         nickname: nickname,
                         content: content,
-                        filepath: self?.profileFilePath
+                        filepath: self?.profileFilePath,
+                        refresh: self?.isRefreshProfileImage ?? true
                     )
                 }
                 return supplementaryView
@@ -316,7 +321,8 @@ private extension ProfileViewController {
                     supplementaryView.profileView.setUp(
                         nickname: nickname,
                         content: content,
-                        filepath: self?.profileFilePath
+                        filepath: self?.profileFilePath,
+                        refresh: self?.isRefreshProfileImage ?? true
                     )
                 }
                 supplementaryView.menuView.setMyFitftyButtonTarget(self, action: #selector(self?.didTapMyFitftyMenu))
@@ -345,7 +351,6 @@ private extension ProfileViewController {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
-        snapshot.reloadSections([.feed])
         dataSource?.apply(snapshot, animatingDifferences: true) {
             guard sections.first?.items.count == 0 else {
                 return
@@ -355,6 +360,11 @@ private extension ProfileViewController {
             self.emptyView.setUp(self.menuType)
         }
         
+        guard var currentSnapshot = dataSource?.snapshot() else {
+            return
+        }
+        currentSnapshot.reloadSections([.feed])
+        dataSource?.apply(currentSnapshot, animatingDifferences: false)
     }
     
     func postLayout() -> UICollectionViewLayout {
