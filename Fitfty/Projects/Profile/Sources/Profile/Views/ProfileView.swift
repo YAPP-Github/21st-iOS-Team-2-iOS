@@ -62,10 +62,18 @@ final class ProfileView: UIView {
 }
 
 extension ProfileView {
-    func setUp(nickname: String, content: String, filepath: String?) {
+    func setUp(nickname: String, content: String, filepath: String?, refresh: Bool) {
         if let filepath = filepath {
             let url = URL(string: filepath)
-            imageView.kf.setImage(with: url)
+            if refresh {
+                imageView.kf.indicatorType = .activity
+                imageView.kf.setImage(
+                    with: url,
+                    options: [.forceRefresh]
+                )
+            } else {
+                imageView.kf.setImage(with: url)
+            }
         } else {
             imageView.image = CommonAsset.Images.profileDummy.image
         }
