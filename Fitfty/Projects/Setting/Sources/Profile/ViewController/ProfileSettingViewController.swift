@@ -43,7 +43,7 @@ public final class ProfileSettingViewController: UIViewController {
     
     private lazy var navigationBarView: BarView = {
         let barView = BarView(title: "프로필 설정", isChevronButtonHidden: true)
-        barView.setCancelButtonTarget(target: self, action: #selector(didTapSaveButton(_:)))
+        barView.setCancelButtonTarget(target: self, action: #selector(didTapCancelButton(_:)))
         return barView
     }()
     
@@ -55,7 +55,6 @@ public final class ProfileSettingViewController: UIViewController {
     
     private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = CommonAsset.Images.profileSample.image
         imageView.widthAnchor.constraint(equalToConstant: 104).isActive = true
         imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
         imageView.clipsToBounds = true
@@ -153,6 +152,10 @@ private extension ProfileSettingViewController {
     
     @objc func didTapEditProfileButton(_ sender: UIButton) {
         coordinator?.showImagePicker(self)
+    }
+    
+    @objc func didTapCancelButton(_ sender: UIButton) {
+        coordinator?.dismiss()
     }
     
 }
