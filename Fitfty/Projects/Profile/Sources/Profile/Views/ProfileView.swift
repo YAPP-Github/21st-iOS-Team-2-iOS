@@ -13,7 +13,6 @@ final class ProfileView: UIView {
 
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = CommonAsset.Images.profileSample.image
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 52
@@ -64,8 +63,11 @@ final class ProfileView: UIView {
 
 extension ProfileView {
     func setUp(nickname: String, content: String, filepath: String?) {
-        if let url = URL(string: filepath ?? "https://fitfty.s3.ap-northeast-2.amazonaws.com/fitfty_profile_dummy.png") {
+        if let filepath = filepath {
+            let url = URL(string: filepath)
             imageView.kf.setImage(with: url)
+        } else {
+            imageView.image = CommonAsset.Images.profileDummy.image
         }
         nicknameLabel.text = nickname
         contentLabel.text = content
