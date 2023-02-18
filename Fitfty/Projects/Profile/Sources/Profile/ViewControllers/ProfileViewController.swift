@@ -132,6 +132,9 @@ final public class ProfileViewController: UIViewController {
     }
     
     @objc func didTapMyFitftyMenu(_ sender: Any?) {
+        guard menuType == .bookmark else {
+            return
+        }
         isRefreshProfileImage = false
         collectionView.isScrollEnabled = true
         emptyView.isHidden = true
@@ -140,6 +143,9 @@ final public class ProfileViewController: UIViewController {
     }
     
     @objc func didTapBookmarkMenu(_ sender: Any?) {
+        guard menuType == .myFitfty else {
+            return
+        }
         isRefreshProfileImage = false
         collectionView.isScrollEnabled = true
         emptyView.isHidden = true
