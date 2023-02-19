@@ -107,9 +107,15 @@ extension DefaultUserManager: UserManager {
                     self?._location.send((longitude, latitude))
                 }).store(in: &cancellables)
         }
-        Task {
-            _guestState.send(await SessionManager.shared.checkUserSession())
+        guard let identifier = UserDefaults.standard.read(key: .userIdentifier) as? String,
+              let account = UserDefaults.standard.read(key: .userAccount) as? String,
+              Keychain.loadData(serviceIdentifier: identifier, forKey: account) != nil else {
+            Logger.debug(error: SocialLoginError.noToken, message: "No Token")
+            _guestState.send(true)
+            return
         }
+        _guestState.send(false)
+        
     }
  
 }
