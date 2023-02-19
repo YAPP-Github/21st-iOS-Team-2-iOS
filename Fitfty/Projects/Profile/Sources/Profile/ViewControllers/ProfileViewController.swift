@@ -285,9 +285,7 @@ private extension ProfileViewController {
             cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
                 switch item {
                 case .feed(let filepath, _):
-                    guard let cell = collectionView.dequeueReusableCell(
-                        withReuseIdentifier: FeedImageCell.className,
-                        for: indexPath) as? FeedImageCell else {
+                    guard let cell = collectionView.dequeueReusableCell(FeedImageCell.self, for: indexPath) else {
                         return UICollectionViewCell()
                     }
                     cell.setUp(filepath: filepath)
@@ -365,7 +363,6 @@ private extension ProfileViewController {
             self.emptyView.isHidden = false
             self.emptyView.setUp(self.menuType)
         }
-        
         guard var currentSnapshot = dataSource?.snapshot() else {
             return
         }
