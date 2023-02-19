@@ -37,7 +37,7 @@ final class PostView: UIView {
     private lazy var bookmarkButton: UIButton = {
         let button = UIButton()
         button.tintColor = .white
-        button.setImage(CommonAsset.Images.bookmarkFill.image, for: .normal)
+        button.setImage(CommonAsset.Images.bookmark.image, for: .normal)
         button.setPreferredSymbolConfiguration(.init(scale: .large), forImageIn: .normal)
         return button
     }()
