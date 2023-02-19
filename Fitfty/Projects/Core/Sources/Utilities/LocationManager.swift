@@ -14,6 +14,7 @@ import Common
 public final class LocationManager: NSObject {
     
     public static let shared = LocationManager()
+    public var currentAuthorizationStatus: CLAuthorizationStatus { manager.authorizationStatus }
     
     private var manager: CLLocationManager = {
         let manager = CLLocationManager()
@@ -23,7 +24,6 @@ public final class LocationManager: NSObject {
     }()
     
     private var _location = CurrentValueSubject<CLLocation?, Never>(nil)
-    private var _authorizationStatus = CurrentValueSubject<CLAuthorizationStatus, Never>(.notDetermined)
     
     public override init() {
         super.init()
@@ -35,17 +35,17 @@ public final class LocationManager: NSObject {
             return Empty().eraseToAnyPublisher()
         }
         requestWhenInUseAuthorization()
-        manager.requestLocation()
+        requestLocation()
         return _location
             .eraseToAnyPublisher()
     }
     
-    public func authorizationStatus() -> AnyPublisher<CLAuthorizationStatus, Never> {
-        return _authorizationStatus.eraseToAnyPublisher()
-    }
-    
     public func requestWhenInUseAuthorization() {
         manager.requestWhenInUseAuthorization()
+    }
+    
+    public func requestLocation() {
+        manager.requestLocation()
     }
     
 }
@@ -53,16 +53,23 @@ public final class LocationManager: NSObject {
 extension LocationManager: CLLocationManagerDelegate {
     
     public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        guard _location.value == nil ||
+                (
+                    _location.value?.coordinate.longitude == 126.977829174031 &&
+                    _location.value?.coordinate.latitude == 37.5663174209601
+                )
+        else {
+            return
+        }
         let status = manager.authorizationStatus
         switch status {
         case .authorizedAlways, .authorizedWhenInUse:
-            manager.requestLocation()
+            requestLocation()
         case .notDetermined, .restricted:
             requestWhenInUseAuthorization()
         default:
             _location.send(CLLocation(latitude: 37.5663174209601, longitude: 126.977829174031))
         }
-        _authorizationStatus.send(status)
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

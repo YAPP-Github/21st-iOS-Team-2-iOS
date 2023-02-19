@@ -86,6 +86,7 @@ extension MainViewModel: MainViewModelInput {
     func viewDidLoad() {
         userManager.location
             .compactMap { $0 }
+            .removeDuplicates(by: { $0.latitude == $1.latitude && $0.longitude == $1.longitude })
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
                 self?.weatherRepository.reset()
                 self?.currentState.send(.isLoading(true))
@@ -114,6 +115,7 @@ extension MainViewModel: MainViewModelInput {
             return
         }
         update(longitude: longitude, latitude: latitude)
+        LocationManager.shared.requestLocation()
     }
     
     func didTapTag(_ tag: Tag) {
