@@ -223,22 +223,16 @@ private extension MainViewModel {
             Logger.debug(error: FitftyAPIError.notFound(response.message), message: "코디 목록 조회 실패")
             return []
         }
-        var newCodylist: [(CodyResponse, ProfileType)] = []
         if self.isGuest {
-            let profileTypes: [ProfileType] = Array(repeating: .userProfile, count: codyList.count)
-            for (index, cody) in codyList.enumerated() {
-                newCodylist.append((cody, profileTypes[index]))
-            }
+            return codyList
+                .map { ($0, .userProfile) }
+            
         } else {
             let userPrivacy = try await self.getUserPrivacy()
             self.myUserToken = userPrivacy.data?.userToken
-            for cody in codyList {
-                newCodylist.append(
-                    (cody, cody.userToken == self.myUserToken ? .myProfile : .userProfile)
-                )
-            }
+            return codyList
+                .map { ($0, $0.userToken == myUserToken ? .myProfile : .userProfile) }
         }
-        return newCodylist
     }
     
     func getUserPrivacy() async throws -> UserPrivacyResponse {
