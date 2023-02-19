@@ -448,7 +448,7 @@ private extension MyFitftyViewModel {
                         guard let selectedPhAssetInfo = selectedPhAssetInfo else {
                             return
                         }
-                        let data = selectedPhAssetInfo.image.jpegData(compressionQuality: 1) ?? Data()
+                        let data = selectedPhAssetInfo.image.jpegData(compressionQuality: 0.5) ?? Data()
                         guard let weatherTag = self.getWeaherTagString() else {
                             return
                         }
