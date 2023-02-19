@@ -19,6 +19,8 @@ protocol MainViewModelInput {
     
     func refresh()
     
+    func reload()
+    
     func didTapTag(_ tag: Tag)
 }
 
@@ -114,6 +116,17 @@ extension MainViewModel: MainViewModelInput {
         else {
             return
         }
+        update(longitude: longitude, latitude: latitude)
+        LocationManager.shared.requestLocation()
+    }
+    
+    func reload() {
+        guard case .isLoading(let isLoading) = currentState.value, isLoading == false,
+              let longitude = _location.value.longitude, let latitude = _location.value.latitude
+        else {
+            return
+        }
+        currentState.send(.isLoading(true))
         update(longitude: longitude, latitude: latitude)
         LocationManager.shared.requestLocation()
     }
