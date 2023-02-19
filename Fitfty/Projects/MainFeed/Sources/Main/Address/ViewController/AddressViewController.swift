@@ -83,7 +83,7 @@ public final class AddressViewController: UIViewController {
     }()
     
     private lazy var buttonStackView: UIStackView = {
-        let stackView = UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually, spacing: 8)
+        let stackView = UIStackView(axis: .horizontal, alignment: .fill, distribution: .fill, spacing: 8)
         stackView.backgroundColor = .white
         stackView.addArrangedSubviews(backButton, selectButton)
         stackView.alpha = 0
@@ -91,13 +91,18 @@ public final class AddressViewController: UIViewController {
     }()
     
     private lazy var selectButton: FitftyButton = {
-        let button = FitftyButton(style: .enabled, title: "선택")
+        let button = FitftyButton(style: .enabled, title: "변경")
+        button.widthAnchor.constraint(equalToConstant: 194).isActive = true
         button.addTarget(self, action: #selector(didTapSelectButton(_:)), for: .touchUpInside)
         return button
     }()
     
     private lazy var backButton: FitftyButton = {
         let button = FitftyButton(style: .enabled, title: "뒤로가기")
+        button.setTitleColor(CommonAsset.Colors.gray05.color, for: .normal)
+        button.backgroundColor = .white
+        button.layer.borderColor = CommonAsset.Colors.gray02.color.cgColor
+        button.layer.borderWidth = 1
         button.addTarget(self, action: #selector(didTapBackButton(_:)), for: .touchUpInside)
         return button
     }()
