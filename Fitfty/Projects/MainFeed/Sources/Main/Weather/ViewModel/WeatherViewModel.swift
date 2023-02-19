@@ -77,6 +77,7 @@ extension WeatherViewModel: WeatherViewModelInput {
         currentState.send(.isLoading(true))
         userManager.location
             .compactMap { $0 }
+            .removeDuplicates(by: { $0.latitude == $1.latitude && $0.longitude == $1.longitude })
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
                 self?.update(longitude: longitude, latitude: latitude)
                 self?._location.send((longitude, latitude))

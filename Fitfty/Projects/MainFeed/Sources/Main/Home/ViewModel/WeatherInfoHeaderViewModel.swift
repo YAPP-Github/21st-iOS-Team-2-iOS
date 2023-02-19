@@ -40,6 +40,7 @@ extension WeatherInfoHeaderViewModel: WeatherInfoHeaderViewModelInput {
     func fetch() {
         userManager.location
             .compactMap { $0 }
+            .removeDuplicates(by: { $0.latitude == $1.latitude && $0.longitude == $1.longitude })
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
                 self?.getCurrentWeather(longitude: longitude, latitude: latitude)
             }).store(in: &cancellables)
