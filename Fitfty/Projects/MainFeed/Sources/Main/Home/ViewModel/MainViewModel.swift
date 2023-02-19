@@ -46,10 +46,6 @@ public final class MainViewModel {
     private var _currentGender: CurrentValueSubject<Gender?, Never> = .init(nil)
     
     private var _weathers: [MainCellModel] = []
-    private var myUserToken: String?
-    private var isGuest: Bool {
-           userManager.getCurrentGuestState()
-    }
 
     public init(
         addressRepository: AddressRepository,
@@ -223,13 +219,13 @@ private extension MainViewModel {
             Logger.debug(error: FitftyAPIError.notFound(response.message), message: "코디 목록 조회 실패")
             return []
         }
-        if self.isGuest {
+        if userManager.getCurrentGuestState() {
             return codyList
                 .map { ($0, .userProfile) }
             
         } else {
             let userPrivacy = try await self.getUserPrivacy()
-            self.myUserToken = userPrivacy.data?.userToken
+            let myUserToken = userPrivacy.data?.userToken
             return codyList
                 .map { ($0, $0.userToken == myUserToken ? .myProfile : .userProfile) }
         }
