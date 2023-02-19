@@ -95,12 +95,18 @@ extension DefaultUserManager: UserManager {
     }
     
     public func fetchCurrentLocation() {
-        LocationManager.shared.currentLocation()
-            .compactMap { $0 }
-            .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
-            .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
-                self?._location.send((longitude, latitude))
-            }).store(in: &cancellables)
+        if let location =  localStorage.read(key: .currentLocation) as? [String: Any] {
+            let x = Double(location["x"] as? String ?? "126.977829174031") ?? 126.977829174031
+            let y = Double(location["y"] as? String ?? "37.5663174209601") ?? 37.5663174209601
+            _location.send((x, y))
+        } else {
+            LocationManager.shared.currentLocation()
+                .compactMap { $0 }
+                .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
+                .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                    self?._location.send((longitude, latitude))
+                }).store(in: &cancellables)
+        }
         Task {
             _guestState.send(await SessionManager.shared.checkUserSession())
         }
