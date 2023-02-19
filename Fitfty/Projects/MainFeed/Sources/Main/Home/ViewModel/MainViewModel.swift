@@ -91,8 +91,9 @@ extension MainViewModel: MainViewModelInput {
         userManager.location
             .compactMap { $0 }
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                self?.weatherRepository.reset()
                 self?.currentState.send(.isLoading(true))
-                self?.update(longitude: longitude, latitude: latitude)
+                self?.setUp(longitude: longitude, latitude: latitude)
                 self?._location.send((longitude, latitude))
         }).store(in: &cancellables)
         
@@ -116,7 +117,6 @@ extension MainViewModel: MainViewModelInput {
         else {
             return
         }
-        currentState.send(.isLoading(true))
         update(longitude: longitude, latitude: latitude)
     }
     
@@ -130,27 +130,10 @@ extension MainViewModel: MainViewModelInput {
                 let styles = self._currentStyles.value
                 let gender = self._currentGender.value ?? .female
                 let codyList = try await self.getCodyList(gender: gender, styles: styles)
-                let profileTypes: [ProfileType]
-                var list: [(CodyResponse, ProfileType)] = []
-                
-                if self.isGuest {
-                    profileTypes = Array(repeating: .userProfile, count: codyList.count)
-                    for i in 0..<codyList.count {
-                        list.append((codyList[i], profileTypes[i]))
-                    }
-                } else {
-                    let userPrivacy = try await self.getUserPrivacy()
-                    self.myUserToken = userPrivacy.data?.userToken
-                    
-                    for i in 0..<codyList.count {
-                        list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
-                    }
-                    
-                }
                 currentState.send(.sections([
                     MainFeedSection(sectionKind: .weather, items: self._weathers),
                     self.configureTags(styles: styles, gender: gender),
-                    self.configureCodyList(list)
+                    self.configureCodyList(codyList)
                 ]))
             } catch {
                 Logger.debug(error: error, message: "코디 목록 가져오기 실패")
@@ -163,7 +146,7 @@ extension MainViewModel: MainViewModelInput {
 
 private extension MainViewModel {
     
-    func update(longitude: Double, latitude: Double) {
+    func setUp(longitude: Double, latitude: Double) {
         Task { [weak self] in
             guard let self = self else {
                 return
@@ -175,31 +158,37 @@ private extension MainViewModel {
                 let styles = tags.1
                 let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
                 let codyList = try await self.getCodyList(gender: gender, styles: styles)
-                let profileTypes: [ProfileType]
-                var list: [(CodyResponse, ProfileType)] = []
-                
-                if self.isGuest {
-                    profileTypes = Array(repeating: .userProfile, count: codyList.count)
-                    for i in 0..<codyList.count {
-                        list.append((codyList[i], profileTypes[i]))
-                    }
-                } else {
-                    let userPrivacy = try await self.getUserPrivacy()
-                    self.myUserToken = userPrivacy.data?.userToken
-                    for i in 0..<codyList.count {
-                        list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
-                    }
-                }
                 self.currentState.send(.currentLocation(address))
                 self.currentState.send(.sections([
                     self.configureWeathers(weathers),
                     self.configureTags(styles: styles, gender: gender),
-                    self.configureCodyList(list)
+                    self.configureCodyList(codyList)
                 ]))
-            
             } catch {
-                Logger.debug(error: error, message: "사용자 위치 및 날씨 가져오기 실패")
-                self.currentState.send(.errorMessage("현재 위치의 날씨 정보를 가져오는데 알 수 없는 에러가 발생했습니다."))
+                Logger.debug(error: error, message: "사용자 위치 및 날씨, 코디목록 가져오기 실패")
+                self.currentState.send(.errorMessage("현재 위치의 날씨 정보에 맞는 데이터를 가져오는데 알 수 없는 에러가 발생했습니다."))
+            }
+        }
+    }
+    
+    func update(longitude: Double, latitude: Double) {
+        Task { [weak self] in
+            guard let self = self else {
+                return
+            }
+            do {
+                let styles = self._currentStyles.value
+                let gender = self._currentGender.value ?? .female
+                let codyList = try await self.getCodyList(gender: gender, styles: styles)
+                let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
+                self.currentState.send(.sections([
+                    self.configureWeathers(weathers),
+                    self.configureTags(styles: styles, gender: gender),
+                    self.configureCodyList(codyList)
+                ]))
+            } catch {
+                Logger.debug(error: error, message: "사용자 위치 및 날씨, 코디목록 업데이트 실패")
+                self.currentState.send(.errorMessage("현재 위치의 날씨 정보에 맞는 데이터를 가져오는데 알 수 없는 에러가 발생했습니다."))
             }
         }
     }
@@ -227,14 +216,29 @@ private extension MainViewModel {
         return shortTermForecast
     }
     
-    func getCodyList(gender: Gender?, styles: [StyleTag]?) async throws -> [CodyResponse] {
+    func getCodyList(gender: Gender?, styles: [StyleTag]?) async throws -> [(CodyResponse, ProfileType)] {
         let tag = WeatherTag(temp: _currentAverageTemp.value)
         let response = try await fitftyRepository.fetchCodyList(weather: tag, gender: gender, styles: styles)
         guard let codyList = response.data?.pictureDetailInfoList else {
             Logger.debug(error: FitftyAPIError.notFound(response.message), message: "코디 목록 조회 실패")
             return []
         }
-        return codyList
+        var newCodylist: [(CodyResponse, ProfileType)] = []
+        if self.isGuest {
+            let profileTypes: [ProfileType] = Array(repeating: .userProfile, count: codyList.count)
+            for (index, cody) in codyList.enumerated() {
+                newCodylist.append((cody, profileTypes[index]))
+            }
+        } else {
+            let userPrivacy = try await self.getUserPrivacy()
+            self.myUserToken = userPrivacy.data?.userToken
+            for cody in codyList {
+                newCodylist.append(
+                    (cody, cody.userToken == self.myUserToken ? .myProfile : .userProfile)
+                )
+            }
+        }
+        return newCodylist
     }
     
     func getUserPrivacy() async throws -> UserPrivacyResponse {
