@@ -233,7 +233,10 @@ public enum FitftyAPIError: LocalizedError {
 extension FitftyAPI: MoyaCacheable {
     var cachePolicy: MoyaCacheablePolicy {
         switch self {
-        case .getMyProfile: return .reloadIgnoringLocalCacheData
+        case .getMyProfile,
+             .codyList:
+            return .reloadIgnoringLocalCacheData
+            
         default: return .useProtocolCachePolicy
         }
     }
