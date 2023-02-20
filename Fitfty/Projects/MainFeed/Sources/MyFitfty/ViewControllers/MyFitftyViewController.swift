@@ -181,6 +181,8 @@ private extension MyFitftyViewController {
             button.tintColor = .black
             button.setPreferredSymbolConfiguration(.init(scale: .medium), forImageIn: .normal)
             button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
+            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -20, bottom: 0, right: 0)
             return button
         }()
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
