@@ -359,7 +359,7 @@ extension PersonalInfoViewController: UICollectionViewDelegate {
                 self?.viewModel.logout()
             }
             
-        case .membershipWithdrawal:
+        case .membershipWithdrawl:
             viewModel.withdrawAccount()
             
         default: break
