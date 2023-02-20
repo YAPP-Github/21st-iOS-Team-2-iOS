@@ -29,7 +29,7 @@ extension SettingError: LocalizedError {
         case .noAvailableBirthday:
             return NSLocalizedString("올바른 생년월일을 기입해주세요", comment: "Wrong Birthday")
         case .noAvailableNickname:
-            return NSLocalizedString("6자 이상의 영문과 숫자조합으로 이루어진 닉네임을 기입해주세요", comment: "Wrond Nickname")
+            return NSLocalizedString("1자 이상의 영문과 숫자조합으로 이루어진 닉네임을 기입해주세요", comment: "Wrond Nickname")
         case .overlappedNickname:
             return NSLocalizedString("중복된 닉네임이에요", comment: "Overlapped Nickname")
         case .failWithdrawAccount:
