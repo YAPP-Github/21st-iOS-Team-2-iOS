@@ -156,6 +156,9 @@ extension SettingViewController: UICollectionViewDelegate {
         case .privacyRule:
             coordinator?.showPrivacyRule()
             
+        case .askHelp:
+            
+            
         default: break
         }
     }
