@@ -30,7 +30,9 @@ final class ProfileView: UIView {
         let label = UILabel()
         label.font = FitftyFont.appleSDMedium(size: 15).font
         label.textColor = CommonAsset.Colors.gray05.color
+        label.numberOfLines = 0
         label.textAlignment = .center
+        label.lineBreakMode = .byCharWrapping
         return label
     }()
     
@@ -53,10 +55,13 @@ final class ProfileView: UIView {
             imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
                                                
             nicknameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
-            nicknameLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            nicknameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            nicknameLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             
             contentLabel.topAnchor.constraint(equalTo: nicknameLabel.bottomAnchor, constant: 6),
-            contentLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+            contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 }
