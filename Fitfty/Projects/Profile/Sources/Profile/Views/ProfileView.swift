@@ -66,10 +66,10 @@ extension ProfileView {
         if let filepath = filepath {
             let url = URL(string: filepath)
             if refresh {
-                imageView.kf.indicatorType = .activity
                 imageView.kf.setImage(
                     with: url,
-                    options: [.forceRefresh]
+                    placeholder: CommonAsset.Images.profileDummy.image,
+                    options: [.forceRefresh, .transition(.fade(0.1))]
                 )
             } else {
                 imageView.kf.setImage(with: url)
