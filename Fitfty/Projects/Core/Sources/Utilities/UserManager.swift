@@ -22,6 +22,7 @@ public protocol UserManager {
     func updateUserState(_ state: Bool)
     func updateCurrentLocation(_ address: Address)
     func updateGender(_ gender: Gender)
+    func getGender() -> Gender
     func updateGuestState(_ isGuest: Bool)
     func updateCompletedWelcomePage()
     func getCurrentGuestState() -> Bool
@@ -80,6 +81,10 @@ extension DefaultUserManager: UserManager {
     
     public func updateGender(_ gender: Gender) {
         _gender = gender
+    }
+    
+    public func getGender() -> Gender {
+        return _gender ?? .female
     }
     
     public func updateGuestState(_ isGuest: Bool) {

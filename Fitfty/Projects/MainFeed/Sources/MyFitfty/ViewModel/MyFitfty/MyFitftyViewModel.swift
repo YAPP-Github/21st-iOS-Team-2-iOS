@@ -53,7 +53,7 @@ public final class MyFitftyViewModel {
     ]
     
     private var genderTagItems: [(gender: String, isSelected: Bool)] = [
-        ("여성", true),
+        ("여성", false),
         ("남성", false)
     ]
     
@@ -224,6 +224,7 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
     func viewDidLoad() {
         switch myFitftyType {
         case .uploadMyFitfty:
+            changeTag(.genderTag, selectedIndex: userManager.gender == .female ? 0 : 1)
             currentState.send(.sections([
                 MyFitftySection(sectionKind: .content, items: [MyFitftyCellModel.content(UUID())]),
                 MyFitftySection(sectionKind: .weatherTag, items: getWeatherTagCellModels()),
@@ -488,12 +489,10 @@ private extension MyFitftyViewModel {
                             photoTakenTime: self.photoTakenTime,
                             tagGroup: tagGroup
                         )
-                        print(request)
                         let response = try await putPost(request: request, boardToken: boardToken)
                         if response.result == "SUCCESS" {
                             self.currentState.send(.completed(true))
                         } else {
-                            print(response)
                             self.currentState.send(.completed(false))
                             self.currentState.send(.errorMessage("핏프티 수정에 알 수 없는 에러가 발생했습니다."))
                         }
