@@ -94,6 +94,15 @@ final public class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
+        switch profileType {
+        case .myProfile:
+            break
+        case .userProfile:
+            guard let nickname = nickname else {
+                return
+            }
+            viewModel.input.viewDidLoadWithoutMenu(nickname: nickname)
+        }
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -102,10 +111,7 @@ final public class ProfileViewController: UIViewController {
         emptyView.isHidden = true
         switch profileType {
         case .userProfile:
-            guard let nickname = nickname else {
-                return
-            }
-            viewModel.input.viewWillAppearWithoutMenu(nickname: nickname)
+            break
         case .myProfile:
             isRefreshProfileImage = true
             viewModel.input.viewWillAppearWithMenu(menuType: menuType)
