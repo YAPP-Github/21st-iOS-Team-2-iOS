@@ -22,6 +22,14 @@ final public class DetailReportViewController: UIViewController {
         return barView
     }()
     
+    private lazy var descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "신고 후 접수까지 최대 24시간이 소요될 수 있어요."
+        label.textColor = CommonAsset.Colors.gray05.color
+        label.font = FitftyFont.appleSDSemiBold(size: 13).font
+        return label
+    }()
+    
     private lazy var reportButton: FitftyButton = {
         let button = FitftyButton(style: .enabled, title: "신고하기")
         button.setButtonTarget(target: self, action: #selector(didTapReportButton(_:)))
@@ -73,19 +81,23 @@ final public class DetailReportViewController: UIViewController {
     }
     
     private func setConstraintsLayout() {
-        view.addSubviews(navigationBarView, tableView, reportButton, loadingIndicatorView)
+        view.addSubviews(navigationBarView, descriptionLabel, tableView, reportButton, loadingIndicatorView)
         NSLayoutConstraint.activate([
-            navigationBarView.topAnchor.constraint(equalTo: view.topAnchor),
+            navigationBarView.topAnchor.constraint(equalTo: view.topAnchor, constant: 10),
             navigationBarView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             navigationBarView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             navigationBarView.heightAnchor.constraint(equalToConstant: 76),
             
+            descriptionLabel.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor, constant: -12),
+            descriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            descriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            tableView.topAnchor.constraint(equalTo: navigationBarView.bottomAnchor, constant: 10),
+            tableView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 24),
             tableView.heightAnchor.constraint(equalToConstant: 240),
             
-            reportButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 25),
+            reportButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 38.5),
             reportButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             reportButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
