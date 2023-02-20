@@ -100,7 +100,7 @@ private extension ProfileCoordinator {
             style: .small,
             contentViewController: coordinator.navigationController
         )
-        bottomSheetDelegate = bottomSheetViewController
+        coordinator.bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
     
