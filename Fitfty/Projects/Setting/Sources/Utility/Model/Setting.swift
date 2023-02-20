@@ -53,7 +53,7 @@ extension Setting {
     
     var isNextPage: Bool {
         switch self {
-        case .profile, .myInfo, .termsOfUse, .privacyRule: return true
+        case .profile, .myInfo, .termsOfUse, .privacyRule, .askHelp: return true
         default: return false
         }
     }
