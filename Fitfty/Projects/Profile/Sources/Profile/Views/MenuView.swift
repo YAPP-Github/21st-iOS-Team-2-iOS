@@ -65,18 +65,18 @@ final class MenuView: UIView {
         NSLayoutConstraint.activate([
             barView.widthAnchor.constraint(equalToConstant: 1),
             barView.topAnchor.constraint(equalTo: topAnchor),
-            barView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -40),
+            barView.bottomAnchor.constraint(equalTo: bottomAnchor),
             barView.centerXAnchor.constraint(equalTo: centerXAnchor),
             
             myFitftyMenuView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
             myFitftyMenuView.trailingAnchor.constraint(equalTo: barView.leadingAnchor),
             myFitftyMenuView.topAnchor.constraint(equalTo: topAnchor),
-            myFitftyMenuView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -40),
+            myFitftyMenuView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             bookmarkMenuView.leadingAnchor.constraint(equalTo: barView.trailingAnchor),
             bookmarkMenuView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
             bookmarkMenuView.topAnchor.constraint(equalTo: topAnchor),
-            bookmarkMenuView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -40),
+            bookmarkMenuView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             myFitftyIconButton.trailingAnchor.constraint(equalTo: barView.leadingAnchor, constant: -65),
             myFitftyIconButton.centerYAnchor.constraint(equalTo: myFitftyMenuView.centerYAnchor),
