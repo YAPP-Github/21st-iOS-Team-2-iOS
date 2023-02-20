@@ -30,6 +30,7 @@ final public class MyFitftyViewController: UIViewController {
         collectionView.register(GenderCell.self)
         collectionView.register(Common.HeaderView.self, forSupplementaryViewOfKind: Common.HeaderView.className)
         collectionView.register(FooterView.self, forSupplementaryViewOfKind: FooterView.className)
+        collectionView.register(WarningView.self, forSupplementaryViewOfKind: WarningView.className)
         collectionView.delegate = self
         return collectionView
     }()
@@ -371,6 +372,13 @@ extension MyFitftyViewController {
                     for: indexPath
                 )
                 
+            case WarningView.className:
+                return collectionView.dequeueReusableSupplementaryView(
+                    ofKind: elementKind,
+                    withReuseIdentifier: WarningView.className,
+                    for: indexPath
+                )
+                
             default:
                 return UICollectionReusableView()
             }
@@ -454,10 +462,19 @@ extension MyFitftyViewController {
         )
                 
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 80, trailing: 20)
         
         section.interGroupSpacing = 8
         section.orthogonalScrollingBehavior = .continuous
+        
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(
+                    widthDimension: .absolute(view.safeAreaLayoutGuide.layoutFrame.width-40),
+                    heightDimension: .estimated(54)
+                ),
+                elementKind: WarningView.className, alignment: .bottom)
+        ]
         return section
     }
     
