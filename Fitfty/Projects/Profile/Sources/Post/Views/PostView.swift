@@ -113,4 +113,12 @@ extension PostView {
         bookmarkButton.addTarget(tareget, action: action, for: .touchUpInside)
     }
 
+    func setBookmarkCount(count: Int, currentIsSelected: Bool, isSelected: Bool) {
+        bookmarkButton.setImage(
+            isSelected ? CommonAsset.Images.bookmarkFill.image : CommonAsset.Images.bookmark.image,
+            for: .normal
+        )
+        
+        postInfoView.setBookmarkCount(count, currentIsSelected, isSelected)
+    }
 }
