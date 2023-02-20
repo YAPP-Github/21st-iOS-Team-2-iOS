@@ -15,7 +15,7 @@ protocol ProfileViewModelInput {
     
     var input: ProfileViewModelInput { get }
     func viewWillAppearWithMenu(menuType: MenuType)
-    func viewWillAppearWithoutMenu(nickname: String)
+    func viewDidLoadWithoutMenu(nickname: String)
     func didTapMenu(_ menuType: MenuType)
     func didTapPostWithMenu(selectedIndex: Int, menuType: MenuType)
     func didTapPostWithoutMenu(selectedIndex: Int)
@@ -40,7 +40,7 @@ extension ProfileViewModel: ProfileViewModelInput {
         updateWithMenu(menuType: menuType)
     }
     
-    func viewWillAppearWithoutMenu(nickname: String) {
+    func viewDidLoadWithoutMenu(nickname: String) {
         updateWithoutMenu(nickname: nickname)
     }
     
