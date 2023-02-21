@@ -177,7 +177,6 @@ private extension ProfileViewController {
                 switch state {
                 case .update(let response):
                     self?.update(response)
-                    self?.navigationItem.rightBarButtonItem?.isEnabled = true
                 case .errorMessage(let message):
                     self?.showAlert(message: message)
                 case .isLoading(let isLoading):
@@ -237,7 +236,6 @@ private extension ProfileViewController {
                 action: #selector(didTapMoreVerticalButton)
             )
             navigationItem.rightBarButtonItem?.tintColor = .black
-            navigationItem.rightBarButtonItem?.isEnabled = false
         case .myProfile:
             navigationController?.navigationBar.isHidden = true
         }
