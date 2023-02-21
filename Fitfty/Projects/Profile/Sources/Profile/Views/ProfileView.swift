@@ -73,8 +73,7 @@ extension ProfileView {
             if refresh {
                 imageView.kf.setImage(
                     with: url,
-                    placeholder: CommonAsset.Images.profileDummy.image,
-                    options: [.forceRefresh, .transition(.fade(0.1))]
+                    options: [.forceRefresh, .transition(.fade(0.3))]
                 )
             } else {
                 imageView.kf.setImage(with: url)

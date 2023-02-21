@@ -122,7 +122,7 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
     func showMyFitfty(_ myFitftyType: MyFitftyType) {
         let coordinator = makeMyFitftyCoordinator(myFitftyType)
         coordinator.start()
-        coordinator.navigationController.modalPresentationStyle = .overFullScreen
+        coordinator.navigationController.modalPresentationStyle = .fullScreen
         navigationController.present(coordinator.navigationController, animated: true)
     }
     

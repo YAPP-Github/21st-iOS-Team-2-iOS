@@ -290,7 +290,7 @@ private extension ProfileViewController {
             collectionView: collectionView,
             cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
                 switch item {
-                case .feed(let filepath, _):
+                case .feed(let filepath, _, _):
                     guard let cell = collectionView.dequeueReusableCell(
                         withReuseIdentifier: FeedImageCell.className,
                         for: indexPath) as? FeedImageCell else {
@@ -363,6 +363,7 @@ private extension ProfileViewController {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
+        snapshot.reloadSections([.feed])
         dataSource?.apply(snapshot, animatingDifferences: true) {
             guard sections.first?.items.count == 0 else {
                 return
@@ -371,12 +372,6 @@ private extension ProfileViewController {
             self.emptyView.isHidden = false
             self.emptyView.setUp(self.menuType)
         }
-        
-        guard var currentSnapshot = dataSource?.snapshot() else {
-            return
-        }
-        currentSnapshot.reloadSections([.feed])
-        dataSource?.apply(currentSnapshot, animatingDifferences: false)
     }
     
     func postLayout() -> UICollectionViewLayout {
