@@ -137,7 +137,7 @@ extension ProfileViewModel {
                     }
                     var profileCellModels: [ProfileCellModel] = []
                     for cody in data.codiList {
-                        profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile))
+                        profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
                     }
                     self.currentState.send(.sections([
                         ProfileSection(sectionKind: .feed, items: profileCellModels)
@@ -161,8 +161,6 @@ extension ProfileViewModel {
                 return
             }
             do {
-                self.currentState.send(.isLoading(true))
-                
                 let response = try await getMyProfile()
                 self.response = response
                 if response.result == "SUCCESS" {
@@ -177,26 +175,24 @@ extension ProfileViewModel {
                     switch menuType {
                     case .myFitfty:
                         for cody in data.codiList {
-                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile))
+                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
                         }
                         self.currentState.send(.sections([
                             ProfileSection(sectionKind: .feed, items: profileCellModels)
                         ]))
                     case .bookmark:
                         for cody in data.bookmarkList {
-                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile))
+                            profileCellModels.append(ProfileCellModel.feed(cody.filePath, .myProfile, UUID()))
                         }
                         self.currentState.send(.sections([
                             ProfileSection(sectionKind: .feed, items: profileCellModels)
                         ]))
                     }
                 } else {
-                    currentState.send(.isLoading(false))
                     currentState.send(.errorMessage("프로필 조회에 알 수 없는 에러가 발생했습니다."))
                 }
             } catch {
                 Logger.debug(error: error, message: "프로필 조회를 실패")
-                currentState.send(.isLoading(false))
                 currentState.send(.errorMessage("프로필 조회에 알 수 없는 에러가 발생했습니다."))
             }
             
