@@ -370,7 +370,7 @@ private extension ProfileViewController {
             snapshot.appendItems($0.items)
         }
         snapshot.reloadSections([.feed])
-        dataSource?.apply(snapshot, animatingDifferences: true) {
+        dataSource?.apply(snapshot, animatingDifferences: false) {
             guard sections.first?.items.count == 0 else {
                 return
             }
