@@ -40,9 +40,7 @@ final class FeedImageCell: UICollectionViewCell {
             feedImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             feedImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             feedImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            feedImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            feedImageView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
-            feedImageView.heightAnchor.constraint(equalTo: contentView.heightAnchor)
+            feedImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }
     
