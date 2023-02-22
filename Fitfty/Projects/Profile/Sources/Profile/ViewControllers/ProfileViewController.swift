@@ -94,28 +94,14 @@ final public class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
-        switch profileType {
-        case .myProfile:
-            break
-        case .userProfile:
-            guard let nickname = nickname else {
-                return
-            }
-            viewModel.input.viewDidLoadWithoutMenu(nickname: nickname)
-        }
+        setUserProfile()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNavigationBar()
+        setMyProfile()
         emptyView.isHidden = true
-        switch profileType {
-        case .userProfile:
-            break
-        case .myProfile:
-            isRefreshProfileImage = true
-            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
-        }
     }
     
     private func setUp() {
@@ -171,7 +157,7 @@ final public class ProfileViewController: UIViewController {
 
 private extension ProfileViewController {
     
-    private func bind() {
+    func bind() {
         viewModel.state.compactMap { $0 }
             .sinkOnMainThread(receiveValue: { [weak self] state in
                 switch state {
@@ -220,6 +206,28 @@ private extension ProfileViewController {
             emptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -86),
             emptyView.heightAnchor.constraint(equalToConstant: 92)
         ])
+    }
+    
+    func setUserProfile() {
+        switch profileType {
+        case .myProfile:
+            break
+        case .userProfile:
+            guard let nickname = nickname else {
+                return
+            }
+            viewModel.input.viewDidLoadWithoutMenu(nickname: nickname)
+        }
+    }
+    
+    func setMyProfile() {
+        switch profileType {
+        case .userProfile:
+            break
+        case .myProfile:
+            isRefreshProfileImage = true
+            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
+        }
     }
     
     func setNavigationBar() {
