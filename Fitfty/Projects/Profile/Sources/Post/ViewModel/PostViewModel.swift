@@ -23,7 +23,7 @@ public final class PostViewModel {
     private var currentState: CurrentValueSubject<ViewModelState?, Never> = .init(nil)
     private var cancellables: Set<AnyCancellable> = .init()
     private var isBookmarked: Bool?
-    private var currentIsBookmarked: Bool?
+    private var isCurrentBookmarked: Bool?
     private var bookmarkCount: Int?
     
     public init() { }
@@ -76,7 +76,7 @@ private extension PostViewModel {
                     return
                 }
                 self.isBookmarked = response.data?.bookmarked
-                self.currentIsBookmarked = response.data?.bookmarked
+                self.isCurrentBookmarked = response.data?.bookmarked
                 self.bookmarkCount = response.data?.bookmarkCnt
                 self.currentState.send(.update(response))
                 currentState.sink(receiveValue: { [weak self] state in
@@ -110,7 +110,7 @@ private extension PostViewModel {
                     self.currentState.send(.errorMessage("북마크 업데이트 실패"))
                 }
                 self.isBookmarked = !isBookmarked
-                self.currentState.send(.bookmark(self.currentIsBookmarked, self.isBookmarked, self.bookmarkCount))
+                self.currentState.send(.bookmark(self.isCurrentBookmarked, self.isBookmarked, self.bookmarkCount))
             } catch {
                 self.currentState.send(.errorMessage("북마크 업데이트 실패"))
                 Logger.debug(error: error, message: "북마크 업데이트 실패")
