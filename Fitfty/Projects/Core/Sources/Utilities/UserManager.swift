@@ -74,7 +74,10 @@ extension DefaultUserManager: UserManager {
         }
         localStorage.write(key: .currentLocation, value: addressDictionary)
         _location.send(
-            (Double(address.x) ?? 126.977829174031, Double(address.y) ?? 37.5663174209601)
+            (
+                Double(address.x) ?? LocationManager.Constant.defaultLongitude,
+                Double(address.y) ?? LocationManager.Constant.defaultLatitude
+            )
         )
     }
     
@@ -96,8 +99,12 @@ extension DefaultUserManager: UserManager {
     
     public func fetchCurrentLocation() {
         if let location =  localStorage.read(key: .currentLocation) as? [String: Any] {
-            let x = Double(location["x"] as? String ?? "126.977829174031") ?? 126.977829174031
-            let y = Double(location["y"] as? String ?? "37.5663174209601") ?? 37.5663174209601
+            let x = Double(
+                location["x"] as? String ?? LocationManager.Constant.defaultLongitude.description
+            ) ?? LocationManager.Constant.defaultLongitude
+            let y = Double(
+                location["y"] as? String ?? LocationManager.Constant.defaultLatitude.description
+            ) ?? LocationManager.Constant.defaultLatitude
             _location.send((x, y))
         } else {
             LocationManager.shared.currentLocation()

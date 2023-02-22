@@ -13,6 +13,12 @@ import Common
 
 public final class LocationManager: NSObject {
     
+    public enum Constant {
+        public static let defaultLongitude = 126.977829174031
+        public static let defaultLatitude = 37.5663174209601
+        
+    }
+    
     public static let shared = LocationManager()
     public var currentAuthorizationStatus: CLAuthorizationStatus { manager.authorizationStatus }
     
@@ -55,8 +61,8 @@ extension LocationManager: CLLocationManagerDelegate {
     public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         guard _location.value == nil ||
                 (
-                    _location.value?.coordinate.longitude == 126.977829174031 &&
-                    _location.value?.coordinate.latitude == 37.5663174209601
+                    _location.value?.coordinate.longitude == Constant.defaultLongitude &&
+                    _location.value?.coordinate.latitude == Constant.defaultLatitude
                 )
         else {
             return
@@ -68,7 +74,7 @@ extension LocationManager: CLLocationManagerDelegate {
         case .notDetermined, .restricted:
             requestWhenInUseAuthorization()
         default:
-            _location.send(CLLocation(latitude: 37.5663174209601, longitude: 126.977829174031))
+            _location.send(CLLocation(latitude: Constant.defaultLatitude, longitude: Constant.defaultLongitude))
         }
     }
     
