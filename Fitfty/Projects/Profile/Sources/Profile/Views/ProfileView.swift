@@ -8,6 +8,7 @@
 
 import UIKit
 import Common
+import Kingfisher
 
 final class ProfileView: UIView {
 
@@ -73,7 +74,7 @@ extension ProfileView {
             if refresh {
                 imageView.kf.setImage(
                     with: url,
-                    options: [.forceRefresh, .transition(.fade(0.3))]
+                    options: [.transition(.fade(0.5))]
                 )
             } else {
                 imageView.kf.setImage(with: url)
