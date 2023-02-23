@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Profile
 import Common
+import Core
 
 final class ReportCoordinator: Coordinator {
     
@@ -53,6 +54,13 @@ private extension ReportCoordinator {
     func makeReportViewController(reportPresentType: ReportPresentType, userToken: String?, boardToken: String?) -> UIViewController {
         let viewController = ReportViewController(
             coordinator: self,
+            viewModel: ReportViewModel(
+                userManager: DefaultUserManager.shared,
+                userToken: userToken,
+                boardToken: boardToken,
+                reportType: reportPresentType == .userReport ? .userReport : .postReport,
+                fitftyRepository: DefaultFitftyRepository()
+            ),
             reportPresentType: reportPresentType,
             userToken: userToken,
             boardToken: boardToken
@@ -91,6 +99,15 @@ extension ReportCoordinator: ReportCoordinatorInterface {
             self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
         }
     }
+    
+    func popToRoot() {
+        bottomSheetDelegate?.dismissBottomSheet {
+            self.navigationController.viewControllers.removeAll()
+            self.finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+            self.parentCoordinator?.navigationController.popToRootViewController(animated: true)
+        }
+    }
+    
 }
 
 extension ReportCoordinator: CoordinatorFinishDelegate {

@@ -97,7 +97,7 @@ private extension ProfileCoordinator {
         coordinator.parentCoordinator = self
         let bottomSheetViewController =
         BottomSheetViewController(
-            style: .small,
+            style: .custom(196),
             contentViewController: coordinator.navigationController
         )
         bottomSheetDelegate = bottomSheetViewController
