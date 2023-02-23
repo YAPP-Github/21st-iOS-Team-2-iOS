@@ -6,7 +6,6 @@
 //  Copyright © 2023 Fitfty. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import Common
 import Setting
