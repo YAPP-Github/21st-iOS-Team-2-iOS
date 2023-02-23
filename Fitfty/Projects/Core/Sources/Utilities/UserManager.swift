@@ -18,7 +18,7 @@ public protocol UserManager {
     var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { get }
     var gender: Gender? { get }
     var isGuest: AnyPublisher<Bool, Never> { get }
-   
+    var isAdmin: AnyPublisher<Bool, Never> { get }
     func updateUserState(_ state: Bool)
     func updateCurrentLocation(_ address: Address)
     func updateGender(_ gender: Gender)
@@ -26,7 +26,8 @@ public protocol UserManager {
     func updateGuestState(_ isGuest: Bool)
     func updateCompletedWelcomePage()
     func getCurrentGuestState() -> Bool
-   
+    func updateAdminState(_ isAdmin: Bool)
+    func getAdminState() -> Bool
 }
 
 public final class DefaultUserManager {
@@ -38,6 +39,7 @@ public final class DefaultUserManager {
     private var _location: CurrentValueSubject<(longitude: Double, latitude: Double)?, Never> = .init(nil)
     private var _gender: Gender?
     private var _guestState: CurrentValueSubject<Bool, Never> = .init(true)
+    private var _adminState: CurrentValueSubject<Bool, Never> = .init(false)
    
     private var cancellables: Set<AnyCancellable> = .init()
     
@@ -64,6 +66,7 @@ extension DefaultUserManager: UserManager {
     public var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { _location.eraseToAnyPublisher() }
     public var gender: Gender? { _gender }
     public var isGuest: AnyPublisher<Bool, Never> { _guestState.eraseToAnyPublisher() }
+    public var isAdmin: AnyPublisher<Bool, Never> { _guestState.eraseToAnyPublisher() }
     
     public func updateUserState(_ state: Bool) {
         localStorage.write(key: .isNewUser, value: state)
@@ -97,6 +100,14 @@ extension DefaultUserManager: UserManager {
     
     public func getCurrentGuestState() -> Bool {
         return _guestState.value
+    }
+    
+    public func updateAdminState(_ isAdmin: Bool) {
+        _adminState.send(isAdmin)
+    }
+    
+    public func getAdminState() -> Bool {
+        return _adminState.value
     }
     
     public func fetchCurrentLocation() {
