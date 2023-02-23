@@ -100,7 +100,7 @@ private extension ProfileCoordinator {
             style: .small,
             contentViewController: coordinator.navigationController
         )
-        bottomSheetDelegate = bottomSheetViewController
+        coordinator.bottomSheetDelegate = bottomSheetViewController
         return bottomSheetViewController
     }
     
@@ -122,7 +122,7 @@ extension ProfileCoordinator: ProfileCoordinatorInterface {
     func showMyFitfty(_ myFitftyType: MyFitftyType) {
         let coordinator = makeMyFitftyCoordinator(myFitftyType)
         coordinator.start()
-        coordinator.navigationController.modalPresentationStyle = .overFullScreen
+        coordinator.navigationController.modalPresentationStyle = .fullScreen
         navigationController.present(coordinator.navigationController, animated: true)
     }
     

@@ -94,22 +94,14 @@ final public class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
+        setUserProfile()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNavigationBar()
+        setMyProfile()
         emptyView.isHidden = true
-        switch profileType {
-        case .userProfile:
-            guard let nickname = nickname else {
-                return
-            }
-            viewModel.input.viewWillAppearWithoutMenu(nickname: nickname)
-        case .myProfile:
-            isRefreshProfileImage = true
-            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
-        }
     }
     
     private func setUp() {
@@ -165,13 +157,12 @@ final public class ProfileViewController: UIViewController {
 
 private extension ProfileViewController {
     
-    private func bind() {
+    func bind() {
         viewModel.state.compactMap { $0 }
             .sinkOnMainThread(receiveValue: { [weak self] state in
                 switch state {
                 case .update(let response):
                     self?.update(response)
-                    self?.navigationItem.rightBarButtonItem?.isEnabled = true
                 case .errorMessage(let message):
                     self?.showAlert(message: message)
                 case .isLoading(let isLoading):
@@ -217,6 +208,28 @@ private extension ProfileViewController {
         ])
     }
     
+    func setUserProfile() {
+        switch profileType {
+        case .myProfile:
+            break
+        case .userProfile:
+            guard let nickname = nickname else {
+                return
+            }
+            viewModel.input.viewDidLoadWithoutMenu(nickname: nickname)
+        }
+    }
+    
+    func setMyProfile() {
+        switch profileType {
+        case .userProfile:
+            break
+        case .myProfile:
+            isRefreshProfileImage = true
+            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
+        }
+    }
+    
     func setNavigationBar() {
         navigationController?.navigationBar.shadowImage = UIImage()
        
@@ -231,7 +244,6 @@ private extension ProfileViewController {
                 action: #selector(didTapMoreVerticalButton)
             )
             navigationItem.rightBarButtonItem?.tintColor = .black
-            navigationItem.rightBarButtonItem?.isEnabled = false
         case .myProfile:
             navigationController?.navigationBar.isHidden = true
         }
@@ -284,7 +296,7 @@ private extension ProfileViewController {
             collectionView: collectionView,
             cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
                 switch item {
-                case .feed(let filepath, _):
+                case .feed(let filepath, _, _):
                     guard let cell = collectionView.dequeueReusableCell(FeedImageCell.self, for: indexPath) else {
                         return UICollectionViewCell()
                     }
@@ -355,7 +367,8 @@ private extension ProfileViewController {
             snapshot.appendSections([$0.sectionKind])
             snapshot.appendItems($0.items)
         }
-        dataSource?.apply(snapshot, animatingDifferences: true) {
+        snapshot.reloadSections([.feed])
+        dataSource?.apply(snapshot, animatingDifferences: false) {
             guard sections.first?.items.count == 0 else {
                 return
             }
@@ -363,11 +376,6 @@ private extension ProfileViewController {
             self.emptyView.isHidden = false
             self.emptyView.setUp(self.menuType)
         }
-        guard var currentSnapshot = dataSource?.snapshot() else {
-            return
-        }
-        currentSnapshot.reloadSections([.feed])
-        dataSource?.apply(currentSnapshot, animatingDifferences: false)
     }
     
     func postLayout() -> UICollectionViewLayout {
