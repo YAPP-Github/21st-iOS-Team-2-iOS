@@ -144,8 +144,8 @@ extension MainViewModel: MainViewModelInput {
                     configureCodyList(codyList)
                 ]))
             } catch {
-                Logger.debug(error: error, message: "코디 목록 가져오기 실패")
-                currentState.send(.errorMessage("코디 목록을 업데이트 하는데 알 수 없는 에러가 발생하여 실패하였습니다."))
+                Logger.debug(error: error, message: MainFeedError.codyLoadFailed.errorDescription ?? "")
+                currentState.send(.errorMessage(MainFeedError.codyLoadFailed.userGuideErrorMessage))
             }
         }
     }
@@ -170,8 +170,8 @@ private extension MainViewModel {
                     configureCodyList(codyList)
                 ]))
             } catch {
-                Logger.debug(error: error, message: "사용자 위치 및 날씨, 코디목록 가져오기 실패")
-                currentState.send(.errorMessage("현재 위치의 날씨 정보에 맞는 데이터를 가져오는데 알 수 없는 에러가 발생했습니다."))
+                Logger.debug(error: error, message: MainFeedError.setUpFailed.errorDescription ?? "")
+                currentState.send(.errorMessage(MainFeedError.setUpFailed.userGuideErrorMessage))
             }
         }
     }
@@ -189,8 +189,8 @@ private extension MainViewModel {
                     configureCodyList(codyList)
                 ]))
             } catch {
-                Logger.debug(error: error, message: "사용자 위치 및 날씨, 코디목록 업데이트 실패")
-                currentState.send(.errorMessage("현재 위치의 날씨 정보에 맞는 데이터를 가져오는데 알 수 없는 에러가 발생했습니다."))
+                Logger.debug(error: error, message: MainFeedError.updateFailed.errorDescription ?? "")
+                currentState.send(.errorMessage(MainFeedError.updateFailed.userGuideErrorMessage))
             }
         }
     }
@@ -222,7 +222,7 @@ private extension MainViewModel {
         let tag = WeatherTag(temp: _currentAverageTemp.value)
         let response = try await fitftyRepository.fetchCodyList(weather: tag, gender: gender, styles: styles)
         guard let codyList = response.data?.pictureDetailInfoList else {
-            Logger.debug(error: FitftyAPIError.notFound(response.message), message: "코디 목록 조회 실패")
+            Logger.debug(error: FitftyAPIError.notFound(response.message), message: MainFeedError.codyLoadFailed.errorDescription ?? "")
             return []
         }
         if userManager.getCurrentGuestState() {
@@ -256,9 +256,7 @@ private extension MainViewModel {
                         userManager.updateGender(data.gender)
                         userManager.updateGuestState(false)
                     } else {
-                        Logger.debug(error: ViewModelError.failure(
-                            errorCode: response.errorCode ?? "", message: response.message ?? ""
-                        ), message: "태그 설정 조회 실패")
+                        Logger.debug(error: MainFeedError.tagLoadFailed, message: MainFeedError.tagLoadFailed.errorDescription ?? "")
                         continuation.resume(returning: (.female, []))
                     }
                 } catch {

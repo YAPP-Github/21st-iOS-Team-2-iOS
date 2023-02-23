@@ -47,9 +47,7 @@ extension WelcomeViewModel: WelcomeViewModelInput {
                 if let data = response.data {
                     currentState.send(.nickName(data.nickname))
                 } else {
-                    Logger.debug(error: ViewModelError.failure(
-                        errorCode: response.errorCode ?? "", message: response.message ?? ""
-                    ), message: "태그 설정 조회 실패")
+                    Logger.debug(error: MainFeedError.tagLoadFailed, message: MainFeedError.tagLoadFailed.errorDescription ?? "")
                 }
             } catch {
                 Logger.debug(error: error, message: "태그 설정 조회 실패")

@@ -73,8 +73,10 @@ private extension CodyCellViewModel {
             do {
                 let response = try await fitftyRepository.bookmark(isBookmark, boardToken: cody.boardToken)
                 if response.result == .fail {
-                    let error = ViewModelError.failure(errorCode: response.errorCode ?? "", message: response.message ?? "")
-                    Logger.debug(error: error, message: "북마크 업데이트 실패")
+                    Logger.debug(
+                        error: MainFeedError.bookmarkFailed,
+                        message: "\(response.errorCode ?? ""): \(response.message ?? "")"
+                    )
                 }
             } catch {
                 Logger.debug(error: error, message: "북마크 업데이트 실패")
