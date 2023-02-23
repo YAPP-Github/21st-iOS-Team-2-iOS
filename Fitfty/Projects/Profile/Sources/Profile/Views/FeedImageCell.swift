@@ -25,19 +25,28 @@ final class FeedImageCell: UICollectionViewCell {
         setUpConstraintLayout()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        reset()
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     private func setUpConstraintLayout() {
-        self.addSubview(feedImageView)
-        feedImageView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubviews(feedImageView)
         NSLayoutConstraint.activate([
-            feedImageView.topAnchor.constraint(equalTo: self.topAnchor),
-            feedImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            feedImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            feedImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+            feedImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            feedImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            feedImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            feedImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
+    }
+    
+    private func reset() {
+        feedImageView.kf.cancelDownloadTask()
+        feedImageView.image = nil
     }
 }
 
@@ -46,7 +55,18 @@ extension FeedImageCell {
     func setUp(filepath: String) {
         if let url = URL(string: filepath) {
             feedImageView.kf.indicatorType = .activity
-            feedImageView.kf.setImage(with: url)
+            let processor = DownsamplingImageProcessor(
+                size: CGSize(
+                    width: feedImageView.bounds.size.width == 0 ? 200 : feedImageView.bounds.size.width,
+                    height: feedImageView.bounds.size.height == 0 ? 200 : feedImageView.bounds.size.height
+                )
+            )
+            feedImageView.kf.setImage(with: url, options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(0.5)),
+                .cacheOriginalImage
+            ])
         }
     }
 }

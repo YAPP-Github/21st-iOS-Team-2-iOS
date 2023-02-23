@@ -44,6 +44,7 @@ public final class DefaultAddressRepository: AddressRepository {
     }
     
     public func fetchAddress(longitude: Double, latitude: Double) async throws -> Address {
+        let (longitude, latitude) = check(longitude: longitude, latitude: latitude)
         let searchAddress = AddressConversionRequest(x: longitude, y: latitude)
         let response = try await KakaoAKAPI.request(
             target: KakaoAKAPI.fetchAddressConversion(parameter: try searchAddress.asDictionary()),
@@ -62,4 +63,15 @@ public final class DefaultAddressRepository: AddressRepository {
         )
     }
     
+}
+
+private extension DefaultAddressRepository {
+    
+    func check(longitude: Double, latitude: Double) -> (longitude: Double, latitude: Double) {
+        if longitude <= 130, longitude >= 127 && latitude <= 38, latitude >= 35 {
+            return (longitude, latitude)
+        } else {
+            return (LocationManager.Constant.defaultLongitude, LocationManager.Constant.defaultLatitude)
+        }
+    }
 }

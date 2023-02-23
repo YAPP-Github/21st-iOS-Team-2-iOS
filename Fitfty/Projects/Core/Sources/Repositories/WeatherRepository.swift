@@ -23,6 +23,8 @@ public protocol WeatherRepository {
     func fetchWeatherNow(longitude: String, latitude: String) async throws -> WeatherNow
     
     func getTodayAverageTemp(longitude: String, latitude: String) async throws -> Int
+    
+    func reset()
 
 }
 
@@ -107,6 +109,11 @@ public final class DefaultWeatherRepository: WeatherRepository {
         try await pastShortTermForecast(longitude: longitude, latitude: latitude)
         let data = _pastShortTermForecast
         return transferService.averageTemp(data, date: Date())
+    }
+    
+    public func reset() {
+        _pastShortTermForecast.removeAll()
+        _shortTermForecast.removeAll()
     }
     
 }
