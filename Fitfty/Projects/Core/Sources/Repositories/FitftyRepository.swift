@@ -23,6 +23,10 @@ public protocol FitftyRepository {
     
     func report(_ request: UserReportRequest) async throws -> FitftyResponse
     
+    func getUserReportList() async throws -> UserReportListResponse
+    
+    func getPostReportList() async throws -> PostReportListResponse
+    
 }
 
 public final class DefaultFitftyRepository: FitftyRepository {
@@ -62,6 +66,14 @@ public final class DefaultFitftyRepository: FitftyRepository {
     
     public func report(_ request: UserReportRequest) async throws -> FitftyResponse {
         return try await FitftyAPI.request(target: .reportUser(parameters: request), dataType: FitftyResponse.self)
+    }
+    
+    public func getUserReportList() async throws -> UserReportListResponse {
+        return try await FitftyAPI.request(target: .getUserReportList, dataType: UserReportListResponse.self)
+    }
+    
+    public func getPostReportList() async throws -> PostReportListResponse {
+        return try await FitftyAPI.request(target: .getPostReportList, dataType: PostReportListResponse.self)
     }
     
 }
