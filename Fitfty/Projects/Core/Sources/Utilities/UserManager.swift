@@ -17,7 +17,7 @@ public protocol UserManager {
     
     var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { get }
     var gender: Gender? { get }
-    var isGuest: Bool { get }
+    var isGuest: AnyPublisher<Bool, Never> { get }
    
     func updateUserState(_ state: Bool)
     func updateCurrentLocation(_ address: Address)
@@ -51,11 +51,7 @@ extension DefaultUserManager: UserManager {
     public var isNewUser: Bool {
         localStorage.read(key: .isNewUser) as? Bool ?? true
     }
-    
-    public var isGuest: Bool {
-        localStorage.read(key: .isGuest) as? Bool ?? true
-    }
-    
+   
     public var currentLocation: Address? {
         let address = localStorage.read(key: .currentLocation) as? [String: Any] ?? [:]
         return Address(address)
@@ -67,7 +63,8 @@ extension DefaultUserManager: UserManager {
     
     public var location: AnyPublisher<(longitude: Double, latitude: Double)?, Never> { _location.eraseToAnyPublisher() }
     public var gender: Gender? { _gender }
-   
+    public var isGuest: AnyPublisher<Bool, Never> { _guestState.eraseToAnyPublisher() }
+    
     public func updateUserState(_ state: Bool) {
         localStorage.write(key: .isNewUser, value: state)
     }
@@ -90,8 +87,8 @@ extension DefaultUserManager: UserManager {
         return _gender ?? .female
     }
     
-    public func updateGuestState(_ state: Bool) {
-        localStorage.write(key: .isGuest, value: state)
+    public func updateGuestState(_ isGuest: Bool) {
+        _guestState.send(isGuest)
     }
     
     public func updateCompletedWelcomePage() {
@@ -99,7 +96,7 @@ extension DefaultUserManager: UserManager {
     }
     
     public func getCurrentGuestState() -> Bool {
-        return isGuest
+        return _guestState.value
     }
     
     public func fetchCurrentLocation() {
