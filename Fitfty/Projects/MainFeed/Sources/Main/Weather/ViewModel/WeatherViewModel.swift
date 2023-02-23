@@ -125,27 +125,24 @@ extension WeatherViewModel: WeatherViewModelOutput {
 private extension WeatherViewModel {
     
     func update(longitude: Double, latitude: Double) {
-        Task { [weak self] in
-            guard let self = self else {
-                return
-            }
+        Task {
             do {
-                let address = try await self.getAddress(
+                let address = try await getAddress(
                     longitude: longitude,
                     latitude: latitude
                 )
-                self.currentState.send(.currentLocation(address))
-                self.currentState.send(.sections([
-                    self.configureTodayWeathers(
-                        try await self.getTodayWeathers(longitude: longitude, latitude: latitude)
+                currentState.send(.currentLocation(address))
+                currentState.send(.sections([
+                    configureTodayWeathers(
+                        try await getTodayWeathers(longitude: longitude, latitude: latitude)
                     ),
-                    self.configureAnotherDayWeathers(
-                        try await self.getAnotherDayWeathers(longitude: longitude, latitude: latitude)
+                    configureAnotherDayWeathers(
+                        try await getAnotherDayWeathers(longitude: longitude, latitude: latitude)
                     )
                 ]))
             } catch {
                 Logger.debug(error: error, message: "사용자 위치 및 날씨 가져오기 실패")
-                self.currentState.send(.errorMessage("현재 위치의 날씨 정보를 가져오는데 알 수 없는 에러가 발생했습니다."))
+                currentState.send(.errorMessage("현재 위치의 날씨 정보를 가져오는데 알 수 없는 에러가 발생했습니다."))
             }
         }
     }

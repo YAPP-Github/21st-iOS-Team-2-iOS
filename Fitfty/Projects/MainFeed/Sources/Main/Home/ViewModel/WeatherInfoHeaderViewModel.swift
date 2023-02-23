@@ -60,15 +60,12 @@ extension WeatherInfoHeaderViewModel: ViewModelType {
 private extension WeatherInfoHeaderViewModel {
     
     func getCurrentWeather(longitude: Double, latitude: Double) {
-        Task { [weak self] in
-            guard let self = self else {
-                return
-            }
+        Task {
             do {
-                let currentWeather = try await self.weatherRepository.fetchCurrentWeather(
+                let currentWeather = try await weatherRepository.fetchCurrentWeather(
                     longitude: longitude.description, latitude: latitude.description
                 )
-                self.currentState.send(.currentWeather(currentWeather))
+                currentState.send(.currentWeather(currentWeather))
             } catch {
                 Logger.debug(error: error, message: "현재 날씨 가져오기 실패")
             }
