@@ -145,6 +145,7 @@ extension FitftyAPI: TargetType, AccessTokenAuthorizable {
              .setUserDetails(let parameters),
              .postMyFitfty(let parameters),
              .codyList(let parameters),
+             .updateUserPrivacy(let parameters),
              .updateMyProfile(let parameters),
              .putPost(let parameters, _):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)

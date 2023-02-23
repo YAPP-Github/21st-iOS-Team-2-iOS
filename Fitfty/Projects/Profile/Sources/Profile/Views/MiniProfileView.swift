@@ -61,9 +61,13 @@ final class MiniProfileView: UIView {
 
 extension MiniProfileView {
     func setUp(filepath: String?, nickname: String) {
-        if let url = URL(string: filepath ?? "https://fitfty.s3.ap-northeast-2.amazonaws.com/fitfty_profile_dummy.png") {
+        if let filepath = filepath {
+            let url = URL(string: filepath)
             profileImageView.kf.setImage(with: url)
+        } else {
+            profileImageView.image = CommonAsset.Images.profileDummy.image
         }
+       
         nicknameLabel.text = nickname
     }
     

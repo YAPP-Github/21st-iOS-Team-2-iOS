@@ -19,6 +19,7 @@ final public class ProfileViewController: UIViewController {
     private var profileType: ProfileType
     private var presentType: ProfilePresentType
     private var nickname: String?
+    private var isRefreshProfileImage = false
     private var dataSource: UICollectionViewDiffableDataSource<ProfileSectionKind, ProfileCellModel>?
     
     private lazy var collectionView: UICollectionView = {
@@ -38,7 +39,7 @@ final public class ProfileViewController: UIViewController {
     }()
     
     private lazy var loadingIndicatorView: LoadingView = {
-        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0.2), alpha: 1)
+        let loadingView: LoadingView = .init(backgroundColor: .white.withAlphaComponent(0), alpha: 1)
         loadingView.stopAnimating()
         return loadingView
     }()
@@ -93,21 +94,14 @@ final public class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setUp()
         bind()
+        setUserProfile()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNavigationBar()
+        setMyProfile()
         emptyView.isHidden = true
-        switch profileType {
-        case .userProfile:
-            guard let nickname = nickname else {
-                return
-            }
-            viewModel.input.viewWillAppearWithoutMenu(nickname: nickname)
-        case .myProfile:
-            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
-        }
     }
     
     private func setUp() {
@@ -130,6 +124,10 @@ final public class ProfileViewController: UIViewController {
     }
     
     @objc func didTapMyFitftyMenu(_ sender: Any?) {
+        guard menuType == .bookmark else {
+            return
+        }
+        isRefreshProfileImage = false
         collectionView.isScrollEnabled = true
         emptyView.isHidden = true
         menuType = .myFitfty
@@ -137,6 +135,10 @@ final public class ProfileViewController: UIViewController {
     }
     
     @objc func didTapBookmarkMenu(_ sender: Any?) {
+        guard menuType == .myFitfty else {
+            return
+        }
+        isRefreshProfileImage = false
         collectionView.isScrollEnabled = true
         emptyView.isHidden = true
         menuType = .bookmark
@@ -155,13 +157,12 @@ final public class ProfileViewController: UIViewController {
 
 private extension ProfileViewController {
     
-    private func bind() {
+    func bind() {
         viewModel.state.compactMap { $0 }
             .sinkOnMainThread(receiveValue: { [weak self] state in
                 switch state {
                 case .update(let response):
                     self?.update(response)
-                    self?.navigationItem.rightBarButtonItem?.isEnabled = true
                 case .errorMessage(let message):
                     self?.showAlert(message: message)
                 case .isLoading(let isLoading):
@@ -207,6 +208,28 @@ private extension ProfileViewController {
         ])
     }
     
+    func setUserProfile() {
+        switch profileType {
+        case .myProfile:
+            break
+        case .userProfile:
+            guard let nickname = nickname else {
+                return
+            }
+            viewModel.input.viewDidLoadWithoutMenu(nickname: nickname)
+        }
+    }
+    
+    func setMyProfile() {
+        switch profileType {
+        case .userProfile:
+            break
+        case .myProfile:
+            isRefreshProfileImage = true
+            viewModel.input.viewWillAppearWithMenu(menuType: menuType)
+        }
+    }
+    
     func setNavigationBar() {
         navigationController?.navigationBar.shadowImage = UIImage()
        
@@ -221,7 +244,6 @@ private extension ProfileViewController {
                 action: #selector(didTapMoreVerticalButton)
             )
             navigationItem.rightBarButtonItem?.tintColor = .black
-            navigationItem.rightBarButtonItem?.isEnabled = false
         case .myProfile:
             navigationController?.navigationBar.isHidden = true
         }
@@ -274,7 +296,7 @@ private extension ProfileViewController {
             collectionView: collectionView,
             cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
                 switch item {
-                case .feed(let filepath, _):
+                case .feed(let filepath, _, _):
                     guard let cell = collectionView.dequeueReusableCell(
                         withReuseIdentifier: FeedImageCell.className,
                         for: indexPath) as? FeedImageCell else {
@@ -299,7 +321,8 @@ private extension ProfileViewController {
                     supplementaryView.profileView.setUp(
                         nickname: nickname,
                         content: content,
-                        filepath: self?.profileFilePath
+                        filepath: self?.profileFilePath,
+                        refresh: self?.isRefreshProfileImage ?? true
                     )
                 }
                 return supplementaryView
@@ -316,7 +339,8 @@ private extension ProfileViewController {
                     supplementaryView.profileView.setUp(
                         nickname: nickname,
                         content: content,
-                        filepath: self?.profileFilePath
+                        filepath: self?.profileFilePath,
+                        refresh: self?.isRefreshProfileImage ?? true
                     )
                 }
                 supplementaryView.menuView.setMyFitftyButtonTarget(self, action: #selector(self?.didTapMyFitftyMenu))
@@ -346,7 +370,7 @@ private extension ProfileViewController {
             snapshot.appendItems($0.items)
         }
         snapshot.reloadSections([.feed])
-        dataSource?.apply(snapshot, animatingDifferences: true) {
+        dataSource?.apply(snapshot, animatingDifferences: false) {
             guard sections.first?.items.count == 0 else {
                 return
             }
@@ -354,7 +378,6 @@ private extension ProfileViewController {
             self.emptyView.isHidden = false
             self.emptyView.setUp(self.menuType)
         }
-        
     }
     
     func postLayout() -> UICollectionViewLayout {

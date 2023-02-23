@@ -8,12 +8,12 @@
 
 import UIKit
 import Common
+import Kingfisher
 
 final class ProfileView: UIView {
 
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = CommonAsset.Images.profileSample.image
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 52
@@ -31,7 +31,9 @@ final class ProfileView: UIView {
         let label = UILabel()
         label.font = FitftyFont.appleSDMedium(size: 15).font
         label.textColor = CommonAsset.Colors.gray05.color
+        label.numberOfLines = 0
         label.textAlignment = .center
+        label.lineBreakMode = .byCharWrapping
         return label
     }()
     
@@ -54,18 +56,31 @@ final class ProfileView: UIView {
             imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
                                                
             nicknameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
-            nicknameLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            nicknameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            nicknameLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             
             contentLabel.topAnchor.constraint(equalTo: nicknameLabel.bottomAnchor, constant: 6),
-            contentLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+            contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 }
 
 extension ProfileView {
-    func setUp(nickname: String, content: String, filepath: String?) {
-        if let url = URL(string: filepath ?? "https://fitfty.s3.ap-northeast-2.amazonaws.com/fitfty_profile_dummy.png") {
-            imageView.kf.setImage(with: url)
+    func setUp(nickname: String, content: String, filepath: String?, refresh: Bool) {
+        if let filepath = filepath {
+            let url = URL(string: filepath)
+            if refresh {
+                imageView.kf.setImage(
+                    with: url,
+                    options: [.transition(.fade(0.5))]
+                )
+            } else {
+                imageView.kf.setImage(with: url)
+            }
+        } else {
+            imageView.image = CommonAsset.Images.profileDummy.image
         }
         nicknameLabel.text = nickname
         contentLabel.text = content
