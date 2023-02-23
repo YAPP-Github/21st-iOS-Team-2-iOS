@@ -272,7 +272,7 @@ private extension NicknameView {
         }
         
         enum FirstWarningLabel {
-            static let text = "6자 이상의 영문 혹은 영문과 숫자를 조합"
+            static let text = "1자 이상의 영문 혹은 영문과 숫자를 조합"
         }
         
         enum SecondWarningStackView {

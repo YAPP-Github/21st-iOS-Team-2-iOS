@@ -70,7 +70,7 @@ extension SettingCell {
     func setUp(item: Setting) {
         titleLabel.text = item.title
         separator.isHidden = !item.isNextPage
-        if item == .membershipWithdrawal {
+        if item == .membershipWithdrawl {
             titleLabel.textColor = .systemRed
         }
     }

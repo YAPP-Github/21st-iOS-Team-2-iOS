@@ -115,7 +115,7 @@ final class ContentCell: UICollectionViewCell {
         contentView.addSubviews(codyImageView, backgroundButton, uploadPhotoButton,
                                 contentTextView, guidanceLabel, tapView)
         NSLayoutConstraint.activate([
-            backgroundButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
+            backgroundButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 13),
             backgroundButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             backgroundButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             backgroundButton.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width*0.936),
@@ -125,7 +125,7 @@ final class ContentCell: UICollectionViewCell {
             tapView.trailingAnchor.constraint(equalTo: backgroundButton.trailingAnchor),
             tapView.heightAnchor.constraint(equalTo: backgroundButton.heightAnchor),
             
-            codyImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
+            codyImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 13),
             codyImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             codyImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             codyImageView.heightAnchor.constraint(equalTo: backgroundButton.heightAnchor),

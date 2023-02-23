@@ -111,4 +111,12 @@ extension PostInfoView {
         bookmarkLabel.text = bookmark.insertComma
     }
     
+    func setBookmarkCount(_ count: Int, _ currentIsSelected: Bool, _ isSelected: Bool) {
+        if currentIsSelected {
+            bookmarkLabel.text = isSelected ? String(count).insertComma : String(count-1).insertComma
+        } else {
+            bookmarkLabel.text = isSelected ? String(count+1).insertComma : String(count).insertComma
+        }
+    }
+    
 }
