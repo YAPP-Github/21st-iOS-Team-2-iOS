@@ -94,7 +94,7 @@ extension MainViewModel: MainViewModelInput {
                 self?.currentState.send(.isLoading(true))
                 self?.setUp(longitude: longitude, latitude: latitude)
                 self?._location.send((longitude, latitude))
-        }).store(in: &cancellables)
+            }).store(in: &cancellables)
         
         currentState.sink(receiveValue: { [weak self] state in
             switch state {
@@ -133,22 +133,19 @@ extension MainViewModel: MainViewModelInput {
     
     func didTapTag(_ tag: Tag) {
         updateTags(tag)
-        Task { [weak self] in
-            guard let self = self else {
-                return
-            }
+        Task {
             do {
-                let styles = self._currentStyles.value
-                let gender = self._currentGender.value ?? .female
-                let codyList = try await self.getCodyList(gender: gender, styles: styles)
+                let styles = _currentStyles.value
+                let gender = _currentGender.value ?? .female
+                let codyList = try await getCodyList(gender: gender, styles: styles)
                 currentState.send(.sections([
-                    MainFeedSection(sectionKind: .weather, items: self._weathers),
-                    self.configureTags(styles: styles, gender: gender),
-                    self.configureCodyList(codyList)
+                    MainFeedSection(sectionKind: .weather, items: _weathers),
+                    configureTags(styles: styles, gender: gender),
+                    configureCodyList(codyList)
                 ]))
             } catch {
                 Logger.debug(error: error, message: "코디 목록 가져오기 실패")
-                self.currentState.send(.errorMessage("코디 목록을 업데이트 하는데 알 수 없는 에러가 발생하여 실패하였습니다."))
+                currentState.send(.errorMessage("코디 목록을 업데이트 하는데 알 수 없는 에러가 발생하여 실패하였습니다."))
             }
         }
     }
@@ -158,48 +155,42 @@ extension MainViewModel: MainViewModelInput {
 private extension MainViewModel {
     
     func setUp(longitude: Double, latitude: Double) {
-        Task { [weak self] in
-            guard let self = self else {
-                return
-            }
+        Task {
             do {
-                let address = try await self.getAddress(longitude: longitude, latitude: latitude)
-                let tags = await self.getTags()
+                let address = try await getAddress(longitude: longitude, latitude: latitude)
+                let tags = await getTags()
                 let gender = tags.0
                 let styles = tags.1
-                let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
-                let codyList = try await self.getCodyList(gender: gender, styles: styles)
-                self.currentState.send(.currentLocation(address))
-                self.currentState.send(.sections([
-                    self.configureWeathers(weathers),
-                    self.configureTags(styles: styles, gender: gender),
-                    self.configureCodyList(codyList)
+                let weathers = try await getWeathers(longitude: longitude, latitude: latitude)
+                let codyList = try await getCodyList(gender: gender, styles: styles)
+                currentState.send(.currentLocation(address))
+                currentState.send(.sections([
+                    configureWeathers(weathers),
+                    configureTags(styles: styles, gender: gender),
+                    configureCodyList(codyList)
                 ]))
             } catch {
                 Logger.debug(error: error, message: "사용자 위치 및 날씨, 코디목록 가져오기 실패")
-                self.currentState.send(.errorMessage("현재 위치의 날씨 정보에 맞는 데이터를 가져오는데 알 수 없는 에러가 발생했습니다."))
+                currentState.send(.errorMessage("현재 위치의 날씨 정보에 맞는 데이터를 가져오는데 알 수 없는 에러가 발생했습니다."))
             }
         }
     }
     
     func update(longitude: Double, latitude: Double) {
-        Task { [weak self] in
-            guard let self = self else {
-                return
-            }
+        Task {
             do {
-                let styles = self._currentStyles.value
-                let gender = self._currentGender.value ?? .female
-                let codyList = try await self.getCodyList(gender: gender, styles: styles)
-                let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
-                self.currentState.send(.sections([
-                    self.configureWeathers(weathers),
-                    self.configureTags(styles: styles, gender: gender),
-                    self.configureCodyList(codyList)
+                let styles = _currentStyles.value
+                let gender = _currentGender.value ?? .female
+                let codyList = try await getCodyList(gender: gender, styles: styles)
+                let weathers = try await getWeathers(longitude: longitude, latitude: latitude)
+                currentState.send(.sections([
+                    configureWeathers(weathers),
+                    configureTags(styles: styles, gender: gender),
+                    configureCodyList(codyList)
                 ]))
             } catch {
                 Logger.debug(error: error, message: "사용자 위치 및 날씨, 코디목록 업데이트 실패")
-                self.currentState.send(.errorMessage("현재 위치의 날씨 정보에 맞는 데이터를 가져오는데 알 수 없는 에러가 발생했습니다."))
+                currentState.send(.errorMessage("현재 위치의 날씨 정보에 맞는 데이터를 가져오는데 알 수 없는 에러가 발생했습니다."))
             }
         }
     }

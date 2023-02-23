@@ -41,14 +41,11 @@ extension WelcomeViewModel: WelcomeViewModelInput {
     var input: WelcomeViewModelInput { self }
     
     func viewDidLoad() {
-        Task { [weak self] in
-            guard let self = self else {
-                return
-            }
+        Task {
             do {
                 let response = try await fitftyRepository.fetchMyInfo()
                 if let data = response.data {
-                    self.currentState.send(.nickName(data.nickname))
+                    currentState.send(.nickName(data.nickname))
                 } else {
                     Logger.debug(error: ViewModelError.failure(
                         errorCode: response.errorCode ?? "", message: response.message ?? ""
