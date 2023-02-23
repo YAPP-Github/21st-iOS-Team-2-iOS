@@ -85,10 +85,10 @@ final class ReportListCell: UITableViewCell {
     }
     
     @objc func didTapCheckbox(_ sender: Any?) {
-        if !checkBoxButton.isSelected {
-            checkBoxButton.setImage(CommonAsset.Images.btnCheckBoxSelected.image, for: .normal)
-        } else {
+        if checkBoxButton.isSelected {
             checkBoxButton.setImage(CommonAsset.Images.btnCheckBoxUnSelected.image, for: .normal)
+        } else {
+            checkBoxButton.setImage(CommonAsset.Images.btnCheckBoxSelected.image, for: .normal)
         }
     }
  
