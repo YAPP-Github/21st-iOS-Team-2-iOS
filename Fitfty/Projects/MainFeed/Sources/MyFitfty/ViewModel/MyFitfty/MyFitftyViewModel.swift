@@ -294,12 +294,12 @@ extension MyFitftyViewModel: MyFitftyViewModelInput {
                         currentState.send(.isLoading(false))
                     } else {
                         currentState.send(.isLoading(false))
-                        currentState.send(.errorMessage("프로필 조회에 알 수 없는 에러가 발생했습니다."))
+                        currentState.send(.errorMessage(MyFitftyError.failGetPost.localizedDescription))
                     }
                 } catch {
-                    Logger.debug(error: error, message: "작성했던 게시글 조회 실패")
+                    Logger.debug(error: error, message: MyFitftyError.failGetPost.localizedDescription)
                     currentState.send(.isLoading(false))
-                    currentState.send(.errorMessage("작성했던 게시글 조회에 알 수 없는 에러가 발생했습니다."))
+                    currentState.send(.errorMessage(MyFitftyError.failGetPost.localizedDescription))
                 }
             }
         }
@@ -431,7 +431,7 @@ private extension MyFitftyViewModel {
                 ], true))
             } catch {
                 Logger.debug(error: error, message: "사진 날씨정보 가져오기 실패")
-                self.currentState.send(.errorMessage("사진의 날씨 정보를 가져오는데 알 수 없는 에러가 발생했습니다."))
+                self.currentState.send(.errorMessage(MyFitftyError.noWeather.localizedDescription))
             }
         }
     }
@@ -472,7 +472,7 @@ private extension MyFitftyViewModel {
                             self.currentState.send(.completed(true))
                         } else {
                             self.currentState.send(.completed(false))
-                            self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
+                            self.currentState.send(.errorMessage(MyFitftyError.failUpload.localizedDescription))
                         }
 
                     case .modifyMyFitfty:
@@ -494,18 +494,18 @@ private extension MyFitftyViewModel {
                             self.currentState.send(.completed(true))
                         } else {
                             self.currentState.send(.completed(false))
-                            self.currentState.send(.errorMessage("핏프티 수정에 알 수 없는 에러가 발생했습니다."))
+                            self.currentState.send(.errorMessage(MyFitftyError.failModify.localizedDescription))
                         }
                     }
                 } else {
                     self.currentState.send(.completed(false))
-                    self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
+                    self.currentState.send(.errorMessage(MyFitftyError.failModify.localizedDescription))
                 }
                 self.currentState.send(.isLoading(false))
             } catch {
-                Logger.debug(error: error, message: "핏프티 등록 실패")
+                Logger.debug(error: error, message: MyFitftyError.failUpload.localizedDescription)
                 self.currentState.send(.isLoading(false))
-                self.currentState.send(.errorMessage("핏프티 등록에 알 수 없는 에러가 발생했습니다."))
+                self.currentState.send(.errorMessage(MyFitftyError.failUpload.localizedDescription))
             }
         }
     }
