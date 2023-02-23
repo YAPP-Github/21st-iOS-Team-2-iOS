@@ -7,11 +7,12 @@
 //
 
 import UIKit
+import MessageUI
+
 import Common
 import Core
 
 public final class SettingViewController: UIViewController {
-    
     private weak var coordinator: SettingCoordinatorInterface?
     private var viewModel: SettingViewModel
     
@@ -45,11 +46,9 @@ public final class SettingViewController: UIViewController {
         collectionView.delegate = self
         return collectionView
     }()
-    
 }
 
 private extension SettingViewController {
-    
     func setUp() {
         view.backgroundColor = .white
         setUpNavigationBar()
@@ -75,6 +74,15 @@ private extension SettingViewController {
     
     @objc func didTapBackButton(_ sender: UITapGestureRecognizer) {
         coordinator?.finished()
+    }
+    
+    func didTapAskHelp() {
+        if MFMailComposeViewController.canSendMail() {
+            let mailViewController = makeMailViewController()
+            self.present(mailViewController, animated: true, completion: nil)
+        } else {
+            self.showSendMailErrorAlert()
+        }
     }
     
     func setUpLayout() {
@@ -116,7 +124,7 @@ private extension SettingViewController {
         return section
     }
     
-    private func setUpDataSource() {
+    func setUpDataSource() {
         dataSource = UICollectionViewDiffableDataSource<SettingViewSection, Setting>(
             collectionView: collectionView,
             cellProvider: { collectionView, indexPath, item in
@@ -132,7 +140,7 @@ private extension SettingViewController {
         collectionView.dataSource = dataSource
     }
     
-    private func applySnapshot() {
+    func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<SettingViewSection, Setting>()
         snapshot.appendSections([.setting])
         if isAdmin {
@@ -145,7 +153,6 @@ private extension SettingViewController {
 }
 
 extension SettingViewController: UICollectionViewDelegate {
-    
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = dataSource?.itemIdentifier(for: indexPath) else {
             return
@@ -168,9 +175,39 @@ extension SettingViewController: UICollectionViewDelegate {
             
         case .postReport:
             coordinator?.showReportList(reportType: .postReport)
+
+        case .askHelp:
+            didTapAskHelp()
             
         default: break
         }
     }
+}
+
+extension SettingViewController: MFMailComposeViewControllerDelegate {
+    public func mailComposeController(_ controller: MFMailComposeViewController,
+                                      didFinishWith result: MFMailComposeResult,
+                                      error: Error?) {
+        controller.dismiss(animated: true)
+    }
     
+    private func makeMailViewController() -> MFMailComposeViewController {
+        let mailViewController = MFMailComposeViewController()
+        mailViewController.mailComposeDelegate = self
+        mailViewController.setToRecipients(["team.fitfty@gmail.com"])
+        mailViewController.setSubject("문의하기")
+        mailViewController.setMessageBody("서비스 이용에 어떤 문제가 있나요?", isHTML: false)
+        
+        return mailViewController
+    }
+    
+    private func showSendMailErrorAlert() {
+        let alertController = UIAlertController(title: "메일 전송 실패",
+                                                message: "아이폰 이메일 설정을 확인하고 다시 시도해주세요.",
+                                                preferredStyle: .alert)
+        let action = UIAlertAction(title: "확인", style: .default)
+        alertController.addAction(action)
+        
+        present(alertController, animated: true, completion: nil)
+    }
 }

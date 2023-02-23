@@ -76,7 +76,7 @@ public final class PersonalInfoViewController: UIViewController {
     }()
     
     private lazy var nicknameTextField: FitftyTextField = {
-        let textFiled = FitftyTextField(style: .normal, placeHolderText: "6자 이상의 영문 혹은 영문과 숫자를 조합")
+        let textFiled = FitftyTextField(style: .normal, placeHolderText: "1자 이상의 영문 혹은 영문과 숫자를 조합")
         textFiled.font = FitftyFont.appleSDSemiBold(size: 16).font
         textFiled.delegate = self
         return textFiled
@@ -359,7 +359,7 @@ extension PersonalInfoViewController: UICollectionViewDelegate {
                 self?.viewModel.logout()
             }
             
-        case .membershipWithdrawal:
+        case .membershipWithdrawl:
             viewModel.withdrawAccount()
             
         default: break
