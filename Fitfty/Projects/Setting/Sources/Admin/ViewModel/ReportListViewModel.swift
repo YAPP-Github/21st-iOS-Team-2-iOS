@@ -53,7 +53,7 @@ extension ReportListViewModel: ViewModelType {
     
 }
 
-extension ReportListViewModel {
+private extension ReportListViewModel {
     
     func getReportList() {
         Task { [weak self] in
@@ -63,29 +63,16 @@ extension ReportListViewModel {
             do {
                 switch reportType {
                 case .postReport:
-                    let response = try await self.fitftyRepository.getPostReportList()
-                    print(response)
-                    guard response.result == "SUCCESS",
-                          let data = response.data else {
+                    guard let data = try await getPostReportList() else {
                         return
                     }
-                    var cellModels = [ReportListCellModel]()
-                    for i in 0..<data.count {
-                        cellModels.append(ReportListCellModel.report(data[i].reportUserEmail, getKoreanDetailReport(data[i].type[0]), String(data[i].reportedCount+1), data[i].reportedBoardFilePath))
-                    }
-                    self.currentState.send(.sections([ReportListSection(sectionKind: .report, items: cellModels)]))
+                    self.currentState.send(.sections([ReportListSection(sectionKind: .report, items: getCellModels(data))]))
+                    
                 case .userReport:
-                    let response = try await self.fitftyRepository.getUserReportList()
-                    print(response)
-                    guard response.result == "SUCCESS",
-                          let data = response.data else {
+                    guard let data = try await getUserReportList() else {
                         return
                     }
-                    var cellModels = [ReportListCellModel]()
-                    for i in 0..<data.count {
-                        cellModels.append(ReportListCellModel.report(data[i].reportedUserEmail, getKoreanDetailReport(data[i].type[0]), String(data[i].reportedCount+1), nil))
-                    }
-                    self.currentState.send(.sections([ReportListSection(sectionKind: .report, items: cellModels)]))
+                    self.currentState.send(.sections([ReportListSection(sectionKind: .report, items: getCellModels(data))]))
                 }
             } catch {
                 Logger.debug(error: error, message: "신고 리스트 조회 실패")
@@ -94,7 +81,41 @@ extension ReportListViewModel {
         }
     }
     
-    private func getKoreanDetailReport(_ english: String) -> String {
+    func getPostReportList() async throws -> [PostReportListData]? {
+        let response = try await self.fitftyRepository.getPostReportList()
+        if response.result == "SUCCESS" {
+            return response.data
+        } else {
+            return nil
+        }
+    }
+    
+    func getUserReportList() async throws -> [UserReportListData]? {
+        let response = try await self.fitftyRepository.getUserReportList()
+        if response.result == "SUCCESS" {
+            return response.data
+        } else {
+            return nil
+        }
+    }
+    
+    func getCellModels(_ data: [PostReportListData]) -> [ReportListCellModel] {
+        var cellModels = [ReportListCellModel]()
+        for i in 0..<data.count {
+            cellModels.append(ReportListCellModel.report(data[i].reportUserEmail, getKoreanDetailReport(data[i].type[0]), String(data[i].reportedCount+1), data[i].reportedBoardFilePath))
+        }
+        return cellModels
+    }
+    
+    func getCellModels(_ data: [UserReportListData]) -> [ReportListCellModel] {
+        var cellModels = [ReportListCellModel]()
+        for i in 0..<data.count {
+            cellModels.append(ReportListCellModel.report(data[i].reportedUserEmail, getKoreanDetailReport(data[i].type[0]), String(data[i].reportedCount+1), nil))
+        }
+        return cellModels
+    }
+    
+    func getKoreanDetailReport(_ english: String) -> String {
         switch english {
         case "OBSCENE": return "음란성/선정성"
         case "WEATHER": return "날씨와맞지않음"
