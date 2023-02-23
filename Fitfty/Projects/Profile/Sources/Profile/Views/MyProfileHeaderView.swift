@@ -59,19 +59,14 @@ final class MyProfileHeaderView: UICollectionReusableView {
             backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18),
             
             profileView.topAnchor.constraint(equalTo: settingButton.bottomAnchor, constant: 12),
-            profileView.heightAnchor.constraint(equalToConstant: 173),
-            profileView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            profileView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            profileView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            profileView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            profileView.bottomAnchor.constraint(equalTo: menuView.topAnchor, constant: -24),
             
-            menuView.topAnchor.constraint(equalTo: profileView.bottomAnchor, constant: 20),
-            menuView.heightAnchor.constraint(equalToConstant: 72),
+            menuView.heightAnchor.constraint(equalToConstant: 32),
             menuView.leadingAnchor.constraint(equalTo: leadingAnchor),
             menuView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            spacingView.topAnchor.constraint(equalTo: menuView.bottomAnchor),
-            spacingView.heightAnchor.constraint(equalToConstant: 24),
-            spacingView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            spacingView.trailingAnchor.constraint(equalTo: trailingAnchor)
+            menuView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 }
