@@ -22,4 +22,5 @@ public struct UserData: Codable {
     public let phoneNumber: String?
     public let gender: String?
     public let birthday: String?
+    public let role: String
 }

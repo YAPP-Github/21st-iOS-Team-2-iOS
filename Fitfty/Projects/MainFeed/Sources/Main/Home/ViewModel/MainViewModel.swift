@@ -231,6 +231,11 @@ private extension MainViewModel {
             
         } else {
             let userPrivacy = try await self.getUserPrivacy()
+            if userPrivacy.data?.role == "ROLE_ADMIN" {
+                userManager.updateAdminState(true)
+            } else {
+                userManager.updateAdminState(false)
+            }
             let myUserToken = userPrivacy.data?.userToken
             return codyList
                 .map { ($0, $0.userToken == myUserToken ? .myProfile : .userProfile) }
