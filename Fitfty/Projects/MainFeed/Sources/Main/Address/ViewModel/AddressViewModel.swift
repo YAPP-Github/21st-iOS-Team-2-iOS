@@ -55,7 +55,7 @@ public final class AddressViewModel {
     }
     
     private func search(_ text: String) {
-        Task { [weak self] in
+        Task {
             do {
                 let addressList = try await addressRespository.fetchAddressList(search: text)
                 currentState.send(.isEmpty(addressList.isEmpty))
@@ -64,7 +64,7 @@ public final class AddressViewModel {
                 ]))
             } catch {
                 Logger.debug(error: error, message: "주소 검색 결과 가져오기 실패")
-                self?.currentState.send(.errorMessage("주소 검색 결과를 가져오다가 알 수 없는 에러가 발생했습니다."))
+                currentState.send(.errorMessage("주소 검색 결과를 가져오다가 알 수 없는 에러가 발생했습니다."))
             }
         }
     }
@@ -94,13 +94,13 @@ extension AddressViewModel: AddressViewModelInput {
     
     func didTapAddress(_ address: Address) {
         currentState.send(.isLoading(true))
-        Task { [weak self] in
+        Task {
             do {
                 let weather = try await weatherRepository.fetchWeatherNow(longitude: address.x, latitude: address.y)
                 currentState.send(.weather(weather: weather, address: address.formatted()))
             } catch {
                 Logger.debug(error: error, message: "현재 날씨 가져오기 실패")
-                self?.currentState.send(.errorMessage("주소에 해당하는 현재 날씨를 가져오다가 알 수 없는 에러가 발생했습니다."))
+                currentState.send(.errorMessage("주소에 해당하는 현재 날씨를 가져오다가 알 수 없는 에러가 발생했습니다."))
             }
             currentState.send(.isLoading(false))
             selectedAddress.send(address)

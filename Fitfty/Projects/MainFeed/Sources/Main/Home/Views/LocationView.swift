@@ -18,7 +18,7 @@ final class LocationView: UIStackView {
     private lazy var locationLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .preferredFont(for: .callout, weight: .semibold)
+        label.font = FitftyFont.appleSDSemiBold(size: 15).font
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -28,11 +28,12 @@ final class LocationView: UIStackView {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(
             font: .preferredFont(for: .subheadline, weight: .regular),
-            scale: .large
+            scale: .medium
         )
         button.setImage(UIImage(systemName: "chevron.down")?.withConfiguration(config), for: .normal)
         button.tintColor = .black
-        button.addTarget(self, action: #selector(didTapButton(_:)), for: .touchUpInside)
+        button.isUserInteractionEnabled = false
+        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return button
     }()
     
@@ -46,12 +47,8 @@ final class LocationView: UIStackView {
         axis = .horizontal
         alignment = .center
         distribution = .fill
-        spacing = 2
+        spacing = 3
         addArrangedSubviews(locationLabel, locationButton)
-    }
-    
-    @objc func didTapButton(_ sender: UIButton) {
-        print(#function)
     }
     
     func update(location: String) {

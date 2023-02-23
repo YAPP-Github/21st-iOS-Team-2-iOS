@@ -69,6 +69,7 @@ final class LocationConverter {
     }
     
     func grid(longitude: Double, latitude: Double) -> (x: Int, y: Int) {
+        let (longitude, latitude) = check(longitude: longitude, latitude: latitude)
         var ra: Double = tan(pi * 0.25 + latitude * degrad * 0.5)
         ra = re * sf / pow(ra, sn)
         var theta: Double = longitude * degrad - olon
@@ -82,5 +83,13 @@ final class LocationConverter {
         let x: Double = ra * sin(theta) + map.xCoordinate
         let y: Double = ro - ra * cos(theta) + map.yCoordinate
         return (Int(x + 1.5), Int(y + 1.5))
+    }
+    
+    private func check(longitude: Double, latitude: Double) -> (longitude: Double, latitude: Double) {
+        if longitude <= 130, longitude >= 127 && latitude <= 38, latitude >= 35 {
+            return (longitude, latitude)
+        } else {
+            return (LocationManager.Constant.defaultLongitude, LocationManager.Constant.defaultLatitude)
+        }
     }
 }

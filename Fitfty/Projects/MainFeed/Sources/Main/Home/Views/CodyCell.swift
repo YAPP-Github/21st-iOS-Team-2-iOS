@@ -139,7 +139,19 @@ extension CodyCell {
             switch state {
             case .cody(let cody):
                 if let url = URL(string: cody.filePath) {
-                    self?.codyImageView.kf.setImage(with: url)
+                    let processor = DownsamplingImageProcessor(
+                        size: CGSize(
+                            width: self?.codyImageView.bounds.size.width ?? 256,
+                            height: self?.codyImageView.bounds.size.height ?? 256
+                        )
+                    )
+                    self?.codyImageView.kf.setImage(
+                        with: url, options: [
+                            .processor(processor),
+                            .transition(.fade(0.5)),
+                            .scaleFactor(UIScreen.main.scale),
+                            .cacheOriginalImage
+                    ])
                 }
                 if let profileURL = cody.profilePictureUrl, let url = URL(string: profileURL) {
                     self?.profileImageView.kf.setImage(with: url)

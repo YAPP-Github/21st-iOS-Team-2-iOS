@@ -78,7 +78,10 @@ extension DefaultUserManager: UserManager {
         }
         localStorage.write(key: .currentLocation, value: addressDictionary)
         _location.send(
-            (Double(address.x) ?? 126.977829174031, Double(address.y) ?? 37.5663174209601)
+            (
+                Double(address.x) ?? LocationManager.Constant.defaultLongitude,
+                Double(address.y) ?? LocationManager.Constant.defaultLatitude
+            )
         )
     }
     
@@ -111,15 +114,31 @@ extension DefaultUserManager: UserManager {
     }
     
     public func fetchCurrentLocation() {
-        LocationManager.shared.currentLocation()
-            .compactMap { $0 }
-            .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
-            .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
-                self?._location.send((longitude, latitude))
-            }).store(in: &cancellables)
-        Task {
-            _guestState.send(await SessionManager.shared.checkUserSession())
+        if let location =  localStorage.read(key: .currentLocation) as? [String: Any] {
+            let x = Double(
+                location["x"] as? String ?? LocationManager.Constant.defaultLongitude.description
+            ) ?? LocationManager.Constant.defaultLongitude
+            let y = Double(
+                location["y"] as? String ?? LocationManager.Constant.defaultLatitude.description
+            ) ?? LocationManager.Constant.defaultLatitude
+            _location.send((x, y))
+        } else {
+            LocationManager.shared.currentLocation()
+                .compactMap { $0 }
+                .map { ($0.coordinate.longitude, $0.coordinate.latitude )}
+                .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                    self?._location.send((longitude, latitude))
+                }).store(in: &cancellables)
         }
+        guard let identifier = UserDefaults.standard.read(key: .userIdentifier) as? String,
+              let account = UserDefaults.standard.read(key: .userAccount) as? String,
+              Keychain.loadData(serviceIdentifier: identifier, forKey: account) != nil else {
+            Logger.debug(error: SocialLoginError.noToken, message: "No Token")
+            _guestState.send(true)
+            return
+        }
+        _guestState.send(false)
+        
     }
  
 }
