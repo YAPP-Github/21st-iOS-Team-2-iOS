@@ -182,6 +182,8 @@ private extension MyFitftyViewController {
             button.tintColor = .black
             button.setPreferredSymbolConfiguration(.init(scale: .medium), forImageIn: .normal)
             button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
+            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -20, bottom: 0, right: 0)
             return button
         }()
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
@@ -419,7 +421,7 @@ extension MyFitftyViewController {
     private func contentSectionLayout() -> NSCollectionLayoutSection? {
         let layoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+55+64)
+            heightDimension: .absolute(UIScreen.main.bounds.width*0.936+13+40+64)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(

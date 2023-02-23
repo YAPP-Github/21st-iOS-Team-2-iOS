@@ -25,8 +25,8 @@ final class UserProfileHeaderView: UICollectionReusableView {
         addSubviews(profileView)
         NSLayoutConstraint.activate([
             profileView.topAnchor.constraint(equalTo: topAnchor, constant: 29),
-            profileView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            profileView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            profileView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            profileView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             profileView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
