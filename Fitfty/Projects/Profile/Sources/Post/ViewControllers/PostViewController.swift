@@ -114,6 +114,13 @@ final public class PostViewController: UIViewController {
                     self?.showAlert(message: message)
                 case .isLoading(let isLoading):
                     isLoading ? self?.loadingIndicatorView.startAnimating() : self?.loadingIndicatorView.stopAnimating()
+                case .bookmark(let currentIsSelected, let isSelected, let bookmarkCount):
+                    guard let isSelected = isSelected,
+                          let bookmarkCount = bookmarkCount,
+                          let currentIsSelected = currentIsSelected else {
+                        return
+                    }
+                    self?.postView.setBookmarkCount(count: bookmarkCount, currentIsSelected: currentIsSelected, isSelected: isSelected)
                 }
             }).store(in: &cancellables)
     }

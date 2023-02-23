@@ -109,11 +109,10 @@ private extension ProfileSettingViewController {
                     self?.introductionTextField.text = text
                     
                 case .updateProfileImage(let imageString):
-                    self?.profileImageView.kf.indicatorType = .activity
                     if let url = URL(string: imageString ?? "") {
                         self?.profileImageView.kf.setImage(
                             with: url,
-                            options: [.forceRefresh]
+                            options: [.transition(.fade(0.5))]
                         )
                     }
                     
