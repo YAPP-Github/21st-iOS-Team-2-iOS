@@ -32,6 +32,10 @@ public final class ProfileSettingViewModel: ViewModelType {
     }
     
     func didTapSaveButton(message: String?) {
+        guard checkAvailableMessage(message) else {
+            return
+        }
+        
         Task {
             do {
                 var url: String?
@@ -68,6 +72,7 @@ public final class ProfileSettingViewModel: ViewModelType {
 
 extension ProfileSettingViewModel {    
     private func saveUserProfile(imageUrl: String?, message: String?) {
+        let message = message?.isEmpty == true ? nil : message
         Task {
             do {
                 try await repository.updateUserProfile(profilePictureUrl: imageUrl, message: message)
@@ -77,6 +82,14 @@ extension ProfileSettingViewModel {
                 currentState.send(.showErrorAlert(error))
             }
         }
+    }
+    
+    private func checkAvailableMessage(_ message: String?) -> Bool {
+        guard message?.count ?? 0 <= 30 else {
+            currentState.send(.showErrorAlert(SettingError.tooManyMessage))
+            return false
+        }
+        return true
     }
     
     private func filenameFromFilepath(_ filepath: String?) -> String? {
