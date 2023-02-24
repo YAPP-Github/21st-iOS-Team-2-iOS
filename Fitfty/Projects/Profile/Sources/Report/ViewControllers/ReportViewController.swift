@@ -74,11 +74,8 @@ final public class ReportViewController: UIViewController {
                 case .errorMessage(let message):
                     self?.showAlert(message: message)
                     
-                case .completed(let isCompleted):
-                    guard isCompleted else {
-                        return
-                    }
-                    let message = self?.reportPresentType == .userReport ? "계정" : "게시글"
+                case .completed(let reportType):
+                    let message = reportType == .userReport ? "계정" : "게시글"
                     let alert = UIAlertController(title: "", message: "\(message) 가리기를 완료했어요.", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "메인 화면으로 돌아가기", style: .default, handler: { _ in
                         self?.coordinator.popToRoot()
@@ -100,13 +97,14 @@ final public class ReportViewController: UIViewController {
         case .userReport:
             myPostBottomSheetView.setUpUserProfile()
             myPostBottomSheetView.setActionFirstButton(self, action: #selector(didTapUserReportButton))
-            myPostBottomSheetView.setActionSecondButton(self, action: #selector(didTapBlockButton))
+            myPostBottomSheetView.setActionSecondButton(self, action: #selector(didTapUserBlockButton))
             
         case .postUserReport:
             myPostBottomSheetView.setUpUserPost()
             myPostBottomSheetView.setActionFirstButton(self, action: #selector(didTapUserReportButton))
             myPostBottomSheetView.setActionSecondButton(self, action: #selector(didTapPostReportButton))
-            myPostBottomSheetView.setActionThirdButton(self, action: #selector(didTapBlockButton))
+            myPostBottomSheetView.setActionThirdButton(self, action: #selector(didTapPostBlockButton))
+            myPostBottomSheetView.setActionFourthButton(self, action: #selector(didTapUserBlockButton))
         }
     
     }
@@ -119,8 +117,12 @@ final public class ReportViewController: UIViewController {
         coordinator.showDetailReport(.postReport, userToken: userToken, boardToken: boardToken)
     }
     
-    @objc func didTapBlockButton(_ sender: Any?) {
-        viewModel.input.didTapBlockButton()
+    @objc func didTapUserBlockButton(_ sender: Any?) {
+        viewModel.input.didTapBlockButton(.userReport)
+    }
+    
+    @objc func didTapPostBlockButton(_ sender: Any?) {
+        viewModel.input.didTapBlockButton(.postReport)
     }
     
 }

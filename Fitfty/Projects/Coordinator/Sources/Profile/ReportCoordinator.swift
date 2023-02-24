@@ -58,7 +58,6 @@ private extension ReportCoordinator {
                 userManager: DefaultUserManager.shared,
                 userToken: userToken,
                 boardToken: boardToken,
-                reportType: reportPresentType == .userReport ? .userReport : .postReport,
                 fitftyRepository: DefaultFitftyRepository()
             ),
             reportPresentType: reportPresentType,
