@@ -74,14 +74,11 @@ final public class ReportViewController: UIViewController {
                 case .errorMessage(let message):
                     self?.showAlert(message: message)
                     
-                case .completed(let reportType):
-                    let message = reportType == .userReport ? "계정" : "게시글"
-                    let alert = UIAlertController(title: "", message: "\(message) 가리기를 완료했어요.", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "메인 화면으로 돌아가기", style: .default, handler: { _ in
-                        self?.coordinator.popToRoot()
-                    }))
-                    self?.present(alert, animated: true)
-                    
+                case .completed(let completed):
+                    guard completed else {
+                        return
+                    }
+                    self?.coordinator.popToRoot()
                 }
             }).store(in: &cancellables)
     }
@@ -109,6 +106,21 @@ final public class ReportViewController: UIViewController {
     
     }
     
+    private func showBlockAlert(_ reportType: ReportType) {
+        let message = reportType == .userReport ? "계정" : "게시글"
+        let alert = UIAlertController(title: "정말 이 \(message)을 차단할까요?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "취소", style: .default))
+        alert.addAction(UIAlertAction(title: "차단하기", style: .default, handler: { _ in
+            switch reportType {
+            case .userReport:
+                self.viewModel.input.didTapBlockButton(.userReport)
+            case .postReport:
+                self.viewModel.input.didTapBlockButton(.postReport)
+            }
+        }))
+        present(alert, animated: true)
+    }
+    
     @objc func didTapUserReportButton(_ sender: Any?) {
         coordinator.showDetailReport(.userReport, userToken: userToken, boardToken: boardToken)
     }
@@ -118,11 +130,11 @@ final public class ReportViewController: UIViewController {
     }
     
     @objc func didTapUserBlockButton(_ sender: Any?) {
-        viewModel.input.didTapBlockButton(.userReport)
+        showBlockAlert(.userReport)
     }
     
     @objc func didTapPostBlockButton(_ sender: Any?) {
-        viewModel.input.didTapBlockButton(.postReport)
+        showBlockAlert(.postReport)
     }
     
 }

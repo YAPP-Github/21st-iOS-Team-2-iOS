@@ -58,7 +58,7 @@ extension ReportViewModel: ViewModelType {
     
     public enum ViewModelState {
         case errorMessage(String)
-        case completed(ReportType)
+        case completed(Bool)
     }
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
@@ -83,7 +83,6 @@ private extension ReportViewModel {
                     guard response.result == "SUCCESS" else {
                         return
                     }
-                    currentState.send(.completed(.postReport))
                     
                 case .userReport:
                     guard let userToken = userToken else {
@@ -97,8 +96,8 @@ private extension ReportViewModel {
                     guard response.result == "SUCCESS" else {
                         return
                     }
-                    currentState.send(.completed(.userReport))
                 }
+                currentState.send(.completed(true))
                 
             } catch {
                 Logger.debug(error: error, message: "신고하기 실패")
