@@ -78,6 +78,7 @@ public final class PersonalInfoViewModel: ViewModelType {
                                           nickname: response.data?.nickname,
                                           birtyday: response.data?.birthday,
                                           gender: response.data?.gender)
+                
                 currentState.send(.updateUserPrivacy(userPrivacy: userPrivacy))
             } catch {
                 currentState.send(.showErrorAlert(error))
@@ -126,6 +127,7 @@ private extension PersonalInfoViewModel {
                 try await repository.updateUserPrivacy(nickname: nickname,
                                                        birthday: birthday,
                                                        gender: gender)
+                DefaultUserManager.shared.updateGender(Gender(rawValue: gender) ?? .female)
                 currentState.send(.popView)
             } catch {
                 currentState.send(.showErrorAlert(error))
