@@ -13,5 +13,6 @@ public protocol ReportCoordinatorInterface: AnyObject {
     
     func showDetailReport(_ reportType: ReportType, userToken: String?, boardToken: String?)
     func dismiss()
+    func popToRoot()
     
 }
