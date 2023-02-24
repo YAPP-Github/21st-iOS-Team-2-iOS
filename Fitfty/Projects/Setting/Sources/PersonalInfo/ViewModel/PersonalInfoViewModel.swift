@@ -50,16 +50,6 @@ public final class PersonalInfoViewModel: ViewModelType {
     }
     
     func didTapSaveButton(nickname: String?, birthday: String?) {
-        guard let nickname = nickname else {
-            currentState.send(.showErrorAlert(SettingError.noNickname))
-            return
-        }
-        
-        guard let birthday = birthday else {
-            currentState.send(.showErrorAlert(SettingError.noBirthday))
-            return
-        }
-        
         checkAvailableNickname(nickname)
         checkAvailableBirthday(birthday)
         
@@ -143,20 +133,20 @@ private extension PersonalInfoViewModel {
         }
     }
     
-    func checkAvailableNickname(_ nickname: String) {
+    func checkAvailableNickname(_ nickname: String?) {
         self.userPrivacy.nickname = nickname
         let regex = "^[0-9a-zA-Z._]{1,30}$"
-        if nickname.range(of: regex, options: .regularExpression) != nil {
+        if nickname?.range(of: regex, options: .regularExpression) != nil {
             hasAvailableNickname = true
         } else {
             hasAvailableNickname = false
         }
     }
     
-    func checkAvailableBirthday(_ birthday: String) {
+    func checkAvailableBirthday(_ birthday: String?) {
         self.userPrivacy.birtyday = birthday
         let regex = "^[0-9]{6}$"
-        if birthday.range(of: regex, options: .regularExpression) != nil {
+        if birthday?.range(of: regex, options: .regularExpression) != nil {
             hasAvailableBirthday = true
         } else {
             hasAvailableBirthday = false
