@@ -19,6 +19,8 @@ protocol MainViewModelInput {
     
     func refresh()
     
+    func reload()
+    
     func didTapTag(_ tag: Tag)
 }
 
@@ -46,10 +48,6 @@ public final class MainViewModel {
     private var _currentGender: CurrentValueSubject<Gender?, Never> = .init(nil)
     
     private var _weathers: [MainCellModel] = []
-    private var myUserToken: String?
-    private var isGuest: Bool {
-           userManager.getCurrentGuestState()
-    }
 
     public init(
         addressRepository: AddressRepository,
@@ -90,11 +88,13 @@ extension MainViewModel: MainViewModelInput {
     func viewDidLoad() {
         userManager.location
             .compactMap { $0 }
+            .removeDuplicates(by: { $0.latitude == $1.latitude && $0.longitude == $1.longitude })
             .sink(receiveValue: { [weak self] (longitude: Double, latitude: Double) in
+                self?.weatherRepository.reset()
                 self?.currentState.send(.isLoading(true))
-                self?.update(longitude: longitude, latitude: latitude)
+                self?.setUp(longitude: longitude, latitude: latitude)
                 self?._location.send((longitude, latitude))
-        }).store(in: &cancellables)
+            }).store(in: &cancellables)
         
         currentState.sink(receiveValue: { [weak self] state in
             switch state {
@@ -116,45 +116,36 @@ extension MainViewModel: MainViewModelInput {
         else {
             return
         }
+        update(longitude: longitude, latitude: latitude)
+        LocationManager.shared.requestLocation()
+    }
+    
+    func reload() {
+        guard case .isLoading(let isLoading) = currentState.value, isLoading == false,
+              let longitude = _location.value.longitude, let latitude = _location.value.latitude
+        else {
+            return
+        }
         currentState.send(.isLoading(true))
         update(longitude: longitude, latitude: latitude)
+        LocationManager.shared.requestLocation()
     }
     
     func didTapTag(_ tag: Tag) {
         updateTags(tag)
-        Task { [weak self] in
-            guard let self = self else {
-                return
-            }
+        Task {
             do {
-                let styles = self._currentStyles.value
-                let gender = self._currentGender.value ?? .female
-                let codyList = try await self.getCodyList(gender: gender, styles: styles)
-                let profileTypes: [ProfileType]
-                var list: [(CodyResponse, ProfileType)] = []
-                
-                if self.isGuest {
-                    profileTypes = Array(repeating: .userProfile, count: codyList.count)
-                    for i in 0..<codyList.count {
-                        list.append((codyList[i], profileTypes[i]))
-                    }
-                } else {
-                    let userPrivacy = try await self.getUserPrivacy()
-                    self.myUserToken = userPrivacy.data?.userToken
-                    
-                    for i in 0..<codyList.count {
-                        list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
-                    }
-                    
-                }
+                let styles = _currentStyles.value
+                let gender = _currentGender.value ?? .female
+                let codyList = try await getCodyList(gender: gender, styles: styles)
                 currentState.send(.sections([
-                    MainFeedSection(sectionKind: .weather, items: self._weathers),
-                    self.configureTags(styles: styles, gender: gender),
-                    self.configureCodyList(list)
+                    MainFeedSection(sectionKind: .weather, items: _weathers),
+                    configureTags(styles: styles, gender: gender),
+                    configureCodyList(codyList)
                 ]))
             } catch {
-                Logger.debug(error: error, message: "코디 목록 가져오기 실패")
-                self.currentState.send(.errorMessage("코디 목록을 업데이트 하는데 알 수 없는 에러가 발생하여 실패하였습니다."))
+                Logger.debug(error: error, message: MainFeedError.codyLoadFailed.errorDescription ?? "")
+                currentState.send(.errorMessage(MainFeedError.codyLoadFailed.userGuideErrorMessage))
             }
         }
     }
@@ -163,43 +154,43 @@ extension MainViewModel: MainViewModelInput {
 
 private extension MainViewModel {
     
-    func update(longitude: Double, latitude: Double) {
-        Task { [weak self] in
-            guard let self = self else {
-                return
-            }
+    func setUp(longitude: Double, latitude: Double) {
+        Task {
             do {
-                let address = try await self.getAddress(longitude: longitude, latitude: latitude)
-                let tags = await self.getTags()
+                let address = try await getAddress(longitude: longitude, latitude: latitude)
+                let tags = await getTags()
                 let gender = tags.0
                 let styles = tags.1
-                let weathers = try await self.getWeathers(longitude: longitude, latitude: latitude)
-                let codyList = try await self.getCodyList(gender: gender, styles: styles)
-                let profileTypes: [ProfileType]
-                var list: [(CodyResponse, ProfileType)] = []
-                
-                if self.isGuest {
-                    profileTypes = Array(repeating: .userProfile, count: codyList.count)
-                    for i in 0..<codyList.count {
-                        list.append((codyList[i], profileTypes[i]))
-                    }
-                } else {
-                    let userPrivacy = try await self.getUserPrivacy()
-                    self.myUserToken = userPrivacy.data?.userToken
-                    for i in 0..<codyList.count {
-                        list.append((codyList[i], codyList[i].userToken == self.myUserToken ? .myProfile : .userProfile))
-                    }
-                }
-                self.currentState.send(.currentLocation(address))
-                self.currentState.send(.sections([
-                    self.configureWeathers(weathers),
-                    self.configureTags(styles: styles, gender: gender),
-                    self.configureCodyList(list)
+                let weathers = try await getWeathers(longitude: longitude, latitude: latitude)
+                let codyList = try await getCodyList(gender: gender, styles: styles)
+                currentState.send(.currentLocation(address))
+                currentState.send(.sections([
+                    configureWeathers(weathers),
+                    configureTags(styles: styles, gender: gender),
+                    configureCodyList(codyList)
                 ]))
-            
             } catch {
-                Logger.debug(error: error, message: "사용자 위치 및 날씨 가져오기 실패")
-                self.currentState.send(.errorMessage("현재 위치의 날씨 정보를 가져오는데 알 수 없는 에러가 발생했습니다."))
+                Logger.debug(error: error, message: MainFeedError.setUpFailed.errorDescription ?? "")
+                currentState.send(.errorMessage(MainFeedError.setUpFailed.userGuideErrorMessage))
+            }
+        }
+    }
+    
+    func update(longitude: Double, latitude: Double) {
+        Task {
+            do {
+                let styles = _currentStyles.value
+                let gender = _currentGender.value ?? .female
+                let codyList = try await getCodyList(gender: gender, styles: styles)
+                let weathers = try await getWeathers(longitude: longitude, latitude: latitude)
+                currentState.send(.sections([
+                    configureWeathers(weathers),
+                    configureTags(styles: styles, gender: gender),
+                    configureCodyList(codyList)
+                ]))
+            } catch {
+                Logger.debug(error: error, message: MainFeedError.updateFailed.errorDescription ?? "")
+                currentState.send(.errorMessage(MainFeedError.updateFailed.userGuideErrorMessage))
             }
         }
     }
@@ -227,14 +218,28 @@ private extension MainViewModel {
         return shortTermForecast
     }
     
-    func getCodyList(gender: Gender?, styles: [StyleTag]?) async throws -> [CodyResponse] {
+    func getCodyList(gender: Gender?, styles: [StyleTag]?) async throws -> [(CodyResponse, ProfileType)] {
         let tag = WeatherTag(temp: _currentAverageTemp.value)
         let response = try await fitftyRepository.fetchCodyList(weather: tag, gender: gender, styles: styles)
         guard let codyList = response.data?.pictureDetailInfoList else {
-            Logger.debug(error: FitftyAPIError.notFound(response.message), message: "코디 목록 조회 실패")
+            Logger.debug(error: FitftyAPIError.notFound(response.message), message: MainFeedError.codyLoadFailed.errorDescription ?? "")
             return []
         }
-        return codyList
+        if userManager.getCurrentGuestState() {
+            return codyList
+                .map { ($0, .userProfile) }
+            
+        } else {
+            let userPrivacy = try await self.getUserPrivacy()
+            if userPrivacy.data?.role == "ROLE_ADMIN" {
+                userManager.updateAdminState(true)
+            } else {
+                userManager.updateAdminState(false)
+            }
+            let myUserToken = userPrivacy.data?.userToken
+            return codyList
+                .map { ($0, $0.userToken == myUserToken ? .myProfile : .userProfile) }
+        }
     }
     
     func getUserPrivacy() async throws -> UserPrivacyResponse {
@@ -256,9 +261,7 @@ private extension MainViewModel {
                         userManager.updateGender(data.gender)
                         userManager.updateGuestState(false)
                     } else {
-                        Logger.debug(error: ViewModelError.failure(
-                            errorCode: response.errorCode ?? "", message: response.message ?? ""
-                        ), message: "태그 설정 조회 실패")
+                        Logger.debug(error: MainFeedError.tagLoadFailed, message: MainFeedError.tagLoadFailed.errorDescription ?? "")
                         continuation.resume(returning: (.female, []))
                     }
                 } catch {

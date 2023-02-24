@@ -69,4 +69,5 @@ enum CoordinatorType {
     case onboarding
     case detailReport
     case report
+    case reportList
 }
