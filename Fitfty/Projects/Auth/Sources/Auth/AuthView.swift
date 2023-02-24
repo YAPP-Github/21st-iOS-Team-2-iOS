@@ -14,7 +14,7 @@ final class AuthView: UIView {
     private let logoImageView = UIImageView()
     private let snsLabel = UILabel()
     private let snsImageStackView = UIStackView()
-    private let acceptPrivacyLabel = UILabel()
+    private let acceptPrivacyTextView = LinksTextView()
     private let kakaoButton = UIButton()
     private let appleButton = UIButton()
     private let enterWithoutLoginButton = UIButton()
@@ -47,11 +47,15 @@ final class AuthView: UIView {
         loginProblemButton.addTarget(target, action: action, for: .touchUpInside)
     }
     
+    func setAcceptPrivacyTextViewLinkAction(tapLink: @escaping (URL) -> Bool) {
+        acceptPrivacyTextView.onLinkTap = tapLink
+    }
+    
     private func configure() {
         configureLogoImageView()
         configureLoginProblemButton()
         configureEnterButtonWithoutLogin()
-        configureAcceptPrivacyLabel()
+        configureAcceptPrivacyTextView()
         configureSnsImageStackView()
         configureSnsLabel()
     }
@@ -100,23 +104,30 @@ final class AuthView: UIView {
         enterWithoutLoginButton.layer.borderWidth = Style.EnterWithoutLoginButton.borderWidth
     }
     
-    private func configureAcceptPrivacyLabel() {
-        addSubviews(acceptPrivacyLabel)
+    private func configureAcceptPrivacyTextView() {
+        addSubviews(acceptPrivacyTextView)
         NSLayoutConstraint.activate([
-            acceptPrivacyLabel.bottomAnchor.constraint(equalTo: enterWithoutLoginButton.topAnchor,
-                                                      constant: -Style.AcceptPrivacyLabel.margin),
-            acceptPrivacyLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+            acceptPrivacyTextView.bottomAnchor.constraint(equalTo: enterWithoutLoginButton.topAnchor,
+                                                      constant: -Style.AcceptPrivacyTextView.margin),
+            acceptPrivacyTextView.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
+
+        let termsOfUse = Style.AcceptPrivacyTextView.termsOfUse
+        let privacy = Style.AcceptPrivacyTextView.privacy
         
-        acceptPrivacyLabel.text = Style.AcceptPrivacyLabel.text
-        acceptPrivacyLabel.font = Style.AcceptPrivacyLabel.font
-        acceptPrivacyLabel.textColor = Style.AcceptPrivacyLabel.textColor.color
+        acceptPrivacyTextView.font = Style.AcceptPrivacyTextView.font
+        acceptPrivacyTextView.textColor = Style.AcceptPrivacyTextView.textColor.color
+        acceptPrivacyTextView.text = "서비스 가입 시 \(termsOfUse) 및 \(privacy)에 동의하게 돼요."
+        acceptPrivacyTextView.addLinks([
+            termsOfUse: Style.AcceptPrivacyTextView.termsOfUseLink,
+            privacy: Style.AcceptPrivacyTextView.privacyLink
+        ])
     }
     
     private func configureSnsImageStackView() {
         addSubviews(snsImageStackView)
         NSLayoutConstraint.activate([
-            snsImageStackView.bottomAnchor.constraint(equalTo: acceptPrivacyLabel.topAnchor,
+            snsImageStackView.bottomAnchor.constraint(equalTo: acceptPrivacyTextView.topAnchor,
                                                       constant: -Style.SnsImageStackView.margin),
             snsImageStackView.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
@@ -189,9 +200,13 @@ private extension AuthView {
             static let title = "둘러보기"
         }
         
-        enum AcceptPrivacyLabel {
+        enum AcceptPrivacyTextView {
             static let margin: CGFloat = 20
             static let text = "서비스 가입 시 이용약관 및 개인정보취급방침에 동의하게 돼요."
+            static let privacy = "개인정보이용방침"
+            static let privacyLink = "https://maze-mozzarella-6e5.notion.site/ed1e98c3fee5417b89f85543f4a398d2"
+            static let termsOfUse = "이용약관"
+            static let termsOfUseLink = "https://maze-mozzarella-6e5.notion.site/dd559e6017ee499fa569148b8621966d"
             static let textColor = CommonAsset.Colors.gray04
             static let font = FitftyFont.appleSDBold(size: 12).font
         }
