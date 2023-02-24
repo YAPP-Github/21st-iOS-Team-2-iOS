@@ -28,6 +28,7 @@ final class SettingCoordinator: Coordinator {
     
     func start() {
         let viewController = makeSettingViewController()
+        viewController.hidesBottomBarWhenPushed = true
         navigationController.navigationBar.prefersLargeTitles = true
         navigationController.pushViewController(viewController, animated: true)
     }
