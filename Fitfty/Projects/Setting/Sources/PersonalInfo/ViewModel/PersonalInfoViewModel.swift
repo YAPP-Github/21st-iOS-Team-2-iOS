@@ -134,7 +134,7 @@ private extension PersonalInfoViewModel {
     }
     
     func checkAvailableNickname(_ nickname: String?) {
-        self.userPrivacy.nickname = nickname
+        userPrivacy.nickname = nickname
         let regex = "^[0-9a-zA-Z._]{1,30}$"
         if nickname?.range(of: regex, options: .regularExpression) != nil {
             hasAvailableNickname = true
@@ -144,7 +144,13 @@ private extension PersonalInfoViewModel {
     }
     
     func checkAvailableBirthday(_ birthday: String?) {
-        self.userPrivacy.birtyday = birthday
+        if birthday?.isEmpty == true {
+            userPrivacy.birtyday = nil
+            hasAvailableBirthday = true
+            return
+        }
+        
+        userPrivacy.birtyday = birthday
         let regex = "^[0-9]{6}$"
         if birthday?.range(of: regex, options: .regularExpression) != nil {
             hasAvailableBirthday = true
