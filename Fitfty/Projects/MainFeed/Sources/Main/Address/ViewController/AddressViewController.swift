@@ -24,6 +24,14 @@ public final class AddressViewController: UIViewController {
         bind()
     }
     
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if LocationManager.shared.currentAuthorizationStatus == .denied {
+            showRequestLocationPermission()
+        }
+        LocationManager.shared.requestWhenInUseAuthorization()
+    }
+    
     public init(coordinator: AddressCoordinatorInterface, viewModel: AddressViewModel) {
         self.coordinator = coordinator
         self.viewModel = viewModel
@@ -75,7 +83,7 @@ public final class AddressViewController: UIViewController {
     }()
     
     private lazy var buttonStackView: UIStackView = {
-        let stackView = UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually, spacing: 8)
+        let stackView = UIStackView(axis: .horizontal, alignment: .fill, distribution: .fill, spacing: 8)
         stackView.backgroundColor = .white
         stackView.addArrangedSubviews(backButton, selectButton)
         stackView.alpha = 0
@@ -83,13 +91,18 @@ public final class AddressViewController: UIViewController {
     }()
     
     private lazy var selectButton: FitftyButton = {
-        let button = FitftyButton(style: .enabled, title: "선택")
+        let button = FitftyButton(style: .enabled, title: "변경")
+        button.widthAnchor.constraint(equalToConstant: 194).isActive = true
         button.addTarget(self, action: #selector(didTapSelectButton(_:)), for: .touchUpInside)
         return button
     }()
     
     private lazy var backButton: FitftyButton = {
         let button = FitftyButton(style: .enabled, title: "뒤로가기")
+        button.setTitleColor(CommonAsset.Colors.gray05.color, for: .normal)
+        button.backgroundColor = .white
+        button.layer.borderColor = CommonAsset.Colors.gray02.color.cgColor
+        button.layer.borderWidth = 1
         button.addTarget(self, action: #selector(didTapBackButton(_:)), for: .touchUpInside)
         return button
     }()
@@ -293,6 +306,22 @@ private extension AddressViewController {
             self?.searchController.searchBar.alpha = 0
             self?.view.layoutIfNeeded()
         }, completion: nil)
+    }
+    
+    private func showRequestLocationPermission() {
+        let alert = UIAlertController(
+            title: "",
+            message: """
+                     위치 권한을 허용해주시면,
+                     실시간 위치를 기준으로 날씨 및 코디추천을 받아보실 수 있어요.
+                     """,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "닫기", style: .cancel))
+        alert.addAction(UIAlertAction(title: "설정으로 이동", style: .default, handler: { _ in
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+        }))
+        present(alert, animated: true)
     }
 }
 

@@ -10,12 +10,15 @@ import UIKit
 import MessageUI
 
 import Common
+import Core
 
 public final class SettingViewController: UIViewController {
     private weak var coordinator: SettingCoordinatorInterface?
     private var viewModel: SettingViewModel
     
     private var dataSource: UICollectionViewDiffableDataSource<SettingViewSection, Setting>?
+    
+    private let isAdmin = DefaultUserManager.shared.getAdminState()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -141,7 +144,11 @@ private extension SettingViewController {
     func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<SettingViewSection, Setting>()
         snapshot.appendSections([.setting])
-        snapshot.appendItems(Setting.settings())
+        if isAdmin {
+            snapshot.appendItems(Setting.adminSettings())
+        } else {
+            snapshot.appendItems(Setting.userSettings())
+        }
         dataSource?.apply(snapshot)
     }
 }
@@ -164,6 +171,12 @@ extension SettingViewController: UICollectionViewDelegate {
         case .privacyRule:
             coordinator?.showPrivacyRule()
             
+        case .userReport:
+            coordinator?.showReportList(reportType: .userReport)
+            
+        case .postReport:
+            coordinator?.showReportList(reportType: .postReport)
+
         case .askHelp:
             didTapAskHelp()
             

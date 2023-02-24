@@ -13,7 +13,7 @@ public final class TabBarController: UITabBarController {
     public init() {
         super.init(nibName: nil, bundle: nil)
         object_setClass(self.tabBar, TabBar.self)
-        self.tabBar.backgroundColor = .white
+        applyShadow()
     }
     
     required init?(coder: NSCoder) {
@@ -25,6 +25,13 @@ public final class TabBarController: UITabBarController {
         override func sizeThatFits(_ size: CGSize) -> CGSize {
             return CGSize(width: UIScreen.main.bounds.width, height: 96)
         }
+    }
+    
+    private func applyShadow() {
+        tabBar.layer.shadowColor = UIColor.black.cgColor
+        tabBar.layer.shadowOpacity = 0.3
+        tabBar.layer.shadowOffset = CGSize(width: 0, height: 0)
+        tabBar.layer.shadowRadius = 0.33
     }
     
 }

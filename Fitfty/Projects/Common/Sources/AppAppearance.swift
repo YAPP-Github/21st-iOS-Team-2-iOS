@@ -14,5 +14,8 @@ public final class AppAppearance {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.label]
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
         UINavigationBar.appearance().barTintColor = .white
+        UITabBar.appearance().shadowImage = UIImage()
+        UITabBar.appearance().backgroundImage = UIImage()
+        UITabBar.appearance().backgroundColor = UIColor.white
     }
 }

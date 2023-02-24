@@ -26,6 +26,9 @@ enum Setting {
     case gender
     case male
     case female
+    
+    case userReport
+    case postReport
 }
 
 extension Setting {
@@ -48,18 +51,24 @@ extension Setting {
         case .gender: return "성별"
         case .male: return "남성"
         case .female: return "여성"
+        case .userReport: return "계정 신고 목록"
+        case .postReport: return "게시글 신고 목록"
         }
     }
     
     var isNextPage: Bool {
         switch self {
-        case .profile, .myInfo, .termsOfUse, .privacyRule, .askHelp: return true
+        case .profile, .myInfo, .termsOfUse, .privacyRule, .postReport, .userReport, .askHelp: return true
         default: return false
         }
     }
     
-    static func settings() -> [Setting] {
+    static func userSettings() -> [Setting] {
         return [.profile, .myInfo, .termsOfUse, .privacyRule, .askHelp]
+    }
+    
+    static func adminSettings() -> [Setting] {
+        return [.profile, .myInfo, .termsOfUse, .privacyRule, .userReport, .postReport]
     }
     
     static func etc() -> [Setting] {
