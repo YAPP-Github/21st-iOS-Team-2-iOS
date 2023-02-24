@@ -44,6 +44,7 @@ final public class NicknameViewController: UIViewController {
     }
     
     private func configure() {
+        configureNavigationBar()
         configureNicknameTextField()
         configureNextButtonTarget()
     }
@@ -102,6 +103,16 @@ final public class NicknameViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    private func configureNavigationBar() {
+        let cancelButton = UIBarButtonItem(
+            image: CommonAsset.Images.btnArrowleft.image,
+            style: .plain,
+            target: self,
+            action: #selector(didTapBackButton(_:))
+        )
+        navigationItem.leftBarButtonItem = cancelButton
+    }
+    
     private func configureNicknameTextField() {
         contentView.setNicknameTextFieldDelegate(self)
     }
@@ -113,6 +124,11 @@ final public class NicknameViewController: UIViewController {
     @objc
     private func didTapNextButton() {
         viewModel.didTapNextButton()
+    }
+    
+    @objc
+    private func didTapBackButton(_ sender: UITapGestureRecognizer) {
+        coordinator.pop()
     }
 }
 
