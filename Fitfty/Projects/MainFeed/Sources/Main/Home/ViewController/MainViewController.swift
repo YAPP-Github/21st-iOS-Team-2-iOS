@@ -355,11 +355,11 @@ private extension MainViewController {
     }
     
     @objc func didTapPrevButton(_ sender: FitftyButton) {
-        viewModel.input.refresh()
+        viewModel.input.reload()
     }
     
     @objc func didTapMainButton(_ sender: FitftyButton) {
-        viewModel.input.refresh()
+        viewModel.input.reload()
     }
     
 }
