@@ -14,7 +14,7 @@ import Core
 protocol ReportViewModelInput {
     
     var input: ReportViewModelInput { get }
-    func didTapBlockButton()
+    func didTapBlockButton(_ reportType: ReportType)
 }
 
 public final class ReportViewModel {
@@ -24,20 +24,17 @@ public final class ReportViewModel {
     private var userManager: UserManager
     private var userToken: String?
     private var boardToken: String?
-    private var reportType: ReportType
     private var fitftyRepository: FitftyRepository
     
     public init(
         userManager: UserManager,
         userToken: String?,
         boardToken: String?,
-        reportType: ReportType,
         fitftyRepository: FitftyRepository
     ) {
         self.userManager = userManager
         self.userToken = userToken
         self.boardToken = boardToken
-        self.reportType = reportType
         self.fitftyRepository = fitftyRepository
     }
     
@@ -47,11 +44,11 @@ extension ReportViewModel: ReportViewModelInput {
     
     var input: ReportViewModelInput { self }
     
-    func didTapBlockButton() {
+    func didTapBlockButton(_ reportType: ReportType) {
         if userManager.getCurrentGuestState() {
             currentState.send(.errorMessage("로그인이 필요합니다."))
         } else {
-            report()
+            report(reportType)
         }
     }
     
@@ -61,7 +58,7 @@ extension ReportViewModel: ViewModelType {
     
     public enum ViewModelState {
         case errorMessage(String)
-        case completed(Bool)
+        case completed(ReportType)
     }
     
     public var state: AnyPublisher<ViewModelState, Never> { currentState.compactMap { $0 }.eraseToAnyPublisher() }
@@ -70,11 +67,8 @@ extension ReportViewModel: ViewModelType {
 
 private extension ReportViewModel {
     
-    func report() {
-        Task { [weak self] in
-            guard let self = self else {
-                return
-            }
+    func report(_ reportType: ReportType) {
+        Task {
             do {
                 switch reportType {
                 case .postReport:
@@ -85,11 +79,11 @@ private extension ReportViewModel {
                         reportedBoardToken: boardToken,
                         type: ["INSULT"]
                     )
-                    let response = try await self.fitftyRepository.report(request)
+                    let response = try await fitftyRepository.report(request)
                     guard response.result == "SUCCESS" else {
                         return
                     }
-                    self.currentState.send(.completed(true))
+                    currentState.send(.completed(.postReport))
                     
                 case .userReport:
                     guard let userToken = userToken else {
@@ -99,16 +93,16 @@ private extension ReportViewModel {
                         reportedUserToken: userToken,
                         type: ["INSULT"]
                     )
-                    let response = try await self.fitftyRepository.report(request)
+                    let response = try await fitftyRepository.report(request)
                     guard response.result == "SUCCESS" else {
                         return
                     }
-                    self.currentState.send(.completed(true))
+                    currentState.send(.completed(.userReport))
                 }
                 
             } catch {
                 Logger.debug(error: error, message: "신고하기 실패")
-                self.currentState.send(.errorMessage("신고에 알 수 없는 에러가 발생했습니다."))
+                currentState.send(.errorMessage("신고에 알 수 없는 에러가 발생했습니다."))
             }
         }
     }
