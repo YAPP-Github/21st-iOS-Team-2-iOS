@@ -102,7 +102,6 @@ final public class ProfileViewController: UIViewController {
         setNavigationBar()
         setMyProfile()
         emptyView.isHidden = true
-        tabBarController?.tabBar.isHidden = false
     }
     
     private func setUp() {

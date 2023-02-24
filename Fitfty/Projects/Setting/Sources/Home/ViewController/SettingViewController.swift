@@ -50,7 +50,6 @@ public final class SettingViewController: UIViewController {
 
 private extension SettingViewController {
     func setUp() {
-        tabBarController?.tabBar.isHidden = true
         view.backgroundColor = .white
         setUpNavigationBar()
         setUpLayout()
