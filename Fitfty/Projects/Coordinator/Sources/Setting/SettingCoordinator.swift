@@ -28,6 +28,7 @@ final class SettingCoordinator: Coordinator {
     
     func start() {
         let viewController = makeSettingViewController()
+        viewController.hidesBottomBarWhenPushed = true
         navigationController.navigationBar.prefersLargeTitles = true
         navigationController.pushViewController(viewController, animated: true)
     }
@@ -109,12 +110,12 @@ extension SettingCoordinator: SettingCoordinatorInterface {
     }
     
     func showTermsOfUse() {
-        let webViewController = SettingWebViewController(url: "https://maze-mozzarella-6e5.notion.site/dd559e6017ee499fa569148b8621966d")
+        let webViewController = FitftyWebViewController(url: "https://maze-mozzarella-6e5.notion.site/dd559e6017ee499fa569148b8621966d")
         navigationController.present(webViewController, animated: true)
     }
     
     func showPrivacyRule() {
-        let webViewController = SettingWebViewController(url: "https://maze-mozzarella-6e5.notion.site/ed1e98c3fee5417b89f85543f4a398d2")
+        let webViewController = FitftyWebViewController(url: "https://maze-mozzarella-6e5.notion.site/ed1e98c3fee5417b89f85543f4a398d2")
         navigationController.present(webViewController, animated: true)
     }
     

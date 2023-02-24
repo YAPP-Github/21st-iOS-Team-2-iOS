@@ -50,16 +50,6 @@ public final class PersonalInfoViewModel: ViewModelType {
     }
     
     func didTapSaveButton(nickname: String?, birthday: String?) {
-        guard let nickname = nickname else {
-            currentState.send(.showErrorAlert(SettingError.noNickname))
-            return
-        }
-        
-        guard let birthday = birthday else {
-            currentState.send(.showErrorAlert(SettingError.noBirthday))
-            return
-        }
-        
         checkAvailableNickname(nickname)
         checkAvailableBirthday(birthday)
         
@@ -88,6 +78,7 @@ public final class PersonalInfoViewModel: ViewModelType {
                                           nickname: response.data?.nickname,
                                           birtyday: response.data?.birthday,
                                           gender: response.data?.gender)
+                
                 currentState.send(.updateUserPrivacy(userPrivacy: userPrivacy))
             } catch {
                 currentState.send(.showErrorAlert(error))
@@ -136,6 +127,7 @@ private extension PersonalInfoViewModel {
                 try await repository.updateUserPrivacy(nickname: nickname,
                                                        birthday: birthday,
                                                        gender: gender)
+                DefaultUserManager.shared.updateGender(Gender(rawValue: gender) ?? .female)
                 currentState.send(.popView)
             } catch {
                 currentState.send(.showErrorAlert(error))
@@ -143,20 +135,26 @@ private extension PersonalInfoViewModel {
         }
     }
     
-    func checkAvailableNickname(_ nickname: String) {
-        self.userPrivacy.nickname = nickname
+    func checkAvailableNickname(_ nickname: String?) {
+        userPrivacy.nickname = nickname
         let regex = "^[0-9a-zA-Z._]{1,30}$"
-        if nickname.range(of: regex, options: .regularExpression) != nil {
+        if nickname?.range(of: regex, options: .regularExpression) != nil {
             hasAvailableNickname = true
         } else {
             hasAvailableNickname = false
         }
     }
     
-    func checkAvailableBirthday(_ birthday: String) {
-        self.userPrivacy.birtyday = birthday
+    func checkAvailableBirthday(_ birthday: String?) {
+        if birthday?.isEmpty == true {
+            userPrivacy.birtyday = nil
+            hasAvailableBirthday = true
+            return
+        }
+        
+        userPrivacy.birtyday = birthday
         let regex = "^[0-9]{6}$"
-        if birthday.range(of: regex, options: .regularExpression) != nil {
+        if birthday?.range(of: regex, options: .regularExpression) != nil {
             hasAvailableBirthday = true
         } else {
             hasAvailableBirthday = false

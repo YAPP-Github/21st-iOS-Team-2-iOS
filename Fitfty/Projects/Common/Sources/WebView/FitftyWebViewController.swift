@@ -1,6 +1,6 @@
 //
-//  SettingWebViewController.swift
-//  Setting
+//  FitftyWebViewController.swift
+//  Common
 //
 //  Created by Watcha-Ethan on 2023/02/14.
 //  Copyright © 2023 Fitfty. All rights reserved.
@@ -9,7 +9,7 @@
 import UIKit
 import WebKit
 
-public final class SettingWebViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
+public final class FitftyWebViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     
     private let webView = WKWebView(frame: .zero)
     private let url: String

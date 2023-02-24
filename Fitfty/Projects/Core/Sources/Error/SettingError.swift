@@ -13,6 +13,7 @@ public enum SettingError: Error {
     case noBirthday
     case noAvailableBirthday
     case noAvailableNickname
+    case tooManyMessage
     case overlappedNickname
     case failWithdrawAccount
     case noToken
@@ -30,6 +31,8 @@ extension SettingError: LocalizedError {
             return NSLocalizedString("올바른 생년월일을 기입해주세요", comment: "Wrong Birthday")
         case .noAvailableNickname:
             return NSLocalizedString("1자 이상의 영문과 숫자조합으로 이루어진 닉네임을 기입해주세요", comment: "Wrond Nickname")
+        case .tooManyMessage:
+            return NSLocalizedString("30자 이하로 한 줄 소개를 적어주세요", comment: "Too Many Message")
         case .overlappedNickname:
             return NSLocalizedString("중복된 닉네임이에요", comment: "Overlapped Nickname")
         case .failWithdrawAccount:

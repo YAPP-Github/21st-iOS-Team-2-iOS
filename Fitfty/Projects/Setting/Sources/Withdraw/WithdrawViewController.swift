@@ -170,7 +170,7 @@ final public class WithdrawViewController: UIViewController {
     
     private func autoScroll() {
         let contentOffsetX = collectionView.contentOffset.x
-        let afterContentOffsetX = contentOffsetX + 1
+        let afterContentOffsetX = contentOffsetX + 1.5
         
         if afterContentOffsetX > 350 {
             return

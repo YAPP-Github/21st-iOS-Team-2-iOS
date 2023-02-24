@@ -90,7 +90,7 @@ final public class AuthIntroViewController: UIViewController {
     
     private func autoScroll() {
         let contentOffsetX = collectionView.contentOffset.x
-        let afterContentOffsetX = contentOffsetX + 1
+        let afterContentOffsetX = contentOffsetX + 1.5
         
         if afterContentOffsetX > 600 {
             return

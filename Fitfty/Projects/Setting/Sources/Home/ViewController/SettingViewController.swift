@@ -196,7 +196,7 @@ extension SettingViewController: MFMailComposeViewControllerDelegate {
         mailViewController.mailComposeDelegate = self
         mailViewController.setToRecipients(["team.fitfty@gmail.com"])
         mailViewController.setSubject("문의하기")
-        mailViewController.setMessageBody("서비스 이용에 어떤 문제가 있나요?", isHTML: false)
+        mailViewController.setMessageBody("문제 내용(스크린샷 또는 녹화 화면 첨부 가능):\n사용한 기기 종류:\n문의 답변을 받을 연락처:", isHTML: false)
         
         return mailViewController
     }

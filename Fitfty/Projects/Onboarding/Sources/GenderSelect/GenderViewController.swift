@@ -24,6 +24,7 @@ final public class GenderViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = false
     }
     
     public init(viewModel: GenderViewModel, coordinator: OnboardingCoordinatorInterface) {
@@ -73,13 +74,7 @@ final public class GenderViewController: UIViewController {
     }
     
     private func configureNavigationBar() {
-        let cancelButton = UIBarButtonItem(
-            image: CommonAsset.Images.btnArrowleft.image,
-            style: .plain,
-            target: self,
-            action: #selector(didTapBackButton(_:))
-        )
-        navigationItem.leftBarButtonItem = cancelButton
+        navigationItem.hidesBackButton = true
     }
     
     private func configureButtonTarget() {
