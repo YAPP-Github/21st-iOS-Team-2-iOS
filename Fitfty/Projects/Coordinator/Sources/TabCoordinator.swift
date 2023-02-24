@@ -35,7 +35,7 @@ enum TabBarPage {
     
     var pageIconImage: UIImage? {
         switch self {
-        case .weather: return CommonAsset.Images.iconSun.image.withRenderingMode(.alwaysOriginal)
+        case .weather: return CommonAsset.Images.iconHome.image.withRenderingMode(.alwaysOriginal)
         case .createCody: return CommonAsset.Images.iconAdd.image.withRenderingMode(.alwaysOriginal)
         case .profile: return CommonAsset.Images.iconProfile.image.withRenderingMode(.alwaysOriginal)
         }
@@ -43,7 +43,7 @@ enum TabBarPage {
     
     public var selectedIconImage: UIImage? {
         switch self {
-        case .weather: return CommonAsset.Images.iconSunFill.image.withRenderingMode(.alwaysOriginal)
+        case .weather: return CommonAsset.Images.iconHomeFill.image.withRenderingMode(.alwaysOriginal)
         case .createCody: return CommonAsset.Images.iconAdd.image.withRenderingMode(.alwaysOriginal)
         case .profile: return CommonAsset.Images.iconProfileFill.image.withRenderingMode(.alwaysOriginal)
         }

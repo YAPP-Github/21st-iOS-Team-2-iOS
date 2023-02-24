@@ -77,13 +77,13 @@ public enum WeatherTag: String, Codable {
 }
 extension WeatherTag {
     public init(temp: Int) {
-        if temp < 3 {
+        if temp <= 3 {
             self = .freezing
-        } else if temp > 3, temp < 9 {
+        } else if temp >= 3, temp <= 9 {
             self = .cold
-        } else if temp > 9, temp < 17 {
+        } else if temp >= 9, temp <= 17 {
             self = .chilly
-        } else if temp > 17, temp < 23 {
+        } else if temp >= 17, temp <= 23 {
             self = .warm
         } else {
             self = .hot

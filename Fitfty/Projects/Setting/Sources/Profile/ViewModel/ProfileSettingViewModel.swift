@@ -39,11 +39,12 @@ public final class ProfileSettingViewModel: ViewModelType {
         Task {
             do {
                 var url: String?
-                if let imageData = currentImage.value,
-                   let filename = filenameFromFilepath(profilePictureUrl.value) {
+                if let imageData = currentImage.value {
                     let userToken = try await repository.getUserPrivacy().data?.userToken ?? UUID().uuidString
                     url = try await AmplifyManager.shared.uploadImage(data: imageData, fileName: "profile/\(userToken)_\(Date().currentfullDate)").absoluteString
-                    try await AmplifyManager.shared.delete(fileName: filename)
+                    if let filename = filenameFromFilepath(profilePictureUrl.value) {
+                        try await AmplifyManager.shared.delete(fileName: filename)
+                    }
                 }
                 saveUserProfile(imageUrl: url, message: message)
             } catch {
