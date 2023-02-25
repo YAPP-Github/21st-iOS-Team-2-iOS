@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "appleLoginImage.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

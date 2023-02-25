@@ -12,6 +12,15 @@ let project = Project.makeModule(
     name: "Core",
     product: .staticFramework,
     dependencies: [
-        .SPM.Moya
+        .SPM.Moya,
+        .SPM.KakaoSDKAuth,
+        .SPM.KakaoSDKUser,
+        .SPM.KakaoSDKCommon,
+        .Project.Common,
+        .package(product: "Amplify"),
+        .package(product: "AWSCognitoAuthPlugin"),
+        .package(product: "AWSS3StoragePlugin"),
+        .package(product: "AWSAPIPlugin"),
+        .package(product: "AWSDataStorePlugin")
     ]
 )

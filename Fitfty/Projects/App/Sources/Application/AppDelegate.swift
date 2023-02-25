@@ -6,6 +6,14 @@
 //
 
 import UIKit
+import KakaoSDKCommon
+import KakaoSDKAuth
+
+import Core
+import Common
+import Amplify
+import AWSS3StoragePlugin
+import AWSCognitoAuthPlugin
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +22,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        
+        AppAppearance.setUpAppearance()
+        SocialLoginManager.shared.initailizeKakaoLoginSDK()
+        
+        do {
+            try Amplify.add(plugin: AWSCognitoAuthPlugin())
+            try Amplify.add(plugin: AWSS3StoragePlugin())
+            try Amplify.configure()
+            print("Amplify configured with Auth and Storage plugins")
+        } catch {
+            print("Failed to initialize Amplify with \(error)")
+        }
+
         return true
     }
 

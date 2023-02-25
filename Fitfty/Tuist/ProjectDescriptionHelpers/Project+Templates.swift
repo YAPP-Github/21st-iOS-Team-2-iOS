@@ -13,11 +13,12 @@ public extension Project {
             product: Product,
             organizationName: String = "Fitfty",
             packages: [Package] = [],
-            deploymentTarget: DeploymentTarget? = .iOS(targetVersion: "14.0", devices: [.iphone, .ipad]),
+            deploymentTarget: DeploymentTarget? = .iOS(targetVersion: "14.0", devices: [.iphone]),
             dependencies: [TargetDependency] = [],
             sources: SourceFilesList = ["Sources/**"],
             resources: ResourceFileElements? = nil,
-            infoPlist: InfoPlist = .default
+            infoPlist: InfoPlist = .default,
+            entitlements: Path? = nil
         ) -> Project {
             let settings: Settings = .settings(
                 base: [:],
@@ -35,6 +36,7 @@ public extension Project {
                 infoPlist: infoPlist,
                 sources: sources,
                 resources: resources,
+                entitlements: entitlements,
                 scripts: [.SwiftLintShell],
                 dependencies: dependencies
             )
